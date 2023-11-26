@@ -1,0 +1,49 @@
+Conversión de STEP a Solid Edge
+Fecha: Thursday,January 07,2021 03 :29PM
+Archivo fuente: C:\Users\baqumau\Downloads\IRB140_6kg-81_IRC5_rev03_STEP_j\IRB140_6kg-81_IRC5_rev03_STEP_j\IRB140_6kg-81_LINK6_CAD_rev02.STEP
+Autor: 'ABB'
+Organización: 'ABB'
+Sistema de origen: SolidWorks 2014
+
+Equipo:
+Procesador: Intel(R) Core(TM) i7-2630QM CPU @ 2.00GHz
+Sistema operativo: Windows 7 Home Service Pack 1
+Memoria instalada: 5.94 GB
+
+Información del software
+Versión de Parasolid: 26.0.169
+Versión de PSBodyShop: 16.1.150
+Versión del traductor: 16.42.0
+Versión de Solid Edge: 106.00.06.05 x64
+
+Opciones de importación de STEP
+Habilitar transferencia de atributos: Activado
+Importar cables de clase II: Activado
+Importar cables de clase III: Activado
+Importar superficies de clase IV: Activado
+Importar sólidos de clase VI: Activado
+Habilitar unión: Activado
+Importar y unir superficies de clase II: Activado
+Convertir sólidos de clase IV en superficies recortadas y luego unirlas: Desactivado
+Cuerpos de sólidos booleanos: Activado
+Crear operación base: Activado
+Simplificar geometría: Activado
+Corregir y unir habilitados: Desactivado
+Activar corrección interna: Activado
+Exportar nombres de componentes de pieza como Unicode: Activado
+
+Fase 1 de 3 Convirtiendo en tipos de datos Parasolid...
+Fin de conversión en tipos de datos Parasolid
+Tiempo requerido para convertir:00 : 00 : 01
+
+Fase 2 de 3 Simplificar geometría...
+Proceso de simplificación de geometría completado
+Tiempo requerido para simplificar: 00 : 00 : 00
+Uniendo superficies libres...
+
+Fase 3 de 3 Creando entidades Parasolid...
+Número total de superficies: 0
+Número total de cuerpos sólidos: 1
+Número total de cuerpos de jaula de alambre: 0
+Proceso de conversión completado
+Tiempo total requerido para convertir y posprocesar:00 : 00 : 01

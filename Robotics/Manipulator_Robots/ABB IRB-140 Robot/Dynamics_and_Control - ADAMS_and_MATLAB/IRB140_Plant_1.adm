@@ -1,0 +1,1347 @@
+Adams View model name: ABB_IRB_140
+!
+!-------------------------------- SYSTEM UNITS ---------------------------------
+!
+UNITS/
+, FORCE = NEWTON
+, MASS = KILOGRAM
+, LENGTH = METER
+, TIME = SECOND
+!
+!----------------------------------- PARTS -------------------------------------
+!
+!----------------------------------- Ground ------------------------------------
+!
+!                            adams_view_name='ground'
+PART/1
+, GROUND
+!
+!                           adams_view_name='MARKER_2'
+MARKER/2
+, PART = 1
+!
+!------------------------------------ Part -------------------------------------
+!
+!                    adams_view_name='IRB140___M2004C_BASE_'
+PART/2
+, MASS = 11.99951863
+, CM = 26
+, IP = 0.2387275338, 0.1617491174, 0.1006873276
+!
+!                           adams_view_name='MARKER_1'
+MARKER/1
+, PART = 2
+!
+!                           adams_view_name='MARKER_3'
+MARKER/3
+, PART = 2
+!
+!                            adams_view_name='PSMAR'
+MARKER/25
+, PART = 2
+!
+!                              adams_view_name='cm'
+MARKER/26
+, PART = 2
+, QP = -0.0820393252, 4.020286402E-04, 0.0599247344
+, REULER = 4.713236697, 1.519258801, 1.581322702
+!
+!                          adams_view_name='MARKER_110'
+MARKER/110
+, PART = 2
+!
+!                            adams_view_name='SOLID1'
+GRAPHICS/72
+, EXTERNAL
+, RM = 110
+, FILE = IRB140_Plant_1.xmt_txt
+, ELEMENT = SOLID1
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                    adams_view_name='IRB140___M2004C_LINK1_'
+PART/3
+, MASS = 32.81961314
+, CM = 28
+, IP = 0.5508094425, 0.4503810593, 0.2987063119
+!
+!                           adams_view_name='MARKER_4'
+MARKER/4
+, PART = 3
+!
+!                           adams_view_name='MARKER_5'
+MARKER/5
+, PART = 3
+, QP = 0.07, 0, 0.352
+, REULER = 0, 1.570796327, 0
+!
+!                           adams_view_name='MARKER_7'
+MARKER/7
+, PART = 3
+, QP = -0.0913130169, 0.1117356951, 0.3406151744
+!
+!                          adams_view_name='MARKER_17'
+MARKER/17
+, PART = 3
+, QP = 0.1349092879, -0.0291337054, 0.2211061471
+!
+!                            adams_view_name='PSMAR'
+MARKER/27
+, PART = 3
+!
+!                              adams_view_name='cm'
+MARKER/28
+, PART = 3
+, QP = 0.0290768919, 0.0442091748, 0.2606986706
+, REULER = 2.431233782, 0.7744933033, 3.943799862
+!
+!                          adams_view_name='MARKER_85'
+MARKER/85
+, PART = 3
+!
+!                          adams_view_name='MARKER_86'
+MARKER/86
+, PART = 3
+!
+!                          adams_view_name='MARKER_109'
+MARKER/109
+, PART = 3
+!
+!                            adams_view_name='SOLID2'
+GRAPHICS/73
+, EXTERNAL
+, RM = 109
+, FILE = IRB140_Plant_1.xmt_txt
+, ELEMENT = SOLID2
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK1__2'
+PART/4
+, MASS = 1.093634065
+, CM = 30
+, IP = 0.0043024833, 0.0040766552, 0.0010564207
+!
+!                           adams_view_name='MARKER_8'
+MARKER/8
+, PART = 4
+, QP = -0.0913130169, 0.1117356951, 0.3406151744
+!
+!                            adams_view_name='PSMAR'
+MARKER/29
+, PART = 4
+!
+!                              adams_view_name='cm'
+MARKER/30
+, PART = 4
+, QP = -0.0913130169, 0.1117356951, 0.3406151744
+, REULER = 1.542187536, 3.121788208, 6.263672347
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK1__3'
+PART/5
+, MASS = 1.094532725
+, CM = 32
+, IP = 0.0043079858, 0.0040813915, 0.0010579886
+!
+!                          adams_view_name='MARKER_18'
+MARKER/18
+, PART = 5
+, QP = 0.1349092879, -0.0291337054, 0.2211061471
+!
+!                            adams_view_name='PSMAR'
+MARKER/31
+, PART = 5
+!
+!                              adams_view_name='cm'
+MARKER/32
+, PART = 5
+, QP = 0.1349092879, -0.0291337054, 0.2211061471
+, REULER = 0.01083504, 1.587047383, 0.6006748187
+!
+!                          adams_view_name='MARKER_105'
+MARKER/105
+, PART = 5
+!
+!                            adams_view_name='SOLID4'
+GRAPHICS/75
+, EXTERNAL
+, RM = 105
+, FILE = IRB140_Plant_1.xmt_txt
+, ELEMENT = SOLID4
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                    adams_view_name='IRB140___M2004C_LINK2_'
+PART/6
+, MASS = 25.00007426
+, CM = 34
+, IP = 0.5137262402, 0.445503944, 0.1362765078
+!
+!                           adams_view_name='MARKER_6'
+MARKER/6
+, PART = 6
+, QP = 0.07, 0, 0.352
+, REULER = 0, 1.570796327, 0
+!
+!                           adams_view_name='MARKER_9'
+MARKER/9
+, PART = 6
+, QP = 0.07, 0, 0.712
+, REULER = 0, 1.570796327, 0
+!
+!                            adams_view_name='PSMAR'
+MARKER/33
+, PART = 6
+!
+!                              adams_view_name='cm'
+MARKER/34
+, PART = 6
+, QP = 0.0602722329, -0.0924337165, 0.5502880125
+, REULER = 0.0844687268, 0.1975523994, 6.20752399
+!
+!                          adams_view_name='MARKER_87'
+MARKER/87
+, PART = 6
+, QP = 0.07, 0, 0.352
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_88'
+MARKER/88
+, PART = 6
+, QP = 0.07, 0, 0.352
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_101'
+MARKER/101
+, PART = 6
+, QP = 0.0188511722, -0.0851180816, 0.623070611
+, REULER = 1.570796327, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_102'
+MARKER/102
+, PART = 6
+, QP = 0.0188511722, -0.0851180816, 0.623070611
+, REULER = 1.570796327, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_104'
+MARKER/104
+, PART = 6
+!
+!                            adams_view_name='SOLID5'
+GRAPHICS/76
+, EXTERNAL
+, RM = 104
+, FILE = IRB140_Plant_1.xmt_txt
+, ELEMENT = SOLID5
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                    adams_view_name='IRB140___M2004C_LINK3_'
+PART/7
+, MASS = 0.0574830687
+, CM = 36
+, IP = 4.178137855E-05, 3.916196352E-05, 8.696660393E-06
+!
+!                          adams_view_name='MARKER_19'
+MARKER/19
+, PART = 7
+, QP = 0.0883873285, 0.0076043208, 0.706
+!
+!                            adams_view_name='PSMAR'
+MARKER/35
+, PART = 7
+!
+!                              adams_view_name='cm'
+MARKER/36
+, PART = 7
+, QP = 0.2494293628, 0.051339154, 0.7061083147
+, REULER = 1.569872836, 1.58746076, 7.103748344E-04
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK3__2'
+PART/8
+, MASS = 0.0574830687
+, CM = 38
+, IP = 4.178137855E-05, 3.916196352E-05, 8.696660393E-06
+!
+!                          adams_view_name='MARKER_21'
+MARKER/21
+, PART = 8
+, QP = -0.0664924051, 0.0086684746, 0.7111087415
+!
+!                            adams_view_name='PSMAR'
+MARKER/37
+, PART = 8
+!
+!                              adams_view_name='cm'
+MARKER/38
+, PART = 8
+, QP = -0.0664924051, 0.0086684746, 0.7111087415
+, REULER = 6.282261827, 1.554830003, 6.282474288
+!
+!                          adams_view_name='MARKER_89'
+MARKER/89
+, PART = 8
+, QP = 0.07, 0, 0.712
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_90'
+MARKER/90
+, PART = 8
+, QP = 0.07, 0, 0.712
+, REULER = 0, 1.570796327, 0
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK3__3'
+PART/9
+, MASS = 17.833162
+, CM = 40
+, IP = 0.203848112, 0.1849635632, 0.0719149587
+!
+!                          adams_view_name='MARKER_10'
+MARKER/10
+, PART = 9
+, QP = 0.07, 0, 0.712
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_11'
+MARKER/11
+, PART = 9
+, QP = 0.324, 0, 0.712
+, REULER = 1.570796327, 1.570796327, 1.570796327
+!
+!                          adams_view_name='MARKER_20'
+MARKER/20
+, PART = 9
+, QP = 0.0883873285, 0.0076043208, 0.706
+!
+!                          adams_view_name='MARKER_22'
+MARKER/22
+, PART = 9
+, QP = -0.0664924051, 0.0086684746, 0.7111087415
+!
+!                          adams_view_name='MARKER_24'
+MARKER/24
+, PART = 9
+, QP = 0.2575706372, -0.051339154, 0.7061083147
+!
+!                            adams_view_name='PSMAR'
+MARKER/39
+, PART = 9
+!
+!                              adams_view_name='cm'
+MARKER/40
+, PART = 9
+, QP = 0.0883873285, 0.0076043208, 0.7062916156
+, REULER = 1.5219623, 1.607481899, 0.0545168527
+!
+!                          adams_view_name='MARKER_103'
+MARKER/103
+, PART = 9
+!
+!                            adams_view_name='SOLID8'
+GRAPHICS/79
+, EXTERNAL
+, RM = 103
+, FILE = IRB140_Plant_1.xmt_txt
+, ELEMENT = SOLID8
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK3__4'
+PART/10
+, MASS = 0.0574830687
+, CM = 42
+, IP = 4.178137855E-05, 3.916196352E-05, 8.696660393E-06
+!
+!                          adams_view_name='MARKER_23'
+MARKER/23
+, PART = 10
+, QP = 0.2575706372, -0.051339154, 0.7061083147
+!
+!                            adams_view_name='PSMAR'
+MARKER/41
+, PART = 10
+!
+!                              adams_view_name='cm'
+MARKER/42
+, PART = 10
+, QP = 0.2575706372, -0.051339154, 0.7061083147
+, REULER = 1.569872836, 1.554131894, 6.282474932
+!
+!------------------------------------ Part -------------------------------------
+!
+!                    adams_view_name='IRB140___M2004C_LINK4_'
+PART/11
+, MASS = 5.061827965
+, CM = 44
+, IP = 0.0188190684, 0.0161485447, 0.0100077037
+!
+!                          adams_view_name='MARKER_12'
+MARKER/12
+, PART = 11
+, QP = 0.324, 0, 0.712
+, REULER = 1.570796327, 1.570796327, 1.570796327
+!
+!                          adams_view_name='MARKER_13'
+MARKER/13
+, PART = 11
+, QP = 0.45, 0, 0.712
+, REULER = 0, 1.570796327, 0
+!
+!                            adams_view_name='PSMAR'
+MARKER/43
+, PART = 11
+!
+!                              adams_view_name='cm'
+MARKER/44
+, PART = 11
+, QP = 0.3986486952, -5.553645787E-04, 0.7103033966
+, REULER = 4.654071667, 1.606354468, 1.565964756
+!
+!                          adams_view_name='MARKER_59'
+MARKER/59
+, PART = 11
+, QP = 0.3986486952, -5.553645878E-04, 0.7103033965
+!
+!                          adams_view_name='MARKER_61'
+MARKER/61
+, PART = 11
+, QP = 0.35, 0, 0.712
+!
+!                          adams_view_name='MARKER_63'
+MARKER/63
+, PART = 11
+, QP = 0.32275, 0, 0.7100879297
+!
+!                          adams_view_name='MARKER_99'
+MARKER/99
+, PART = 11
+, QP = 0.4484770127, 6.21015538E-04, 0.7120221155
+, REULER = 0.0260660517, 3.769283632E-04, 0
+!
+!                          adams_view_name='MARKER_100'
+MARKER/100
+, PART = 11
+, QP = 0.4484770127, 6.21015538E-04, 0.7120221155
+, REULER = 0.0260660517, 3.769283632E-04, 0
+!
+!                          adams_view_name='MARKER_108'
+MARKER/108
+, PART = 11
+!
+!                           adams_view_name='SOLID10'
+GRAPHICS/81
+, EXTERNAL
+, RM = 108
+, FILE = IRB140_Plant_1.xmt_txt
+, ELEMENT = SOLID10
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK4__2'
+PART/12
+, MASS = 0.1212496973
+, CM = 46
+, IP = 1.376101831E-04, 6.922570973E-05, 6.922452035E-05
+!
+!                            adams_view_name='PSMAR'
+MARKER/45
+, PART = 12
+!
+!                              adams_view_name='cm'
+MARKER/46
+, PART = 12
+, QP = 0.4500000346, -0.0577950782, 0.7120000893
+, REULER = 1.570796167, 1.668672603, 5.212271743E-07
+!
+!                          adams_view_name='MARKER_64'
+MARKER/64
+, PART = 12
+, QP = 0.4500000346, -0.0577950782, 0.7120000893
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_97'
+MARKER/97
+, PART = 12
+, QP = 0.45, 0.0660108789, 0.712
+, REULER = 3.141592654, 1.570796327, 3.141592654
+!
+!                          adams_view_name='MARKER_98'
+MARKER/98
+, PART = 12
+, QP = 0.45, 0.0660108789, 0.712
+, REULER = 3.141592654, 1.570796327, 3.141592654
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK4__3'
+PART/13
+, MASS = 0.0282401591
+, CM = 48
+, IP = 4.289118578E-06, 2.293410613E-06, 2.293410613E-06
+!
+!                            adams_view_name='PSMAR'
+MARKER/47
+, PART = 13
+!
+!                              adams_view_name='cm'
+MARKER/48
+, PART = 13
+, QP = 0.45, 0.0660108789, 0.712
+, REULER = 1.570796327, 3.141592654, 0
+!
+!                          adams_view_name='MARKER_66'
+MARKER/66
+, PART = 13
+, QP = 0.45, 0.0660108789, 0.712
+, REULER = 0, 1.570796327, 0
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK4__4'
+PART/14
+, MASS = 0.0309531836
+, CM = 50
+, IP = 2.353706926E-05, 2.339466467E-05, 1.529027351E-06
+!
+!                            adams_view_name='PSMAR'
+MARKER/49
+, PART = 14
+!
+!                              adams_view_name='cm'
+MARKER/50
+, PART = 14
+, QP = 0.40922705, 2.736267377E-10, 0.7119989297
+, REULER = 1.605265653, 2.64131016E-05, 4.677920862
+!
+!                          adams_view_name='MARKER_58'
+MARKER/58
+, PART = 14
+, QP = 0.3986486952, -5.553645878E-04, 0.7103033965
+!
+!                          adams_view_name='MARKER_107'
+MARKER/107
+, PART = 14
+!
+!                           adams_view_name='SOLID13'
+GRAPHICS/84
+, EXTERNAL
+, RM = 107
+, FILE = IRB140_Plant_1.xmt_txt
+, ELEMENT = SOLID13
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK4__5'
+PART/15
+, MASS = 1.244533945
+, CM = 52
+, IP = 0.0020252255, 0.0011885322, 0.0010741757
+!
+!                            adams_view_name='PSMAR'
+MARKER/51
+, PART = 15
+!
+!                              adams_view_name='cm'
+MARKER/52
+, PART = 15
+, QP = 0.3061761452, -8.527025253E-08, 0.7114516845
+, REULER = 4.523609602E-06, 1.570538249, 0.007634154
+!
+!                          adams_view_name='MARKER_60'
+MARKER/60
+, PART = 15
+, QP = 0.35, 0, 0.712
+!
+!                          adams_view_name='MARKER_91'
+MARKER/91
+, PART = 15
+, QP = 0.32275, 0, 0.7100879297
+, REULER = 1.570796327, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_92'
+MARKER/92
+, PART = 15
+, QP = 0.32275, 0, 0.7100879297
+, REULER = 1.570796327, 1.570796327, 0
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK4__6'
+PART/16
+, MASS = 0.063332648
+, CM = 54
+, IP = 1.167256759E-04, 6.493432873E-05, 5.181509687E-05
+!
+!                            adams_view_name='PSMAR'
+MARKER/53
+, PART = 16
+!
+!                              adams_view_name='cm'
+MARKER/54
+, PART = 16
+, QP = 0.32275, -3.936075979E-15, 0.7100879297
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_62'
+MARKER/62
+, PART = 16
+, QP = 0.32275, 0, 0.7100879297
+!
+!------------------------------------ Part -------------------------------------
+!
+!                    adams_view_name='IRB140___M2004C_LINK5_'
+PART/17
+, MASS = 1.000004652
+, CM = 76
+, IP = 7.669956685E-04, 4.889946564E-04, 4.727654911E-04
+!
+!                          adams_view_name='MARKER_14'
+MARKER/14
+, PART = 17
+, QP = 0.45, 0, 0.712
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_15'
+MARKER/15
+, PART = 17
+, QP = 0.515, 0, 0.712
+, REULER = 1.570796327, 1.570796327, 1.570796327
+!
+!                            adams_view_name='PSMAR'
+MARKER/55
+, PART = 17
+!
+!                          adams_view_name='MARKER_65'
+MARKER/65
+, PART = 17
+, QP = 0.4500000346, -0.0577950782, 0.7120000893
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_67'
+MARKER/67
+, PART = 17
+, QP = 0.45, 0.0660108789, 0.712
+, REULER = 0, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_69'
+MARKER/69
+, PART = 17
+, QP = 0.470212298, -8.499462785E-08, 0.6834993904
+, REULER = 0, 1.570796327, 0
+!
+!                              adams_view_name='cm'
+MARKER/76
+, PART = 17
+, QP = 0.4484774891, 6.208923175E-04, 0.7120219603
+, REULER = 4.713786029, 3.070428614, 3.13958971
+!
+!                          adams_view_name='MARKER_93'
+MARKER/93
+, PART = 17
+, QP = 0.4484770127, 6.21015538E-04, 0.7120221155
+, REULER = 0.0260660517, 1.571173255, 0
+!
+!                          adams_view_name='MARKER_94'
+MARKER/94
+, PART = 17
+, QP = 0.4484770127, 6.21015538E-04, 0.7120221155
+, REULER = 0.0260660517, 1.571173255, 0
+!
+!------------------------------------ Part -------------------------------------
+!
+!                   adams_view_name='IRB140___M2004C_LINK5__2'
+PART/18
+, MASS = 0.0064818948
+, CM = 77
+, IP = 1.344953107E-07, 1.212740627E-07, 1.212376734E-07
+!
+!                            adams_view_name='PSMAR'
+MARKER/56
+, PART = 18
+!
+!                          adams_view_name='MARKER_68'
+MARKER/68
+, PART = 18
+, QP = 0.470212298, -8.499462785E-08, 0.6834993904
+, REULER = 0, 1.570796327, 0
+!
+!                              adams_view_name='cm'
+MARKER/77
+, PART = 18
+, QP = 0.470212298, -8.499462788E-08, 0.6834993904
+, REULER = 3.143863411, 0.4304481696, 3.139243195
+!
+!------------------------------------ Part -------------------------------------
+!
+!                    adams_view_name='IRB140___M2004C_LINK6_'
+PART/19
+, MASS = 0.4995122021
+, CM = 84
+, IP = 1.216429625E-04, 1.192476842E-04, 1.154004736E-04
+!
+!                          adams_view_name='MARKER_16'
+MARKER/16
+, PART = 19
+, QP = 0.515, 0, 0.712
+, REULER = 1.570796327, 1.570796327, 1.570796327
+!
+!                            adams_view_name='PSMAR'
+MARKER/57
+, PART = 19
+!
+!                              adams_view_name='cm'
+MARKER/84
+, PART = 19
+, QP = 0.5020594288, 2.387855748E-10, 0.7117749695
+, REULER = 4.712387799, 1.427059826, 1.570802272
+!
+!                          adams_view_name='MARKER_95'
+MARKER/95
+, PART = 19
+, QP = 0.515, 0, 0.712
+, REULER = 1.570796327, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_96'
+MARKER/96
+, PART = 19
+, QP = 0.515, 0, 0.712
+, REULER = 1.570796327, 1.570796327, 0
+!
+!                          adams_view_name='MARKER_106'
+MARKER/106
+, PART = 19
+!
+!                           adams_view_name='SOLID18'
+GRAPHICS/89
+, EXTERNAL
+, RM = 106
+, FILE = IRB140_Plant_1.xmt_txt
+, ELEMENT = SOLID18
+, FACETING_TOLERANCE = 300.0028
+!
+!---------------------------------- CONTACTS -----------------------------------
+!
+!                            adams_view_name='Cont_1'
+CONTACT/1
+, IGEOM = 79
+, JGEOM = 76
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!                            adams_view_name='Cont_3'
+CONTACT/3
+, IGEOM = 89
+, JGEOM = 84
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!                            adams_view_name='Cont_5'
+CONTACT/5
+, IGEOM = 81
+, JGEOM = 72
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!                            adams_view_name='Cont_6'
+CONTACT/7
+, IGEOM = 76
+, JGEOM = 72
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!                            adams_view_name='Cont_7'
+CONTACT/9
+, IGEOM = 79
+, JGEOM = 72
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!                            adams_view_name='Cont_2'
+CONTACT/10
+, IGEOM = 76
+, JGEOM = 75
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!                            adams_view_name='Cont_8'
+CONTACT/16
+, IGEOM = 89
+, JGEOM = 75
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!                            adams_view_name='Cont_9'
+CONTACT/17
+, IGEOM = 81
+, JGEOM = 75
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!                            adams_view_name='Cont_4'
+CONTACT/18
+, IGEOM = 81
+, JGEOM = 73
+, IMPACT
+, STIFFNESS = 1.0E+11
+, DAMPING = 10000
+, DMAX = 1.0E-04
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.023
+, MU_DYNAMIC = 0.016
+, STICTION_TRANSITION_VELOCITY = 0.03
+, FRICTION_TRANSITION_VELOCITY = 0.06
+!
+!------------------------------ DYNAMIC GRAPHICS -------------------------------
+!
+!                   adams_view_name='Joint_1_force_graphic_1'
+GRAPHICS/39
+, FORCE
+, ETYPE = JOINT
+, EID = 2
+, EMARKER = 4
+!
+!                   adams_view_name='Joint_2_force_graphic_1'
+GRAPHICS/40
+, FORCE
+, ETYPE = JOINT
+, EID = 3
+, EMARKER = 6
+!
+!                   adams_view_name='Joint_3_force_graphic_1'
+GRAPHICS/41
+, FORCE
+, ETYPE = JOINT
+, EID = 5
+, EMARKER = 10
+!
+!                   adams_view_name='Joint_4_force_graphic_1'
+GRAPHICS/42
+, FORCE
+, ETYPE = JOINT
+, EID = 6
+, EMARKER = 12
+!
+!                   adams_view_name='Joint_5_force_graphic_1'
+GRAPHICS/43
+, FORCE
+, ETYPE = JOINT
+, EID = 7
+, EMARKER = 14
+!
+!                   adams_view_name='Joint_6_force_graphic_1'
+GRAPHICS/44
+, FORCE
+, ETYPE = JOINT
+, EID = 8
+, EMARKER = 16
+!
+!                   adams_view_name='SFORCE_9_force_graphic_1'
+GRAPHICS/90
+, FORCE
+, ETYPE = SFORCE
+, EID = 9
+, EMARKER = 101
+!
+!-------------------------------- CONSTRAINTS ----------------------------------
+!
+!                           adams_view_name='Fixed_1'
+JOINT/1
+, FIXED
+, I = 1
+, J = 2
+!
+!                           adams_view_name='Joint_1'
+JOINT/2
+, REVOLUTE
+, I = 3
+, J = 4
+!
+!                           adams_view_name='Joint_2'
+JOINT/3
+, REVOLUTE
+, I = 5
+, J = 6
+!
+!                           adams_view_name='Fixed_2'
+JOINT/4
+, FIXED
+, I = 7
+, J = 8
+!
+!                           adams_view_name='Joint_3'
+JOINT/5
+, REVOLUTE
+, I = 9
+, J = 10
+!
+!                           adams_view_name='Joint_4'
+JOINT/6
+, REVOLUTE
+, I = 11
+, J = 12
+!
+!                           adams_view_name='Joint_5'
+JOINT/7
+, REVOLUTE
+, I = 13
+, J = 14
+!
+!                           adams_view_name='Joint_6'
+JOINT/8
+, REVOLUTE
+, I = 15
+, J = 16
+!
+!                           adams_view_name='Fixed_3'
+JOINT/9
+, FIXED
+, I = 17
+, J = 18
+!
+!                           adams_view_name='Fixed_4'
+JOINT/10
+, FIXED
+, I = 19
+, J = 20
+!
+!                           adams_view_name='Fixed_5'
+JOINT/11
+, FIXED
+, I = 21
+, J = 22
+!
+!                           adams_view_name='Fixed_6'
+JOINT/12
+, FIXED
+, I = 23
+, J = 24
+!
+!                           adams_view_name='Fixed_7'
+JOINT/13
+, FIXED
+, I = 58
+, J = 59
+!
+!                           adams_view_name='Fixed_8'
+JOINT/14
+, FIXED
+, I = 60
+, J = 61
+!
+!                           adams_view_name='Fixed_9'
+JOINT/15
+, FIXED
+, I = 62
+, J = 63
+!
+!                           adams_view_name='Fixed_10'
+JOINT/16
+, FIXED
+, I = 64
+, J = 65
+!
+!                           adams_view_name='Fixed_11'
+JOINT/17
+, FIXED
+, I = 66
+, J = 67
+!
+!                           adams_view_name='Fixed_12'
+JOINT/18
+, FIXED
+, I = 68
+, J = 69
+!
+!----------------------------------- FORCES ------------------------------------
+!
+!                          adams_view_name='Actuator_1'
+SFORCE/1
+, ROTATIONAL
+, I = 85
+, J = 86
+, ACTIONONLY
+, FUNCTION = VARVAL(13)
+!
+!                          adams_view_name='Actuator_2'
+SFORCE/2
+, ROTATIONAL
+, I = 87
+, J = 88
+, ACTIONONLY
+, FUNCTION = VARVAL(14)
+!
+!                          adams_view_name='Actuator_3'
+SFORCE/3
+, ROTATIONAL
+, I = 89
+, J = 90
+, ACTIONONLY
+, FUNCTION = VARVAL(15)
+!
+!                          adams_view_name='Actuator_4'
+SFORCE/4
+, ROTATIONAL
+, I = 91
+, J = 92
+, ACTIONONLY
+, FUNCTION = VARVAL(16)
+!
+!                          adams_view_name='Actuator_5'
+SFORCE/5
+, ROTATIONAL
+, I = 93
+, J = 94
+, ACTIONONLY
+, FUNCTION = VARVAL(17)
+!
+!                          adams_view_name='Actuator_6'
+SFORCE/6
+, ROTATIONAL
+, I = 95
+, J = 96
+, ACTIONONLY
+, FUNCTION = VARVAL(18)
+!
+!                       adams_view_name='External_Force_1'
+SFORCE/7
+, TRANSLATIONAL
+, I = 97
+, J = 98
+, ACTIONONLY
+, FUNCTION = VARVAL(19)
+!
+!                       adams_view_name='External_Force_2'
+SFORCE/8
+, TRANSLATIONAL
+, I = 99
+, J = 100
+, ACTIONONLY
+, FUNCTION = VARVAL(20)
+!
+!                       adams_view_name='External_Force_3'
+SFORCE/9
+, TRANSLATIONAL
+, I = 101
+, J = 102
+, ACTIONONLY
+, FUNCTION = VARVAL(33)
+!
+!                          adams_view_name='Friction_1'
+FRICTION/1
+, JOINT = 2
+, MU_STATIC = 0.05
+, MU_DYNAMIC = 0.03
+, FRICTION_ARM = 0.1
+, BENDING_REACTION_ARM = 0.1
+, INPUTS = PRELOAD:REACTION_FORCE
+, FRICTION_TORQUE_PRELOAD = 0.03
+!
+!                          adams_view_name='Friction_2'
+FRICTION/2
+, JOINT = 3
+, MU_STATIC = 0.05
+, MU_DYNAMIC = 0.03
+, FRICTION_ARM = 0.1
+, BENDING_REACTION_ARM = 0.1
+, INPUTS = PRELOAD:REACTION_FORCE
+, FRICTION_TORQUE_PRELOAD = 0.03
+!
+!                          adams_view_name='Friction_3'
+FRICTION/3
+, JOINT = 5
+, MU_STATIC = 0.05
+, MU_DYNAMIC = 0.03
+, FRICTION_ARM = 0.1
+, BENDING_REACTION_ARM = 0.1
+, INPUTS = PRELOAD:REACTION_FORCE
+, FRICTION_TORQUE_PRELOAD = 0.03
+!
+!                          adams_view_name='Friction_4'
+FRICTION/4
+, JOINT = 6
+, MU_STATIC = 0.05
+, MU_DYNAMIC = 0.03
+, FRICTION_ARM = 0.1
+, BENDING_REACTION_ARM = 0.1
+, INPUTS = PRELOAD:REACTION_FORCE
+, FRICTION_TORQUE_PRELOAD = 0.03
+!
+!                          adams_view_name='Friction_5'
+FRICTION/5
+, JOINT = 7
+, MU_STATIC = 0.05
+, MU_DYNAMIC = 0.03
+, FRICTION_ARM = 0.1
+, BENDING_REACTION_ARM = 0.1
+, INPUTS = PRELOAD:REACTION_FORCE
+, FRICTION_TORQUE_PRELOAD = 0.03
+!
+!                          adams_view_name='Friction_6'
+FRICTION/6
+, JOINT = 8
+, MU_STATIC = 0.05
+, MU_DYNAMIC = 0.03
+, FRICTION_ARM = 0.1
+, BENDING_REACTION_ARM = 0.1
+, INPUTS = PRELOAD:REACTION_FORCE
+, FRICTION_TORQUE_PRELOAD = 0.03
+!
+!------------------------------ DATA STRUCTURES --------------------------------
+!
+!                            adams_view_name='Theta1'
+VARIABLE/7
+, IC = 0
+, FUNCTION = AZ(4,3)
+!
+!                            adams_view_name='Theta2'
+VARIABLE/8
+, IC = 0
+, FUNCTION = AZ(6,5)
+!
+!                            adams_view_name='Theta3'
+VARIABLE/9
+, IC = 0
+, FUNCTION = AZ(10,9)
+!
+!                            adams_view_name='Theta4'
+VARIABLE/10
+, IC = 0
+, FUNCTION = AZ(12,11)
+!
+!                            adams_view_name='Theta5'
+VARIABLE/11
+, IC = 0
+, FUNCTION = AZ(14,13)
+!
+!                            adams_view_name='Theta6'
+VARIABLE/12
+, IC = 0
+, FUNCTION = AZ(16,15)
+!
+!                           adams_view_name='Torque1'
+VARIABLE/13
+, IC = 0
+, FUNCTION = 0.00000000000000000e+000
+!
+!                           adams_view_name='Torque2'
+VARIABLE/14
+, IC = 0
+, FUNCTION = 0.00000000000000000e+000
+!
+!                           adams_view_name='Torque3'
+VARIABLE/15
+, IC = 0
+, FUNCTION = 0.00000000000000000e+000
+!
+!                           adams_view_name='Torque4'
+VARIABLE/16
+, IC = 0
+, FUNCTION = 0.00000000000000000e+000
+!
+!                           adams_view_name='Torque5'
+VARIABLE/17
+, IC = 0
+, FUNCTION = 0.00000000000000000e+000
+!
+!                           adams_view_name='Torque6'
+VARIABLE/18
+, IC = 0
+, FUNCTION = 0.00000000000000000e+000
+!
+!                         adams_view_name='Disturbance1'
+VARIABLE/19
+, IC = 0
+, FUNCTION = 0.00000000000000000e+000
+!
+!                         adams_view_name='Disturbance2'
+VARIABLE/20
+, IC = 0
+, FUNCTION = 0.00000000000000000e+000
+!
+!                           adams_view_name='dTheta1'
+VARIABLE/21
+, IC = 0
+, FUNCTION = WZ(4,3,4)
+!
+!                           adams_view_name='dTheta2'
+VARIABLE/22
+, IC = 0
+, FUNCTION = WZ(6,5,6)
+!
+!                           adams_view_name='dTheta3'
+VARIABLE/23
+, IC = 0
+, FUNCTION = WZ(10,9,10)
+!
+!                           adams_view_name='dTheta4'
+VARIABLE/24
+, IC = 0
+, FUNCTION = WZ(12,11,12)
+!
+!                           adams_view_name='dTheta5'
+VARIABLE/25
+, IC = 0
+, FUNCTION = WZ(14,13,14)
+!
+!                           adams_view_name='dTheta6'
+VARIABLE/26
+, IC = 0
+, FUNCTION = WZ(16,15,16)
+!
+!                           adams_view_name='Theta_1'
+VARIABLE/27
+, FUNCTION =  AZ(4,3)
+!
+!                           adams_view_name='Theta_2'
+VARIABLE/28
+, FUNCTION =  AZ(6,5)
+!
+!                           adams_view_name='Theta_3'
+VARIABLE/29
+, FUNCTION =  AZ(10,9)
+!
+!                           adams_view_name='Theta_4'
+VARIABLE/30
+, FUNCTION =  AZ(12,11)
+!
+!                           adams_view_name='Theta_5'
+VARIABLE/31
+, FUNCTION =  AZ(14,13)
+!
+!                           adams_view_name='Theta_6'
+VARIABLE/32
+, FUNCTION =  AZ(16,15)
+!
+!                         adams_view_name='Disturbance3'
+VARIABLE/33
+, FUNCTION = 0
+!
+!                            adams_view_name='Inputs'
+PINPUT/1
+, VARIABLES = 13, 14, 15, 16, 17, 18, 19, 20, 33
+!
+!                  adams_view_name='ABB_Robot_Arm.ctrl_pinput'
+PINPUT/2
+, VARIABLES = 13, 14, 15, 16, 17, 18, 19, 20, 33
+!
+!                 adams_view_name='ABB_Robot_Arm_L.ctrl_pinput'
+PINPUT/3
+, VARIABLES = 13, 14, 15, 16, 17, 18
+!
+!                  adams_view_name='IRB140_Plant_1.ctrl_pinput'
+PINPUT/4
+, VARIABLES = 13, 14, 15, 16, 17, 18, 19, 20, 33
+!
+!                           adams_view_name='Outputs'
+POUTPUT/1
+, VARIABLES = 7, 8, 9, 10, 11, 12, 21, 22, 23, 24, 25, 26
+!
+!                  adams_view_name='ABB_Robot_Arm.ctrl_poutput'
+POUTPUT/2
+, VARIABLES = 7, 21, 8, 22, 9, 23, 10, 24, 11, 25, 12, 26
+!
+!                 adams_view_name='ABB_Robot_Arm_L.ctrl_poutput'
+POUTPUT/3
+, VARIABLES = 7, 8, 9, 10, 11, 12
+!
+!                 adams_view_name='IRB140_Plant_1.ctrl_poutput'
+POUTPUT/4
+, VARIABLES = 7, 8, 9, 10, 11, 12, 21, 22, 23, 24, 25, 26
+!
+!------------------------- GRAVITATIONAL ACCELERATION --------------------------
+!
+ACCGRAV/
+, KGRAV = -9.80665
+!
+!----------------------------- ANALYSIS SETTINGS -------------------------------
+!
+INTEGRATOR/
+, GSTIFF
+, INTERPOLATE = OFF
+!
+OUTPUT/
+, REQSAVE
+, GRSAVE
+!
+RESULTS/
+, XRF
+!
+END
