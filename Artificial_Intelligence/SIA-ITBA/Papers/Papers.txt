@@ -1,0 +1,9 @@
+SIMA - Agente en ambientes 3D de Google Deepmind, anunciado ayer 13/3
+
+https://deepmind.google/discover/blog/sima-generalist-ai-agent-for-3d-virtual-environments/
+
+
+
+SORA - Generador de videos artificiales. Anunciado el 15/2 por OpenAI
+
+https://openai.com/sora
