@@ -1,3 +1,9 @@
+
+<figure>
+<img src="baqumau-GitHub.png" alt="baqumau-GitHub" style="height: 35vw"/>
+<figcaption>https://www.youtube.com/@baqumau-Mechatronics</figcaption>
+</figure>
+
 - 👋 Hi, I’m @baqumau, creator of Mechatronics-baqumau YouTube channel: https://www.youtube.com/@baqumau-Mechatronics .
 - 👀 I’m interested in Mechatronics field: Robotics, Modelling, Advanced Control Systems, Etc...
 - 🌱 I’m currently learning Git, and for this reason i have this short presentation.
