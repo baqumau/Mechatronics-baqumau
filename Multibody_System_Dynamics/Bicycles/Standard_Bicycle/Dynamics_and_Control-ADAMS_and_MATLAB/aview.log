@@ -1,0 +1,6 @@
+! Adams/View Adams 2013.2 (built Sep 12 2013)
+! Graphics:  OpenGL
+! Using software OpenGL overlay plane emulation
+! Enter a command, '?', or 'help'.
+model display model=.Bicycle_1 view=all
+! >> model display model=.Bicycle_1 view=all
