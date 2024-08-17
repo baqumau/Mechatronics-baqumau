@@ -1,0 +1,508 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#include "resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_SMALL               ICON    DISCARDABLE     "SMALL.ICO"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_main DIALOG DISCARDABLE  0, 0, 388, 454
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "CH343PTDLL-Demo"
+FONT 12, "宋体"
+BEGIN
+    PUSHBUTTON      "搜索WCH USB串口",IDC_CH341PtHandleIsCH341,154,26,67,13
+    PUSHBUTTON      "清空显示",IDC_clear,273,437,108,13
+    LTEXT           "??",IDC_dllver,77,4,10,8
+    LTEXT           "CH343PT.DLL Ver:",IDC_STATIC,12,4,60,8
+    GROUPBOX        "WCH USB串口芯片搜索和打开",65532,8,14,373,68
+    LTEXT           "串口号:",-1,13,28,28,8
+    COMBOBOX        IDC_PortNum,43,26,95,91,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    EDITTEXT        IDC_ChipType,54,40,320,12,ES_AUTOHSCROLL | WS_DISABLED
+    GROUPBOX        "CH910X/CH344 GPIO设置(谨慎操作, 防止修改I/O方向引起短路)",
+                    65500,8,84,252,212
+    LTEXT           "引脚名称 功能                  IO方向        状态(选中为高)",
+                    -1,14,97,237,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO0,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,108,68,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO1,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,118,68,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO2,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,128,68,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO3,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,137,68,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO5,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,155,68,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO6,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,164,68,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO0,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,108,85,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO1,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,118,85,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO2,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,128,85,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO3,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,137,85,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO5,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,155,85,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO6,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,164,85,8
+    LTEXT           "芯片说明:",-1,14,42,37,8
+    CONTROL         "启用自动打开功能(设备插入USB口时自动打开，拔出自动关闭",
+                    IDC_EnableDevPnPNotify,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,17,54,238,8
+    PUSHBUTTON      "打开串口",IDC_OpenPort,154,66,67,13
+    PUSHBUTTON      "关闭串口",IDC_ClosePort,232,66,67,13
+    PUSHBUTTON      "配置芯片GPIO",IDC_ConfigGPIO,80,264,69,13
+    PUSHBUTTON      "设置GPIO电平",IDC_SetGPIO,151,264,50,13
+    PUSHBUTTON      "获取GPIO电平",IDC_GetGPIO,203,264,54,13
+    CONTROL         "",IDC_Status_GPIO0,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,108,29,8
+    CONTROL         "",IDC_Status_GPIO1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,118,29,8
+    CONTROL         "",IDC_Status_GPIO2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,128,29,8
+    CONTROL         "",IDC_Status_GPIO3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,137,29,8
+    CONTROL         "",IDC_Status_GPIO5,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,155,29,8
+    CONTROL         "",IDC_Status_GPIO6,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,164,29,8
+    EDITTEXT        IDC_show,8,381,373,53,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    ES_WANTRETURN | WS_VSCROLL
+    CONTROL         "GPIO0",IDC_Enable_GPIO0,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,108,35,8
+    CONTROL         "GPIO1",IDC_Enable_GPIO1,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,118,35,8
+    CONTROL         "GPIO2",IDC_Enable_GPIO2,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,128,35,8
+    CONTROL         "GPIO3",IDC_Enable_GPIO3,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,137,35,8
+    CONTROL         "GPIO5",IDC_Enable_GPIO5,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,155,35,8
+    CONTROL         "GPIO6",IDC_Enable_GPIO6,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,164,35,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO4,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,146,68,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO4,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,146,85,8
+    CONTROL         "",IDC_Status_GPIO4,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,146,29,8
+    CONTROL         "GPIO4",IDC_Enable_GPIO4,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,146,35,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO7,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,173,68,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO8,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,182,68,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO9,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,191,68,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO10,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,200,68,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO7,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,173,85,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO8,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,182,85,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO9,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,191,85,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO10,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,200,85,8
+    CONTROL         "",IDC_Status_GPIO7,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,173,29,8
+    CONTROL         "",IDC_Status_GPIO8,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,182,29,8
+    CONTROL         "",IDC_Status_GPIO9,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,191,29,8
+    CONTROL         "",IDC_Status_GPIO10,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,200,29,8
+    CONTROL         "GPIO7",IDC_Enable_GPIO7,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,173,35,8
+    CONTROL         "GPIO8",IDC_Enable_GPIO8,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,182,35,8
+    CONTROL         "GPIO9",IDC_Enable_GPIO9,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,191,35,8
+    CONTROL         "GPIO10",IDC_Enable_GPIO10,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,200,35,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO11,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,209,68,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO11,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,209,85,8
+    CONTROL         "",IDC_Status_GPIO11,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,209,29,8
+    CONTROL         "GPIO11",IDC_Enable_GPIO11,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,209,35,8
+    GROUPBOX        "内置Eeprom字节读写",-1,267,84,114,57
+    EDITTEXT        IDC_CfgEepromData,271,155,106,118,ES_MULTILINE | 
+                    ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "写芯片配置",IDC_EepromWrite,332,277,45,14
+    PUSHBUTTON      "读芯片配置",IDC_EepromRead,271,277,45,14
+    LTEXT           "起始地址:0x",-1,275,97,45,9
+    EDITTEXT        IDC_EepromStartAddr,325,95,48,12,ES_AUTOHSCROLL
+    LTEXT           "数据    :0x",-1,276,110,45,9
+    EDITTEXT        IDC_EepromData,325,108,48,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "字节写",IDC_EepromByteWrite,329,122,45,14
+    PUSHBUTTON      "字节读",IDC_EepromByteRead,276,122,45,14
+    GROUPBOX        "芯片配置",-1,267,144,114,151
+    PUSHBUTTON      "配置GPIO(EEPROM)",IDC_SetGPIOEepromConfig,10,279,68,13
+    PUSHBUTTON      "读取芯片GPIO配置",IDC_ReadGpioConfig,10,264,68,13
+    PUSHBUTTON      "获取GPIO配置(EEPROM)",IDC_GetGPIOEepromConfig,80,279,68,
+                    13
+    GROUPBOX        "CH348Gpio",65530,8,298,373,80
+    CONTROL         "",IDC_348IoDir_GPIO0,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,105,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO0,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,105,341,11,8
+    CONTROL         "",IDC_348Status_GPIO0,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,105,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO0,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,105,332,11,8
+    RTEXT           "引脚使能:使能(选中)",-1,9,332,89,8
+    RTEXT           "IO功能:默认/GPIO(选中)",-1,9,341,89,8
+    RTEXT           "IO方向:输入/输出(选中)",-1,9,350,89,8
+    RTEXT           "引脚状态:低/高(选中)",-1,9,360,89,8
+    LTEXT           "0",IDC_348GpioIndex0,105,321,11,10
+    RTEXT           "GPIO序号",-1,9,322,89,8
+    CONTROL         "",IDC_348IoDir_GPIO1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,116,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,116,341,11,8
+    CONTROL         "",IDC_348Status_GPIO1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,116,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,116,332,11,8
+    LTEXT           "1",IDC_348GpioIndex1,116,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,128,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,128,341,11,8
+    CONTROL         "",IDC_348Status_GPIO2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,128,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO2,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,128,332,11,8
+    LTEXT           "2",IDC_348GpioIndex2,128,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,140,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,140,341,11,8
+    CONTROL         "",IDC_348Status_GPIO3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,140,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO3,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,140,332,11,8
+    LTEXT           "3",IDC_348GpioIndex3,140,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO4,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,151,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO4,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,151,341,11,8
+    CONTROL         "",IDC_348Status_GPIO4,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,151,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO4,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,151,332,11,8
+    LTEXT           "4",IDC_348GpioIndex4,151,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO5,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,162,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO5,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,162,341,11,8
+    CONTROL         "",IDC_348Status_GPIO5,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,162,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO5,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,162,332,11,8
+    LTEXT           "5",IDC_348GpioIndex5,162,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO6,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,173,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO6,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,173,341,11,8
+    CONTROL         "",IDC_348Status_GPIO6,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,173,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO6,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,173,332,11,8
+    LTEXT           "6",IDC_348GpioIndex6,173,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO7,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,185,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO7,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,185,341,11,8
+    CONTROL         "",IDC_348Status_GPIO7,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,185,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO7,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,185,332,11,8
+    LTEXT           "7",IDC_348GpioIndex7,185,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO8,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,195,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO8,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,195,341,11,8
+    CONTROL         "",IDC_348Status_GPIO8,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,195,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO8,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,195,332,11,8
+    LTEXT           "8",IDC_348GpioIndex8,195,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO9,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,206,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO9,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,206,341,11,8
+    CONTROL         "",IDC_348Status_GPIO9,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,206,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO9,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,206,332,11,8
+    LTEXT           "9",IDC_348GpioIndex9,206,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO10,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,216,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO10,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,216,341,11,8
+    CONTROL         "",IDC_348Status_GPIO10,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,216,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO10,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,216,332,11,8
+    LTEXT           "10",IDC_348GpioIndex10,216,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO11,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,228,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO11,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,228,341,11,8
+    CONTROL         "",IDC_348Status_GPIO11,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,228,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO11,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,228,332,11,8
+    LTEXT           "11",IDC_348GpioIndex11,228,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO12,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,239,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO12,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,239,341,11,8
+    CONTROL         "",IDC_348Status_GPIO12,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,239,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO12,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,239,332,11,8
+    LTEXT           "12",IDC_348GpioIndex12,239,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO13,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,250,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO13,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,250,341,11,8
+    CONTROL         "",IDC_348Status_GPIO13,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,250,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO13,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,250,332,11,8
+    LTEXT           "13",IDC_348GpioIndex13,250,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO14,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,261,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO14,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,261,341,11,8
+    CONTROL         "",IDC_348Status_GPIO14,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,261,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO14,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,261,332,11,8
+    LTEXT           "14",IDC_348GpioIndex14,261,321,11,10
+    CONTROL         "",IDC_348IoDir_GPIO15,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,272,350,11,8
+    CONTROL         "",IDC_348IoFunc_GPIO15,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,272,341,11,8
+    CONTROL         "",IDC_348Status_GPIO15,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,272,360,11,8
+    CONTROL         "",IDC_348Enable_GPIO15,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,272,332,11,8
+    LTEXT           "15",IDC_348GpioIndex15,272,321,11,10
+    COMBOBOX        IDC_CH348GpioGpSel,113,307,99,67,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "GPIO组(实际使用无需分组):",IDC_348GpioGpName,10,308,100,
+                    10
+    PUSHBUTTON      "配置芯片GPIO",IDC_348ConfigGPIO,313,330,64,12
+    PUSHBUTTON      "设置GPIO电平",IDC_348SetGPIO,313,343,64,12
+    PUSHBUTTON      "获取GPIO电平",IDC_348GetGPIO,313,356,64,12
+    CONTROL         "All",IDC_348Enable_GPIOAll,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,286,332,21,8
+    CONTROL         "All",IDC_348IoFunc_GPIOAll,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,286,341,21,8
+    CONTROL         "All",IDC_348IoDir_GPIOAll,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,286,350,21,8
+    CONTROL         "All",IDC_348Status_GPIOAll,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,286,360,21,8
+    PUSHBUTTON      "读取芯片GPIO配置",IDC_348ReadGPIOCfg,313,317,64,12
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO12,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,218,68,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO12,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,218,85,8
+    CONTROL         "",IDC_Status_GPIO12,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,218,29,8
+    CONTROL         "GPIO12",IDC_Enable_GPIO12,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,218,35,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO13,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,227,68,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO13,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,227,85,8
+    CONTROL         "",IDC_Status_GPIO13,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,227,29,8
+    CONTROL         "GPIO13",IDC_Enable_GPIO13,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,227,35,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO14,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,236,68,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO14,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,236,85,8
+    CONTROL         "",IDC_Status_GPIO14,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,236,29,8
+    CONTROL         "GPIO14",IDC_Enable_GPIO14,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,236,35,8
+    CONTROL         "输入/输出(选中)",IDC_IoDir_GPIO15,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,138,245,68,8
+    CONTROL         "默认功能/GPIO(选中)",IDC_IoFunc_GPIO15,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,51,245,85,8
+    CONTROL         "",IDC_Status_GPIO15,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,245,29,8
+    CONTROL         "GPIO15",IDC_Enable_GPIO15,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,14,245,35,8
+    CONTROL         "全选",IDC_Enable_GPIOxx,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,14,253,26,8
+    CONTROL         "全选",IDC_IoFunc_GPIOxx,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,51,253,26,8
+    CONTROL         "全选",IDC_IoDir_GPIOxx,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,138,253,26,8
+    CONTROL         "全选",IDC_Status_GPIOxx,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,253,26,8
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+2 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""resource.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+1 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "resource.h\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO MOVEABLE PURE 
+BEGIN
+    IDD_main, DIALOG
+    BEGIN
+        RIGHTMARGIN, 387
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,3,0,0
+ PRODUCTVERSION 1,3,0,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "CH343PT DLL demo,for all wch usb serial chip.\0"
+            VALUE "FileVersion", "1, 4, 0, 0\0"
+            VALUE "InternalName", "CH343PTDemo.exe\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "CH343PTDemo.exe\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "CH343PTDemo.exe\0"
+            VALUE "ProductVersion", "1, 4, 0, 0\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_APP_TITLE           "SerchCH341Port"
+    IDS_HELLO               "Hello World!"
+    IDC_SERCHCH341PORT      "SERCHCH341PORT"
+END
+
+#endif    // Chinese (中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
