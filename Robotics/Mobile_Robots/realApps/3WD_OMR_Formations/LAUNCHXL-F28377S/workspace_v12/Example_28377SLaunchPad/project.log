@@ -1,0 +1,16 @@
+
+
+!CONFIGURATION: 'Debug' (com.ti.ccstudio.buildDefinitions.C2000.Debug.67617003) [Fri May 24 11:20:01 ART 2024]
+
+	!TOOL: 'C2000 Compiler' (com.ti.ccstudio.buildDefinitions.C2000_15.12.exe.compilerDebug.17239310)
+
+		!WARNING: Unresolved target-tool option 'com.ti.ccstudio.buildDefinitions.C2000_15.12.compilerID.ABI'
+
+
+
+!CONFIGURATION: 'Debug' (com.ti.ccstudio.buildDefinitions.C2000.Debug.67617003) [Fri May 24 11:36:17 ART 2024]
+
+	!TOOL: 'C2000 Compiler' (com.ti.ccstudio.buildDefinitions.C2000_15.12.exe.compilerDebug.754225313)
+
+		!WARNING: Unresolved target-tool option 'com.ti.ccstudio.buildDefinitions.C2000_15.12.compilerID.ABI'
+

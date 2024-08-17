@@ -1,0 +1,6 @@
+{
+    "port": "COM7",
+    "configuration": "USB=a_cdcacm",
+    "board": "chipKIT:pic32:chipkit_WF32",
+    "sketch": "Sketches\\Test_LEDs\\Test_LEDs.ino"
+}
