@@ -13,7 +13,7 @@
 #define PWMs_Frequency 1000                                                       // Desired frequency for PWM signals in Hertz.
 #define PWMs_Resolution 16                                                        // Desired resolution for PWM signals.
 #define Baud_Rate 115200                                                          // Baud rate value for UART communications.
-#define Buffer_Size 1024                                                          // Value for setting the receive buffer size.
+#define bufferSize_uart 1024                                                      // Value for setting the receiving buffer size.
 #define PWM_Channel_0 0                                                           // Defining channel 0 for PWM signal.
 #define PWM_Channel_1 1                                                           // Defining channel 1 for PWM signal.
 #define PWM_Channel_2 2                                                           // Defining channel 2 for PWM signal.
@@ -52,8 +52,8 @@ const unsigned int Q2A = 14;                                                    
 const unsigned int Q2B = 27;                                                      // Choosing this pin for encoder's channel B on wheel 2.
 const unsigned int Q3A = 26;                                                      // Choosing this pin for encoder's channel A on wheel 3.
 const unsigned int Q3B = 25;                                                      // Choosing this pin for encoder's channel B on wheel 3.
-const unsigned int bufferSize = 64;                                               // buffer length.
-int Ibuff = 0x00;                                                                 // Index: next char in cbuff.
+const unsigned int bufferSize_str = 64;                                           // buffer length for characters string.
+int Ibuff = 0x00;                                                                 // Index: next char in character-chain.
 int flagcommand;                                                                  // Available command flag.
 int direction_1 = 0;                                                              // Variable to save the turning direction of wheel 1.
 int direction_2 = 0;                                                              // Variable to save the turning direction of wheel 2.
@@ -71,9 +71,9 @@ unsigned int long pulsetime_1 = 0;                                              
 unsigned int long pulsetime_2 = 0;                                                // Variable to save pulse time a for encoder of wheel 2.
 unsigned int long pulsetime_3 = 0;                                                // Variable to save pulse time a for encoder of wheel 3.
 char datoO[8], datoP[8], datoQ[8];                                                // Character vectors.
-char chain[bufferSize];                                                           // Reception buffer.
+char chain[bufferSize_str];                                                       // Reception buffer.
 char ControlSignals[64];                                                          // Variable to save all the control signal values.
-char angular_velocities[64];                                                      // Variable to save the angular displacements of robot wheels.
+char angular_velocities[64];                                                      // Variable to save the angular velocities of robot wheels.
 char PS3_analog_data[64];                                                         // Char variable array to save instantaneous button manipulation of PS3 controller.
 char character = 0x00;                                                            // Variable to save received character by UART module.
 float Control_1;                                                                  // Variable to save received control signal value from UART module (u_1).
@@ -88,7 +88,7 @@ volatile double ang_vel_3;                                                      
 volatile uint32_t iterations = 0;                                                 // Iterations counter in the execution of this program.
 hw_timer_t *Timer2_Cfg = NULL;                                                    // Pointer declaration for timer 2 execution.
 hw_timer_t *Timer3_Cfg = NULL;                                                    // Pointer declaration for timer 3 execution.
-// Arranging a constant matrix W1, that serves to find PWM actuation signals for each wheel of involved vehicles in the OMR formation.
+// Arranging a constant matrix W1, that serves to find PWM actuation signals for each wheel of involved vehicles in the OMR formation:
 float w11 = 100.0f/r_1;                                                           // Precompute operation 1.
 float w12 = w11/2.0f;                                                             // Precompute operation 2.
 float w13 = w11*l_1;                                                              // Precompute operation 3.
@@ -106,7 +106,7 @@ float W1[6][6] = {
   {0.0f, 0.0f, 0.0f,  w15, 0.0f,  w17}
 };
 //-----------------------------------------------------------------------------------
-// putting function declarations here:
+// Putting function declarations here:
 void add_2_cbuff(char c);                                                         // Declaration of add_2_cbuff function.
 void init_cbuff(void);                                                            // Declaration of init_cbuff function.
 void string2float();                                                              // Declaration of string2float function.
@@ -125,7 +125,7 @@ void IRAM_ATTR Timer2_ISR();                                                    
 void IRAM_ATTR Timer3_ISR();                                                      // Declaration of Timer3_ISR function.
 //-----------------------------------------------------------------------------------
 void setup(){
-  // putting setup code here, to run once:
+  // Putting setup code here, to run once:
   //---------------------------------------------------------------------------------
   // Configuring digital inputs and outputs:
   pinMode(ENA,OUTPUT);                                                            // Configuring pin 15 as output.
@@ -148,7 +148,7 @@ void setup(){
   // Initialize serial monitor (UART 0):
   Serial.begin(Baud_Rate);                                                        // Open the standard serial connection to UART 0.
   // Initialize second serial port (UART 2):
-  MySerial.setRxBufferSize(Buffer_Size);                                          // Standard Arduino has 64 bytes.
+  MySerial.setRxBufferSize(bufferSize_uart);                                      // Standard Arduino has 64 bytes.
                                                                                   // ESP32 has 256 bytes.
                                                                                   // Call must come before begin().
   MySerial.begin(Baud_Rate,SERIAL_8N1,RXD2,TXD2);                                 // Open serial connection to UART2.
@@ -204,8 +204,8 @@ void setup(){
 }
 //-----------------------------------------------------------------------------------
 void loop(){
+  // Putting the main code here, to run repeatedly:
   int i, j;                                                                       // Declaration of i and j as integer variables.
-  // putting the main code here, to run repeatedly:
   if(Ps3.isConnected() || MySerial.available() > 0){
     while(MySerial.available() > 0){
       character = 0x00;                                                           // Defining character.
@@ -258,16 +258,16 @@ void loop(){
   delay(50);                                                                      // 50 milliseconds delay.
 }
 //-----------------------------------------------------------------------------------
-// putting function definitions here:
+// Putting function definitions here:
 //-----------------------------------------------------------------------------------
-// initializing buffer:
+// Initializing buffer:
 void init_cbuff(void){
   int i;
   flagcommand = 0;                                                                // Reset flagcommand value.
-  for(i = 0; i < bufferSize; i++){                                                    // Bucle that set to 0 all.
-    chain[i] = 0x00;                                                              // characters in buffer.
+  for(i = 0; i < bufferSize_str; i++){                                            // Bucle that set to 0 all.
+    chain[i] = 0x00;                                                              // Characters in buffer.
   }
-  Ibuff = 0x00;                                                                   // initialize the index.
+  Ibuff = 0x00;                                                                   // Initialize the index.
 }
 //-----------------------------------------------------------------------------------
 // Adding characters to buffer:
@@ -538,7 +538,7 @@ void Timer3_Setup(){
   timerAlarmEnable(Timer3_Cfg);                                                   // Enables the Timer 3 Alarm (or Interrupt).
 }
 //-----------------------------------------------------------------------------------
-// Timer 3 interrupt at 10 Hz:
+// Timer 2 interrupt at 10 Hz:
 void IRAM_ATTR Timer2_ISR(){
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":2,%1.3f,%1.3f,%1.3f,%u;",ang_vel_1,ang_vel_2,ang_vel_3,iterations);
