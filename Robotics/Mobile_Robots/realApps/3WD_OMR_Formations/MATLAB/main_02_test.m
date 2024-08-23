@@ -16,11 +16,11 @@ counter = 0;                                                                % Ti
 flag_1 = 0;                                                                 % Streaming flag.
 angles = zeros(2,3);
 %--------------------------------------------------------------------------
-% A serial port object is constructed:
-S1 = serialport("COM8",250000);
+% A serial port object is constructed:                                                  
+S1 = serialport("COM6",2000000);                                            % Specify baud rate for UART communication.
 configureTerminator(S1,"CR/LF","LF");
+tic
 while (counter < length(t))
-    tic
     java.lang.Thread.sleep(6.25);
     counter = counter + 1;
     % Getting and arraying sinusoidal signals:
@@ -29,6 +29,7 @@ while (counter < length(t))
     writeline(S1,data_s);
     flush(S1);
     time_x(counter,1) = toc;
+    tic
     % Receiving data from UART:
     % data_r = readline(S1);
     % if isempty(data_r)

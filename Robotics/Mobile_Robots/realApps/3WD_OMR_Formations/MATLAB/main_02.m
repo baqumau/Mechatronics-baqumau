@@ -10,7 +10,7 @@ natnetclient = natnet;
 fprintf('Connecting to the server\n')
 natnetclient.HostIP = '192.168.56.1';
 natnetclient.ClientIP = '192.168.56.2';
-natnetclient.ConnectionType = 'Multicast';
+natnetclient.ConnectionType = 'Unicast';
 natnetclient.connect;
 if(natnetclient.IsConnected == 0)
     fprintf('Client failed to connect\n')
@@ -24,7 +24,7 @@ if(model.RigidBodyCount < 1)
     return
 end
 % Poll for the rigid body data at low latency (~1 millisec):
-fprintf('\nPrinting rigid body frame data approximately every second for 10 seconds...\n\n')
+fprintf('\nPrinting rigid bodies frame data approximately to 100 Hz, for 10 seconds...\n\n')
 %--------------------------------------------------------------------------
 % Sinusiodal test signals:
 Ts = 1/250;                                                                 % [Hz] Sample time Ts.
@@ -45,7 +45,7 @@ configureTerminator(S1,"CR/LF","LF");
 while (counter < length(t))
     tic
     java.lang.Thread.sleep(2);
-    data = natnetclient.getFrame;                                             % Method to get current frame.
+    data = natnetclient.getFrame;                                           % Method to get current frame.
     if(isempty(data.RigidBodies(1)))
         fprintf('\tPacket is empty/stale\n')
         fprintf('\tMake sure the server is in Live mode or playing in playback\n\n')

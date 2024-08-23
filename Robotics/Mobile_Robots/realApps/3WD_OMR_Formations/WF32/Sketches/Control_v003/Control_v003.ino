@@ -39,6 +39,9 @@ File baqumau;
 const unsigned int chipSelect_SD_default = 51;                          // Selecting the correct pin for ChipKit WF32.
 const unsigned int chipSelect_SD = chipSelect_SD_default;
 //---------------------------------------------------------------------------------------------------------------
+// Choosing pin that commands the reset of Xbee device:
+const unsigned int RST = 38;                                            // RST pin of the XBee USB adapter is connected to a GPIO pin on your microcontroller for reset the XBee module.
+//---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
 const unsigned int bufferSize = 128;                                    // buffer length.
 uint32_t matlab_counter = 0;                                            // Variable to save the external counter by MATLAB.
@@ -219,7 +222,7 @@ void __attribute__((interrupt)) Timer_4_Handler(){
     //-----------------------------------------------------------------------------------------------------------
     // Packing and streaming the control signals for OMRs formation:
     snprintf(controlSignals,sizeof(controlSignals),":0,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",FMR.v_k[0],FMR.v_k[1],FMR.v_k[2],FMR.v_k[3],FMR.v_k[4],FMR.v_k[5]);
-    Serial1.println(controlSignals);                                    // Write control signals by UART 4.
+    Serial1.println(controlSignals);                                    // Write control signals through UART 4.
   }
 }
 //---------------------------------------------------------------------------------------------------------------
@@ -445,10 +448,12 @@ void setup(){
   pinMode(PIN_LED4,OUTPUT);                                             // Configuring LED 4 as output.
   pinMode(PIN_LED5,OUTPUT);                                             // Configuring LED 5 as output.
   pinMode(PIN_LED6,OUTPUT);                                             // Configuring LED 5 as output.
+  pinMode(RST,OUTPUT);                                                  // Configuring pin 38 as output.
   digitalWrite(PIN_LED3,LOW);                                           // Turn led 3 off.
   digitalWrite(PIN_LED4,LOW);                                           // Turn led 4 off.
   digitalWrite(PIN_LED5,LOW);                                           // Turn led 5 off.
   digitalWrite(PIN_LED6,LOW);                                           // Turn led 6 off.
+  digitalWrite(RST,HIGH);                                               // Turn RST pin to HIGH for establishing UART communication with Xbee.
   //-------------------------------------------------------------------------------------------------------------
   // Enable multi-vector interrupts:
   INTCONbits.MVEC = 1;
@@ -528,7 +533,7 @@ void loop(){
     Serial.println(":10");                                              // Write stop command by UART 1.
   }
   else if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == true){
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%i,%u;",FMR.v_k[0],FMR.v_k[1],FMR.v_k[2],FMR.v_k[3],FMR.v_k[4],FMR.v_k[5],REF.flag[0],iterations);
+    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%i,%u;",FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],REF.flag[0],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.

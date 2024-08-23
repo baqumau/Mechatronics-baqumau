@@ -30,9 +30,9 @@ function NatNetPollingSample
 	% connect the client to the server (multicast over local loopback) -
 	% modify for your network
 	fprintf( 'Connecting to the server\n' )
-	natnetclient.HostIP = '127.0.0.1';
-	natnetclient.ClientIP = '127.0.0.1';
-	natnetclient.ConnectionType = 'Multicast';
+	natnetclient.HostIP = '192.168.56.1';
+	natnetclient.ClientIP = '192.168.56.2';
+	natnetclient.ConnectionType = 'Unicast';
 	natnetclient.connect;
 	if ( natnetclient.IsConnected == 0 )
 		fprintf( 'Client failed to connect\n' )

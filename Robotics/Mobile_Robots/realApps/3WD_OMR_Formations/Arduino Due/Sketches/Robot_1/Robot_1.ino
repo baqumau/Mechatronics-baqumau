@@ -28,6 +28,7 @@ const unsigned int IN4 = 25;                                      // Choosing th
 const unsigned int ENC = 4;                                       // Choosing this pin to generate PWM on wheel 3.
 const unsigned int IN5 = 26;                                      // Choosing this pin to set the turning sense on wheel 3.
 const unsigned int IN6 = 27;                                      // Choosing this pin to set the turning sense on wheel 3.
+const unsigned int RST = 28;                                      // RST pin of the XBee USB adapter is connected to a GPIO pin on your microcontroller for reset the XBee module.
 const unsigned int Q1A = 48;                                      // Choosing this pin for encoder's channel A on wheel 1.
 const unsigned int Q1B = 49;                                      // Choosing this pin for encoder's channel B on wheel 1.
 const unsigned int Q2A = 50;                                      // Choosing this pin for encoder's channel A on wheel 2.
@@ -77,6 +78,7 @@ void setup(){
   pinMode(ENC,OUTPUT);                                            // Configuring pin 4 as output.
   pinMode(IN5,OUTPUT);                                            // Configuring pin 26 as output.
   pinMode(IN6,OUTPUT);                                            // Configuring pin 27 as output.
+  pinMode(RST,OUTPUT);                                            // Configuring pin 28 as output.
   pinMode(Q1A,INPUT);                                             // Configuring pin 48 as input.
   pinMode(Q1B,INPUT);                                             // Configuring pin 49 as input.
   pinMode(Q2A,INPUT);                                             // Configuring pin 50 as input.
@@ -87,6 +89,7 @@ void setup(){
   // Open a serial connection:
   Serial.begin(baudRate);                                         // Open a serial connection through UART 0.
   Serial2.begin(baudRate);                                        // Open a serial connection through UART 2.
+  digitalWrite(RST,HIGH);                                         // Turn RST pin to HIGH for establishing UART communication with Xbee.
   init_cbuff();                                                   // Clear buffer.
   //---------------------------------------------------------------------------------------------------------------------------
   // Enable Timer TC8 interrupt at 10 Hz:
@@ -410,7 +413,6 @@ void loop(){
     character = 0x00;
     character = Serial2.read();                                   // Last received character.
     add_2_cbuff(character);                                       // Add character to buffer.
-    Serial.print(character);
   }
   if(flagcommand == 1){
     string2float();                                               // Call string2float() function. 
