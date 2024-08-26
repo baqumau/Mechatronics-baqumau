@@ -2,11 +2,13 @@ function dataRate = main_03_test_vR2014a()
 clc, clear
 disp('Executing main_03_test');
 % data_s = [];
-time_x = []';
+time_x = []';                                                               % Variable to save tic toc working time.
+dataRate = 0;                                                               % Variable to save streaming data rate.
 %--------------------------------------------------------------------------
 % Setting parameters and test signals:
 counter = 0;                                                                % Ticks counter of sine function.
 flag_1 = 0;                                                                 % Streaming flag.
+Ts = 1/160;                                                                 % Sample time in seconds.
 t_sleep = 8;                                                                % Java sleeping time.
 iter_stop = (1000/t_sleep)*9.5*60;                                          % Iteration stop.
 x1_t = zeros(iter_stop,1);                                                  % Preallocating memory for variable x1_t.
@@ -19,8 +21,8 @@ x7_t = zeros(iter_stop,1);                                                  % Pr
 %--------------------------------------------------------------------------
 % A serial port object is constructed:
 BaudRate = 2000000;                                                         % Specify baud rate for UART communication.
-% Creating Serial Object:
-S1 = serial('COM12','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
+% Creating Serial Object (COM6 is specified):
+S1 = serial('COM6','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
 fopen(S1);                                                                  % Establishes serial communication via S1.
 %--------------------------------------------------------------------------
 tic
@@ -36,9 +38,9 @@ while true
         if (isempty(command) == 0) && (command == 9) && (flag_1 == 0)
             % Sinusiodal test signals:
             % Time function 1:
-            x1_t(counter+1) = 3000*sin(2*pi*.002.*counter);
+            x1_t(counter+1) = 3000*sin(2*pi*.02.*counter*Ts);
             % Time function 2:
-            x2_t(counter+1) = 1500*sin(2*pi*.002.*counter) + 1500*cos(2*pi*.008.*counter);
+            x2_t(counter+1) = 1500*sin(2*pi*.02.*counter*Ts) + 1500*cos(2*pi*.08.*counter*Ts);
             % Time function 3:
             x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2;
             % Time function 4:
@@ -48,7 +50,7 @@ while true
             % Time function 6:
             x6_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x4_t(counter+1)/3000 + x5_t(counter+1)/3000;
             % Time function 7:
-            % x_7(counter+1) = atan2(sin(2*pi*.002.*t),cos(2*pi*.002.*t));
+            % x_7(counter+1) = atan2(sin(2*pi*.002.*counter*Ts),cos(2*pi*.002.*counter*Ts));
             % Getting and arraying sinusoidal signals:
             data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',x1_t(counter+1),x2_t(counter+1),x3_t(counter+1),x4_t(counter+1),x5_t(counter+1),x6_t(counter+1));
             fprintf(S1,data_s);                                             % Write data to serial peripheral.

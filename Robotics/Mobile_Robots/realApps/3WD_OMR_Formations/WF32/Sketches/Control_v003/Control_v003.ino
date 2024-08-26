@@ -7,11 +7,11 @@ Unfortunately ChipKit WF32 with ARDUINO framework does not work appropriately.*/
 // Defining configuration values:
 #define FPB 80E6                                                        // Peripheral bus clock (PBCLK) frequency.
 #define desired_baudrate_1 20E5                                         // Desired baud rate for communication via UART 1 module.
-#define desired_baudrate_4 921600                                       // Desired baud rate for communication via UART 4 module.
+#define desired_baudrate_4 115200                                       // Desired baud rate for communication via UART 4 module.
 #define prescaler_3 16                                                  // Prescaler for the ticks of Timer 3.
-#define freq_hz_3 250                                                   // Frequency in Hz for instructions execution of Timer 3.
+#define freq_hz_3 160                                                   // Frequency in Hz for instructions execution of Timer 3.
 #define prescaler_4 16                                                  // Prescaler for the ticks of Timer 4.
-#define freq_hz_4 125                                                   // Frequency in Hz for instructions execution of Timer 4.
+#define freq_hz_4 80                                                    // Frequency in Hz for instructions execution of Timer 4.
 #define prescaler_5 256                                                 // Prescaler for the ticks of Timer 5.
 #define freq_hz_5 10                                                    // Frequency in Hz for instructions execution of Timer 5.
 #define ticks_per_second 80E6                                           // Ticks per seconds of machine's clock.
@@ -133,7 +133,7 @@ Reference REF = createReference(sampleTime,reftype);                    // Creat
 // Creating a robot formation structure for arranging their relevant variables:
 Formation FMR = createFormation(Robots_Qty);                            // Create the OMRs formation structure.
 //---------------------------------------------------------------------------------------------------------------
-// Timer 3 interrupt (250 Hz):
+// Timer 3 interrupt (160 Hz):
 void __attribute__((interrupt)) Timer_3_Handler(){
   IFS0CLR = 0x00001000;                                                 // Clear the Timer 3 interrupt status flag.
   if(iterations <= final_iteration) Serial.println(":9");               // Command sent to MATLAB to start or continue with linked streaming.
@@ -533,7 +533,7 @@ void loop(){
     Serial.println(":10");                                              // Write stop command by UART 1.
   }
   else if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == true){
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%i,%u;",FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],REF.flag[0],iterations);
+    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.

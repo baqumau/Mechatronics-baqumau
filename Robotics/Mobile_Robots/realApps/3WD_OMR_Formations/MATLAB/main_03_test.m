@@ -19,7 +19,7 @@ x7_t = zeros(iter_stop,1);                                                  % Pr
 %--------------------------------------------------------------------------
 % A serial port object is constructed:
 BaudRate = 2000000;                                                         % Specify baud rate for UART communication.
-S1 = serialport("COM6",BaudRate,"FlowControl","software");
+S1 = serialport("COM6",BaudRate,"FlowControl","none");
 configureTerminator(S1,"CR/LF","LF");
 %--------------------------------------------------------------------------
 tic

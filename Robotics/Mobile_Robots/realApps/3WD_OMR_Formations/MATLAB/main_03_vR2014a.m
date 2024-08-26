@@ -3,6 +3,8 @@ clc, clear
 disp('Executing main_03');
 time_x = []';
 angles = zeros(2,3);                                                        % Preallocating memory for this variable.
+time_x = []';                                                               % Variable to save tic toc working time.
+dataRate = 0;                                                               % Variable to save streaming data rate.
 %--------------------------------------------------------------------------
 % Create an instance of the natnet client class:
 fprintf('Creating natnet class object...\n')
@@ -26,7 +28,7 @@ if(model.RigidBodyCount < 1)
     return
 end
 % Poll for the rigid body data at low latency (~1 millisec):
-fprintf('\nPrinting rigid bodies frame data, approximately to a volatile frequency of 240 Hertz...\r\n')
+fprintf('\nPrinting rigid bodies frame data, approximately to a volatile frequency of 160 Hertz...\r\n')
 %--------------------------------------------------------------------------
 % Setting parameters:
 counter = 0;                                                                % Ticks counter of sine function.
@@ -36,8 +38,8 @@ iter_stop = (1000/t_sleep)*2.5*60;                                          % It
 %--------------------------------------------------------------------------
 % A serial port object is constructed:
 BaudRate = 2000000;                                                         % Specify baud rate for UART communication.
-% Creating Serial Object:
-S1 = serial('COM12','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
+% Creating Serial Object (COM6 is specified):
+S1 = serial('COM6','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
 fopen(S1);                                                                  % Establishes serial communication via S1.
 %--------------------------------------------------------------------------
 tic
