@@ -14,7 +14,7 @@ natnetclient = natnet;
 fprintf('Connecting to the server\n')
 natnetclient.HostIP = '192.168.56.1';
 natnetclient.ClientIP = '192.168.56.2';
-natnetclient.ConnectionType = 'Multicast';
+natnetclient.ConnectionType = 'Unicast';
 natnetclient.connect;
 if(natnetclient.IsConnected == 0)
     fprintf('Client failed to connect\n')
