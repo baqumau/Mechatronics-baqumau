@@ -541,9 +541,9 @@ void Timer3_Setup(){
 // Timer 2 interrupt at 10 Hz:
 void IRAM_ATTR Timer2_ISR(){
   // Packing and streaming the angular velocities of this OMR:
-  sprintf(angular_velocities,":2,%1.3f,%1.3f,%1.3f,%u;",ang_vel_1,ang_vel_2,ang_vel_3,iterations);
+  sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   if(!Ps3.isConnected()){
-    Serial.println(angular_velocities);                                           // Print angular velocities by serial peripheral.
+    MySerial.println(angular_velocities);                                         // Print angular velocities by serial peripheral.
   }
 }
 //-----------------------------------------------------------------------------------

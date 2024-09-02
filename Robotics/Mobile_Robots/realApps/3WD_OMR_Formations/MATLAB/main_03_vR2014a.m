@@ -2,7 +2,8 @@ function dataRate = main_03_vR2014a()
 clc, clear
 disp('Executing main_03');
 time_x = []';
-angles = zeros(2,3);                                                        % Preallocating memory for this variable.
+positions = zeros(2,3);                                                     % Preallocating memory for angles state vector.
+angles = zeros(2,3);                                                        % Preallocating memory for angles state vector.
 time_x = []';                                                               % Variable to save tic toc working time.
 dataRate = 0;                                                               % Variable to save streaming data rate.
 %--------------------------------------------------------------------------
@@ -62,11 +63,14 @@ while true
                 return
             end
             for i = 1:model.RigidBodyCount
+                % Getting position output variables [mm]:
+                positions(i,:) = 1000*[data.RigidBodies(i).x data.RigidBodies(i).y data.RigidBodies(i).z];
+                % Getting orientation output variables [rad]:
                 q = quaternion([data.RigidBodies(i).qx data.RigidBodies(i).qy data.RigidBodies(i).qz data.RigidBodies(i).qw]);
                 angles(i,:) = euler(q,'XYZ','frame');
             end
             % Getting and arraying data from NatNet SDK:
-            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',data.RigidBodies(1).x*1000,data.RigidBodies(1).y*1000,angles(1,3),data.RigidBodies(2).x*1000,data.RigidBodies(2).y*1000,angles(2,3));
+            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',positions(1,1),positions(1,2),angles(1,3),positions(2,1),positions(2,2),angles(2,3));
             % Sending data via UART communication:
             fprintf(S1,data_s);                                             % Write data to serial peripheral.
 %             flush(S1);

@@ -136,7 +136,7 @@ void TC8_Handler(){
   direction_1 = 0; direction_2 = 0; direction_3 = 0;              // Turning direction of robot wheels to zero.
   counterflag_1 = 0; counterflag_2 = 0; counterflag_3 = 0;        // Turning the counter flags to zero.
   // Packing and streaming the angular velocities of this OMR:
-  sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
+  sprintf(angular_velocities,":0,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   Serial2.println(angular_velocities);
 }
 //-----------------------------------------------------------------------------------------------------------------------------

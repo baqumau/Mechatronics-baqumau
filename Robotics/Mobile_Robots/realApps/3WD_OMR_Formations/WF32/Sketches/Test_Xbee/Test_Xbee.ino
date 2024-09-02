@@ -63,10 +63,10 @@ void start_uart_1_module(){
 //---------------------------------------------------------------------------------------------------------------
 // Configuring and enabling UART 4 module (with receiving data interrupt):
 void start_uart_4_module(){
-  uint16_t baudrate_reg = ((FPB/desired_baudrate_4)/4) - 1;             // Calculating baud rate register with BRGH = 1.
+  uint16_t baudrate_reg = round(((FPB/desired_baudrate_4)/16) - 1);     // Calculating baud rate register with BRGH = 0.
   U4BRG = baudrate_reg;                                                 // Setting Baud rate.
   U4STA = 0x0;                                                          // Clear UART4 Status and Control Register.
-  U4MODE = 0x8008;                                                      // Enable UART 4 module for BRGH = 1, 8-bit data, no parity, and 1 stop bit.
+  U4MODE = 0x8000;                                                      // Enable UART 4 module for BRGH = 0, 8-bit data, no parity, and 1 stop bit.
   U4STASET = 0x1005400;                                                 // Enable Transmit and Receive;
                                                                         // Automatic Address Detect mode is enabled.
                                                                         // (UTXISEL = 1), Interrupt flag bit is set when all characters have been transmitted;
