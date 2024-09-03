@@ -1,23 +1,25 @@
 __CFG_XINST$OFF 0 0 ABS 0
 __S0 30000E 0 ABS 0
-__S1 0 0 ABS 0
+__S1 5 0 ABS 0
 __S2 0 0 ABS 0
 __Hintentry 0 0 ABS 0
 __CFG_PWRT$OFF 0 0 ABS 0
 __Lintentry 0 0 ABS 0
-_initialize_USART 7FE4 0 CODE 0
-_main 7FDA 0 CODE 0
+_LATD F8C 0 ABS 0
+_main 7FAE 0 CODE 0
 ___sp 0 0 STACK 2
 start 0 0 CODE 0
-_SPBRG FAF 0 ABS 0
+_TRISD F95 0 ABS 0
 __Hirdata 0 0 CODE 0
 __Lirdata 0 0 CODE 0
 __HRAM 0 0 ABS 0
+_PORTD F83 0 ABS 0
 __LRAM 1 0 ABS 0
 __CFG_WDTPS$32768 0 0 ABS 0
 __Hconfig 30000E 0 CONFIG 0
 __Lconfig 300000 0 CONFIG 0
 __CFG_FOSC$INTIO67 0 0 ABS 0
+main@i 3 0 COMRAM 1
 __Hbigram 0 0 ABS 0
 __Lbigram 0 0 ABS 0
 __Hrparam 0 0 COMRAM 1
@@ -75,14 +77,11 @@ __Linit 0 0 CODE 0
 __Hintcodelo 0 0 CODE 0
 __Lintcodelo 0 0 CODE 0
 __Hrbss 0 0 COMRAM 1
-__end_of_main 7FE4 0 CODE 0
+__end_of_main 8000 0 CODE 0
 __Lrbss 0 0 COMRAM 1
 __Htext 0 0 ABS 0
 __Ltext 0 0 ABS 0
-end_of_initialization 7FD4 0 CODE 0
-_RCSTAbits FAB 0 ABS 0
-_TRISCbits F94 0 ABS 0
-_TXSTAbits FAC 0 ABS 0
+end_of_initialization 7FA8 0 CODE 0
 __Hibigdata 0 0 CODE 0
 __Libigdata 0 0 CODE 0
 __Hifardata 0 0 CODE 0
@@ -103,16 +102,13 @@ __Hpowerup 0 0 CODE 0
 __Lpowerup 0 0 CODE 0
 __Htext0 0 0 ABS 0
 __Ltext0 0 0 ABS 0
-__Htext1 0 0 ABS 0
-__Ltext1 0 0 ABS 0
-__ptext0 7FDA 0 CODE 0
-__ptext1 7FE4 0 CODE 0
+__ptext0 7FAE 0 CODE 0
 __Hclrtext 0 0 ABS 0
 __Lclrtext 0 0 ABS 0
 __CFG_BORV$18 0 0 ABS 0
 __CFG_HFOFST$ON 0 0 ABS 0
-__end_of__initialization 7FD4 0 CODE 0
-_BAUDCONbits FB8 0 ABS 0
+_OSCTUNEbits F9B 0 ABS 0
+__end_of__initialization 7FA8 0 CODE 0
 ___rparam_used 1 0 ABS 0
 __Hidata 0 0 CODE 0
 __Lidata 0 0 CODE 0
@@ -128,8 +124,8 @@ __Hspace_0 30000E 0 ABS 0
 __HcstackCOMRAM 0 0 ABS 0
 __Lspace_0 0 0 ABS 0
 __LcstackCOMRAM 0 0 ABS 0
-__pcstackCOMRAM 0 0 COMRAM 1
-__Hspace_1 0 0 ABS 0
+__pcstackCOMRAM 1 0 COMRAM 1
+__Hspace_1 5 0 ABS 0
 __Lspace_1 0 0 ABS 0
 __Hsmallconst 0 0 SMALLCONST 0
 __Lsmallconst 0 0 SMALLCONST 0
@@ -139,18 +135,17 @@ __Hnvbit 0 0 COMRAM 1
 __Lnvbit 0 0 COMRAM 1
 __Hcinit 0 0 ABS 0
 __Lcinit 0 0 ABS 0
-__pcinit 7FD4 0 CODE 0
+__pcinit 7FA8 0 CODE 0
 __ramtop 600 0 RAM 0
 __mediumconst 0 0 MEDIUMCONST 0
 __size_of_main 0 0 ABS 0
 __Hconst 0 0 CONST 0
 __Lconst 0 0 CONST 0
-__end_of_initialize_USART 8000 0 CODE 0
 __CFG_FCMEN$OFF 0 0 ABS 0
-__size_of_initialize_USART 0 0 ABS 0
 ___inthi_sp 0 0 STACK 2
 __CFG_WDTEN$OFF 0 0 ABS 0
 ___intlo_sp 0 0 STACK 2
+_OSCCONbits FD3 0 ABS 0
 __smallconst 0 0 SMALLCONST 0
 __Hreset_vec 0 0 CODE 0
 __Lreset_vec 0 0 CODE 0
@@ -161,11 +156,11 @@ intlevel0 0 0 CODE 0
 intlevel1 0 0 CODE 0
 intlevel2 0 0 CODE 0
 intlevel3 0 0 CODE 0
-start_initialization 7FD4 0 CODE 0
+start_initialization 7FA8 0 CODE 0
 __CFG_BOREN$SBORDIS 0 0 ABS 0
 __CFG_IESO$OFF 0 0 ABS 0
 __CFG_MCLRE$ON 0 0 ABS 0
-__initialization 7FD4 0 CODE 0
+__initialization 7FA8 0 CODE 0
 __CFG_LPT1OSC$OFF 0 0 ABS 0
 __activetblptr 0 0 ABS 0
 __CFG_LVP$OFF 0 0 ABS 0
@@ -173,36 +168,28 @@ __CFG_LVP$OFF 0 0 ABS 0
 reset_vec 0 3 CODE 0 0
 config 300000 30000D CONFIG 300000 0
 idloc 200000 200007 IDLOC 200000 0
-text1 7FE4 7FFF CODE 7FE4 0
-text0 7FDA 7FE3 CODE 7FDA 0
-cinit 7FD4 7FD9 CODE 7FD4 0
+cstackCOMRAM 1 4 COMRAM 1 1
+text0 7FAE 7FFF CODE 7FAE 0
+cinit 7FA8 7FAD CODE 7FA8 0
 %locals
-dist/default/production\XbeeTest.X.production.obj
+dist/default/production\Hello.X.production.obj
 C:\Program Files (x86)\Microchip\xc8\v1.44\include\pic18f45k20.h
-C:\Users\baqumau\AppData\Local\Temp\s73c.
-386 7FD4 0 CODE 0
-388 7FD4 0 CODE 0
-391 7FD4 0 CODE 0
-397 7FD4 0 CODE 0
-399 7FD4 0 CODE 0
-400 7FD6 0 CODE 0
+C:\Users\baqumau\AppData\Local\Temp\s80k.
+385 7FA8 0 CODE 0
+387 7FA8 0 CODE 0
+390 7FA8 0 CODE 0
+396 7FA8 0 CODE 0
+398 7FA8 0 CODE 0
+399 7FAA 0 CODE 0
 main.c
-47 7FDA 0 CODE 0
-48 7FDA 0 CODE 0
-49 7FDE 0 CODE 0
-51 7FE0 0 CODE 0
-main.c
-56 7FE4 0 CODE 0
-58 7FE4 0 CODE 0
-59 7FE6 0 CODE 0
-61 7FE8 0 CODE 0
-62 7FEA 0 CODE 0
-63 7FEC 0 CODE 0
-64 7FEE 0 CODE 0
-65 7FF0 0 CODE 0
-67 7FF2 0 CODE 0
-68 7FF4 0 CODE 0
-69 7FF6 0 CODE 0
-71 7FF8 0 CODE 0
-72 7FFA 0 CODE 0
-73 7FFE 0 CODE 0
+38 7FAE 0 CODE 0
+39 7FAE 0 CODE 0
+40 7FB2 0 CODE 0
+41 7FB6 0 CODE 0
+42 7FBE 0 CODE 0
+43 7FC4 0 CODE 0
+44 7FC6 0 CODE 0
+45 7FC6 0 CODE 0
+46 7FDC 0 CODE 0
+47 7FE0 0 CODE 0
+45 7FFA 0 CODE 0

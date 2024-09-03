@@ -1,9 +1,9 @@
-/*------------------------------------------------------------------------------
+/* 
  * File:   main.c
  * Author: baqumau
  *
  * Created on September 1, 2024, 9:08 AM
- *
+ * compiled by [MPLAB X IDE v4.01 -- XC8 (v1.44)]
  * This program will be used to test USART communication of PIC18F45K20.
  */
 //------------------------------------------------------------------------------
@@ -34,6 +34,7 @@
 #include <xc.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 //------------------------------------------------------------------------------
 // C O N S T A N T    V A R I A B L E S:
 #define _XTAL_FREQ 64000000
@@ -47,7 +48,10 @@ void initialize_USART(void);
 // M A I N    C O D E:
 void main(void){
     initialize_USART();                                                         // Initialize USART module.
-    NOP();                                                                      // No operation.
+    // Iterative main loop:
+    while(1){
+        __delay_ms(100);                                                        // Delay 100 milliseconds.
+    }
     return;
 }
 //------------------------------------------------------------------------------
@@ -72,6 +76,22 @@ void initialize_USART(void){
     BAUDCON = 0x0;                                                              // Clear BAUDCON.
     BAUDCONbits.BRG16 = 1;                                                      // 16 bits baud rate generator.
     // Setting desired baud rate:
-    uint16_t baudrate_reg = _XTAL_FREQ/desired_baudrate/4 - 1;                  // Calculating baud rate register with BRG16 = 1 and BRGH = 1;
+    int baudrate_reg = _XTAL_FREQ/desired_baudrate/4 - 1;                       // Calculating baud rate register with BRG16 = 1 and BRGH = 1;
     SPBRG = 0x8A;                                                               // Set to 115200 baud rate, 64 Mhz of FOSC, High Speed and BRG16.
+    // USART interrupts configuration:
+    RCONbits.IPEN   = 1; // ENABLE interrupt priority
+    INTCONbits.GIE  = 1; // ENABLE interrupts
+    INTCONbits.PEIE = 1; // ENable peripheral interrupts.
+    PIE1bits.RCIE   = 1; // ENABLE USART receive interrupt
+    PIE1bits.TXIE   = 0; // disable USART TX interrupt
+}
+//------------------------------------------------------------------------------
+// Writing the Interrupt Service Routine (ISR):
+void __interrupt() ISR(void){
+    if (PIR1bits.RCIF){                                                         // Check if the USART receive interrupt flag is set.
+        PIE1bits.RCIE  = 0;                                                     // Disable USART Interrupt.
+        char character = RCREG;                                                 // Read RX register or character.
+        TXREG = character;                                                      // Send register or character (creating echo).
+        PIE1bits.RCIE  = 1;                                                     // Enable USART Interrupt.
+    }
 }
