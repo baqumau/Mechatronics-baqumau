@@ -50,7 +50,7 @@ volatile bool flagcommand_5 = false;                                    // Avail
 volatile uint32_t counter_4 = 0;                                        // Interrupts counter (Timer 4).
 volatile uint32_t counter_5 = 0;                                        // Interrupts counter (Timer 5).
 volatile uint32_t iterations = 0;                                       // Iterations counter in the program.
-char controlSignals[bufferSize];                                        // Variable to save received data by UART module.
+char controlSignals[bufferSize];                                        // Variable to save control signals data and subsequently send via UART 4 module.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
 enum Control_System consys = SMC_CS;                                    // Declare the control system type.
 enum Reference_Type reftype = MINGYUE_01;                               // Declare the reference shape type.
@@ -510,7 +510,7 @@ void loop(){
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.
-    Serial.println(measurements);                                       // Write measurements by UART 1.
+    Serial.println(measurements);                                       // Write measurements via UART 1.
   }
   else if(iterations > final_iteration && baqumau){
     baqumau.println("];");                                              // Writing on microSD.
