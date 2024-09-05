@@ -35,7 +35,7 @@ const unsigned int Q2A = 50;                                      // Choosing th
 const unsigned int Q2B = 51;                                      // Choosing this pin for encoder's channel B on wheel 2.
 const unsigned int Q3A = 52;                                      // Choosing this pin for encoder's channel A on wheel 3.
 const unsigned int Q3B = 53;                                      // Choosing this pin for encoder's channel B on wheel 3.
-const unsigned int buffer = 100;                                  // buffer length.
+const unsigned int buffer = 128;                                  // buffer length.
 int Ibuff = 0x00;                                                 // Index: next char in cbuff.
 int flagcommand;                                                  // Available command flag.
 int direction_1 = 0;                                              // Variable to save the turning direction of wheel 1.
@@ -53,11 +53,11 @@ int long counter_6 = 0;                                           // Counter of 
 unsigned int long pulsetime_1 = 0;                                // Variable to save pulse time a for encoder of wheel 1.
 unsigned int long pulsetime_2 = 0;                                // Variable to save pulse time a for encoder of wheel 2.
 unsigned int long pulsetime_3 = 0;                                // Variable to save pulse time a for encoder of wheel 3.
-char datoO[10], datoP[10], datoQ[10];                             // Character vectors.
+char datoO[16], datoP[16], datoQ[16];                             // Character vectors.
 char chain[buffer];                                               // Reception buffer.
-char angular_velocities[30];                                      // Variable to save the angular displacements of robot wheels.
-char ControlSignals[128];                                         // Variable to save all the control signal values.
-char character;                                                   // Variable to save received character by UART module.
+char angular_velocities[32];                                      // Variable to save the angular displacements of robot wheels.
+char ControlSignals[64];                                          // Variable to save all the control signal values.
+// char character;                                                   // Variable to save received character by UART module.
 float Control_1;                                                  // Variable to save received control signal value from UART module (u_1).
 float Control_2;                                                  // Variable to save received control signal value from UART module (u_2).
 float Control_3;                                                  // Variable to save received control signal value from UART module (u_3).
@@ -68,6 +68,7 @@ volatile uint32_t iterations = 0;                                 // Iterations 
 //-----------------------------------------------------------------------------------------------------------------------------
 void setup(){
   //---------------------------------------------------------------------------------------------------------------------------
+  delay(200);                                                     // 200 milliseconds delay.
   // Configuring digital inputs and outputs:
   pinMode(ENA,OUTPUT);                                            // Configuring pin 2 as output.
   pinMode(IN1,OUTPUT);                                            // Configuring pin 22 as output.
@@ -410,8 +411,8 @@ void Q3B_Interrupt(){
 //-----------------------------------------------------------------------------------------------------------------------------
 void loop(){
   while(Serial2.available() > 0){
-    character = 0x00;
-    character = Serial2.read();                                   // Last received character.
+    // character = 0x00;
+    char character = Serial2.read();                              // Last received character.
     add_2_cbuff(character);                                       // Add character to buffer.
   }
   if(flagcommand == 1){
@@ -422,6 +423,6 @@ void loop(){
     MovingWheel_3(Control_3);                                     // Calling function that moves wheel 3.
     delayMicroseconds(1);                                         // 1 microsecond delay.
   }
-  delay(20);                                                      // 20 milliseconds delay.
+  else delay(20);                                                 // 20 milliseconds delay.
 }
 //-----------------------------------------------------------------------------------------------------------------------------

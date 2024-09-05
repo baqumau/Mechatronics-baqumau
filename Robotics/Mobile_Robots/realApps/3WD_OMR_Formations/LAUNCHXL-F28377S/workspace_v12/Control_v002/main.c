@@ -13,7 +13,8 @@
 // $TI Release: F2837xS Support Library v130 $
 // $Release start: Wed May 22 of 2024 $
 //#######################################################################################################################
-
+// Including libraries to the main program:
+#include <math.h>
 #include <src/baqumau/3WD_OMRs_Controllers.h>                           // Controllers library.
 #include <src/baqumau/3WD_OMRs_References.h>                            // Reference library.
 #include <src/baqumau/baqumau.h>                                        // My library.

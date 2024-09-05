@@ -1,5 +1,5 @@
-/* This Library includes common usage structs and functions several configurations. Several functions
-will be implemented to facilite posterior implementations.*/
+/* This Library include common usage structures and functions with useful configurations. These functions
+were implemented for facilitating posterior code creations.*/
 //---------------------------------------------------------------------------------------------------------------
 #ifndef _baqumau_H_
 #define _baqumau_H_

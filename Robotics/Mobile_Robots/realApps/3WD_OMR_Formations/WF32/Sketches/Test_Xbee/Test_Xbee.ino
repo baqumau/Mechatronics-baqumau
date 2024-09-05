@@ -21,7 +21,7 @@ Unfortunately ChipKit WF32 with ARDUINO framework in PlatformIO does not work ap
 #include "src\baqumau\3WD_OMRs_Controllers.h"                           // Controllers library.
 //---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
-const unsigned int bufferSize = 128;                                    // buffer length.
+const unsigned int bufferSize = 64;                                     // buffer length.
 // Choosing pin that commands the reset of Xbee device:
 const unsigned int RST = 38;                                            // RST pin of the XBee USB adapter is connected to a GPIO pin on your microcontroller for reset the XBee module.
 //-------------------------
@@ -40,15 +40,15 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
   digitalWrite(PIN_LED6,HIGH);                                          // Turn led 6 to ON.
   int i;                                                                // Declaration of i as index integer variable.
   while (!U1STAbits.URXDA);                                             // Wait until data is available.
-  char character = U1RXREG;                                             // Variable to save received character by UART 1 module.
-  add_2_charBuffer(&UART1,character);                                   // Adding character to data buffer assigned to UART 1 module.
+  char character_1 = U1RXREG;                                           // Variable to save received character by UART 1 module.
+  add_2_charBuffer(&UART1,character_1);                                 // Adding character to data buffer assigned to UART 1 module.
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 1 module:
   // If streaming data is completely added to char buffer of UART1 struct:
   if(UART1.flag[1]){
     classify_charBuffer(&UART1);                                        // Classify data from assigned buffer to UART1 struct data matrix. 
     for(i = 0; i < 6; i++){
-      FMR.v_k[i] = atof(UART1.MAT3.data[0][i]);                         // Saving pose of OMRs formation along global reference frame.
+      FMR.v_k[i] = roundToThreeDecimals(atof(UART1.MAT3.data[0][i]));   // Saving pose of OMRs formation along global reference frame.
     }
     init_charBuffer(&UART1);                                            // Initialize char-type data buffer associated to UART 1.
     //-----------------------------------------------------------------------------------------------------------
@@ -65,15 +65,16 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
   int i;                                                                // Declaration of i as index integer variable.
   digitalWrite(PIN_LED5,HIGH);                                          // Turn led 5 to ON.
   while (!U4STAbits.URXDA);                                             // Wait until data is available.
-  char character = U4RXREG;                                             // Variable to save received character by UART 4 module.
+  char character_4 = U4RXREG;                                           // Variable to save received character by UART 4 module.
+  add_2_charBuffer(&UART4,character_4);                                 // Adding character to data buffer assigned to UART 4 module.
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 4 module:
   // If streaming data is completely added to char buffer of UART4 struct:
   if(UART4.flag[1]){
     classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART4 struct data matrix.
     for(i = 0; i < 3; i++){
-      FMR.w_k[i] = atof(UART4.MAT3.data[0][i]);                         // Saving angular velocities of omni-wheels attached on vehicle 1.
-      FMR.w_k[i+3] = atof(UART4.MAT3.data[1][i]);                       // Saving angular velocities of omni-wheels attached on vehicle 2.
+      FMR.w_k[i] = roundToThreeDecimals(atof(UART4.MAT3.data[0][i]));   // Saving angular velocities of omni-wheels attached on vehicle 1.
+      FMR.w_k[i+3] = roundToThreeDecimals(atof(UART4.MAT3.data[1][i])); // Saving angular velocities of omni-wheels attached on vehicle 2.
     }
     init_charBuffer(&UART4);                                            // Initialize char-type data buffer associated to UART 4.
     //-----------------------------------------------------------------------------------------------------------
@@ -133,6 +134,5 @@ void setup(){
 //---------------------------------------------------------------------------------------------------------------
 void loop(){
   // put your main code here, to run repeatedly:
-  // Serial1.println("baqumau-baqumau-baqumau");
-  // delay(50);
+  delay(50);
 }
