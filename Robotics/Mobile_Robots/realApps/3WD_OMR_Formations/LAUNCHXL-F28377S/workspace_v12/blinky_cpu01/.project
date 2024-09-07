@@ -78,7 +78,7 @@
 		</variable>
 		<variable>
 			<name>ORIGINAL_PROJECT_ROOT</name>
-			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/controlSUITE/device_support/F2837xS/v130/F2837xS_examples_Cpu1/blinky/cpu01/ccs</value>
+			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/controlSUITE/device_support/F2837xS/v210/F2837xS_examples_Cpu1/blinky/cpu01/ccs</value>
 		</variable>
 	</variableList>
 </projectDescription>
