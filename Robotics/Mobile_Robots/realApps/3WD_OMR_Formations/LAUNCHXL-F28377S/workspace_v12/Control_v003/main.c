@@ -90,10 +90,10 @@ void main(void){
     InitCpuTimers();                                                            // Initialize the CPU Timers.
 
     // Configure CPU-Timer 0, 1, and 2 to interrupt every second:
-    // 200MHz CPU Frequency, 1 second Period (in uSeconds)
-    ConfigCpuTimer(&CpuTimer0, 200, 1000000);
-    ConfigCpuTimer(&CpuTimer1, 200, 1000000);
-    ConfigCpuTimer(&CpuTimer2, 200, 1000000);
+    // 200MHz CPU Frequency, 1/250 seconds of Period (in uSeconds)
+    ConfigCpuTimer(&CpuTimer0, 200.0f, 4000.0f);
+    ConfigCpuTimer(&CpuTimer1, 200.0f, 4000.0f);
+    ConfigCpuTimer(&CpuTimer2, 200.0f, 4000.0f);
 
     // To ensure precise timing, use write-only instructions to write to the entire register. Therefore, if any
     // of the configuration bits are changed in ConfigCpuTimer and InitCpuTimers (in F2837xS_cputimervars.h), the
@@ -143,15 +143,17 @@ __interrupt void cpu_timer1_isr(void){
 __interrupt void cpu_timer2_isr(void){
     CpuTimer2.InterruptCount++;
     // The CPU acknowledges the interrupt.
-    if(flagcommand_1){
+    if(flagcommand_1 && CpuTimer2.InterruptCount == 250){
         GPIO_WritePin(BLINKY_LED_GPIO_01, 0);                                       // Turn LED GPIO 1 to ON.
         GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                       // Turn LED GPIO 2 to OFF.
         flagcommand_1 = false;                                                      // Set flag command 1 to FALSE.
+        CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
-    else{
+    else if(!flagcommand_1 && CpuTimer2.InterruptCount == 250){
         GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                       // Turn LED GPIO 1 to OFF.
         GPIO_WritePin(BLINKY_LED_GPIO_02, 0);                                       // Turn LED GPIO 2 to ON.
         flagcommand_1 = true;                                                       // Set flag command 1 to TRUE.
+        CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------
