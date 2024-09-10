@@ -12,11 +12,11 @@ will be implemented in this library to run ADRC-RS and SMC-CS control systems in
 //---------------------------------------------------------------------------------------------------------------
 /* Define _USE_MATH_DEFINES before including 3WD-OMRs_Controllers.h to expose their macro definitions for common
 math constants. */
-#define M_PI    3.14159265358979323846                                           // PI definition.
-#define M_PI_2  1.57079632679489661923                                           // Math definition of PI/2.
-#define M_PI_4  0.78539816339744830962                                           // Math definition of PI/6.
-#define M_PI_6  0.52359877559829887308                                           // Math definition of PI/6.
-#define M_SQRT2 1.41421356237309504880                                           // Math definition of SQRT(2).
+#define M_PI    3.14159265358979323846                                          // PI definition.
+#define M_PI_2  1.57079632679489661923                                          // Math definition of PI/2.
+#define M_PI_4  0.78539816339744830962                                          // Math definition of PI/6.
+#define M_PI_6  0.52359877559829887308                                          // Math definition of PI/6.
+#define M_SQRT2 1.41421356237309504880                                          // Math definition of SQRT(2).
 //---------------------------------------------------------------------------------------------------------------
 // Definition of kinematic and dynamical parameters of OMRs, that will be exported by the library:
 #define Robots_Qty 2                                                            // [Un], Qty of robots in the formation;

@@ -14,7 +14,7 @@
 //!  sampling ADCIN14 once a second.  If the sample is greater than midscale
 //!  the red LED on the board is lit, while if it is lower a blue LED is lit.  
 //!  Sample data is also display in a serial terminal via the boards back 
-//!  channel UART.  You may view this data by configuring a serial termainal 
+//!  channel UART.  You may view this data by configuring a serial terminal
 //!  to the correct COM port at 115200 Baud 8-N-1.
 //!
 //
@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <file.h>
 
-#include "F28x_Project.h"     // DSP28x Headerfile
+#include "F28x_Project.h"     // DSP28x Header file
 #include "ti_ascii.h"
 #include "sci_io.h"
 
