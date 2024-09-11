@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <math.h>
 #include "driver/mcpwm.h"
 #include "soc/mcpwm_reg.h"
@@ -54,7 +55,7 @@ const unsigned int Q3A = 26;                                                    
 const unsigned int Q3B = 25;                                                      // Choosing this pin for encoder's channel B on wheel 3.
 const unsigned int bufferSize_str = 64;                                           // buffer length for characters string.
 int Ibuff = 0x00;                                                                 // Index: next char in character-chain.
-int flagcommand;                                                                  // Available command flag.
+bool flagcommand;                                                                 // Available command flag.
 int direction_1 = 0;                                                              // Variable to save the turning direction of wheel 1.
 int direction_2 = 0;                                                              // Variable to save the turning direction of wheel 2.
 int direction_3 = 0;                                                              // Variable to save the turning direction of wheel 3.
@@ -75,7 +76,6 @@ char chain[bufferSize_str];                                                     
 char ControlSignals[64];                                                          // Variable to save all the control signal values.
 char angular_velocities[64];                                                      // Variable to save the angular velocities of robot wheels.
 char PS3_analog_data[64];                                                         // Char variable array to save instantaneous button manipulation of PS3 controller.
-char character = 0x00;                                                            // Variable to save received character by UART module.
 float Control_1;                                                                  // Variable to save received control signal value from UART module (u_1).
 float Control_2;                                                                  // Variable to save received control signal value from UART module (u_2).
 float Control_3;                                                                  // Variable to save received control signal value from UART module (u_3).
@@ -208,19 +208,18 @@ void loop(){
   int i, j;                                                                       // Declaration of i and j as integer variables.
   if(Ps3.isConnected() || MySerial.available() > 0){
     while(MySerial.available() > 0){
-      character = 0x00;                                                           // Defining character.
-      character = MySerial.read();                                                // Last received character.
+      char character = MySerial.read();                                           // Last received character.
       add_2_cbuff(character);                                                     // Adding character to data buffer assigned to UART 2 module.
     }
     // Taking values from UART 2 module:
-    if(flagcommand){
+    if(flagcommand && !Ps3.isConnected()){
       string2float();                                                             // Call string2float() function.
       init_cbuff();                                                               // Clear buffer.
       MovingWheel_1(Control_1*d_th21_max/100.0f);                                 // Calling function that moves wheel 1 at certain desired angular velocity.
       MovingWheel_2(Control_2*d_th22_max/100.0f);                                 // Calling function that moves wheel 2 at certain desired angular velocity.
       MovingWheel_3(Control_3*d_th23_max/100.0f);                                 // Calling function that moves wheel 3 at certain desired angular velocity.
     }
-    if(Ps3.isConnected()){
+    else if(Ps3.isConnected()){
       // Arranging velocity command data obtained from PS3 controller, in [mm/s] and [rad/s] units:
       float ps3_u_k[6] = {                                         -(float)(Ps3.data.analog.stick.rx)*V1_x_max/128.0f,
                                                                     (float)(Ps3.data.analog.stick.ry)*V1_y_max/128.0f,
@@ -263,7 +262,7 @@ void loop(){
 // Initializing buffer:
 void init_cbuff(void){
   int i;
-  flagcommand = 0;                                                                // Reset flagcommand value.
+  flagcommand = false;                                                            // Reset flagcommand state.
   for(i = 0; i < bufferSize_str; i++){                                            // Bucle that set to 0 all.
     chain[i] = 0x00;                                                              // Characters in buffer.
   }
@@ -274,10 +273,10 @@ void init_cbuff(void){
 void add_2_cbuff(char c){
   switch(c){
     case 0x0D:                                                                    // Line Feed 1 -> Enable flag.
-    flagcommand = 1;
+    flagcommand = true;
     break;
     case 0x0A:                                                                    // Line Feed 2 -> Enable flag.
-    flagcommand = 1;
+    flagcommand = true;
     break;
     case 0x08:                                                                    // Del -> Delete last character from buffer.
     if(Ibuff > 0) chain[--Ibuff] = 0x00;
