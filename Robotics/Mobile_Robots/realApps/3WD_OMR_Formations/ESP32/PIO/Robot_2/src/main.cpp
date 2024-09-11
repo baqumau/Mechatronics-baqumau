@@ -253,6 +253,7 @@ void loop(){
       sprintf(ControlSignals,":0,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
       MySerial.println(ControlSignals);
     }
+    else NOP();                                                                   // No operation cycle.
   }
   delay(50);                                                                      // 50 milliseconds delay.
 }
