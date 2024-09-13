@@ -424,6 +424,6 @@ void loop(){
     MovingWheel_3(Control_3);                                     // Calling function that moves wheel 3.
     delayMicroseconds(1);                                         // 1 microsecond delay.
   }
-  else delay(20);                                                 // 20 milliseconds delay.
+  else delayMicroseconds(2);                                      // 2 microseconds delay.
 }
 //-----------------------------------------------------------------------------------------------------------------------------

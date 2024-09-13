@@ -105,6 +105,24 @@ float W1[6][6] = {
   {0.0f, 0.0f, 0.0f,  w15, 0.0f,  w17}
 };
 //-----------------------------------------------------------------------------------
+// Putting function declarations here:
+void add_2_cbuff(char c);                                                         // Declaration of add_2_cbuff function.
+void init_cbuff(void);                                                            // Declaration of init_cbuff function.
+void string2float();                                                              // Declaration of string2float function.
+void MovingWheel_1(float value);                                                  // Declaration of MovingWheel_1 function.
+void MovingWheel_2(float value);                                                  // Declaration of MovingWheel_2 function.
+void MovingWheel_3(float value);                                                  // Declaration of MovingWheel_3 function.
+void Timer2_Setup();                                                              // Declaration of Timer2_Setup function.
+void Timer3_Setup();                                                              // Declaration of Timer3_Setup function.
+void IRAM_ATTR Q1A_Interrupt();                                                   // Declaration of Q1A_Interrupt function.
+void IRAM_ATTR Q1B_Interrupt();                                                   // Declaration of Q1B_Interrupt function.
+void IRAM_ATTR Q2A_Interrupt();                                                   // Declaration of Q2A_Interrupt function.
+void IRAM_ATTR Q2B_Interrupt();                                                   // Declaration of Q2B_Interrupt function.
+void IRAM_ATTR Q3A_Interrupt();                                                   // Declaration of Q3A_Interrupt function.
+void IRAM_ATTR Q3B_Interrupt();                                                   // Declaration of Q3B_Interrupt function.
+void IRAM_ATTR Timer2_ISR();                                                      // Declaration of Timer2_ISR function.
+void IRAM_ATTR Timer3_ISR();                                                      // Declaration of Timer3_ISR function.
+//-----------------------------------------------------------------------------------
 // Timer 2 interrupt at 10 Hz:
 void IRAM_ATTR Timer2_ISR(){
   // Packing and streaming the angular velocities of this OMR:
@@ -313,7 +331,7 @@ void MovingWheel_3(float value){
 }
 //-----------------------------------------------------------------------------------
 // Interruption by change of signal A of encoder attached on wheel 1:
-void Q1A_Interrupt(){
+void IRAM_ATTR Q1A_Interrupt(){
   if(digitalRead(Q1A) == HIGH && digitalRead(Q1B) == HIGH){
     counter_1--;
     direction_1 = -1;                                                             // Wheel 1 is moving in counterclockwise direction.
@@ -336,7 +354,7 @@ void Q1A_Interrupt(){
 }
 //-----------------------------------------------------------------------------------
 // Interruption by change of signal B of encoder attached on wheel 1:
-void Q1B_Interrupt(){
+void IRAM_ATTR Q1B_Interrupt(){
   if(digitalRead(Q1B) == HIGH && digitalRead(Q1A) == HIGH){
     counter_2++;
     direction_1 = 1;                                                              // Wheel 1 is moving in clockwise direction.
@@ -359,7 +377,7 @@ void Q1B_Interrupt(){
 }
 //-----------------------------------------------------------------------------------
 // Interruption by change of signal A of encoder attached on wheel 2:
-void Q2A_Interrupt(){
+void IRAM_ATTR Q2A_Interrupt(){
   if(digitalRead(Q2A) == HIGH && digitalRead(Q2B) == HIGH){
     counter_3--;
     direction_2 = -1;                                                             // Wheel 2 is moving in counterclockwise direction.
@@ -382,7 +400,7 @@ void Q2A_Interrupt(){
 }
 //-----------------------------------------------------------------------------------
 // Interruption by change of signal B of encoder attached on wheel 2:
-void Q2B_Interrupt(){
+void IRAM_ATTR Q2B_Interrupt(){
   if(digitalRead(Q2B) == HIGH && digitalRead(Q2A) == HIGH){
     counter_4++;
     direction_2 = 1;                                                              // Wheel 2 is moving in clockwise direction.
@@ -405,7 +423,7 @@ void Q2B_Interrupt(){
 }
 //-----------------------------------------------------------------------------------
 // Interruption by change of signal A of encoder attached on wheel 3:
-void Q3A_Interrupt(){
+void IRAM_ATTR Q3A_Interrupt(){
   if(digitalRead(Q3A) == HIGH && digitalRead(Q3B) == HIGH){
     counter_5--;
     direction_3 = -1;                                                             // Wheel 3 is moving in counterclockwise direction.
@@ -428,7 +446,7 @@ void Q3A_Interrupt(){
 }
 //-----------------------------------------------------------------------------------
 // Interruption by change of signal B of encoder attached on wheel 3:
-void Q3B_Interrupt(){
+void IRAM_ATTR Q3B_Interrupt(){
   if(digitalRead(Q3B) == HIGH && digitalRead(Q3A) == HIGH){
     counter_6++;
     direction_3 = 1;                                                              // Wheel 3 is moving in clockwise direction.
@@ -460,7 +478,7 @@ void loop(){
       add_2_cbuff(character);                                                     // Adding character to data buffer assigned to UART 2 module.
     }
     // Taking values from UART 2 module:
-    if(flagcommand){
+    if(flagcommand == 1 &&  && !Ps3.isConnected()){
       string2float();                                                             // Call string2float() function.
       init_cbuff();                                                               // Clear buffer.
       MovingWheel_1(Control_1*d_th21_max/100.0f);                                 // Calling function that moves wheel 1 at certain desired angular velocity.
@@ -498,9 +516,9 @@ void loop(){
       sprintf(PS3_analog_data,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",ps3_v_k[0],ps3_v_k[1],ps3_v_k[2],ps3_v_k[3],ps3_v_k[4],ps3_v_k[5]);
       //--------------------------------------
       // Arranging and sending control signals:
-      sprintf(ControlSignals,":1,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
+      sprintf(ControlSignals,":0,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
       MySerial.println(ControlSignals);
     }
   }
-  delayMicroseconds(5);                                                          // 5 microseconds delay.
+  delay(50);                                                                      // 50 milliseconds delay.
 }

@@ -257,7 +257,7 @@ void loop(){
     }
     else NOP();                                                                   // No operation cycle.
   }
-  delay(50);                                                                      // 50 milliseconds delay.
+  delayMicroseconds(2);                                                           // 2 microseconds delay.
 }
 //-----------------------------------------------------------------------------------
 // Putting function definitions here:

@@ -4,8 +4,11 @@
 // TITLE:       Observer-based Robust Cluster Space Control for Omni-directional Robot Formations.
 //
 // OBJECTIVES:
-// 1. Blink functionality of LED 09 and LED 10.
-// 2. Timer interrupt to 250Hz.
+// 1. Blink functionality of LED 09 and LED 10, with timer interrupts.
+// 2. Timer 0 interrupt to 200 Hz.
+// 3. Timer 1 interrupt to 10 Hz.
+// 4. Timer 2 interrupt to 250 Hz.
+// 5. SCIA communication (UART).
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
