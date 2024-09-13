@@ -9,14 +9,14 @@ will be implemented in this library to run ADRC-RS and SMC-CS control systems in
 #include <stdio.h>
 #include <stdbool.h>
 #include <float.h>
-// #include <xc.h>                                                              // Header file that allows code in the source file to access compiler-specific or device-specific features.
-                                                                                // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
-                                                                                // header file.
+#include <math.h>
+// #include <xc.h>                                                                 // Header file that allows code in the source file to access compiler-specific or device-specific features.
+                                                                                   // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
+                                                                                   // header file.
 //---------------------------------------------------------------------------------------------------------------
-/* Define _USE_MATH_DEFINES before including 3WD-OMRs_Controllers.h to expose their macro definitions for common
+/* Define _USE_MATH_DEFINES before including 3WD_OMRs_Controllers.h to expose their macro definitions for common
 math constants. */
 #define M_PI_6 0.523598775598299                                                // Math definition.
-#define F_PI (float)(M_PI)                                                      // PI conversion to float type number.
 //---------------------------------------------------------------------------------------------------------------
 // Definition of kinematic and dynamical parameters of OMRs that will be exported by the library:
 #define Robots_Qty 2                                                            // [Un], Qty of robots in the formation;
@@ -32,7 +32,7 @@ math constants. */
 #define d_th11_max 15.0344f                                                     // [rad/s], Maximum angular velocity of wheel 1.
 #define d_th12_max 13.0382f                                                     // [rad/s], Maximum angular velocity of wheel 2.
 #define d_th13_max 15.2282f                                                     // [rad/s], Maximum angular velocity of wheel 3.
-#define V1_x_max (r_1/3.0f)*(d_th11_max + d_th12_max + 2.0f*d_th13_max)         // [mm/s], Maximum linear velocity along X axis (considering x in a parallel direction to wheel 3).
+#define V1_x_max (r_1/(3.0f))*(d_th11_max + d_th12_max + 2.0f*d_th13_max)       // [mm/s], Maximum linear velocity along X axis (considering x in a parallel direction to wheel 3).
 #define V1_y_max (r_1/sqrt(3.0f))*(d_th11_max + d_th12_max)                     // [mm/s], Maximum linear velocity along Y axis (wheels 1 and 2 are symmetrically oriented by the angle delta with respect to Y axis).
 #define d_phi1_max (r_1/(3.0f*l_1))*(d_th11_max + d_th12_max + d_th13_max)      // [rad/s], Maximum angular velocity of the robot.
 #define ke_1 0.8f                                                               // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 1.
@@ -48,12 +48,14 @@ math constants. */
 #define d_th21_max 16.2931f                                                     // [rad/s], Maximum angular velocity of wheel 1.
 #define d_th22_max 14.0691f                                                     // [rad/s], Maximum angular velocity of wheel 2.
 #define d_th23_max 14.9449f                                                     // [rad/s], Maximum angular velocity of wheel 3.
-#define V2_x_max (r_2/3.0f)*(d_th21_max + d_th22_max + 2.0f*d_th23_max)         // [mm/s], Maximum linear velocity along X axis (considering X in a parallel direction to wheel 3).
+#define V2_x_max (r_2/(3.0f))*(d_th21_max + d_th22_max + 2.0f*d_th23_max)       // [mm/s], Maximum linear velocity along X axis (considering X in a parallel direction to wheel 3).
 #define V2_y_max (r_2/sqrt(3.0f))*(d_th21_max + d_th22_max)                     // [mm/s], Maximum linear velocity along Y axis (wheels 1 and 2 are symmetrically oriented by the angle delta with respect to Y axis).
 #define d_phi2_max (r_2/(3.0f*l_2))*(d_th21_max + d_th22_max + d_th23_max)      // [rad/s], Maximum angular velocity of the robot.
 #define ke_2 0.8f                                                               // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 2.
 // Another constant parameters:
+#ifndef NOP
 #define NOP __asm__ __volatile__ ("nop\n\t")                                    // Nop instruction (asm).
+#endif
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to arrange matrices:
 typedef struct{

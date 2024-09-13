@@ -58,7 +58,7 @@ char datoO[16], datoP[16], datoQ[16];                             // Character v
 char chain[buffer];                                               // Reception buffer.
 char angular_velocities[32];                                      // Variable to save the angular displacements of robot wheels.
 char ControlSignals[64];                                          // Variable to save all the control signal values.
-// char character;                                                   // Variable to save received character by UART module.
+char character;                                                   // Variable to save received character by UART module.
 float Control_1;                                                  // Variable to save received control signal value from UART module (u_1).
 float Control_2;                                                  // Variable to save received control signal value from UART module (u_2).
 float Control_3;                                                  // Variable to save received control signal value from UART module (u_3).
@@ -412,8 +412,8 @@ void Q3B_Interrupt(){
 //-----------------------------------------------------------------------------------------------------------------------------
 void loop(){
   while(Serial2.available() > 0){
-    // character = 0x00;
-    char character = Serial2.read();                              // Last received character.
+    character = 0x00;
+    character = Serial2.read();                                   // Last received character.
     add_2_cbuff(character);                                       // Add character to buffer.
   }
   if(flagcommand == 1){

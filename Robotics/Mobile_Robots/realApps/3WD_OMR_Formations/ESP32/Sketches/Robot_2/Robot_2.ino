@@ -10,20 +10,21 @@
 // Defining mathematical and configuration values:
 #define _USE_MATH_DEFINES                                                         // Mathematical definitions.
 #define APB_CLK 80.0E6                                                            // Clock of the Advanced Peripheral Bus (80 Mhz).
-#define PWMs_Frequency 1000                                                       // Desired frequency for PWM signals.
+#define PWMs_Frequency 1000                                                       // Desired frequency for PWM signals in Hertz.
 #define PWMs_Resolution 16                                                        // Desired resolution for PWM signals.
-#define Baud_Rate_0 250000                                                        // Communication baud rate value for UART 0 peripheral.
-#define Baud_Rate_2 115200                                                        // Communication baud rate value for UART 2 peripheral.
-#define bufferSize_uart 1024                                                      // Value for setting the receive buffer size.
+#define Baud_Rate 115200                                                          // Baud rate value for UART communications.
+#define bufferSize_uart 1024                                                      // Value for setting the receiving buffer size.
 #define PWM_Channel_0 0                                                           // Defining channel 0 for PWM signal.
 #define PWM_Channel_1 1                                                           // Defining channel 1 for PWM signal.
 #define PWM_Channel_2 2                                                           // Defining channel 2 for PWM signal.
 //-----------------------------------------------------------------------------------
 // Including libraries to the program:
+#include <Arduino.h>
 #include <Ps3Controller.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <math.h>
 #include <HardwareSerial.h>
 #include "src/baqumau/3WD_OMRs_Controllers.h"
@@ -71,9 +72,9 @@ unsigned int long pulsetime_3 = 0;                                              
 char datoO[8], datoP[8], datoQ[8];                                                // Character vectors.
 char PS3_analog_data[64];                                                         // Char variable array to save instantaneous button manipulation of PS3 controller.
 char ControlSignals[64];                                                          // Variable to save all the control signal values.
-char angular_velocities[64];                                                      // Variable to save the angular velocities of robot wheels.
+char angular_velocities[32];                                                      // Variable to save the angular velocities of robot wheels.
 char chain[bufferSize_str];                                                       // Reception buffer.
-char character = 0x00;;                                                           // Variable to save received character by UART module.
+char character;                                                                   // Variable to save received character by UART module.
 float Control_1;                                                                  // Variable to save received control signal value from UART module (u_1).
 float Control_2;                                                                  // Variable to save received control signal value from UART module (u_2).
 float Control_3;                                                                  // Variable to save received control signal value from UART module (u_3).
@@ -107,7 +108,7 @@ float W1[6][6] = {
 // Timer 2 interrupt at 10 Hz:
 void IRAM_ATTR Timer2_ISR(){
   // Packing and streaming the angular velocities of this OMR:
-  sprintf(angular_velocities,":2,%1.3f,%1.3f,%1.3f,%u;",ang_vel_1,ang_vel_2,ang_vel_3,iterations);
+  sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   if(!Ps3.isConnected()){
     Serial.println(angular_velocities);                                           // Print angular velocities by serial peripheral.
   }
@@ -132,7 +133,6 @@ void IRAM_ATTR Timer3_ISR(){
 }
 //-----------------------------------------------------------------------------------
 void setup(){
-  delay(500);                                                                     // .5 seconds delay.
   //---------------------------------------------------------------------------------
   // Configuring digital inputs and outputs:
   pinMode(ENA,OUTPUT);                                                            // Configuring pin 15 as output.
@@ -158,18 +158,18 @@ void setup(){
   //---------------------------------------------------------------------------------
   // Enabling UART communications:
   // Initialize serial monitor (UART 0):
-  Serial.begin(Baud_Rate_0);                                                      // Open a serial connection (UART 0).
+  Serial.begin(Baud_Rate);                                                        // Open a serial connection (UART 0).
   // Initialize second serial port (UART 2):
   MySerial.setRxBufferSize(bufferSize_uart);                                      // Standard Arduino has 64 bytes.
                                                                                   // ESP32 has 256 bytes.
                                                                                   // Call must come before begin().
-  MySerial.begin(Baud_Rate_2,SERIAL_8N1,RXD2,TXD2);                               // Open a serial connection (UART 2).
+  MySerial.begin(Baud_Rate,SERIAL_8N1,RXD2,TXD2);                                 // Open a serial connection (UART 2).
   init_cbuff();                                                                   // Clear buffer.
   //---------------------------------------------------------------------------------
   // Configuring PS3 controller:
   ps3SetBluetoothMacAddress(new_mac);                                             // Setting MAC address for PS3 controller.
   Ps3.begin("c0:14:3d:63:9e:ca");                                                 // Enable PS3 controller communication.
-  Serial.println("Ready.");
+  Serial.println("PS3 Controller is --Ready.");
   //---------------------------------------------------------------------------------
   // Activate interrupts for counting pulses on attached encoders on robot's wheels:
   attachInterrupt(digitalPinToInterrupt(Q1A),Q1A_Interrupt,CHANGE);
@@ -190,8 +190,8 @@ void setup(){
 // Setting Timer 2 and configuring its interruption function (at 10 Hz):
 void Timer2_Setup(){
   Timer2_Cfg = timerBegin(10);                                                    // Set timer frequency to 10 Hz.
-  timerAttachInterrupt(Timer3_Cfg,&Timer3_ISR);                                   // Attaches the Timer 3 interrupt event with a desired ISR_Handler callback function (Timer3_ISR), that will be executed periodically.
-  timerAlarm(Timer3_Cfg,100000,true,0);                                           // Set alarm to call Timer3_ISR function every 0.1 seconds (value in microseconds). Repeat the alarm (third parameter) with unlimited count = 0 (fourth parameter).
+  timerAttachInterrupt(Timer2_Cfg,&Timer2_ISR);                                   // Attaches the Timer 3 interrupt event with a desired ISR_Handler callback function (Timer3_ISR), that will be executed periodically.
+  timerAlarm(Timer2_Cfg,100000,true,0);                                           // Set alarm to call Timer3_ISR function every 0.1 seconds (value in microseconds). Repeat the alarm (third parameter) with unlimited count = 0 (fourth parameter).
 }
 //-----------------------------------------------------------------------------------
 // Setting Timer 3 and configuring its interruption function (at 10 Hz):
@@ -498,9 +498,9 @@ void loop(){
       sprintf(PS3_analog_data,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",ps3_v_k[0],ps3_v_k[1],ps3_v_k[2],ps3_v_k[3],ps3_v_k[4],ps3_v_k[5]);
       //--------------------------------------
       // Arranging and sending control signals:
-      sprintf(ControlSignals,":0,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
+      sprintf(ControlSignals,":1,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
       MySerial.println(ControlSignals);
     }
   }
-  delay(50);                                                                      // 50 milliseconds delay.
+  delayMicroseconds(5);                                                          // 5 microseconds delay.
 }

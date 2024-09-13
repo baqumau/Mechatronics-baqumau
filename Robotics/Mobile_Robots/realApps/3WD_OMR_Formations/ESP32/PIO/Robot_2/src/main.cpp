@@ -71,10 +71,11 @@ int long counter_6 = 0;                                                         
 unsigned int long pulsetime_1 = 0;                                                // Variable to save pulse time a for encoder of wheel 1.
 unsigned int long pulsetime_2 = 0;                                                // Variable to save pulse time a for encoder of wheel 2.
 unsigned int long pulsetime_3 = 0;                                                // Variable to save pulse time a for encoder of wheel 3.
+char character;                                                                   // Variable to save received character by UART 2 module.
 char datoO[8], datoP[8], datoQ[8];                                                // Character vectors.
 char chain[bufferSize_str];                                                       // Reception buffer.
 char ControlSignals[64];                                                          // Variable to save all the control signal values.
-char angular_velocities[64];                                                      // Variable to save the angular velocities of robot wheels.
+char angular_velocities[32];                                                      // Variable to save the angular velocities of robot wheels.
 char PS3_analog_data[64];                                                         // Char variable array to save instantaneous button manipulation of PS3 controller.
 float Control_1;                                                                  // Variable to save received control signal value from UART module (u_1).
 float Control_2;                                                                  // Variable to save received control signal value from UART module (u_2).
@@ -151,7 +152,7 @@ void setup(){
   MySerial.setRxBufferSize(bufferSize_uart);                                      // Standard Arduino has 64 bytes.
                                                                                   // ESP32 has 256 bytes.
                                                                                   // Call must come before begin().
-  MySerial.begin(Baud_Rate,SERIAL_8N1,RXD2,TXD2);                                 // Open serial connection to UART2.
+  MySerial.begin(Baud_Rate,SERIAL_8N1,RXD2,TXD2);                                 // Open serial connection to UART 2.
   init_cbuff();                                                                   // Clear buffer.
   //---------------------------------------------------------------------------------
   // Configuring PS3 controller:
@@ -208,7 +209,8 @@ void loop(){
   int i, j;                                                                       // Declaration of i and j as integer variables.
   if(Ps3.isConnected() || MySerial.available() > 0){
     while(MySerial.available() > 0){
-      char character = MySerial.read();                                           // Last received character.
+      character = 0x00;                                                           // Defining first value of character.
+      character = MySerial.read();                                                // Last received character.
       add_2_cbuff(character);                                                     // Adding character to data buffer assigned to UART 2 module.
     }
     // Taking values from UART 2 module:
