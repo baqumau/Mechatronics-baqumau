@@ -67,7 +67,9 @@ char *msg_1;                                                                    
 char *msg_2;                                                                        // Variable 2 to save a char data chain.
 //-----------------------------------------------
 // Declaration of data structure for SCIA peripheral:
-Data_Struct SCIA;                                                                  // Pointer to Data_Struct.
+Data_Struct SCIA;                                                                  // Data structure to arrange data from SCIA.
+// Declaration of data structure for SCIB peripheral:
+Data_Struct SCIB;                                                                  // Data structure to arrange data from SCIB.
 //-----------------------------------------------------------------------------------------------------------------------
 void main(void){
     // Step 1. Initialize System Control:
@@ -123,6 +125,7 @@ void main(void){
     scia_fifo_init();                                                               // Initialize the SCIA FIFO.
     scia_init();                                                                    // Initialize the SCIA.
     msg_1 = ":9\n\0";                                                               // Message to ask to MATLAB for data.
+    msg_2 = ":10\n\0";                                                              // Message to stop streaming data with MATLAB.
 
     // Interrupts that are used in this example are re-mapped to
     // ISR functions found within this file.
@@ -139,11 +142,11 @@ void main(void){
 
     // Configure CPU-Timer 0, 1, and 2 to interrupt every second:
     // Timer 0 -> 200MHz CPU Frequency, 1/200 seconds of Period (in uSeconds):
-    ConfigCpuTimer(&CpuTimer0, 200.0f, 5000.0f);
+    ConfigCpuTimer(&CpuTimer0,200.0f,1000000.0f/freq_hz_0);
     // Timer 1 -> 200MHz CPU Frequency, 1/10 seconds of Period (in uSeconds):
-    ConfigCpuTimer(&CpuTimer1, 200.0f, 100000.0f);
+    ConfigCpuTimer(&CpuTimer1,200.0f,1000000.0f/freq_hz_1);
     // Timer 2 -> 200MHz CPU Frequency, 1/250 seconds of Period (in uSeconds):
-    ConfigCpuTimer(&CpuTimer2, 200.0f, 4000.0f);
+    ConfigCpuTimer(&CpuTimer2,200.0f,1000000.0f/freq_hz_2);
 
     // To ensure precise timing, use write-only instructions to write to the entire register. Therefore, if any
     // of the configuration bits are changed in ConfigCpuTimer and InitCpuTimers (in F2837xS_cputimervars.h), the
@@ -177,6 +180,9 @@ void main(void){
     // Definition of data structure for SCIA peripheral:
     SCIA = createDataStruct(bufferSize,1,3*Robots_Qty,16);
     init_charBuffer(&SCIA);                                                         // Initialize dedicated char-type data buffer of SCIA.
+    // Definition of data structure for SCIB peripheral:
+    SCIB = createDataStruct(bufferSize,2,3,16);
+    init_charBuffer(&SCIB);                                                         // Initialize dedicated char-type data buffer of SCIB.
 
     // Step 7. IDLE loop. Just sit and loop forever (optional):
     for(;;){
@@ -199,12 +205,12 @@ __interrupt void cpu_timer0_isr(void){
 __interrupt void cpu_timer1_isr(void){
     CpuTimer1.InterruptCount++;
     // The CPU acknowledges the interrupt.
-    if(flagcommand_1 && CpuTimer1.InterruptCount == 10){
+    if(flagcommand_1 && CpuTimer1.InterruptCount == freq_hz_1){
         GPIO_WritePin(BLINKY_LED_GPIO_01, 0);                                       // Turn LED GPIO 1 to ON.
         flagcommand_1 = false;                                                      // Set flag command 1 to FALSE.
         CpuTimer1.InterruptCount = 0;                                               // Reset Timer 1 counter.
     }
-    else if(!flagcommand_1 && CpuTimer1.InterruptCount == 10){
+    else if(!flagcommand_1 && CpuTimer1.InterruptCount == freq_hz_1){
         GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                       // Turn LED GPIO 1 to OFF.
         flagcommand_1 = true;                                                       // Set flag command 1 to TRUE.
         CpuTimer1.InterruptCount = 0;                                               // Reset Timer 1 counter.
@@ -215,16 +221,17 @@ __interrupt void cpu_timer1_isr(void){
 __interrupt void cpu_timer2_isr(void){
     CpuTimer2.InterruptCount++;
     // The CPU acknowledges the interrupt.
-    if(flagcommand_2 && CpuTimer2.InterruptCount == 250){
+    if(flagcommand_2 && CpuTimer2.InterruptCount == freq_hz_2){
         GPIO_WritePin(BLINKY_LED_GPIO_02, 0);                                       // Turn LED GPIO 2 to ON.
         flagcommand_2 = false;                                                      // Set flag command 2 to FALSE.
         CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
-    else if(!flagcommand_2 && CpuTimer2.InterruptCount == 250){
+    else if(!flagcommand_2 && CpuTimer2.InterruptCount == freq_hz_2){
         GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                       // Turn LED GPIO 2 to OFF.
         flagcommand_2 = true;                                                       // Set flag command 2 to TRUE.
         CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
+    scia_msg(msg_1);                                                                // Write message 1 through SCIA peripheral.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through SCIA received data:
@@ -237,9 +244,9 @@ __interrupt void scia_rx_isr(void){
         add_2_charBuffer(&SCIA,receivedChar);                                       // Adding character to data buffer assigned to SCIA peripheral.
     }
     if(SCIA.flag[1]){
-        strcpy(msg_2,SCIA.charBuffer);                                              // Copy the SCIA.charBuffer string into the message 2.
-        strcat(msg_2,"\n\0");                                                       // Concatenate the terminator string to the message 2.
-        scia_msg(msg_2);                                                            // Write message 2 through SCIA peripheral.
+        // strcpy(msg_2,SCIA.charBuffer);                                              // Copy the SCIA.charBuffer string into the message 2.
+        // strcat(msg_2,"\n\0");                                                       // Concatenate the terminator string to the message 2.
+        // scia_msg(msg_2);                                                            // Write message 2 through SCIA peripheral.
         init_charBuffer(&SCIA);                                                     // Initialize dedicated char-type data buffer of SCIA.
     }
     //-----------------------------------------------

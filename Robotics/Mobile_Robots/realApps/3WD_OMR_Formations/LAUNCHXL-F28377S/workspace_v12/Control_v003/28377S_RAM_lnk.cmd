@@ -64,10 +64,10 @@ SECTIONS
    .stack           : > RAMM1,     PAGE = 1
    .ebss            : > RAMLS5,    PAGE = 1
    .econst          : > RAMLS5,    PAGE = 1
-   .esysmem         : > RAMLS5,    PAGE = 1
+   .esysmem         : > RAMGS0 | RAMGS1 | RAMGS2,    PAGE = 1
 
-   ramgs0           : > RAMGS0,    PAGE = 1
-   ramgs1           : > RAMGS1,    PAGE = 1
+   ramgs0           : > RAMGS3,    PAGE = 1
+   ramgs1           : > RAMGS4,    PAGE = 1
 }
 
 /*
