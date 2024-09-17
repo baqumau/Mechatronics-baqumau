@@ -264,7 +264,7 @@ void loop(){
 //-----------------------------------------------------------------------------------
 // Initializing buffer:
 void init_cbuff(void){
-  int i;
+  int i;                                                                          // Declaration of i as integer variable.
   flagcommand = false;                                                            // Reset flagcommand state.
   for(i = 0; i < bufferSize_str; i++){                                            // Bucle that set to 0 all.
     chain[i] = 0x00;                                                              // Characters in buffer.
@@ -291,7 +291,7 @@ void add_2_cbuff(char c){
 //-----------------------------------------------------------------------------------
 // Changing character string to floating numbers:
 void string2float(){
-  int i = 0; int j = 0; int r = 0; int s = 0; int t = 0;
+  int i = 0; int j = 0; int r = 0; int s = 0; int t = 0;                          // Declaration of i, j, r, s and t as integer variable.
   // separating received data from UART module:
   for(i = 0; i < Ibuff; i++){
     if(chain[i] == ','){                                                          // Detecting ',' within data chain.
@@ -318,7 +318,7 @@ Control_3 = atof(datoQ);                                                        
 //-----------------------------------------------------------------------------------
 // Motion generation for wheel 1 (according to control signal):
 void MovingWheel_1(float value){
-  int PWMdc;
+  int PWMdc;                                                                      // Declaration of PWMdc as integer variable.
   PWMdc = abs(value*pow(2,PWMs_Resolution))/d_th21_max;                           // Duty cycle value in Ticks.
   if(value < 0){
     digitalWrite(IN1,HIGH);
@@ -340,7 +340,7 @@ void MovingWheel_1(float value){
 //-----------------------------------------------------------------------------------
 // Motion generation for wheel 2 (according to control signal):
 void MovingWheel_2(float value){
-  int PWMdc;
+  int PWMdc;                                                                      // Declaration of PWMdc as integer variable.
   PWMdc = abs(value*pow(2,PWMs_Resolution))/d_th22_max;                           // Duty cycle value in Ticks.
   if(value < 0){
     digitalWrite(IN3,HIGH);
@@ -362,7 +362,7 @@ void MovingWheel_2(float value){
 //-----------------------------------------------------------------------------------
 // Motion generation for wheel 3 (according to control signal):
 void MovingWheel_3(float value){
-  int PWMdc;
+  int PWMdc;                                                                      // Declaration of PWMdc as integer variable.
   PWMdc = abs(value*pow(2,PWMs_Resolution))/d_th23_max;                           // Duty cycle value in Ticks.
   if(value < 0){
     digitalWrite(IN5,HIGH);

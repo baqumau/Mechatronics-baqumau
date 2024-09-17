@@ -9,6 +9,7 @@
 // 3. Timer 1 interrupt to 10 Hz.
 // 4. Timer 2 interrupt to 250 Hz.
 // 5. SCIA communication (UART).
+// 6. Receiving FIFO interrupt via SCIA.
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
@@ -45,20 +46,28 @@
 __interrupt void cpu_timer0_isr(void);
 __interrupt void cpu_timer1_isr(void);
 __interrupt void cpu_timer2_isr(void);
+// Function to generate interrupt service through SCIA received data:
+__interrupt void scia_rx_isr(void);
 //-----------------------------------------------
-// Function to initialize SCIA (8-bit word, baud rate 0x000F, default, 1 STOP bit, no parity):
+// Function to initialize SCIA (8-bit word, baud rate 2E6, default, 1 STOP bit, no parity):
 void scia_init();
 // Function to initialize the SCIA FIFO:
 void scia_fifo_init(void);
 // Function to transmit a character through the SCIA:
-void scia_xmit(int a);
+void scia_xmit(char a);
 // Function to transmit message via SCIA:
 void scia_msg(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
 // Global variables used here:
+const Uint16 bufferSize = 128;                                                      // buffer length.
 bool flagcommand_1 = false;                                                         // Setting flag command 1 to false.
 bool flagcommand_2 = false;                                                         // Setting flag command 2 to false.
-char *msg;                                                                          // Variable to save a char data chain.
+volatile char receivedChar;                                                         // Variable to save received character from SCIA.
+char *msg_1;                                                                        // Variable 1 to save a char data chain.
+char *msg_2;                                                                        // Variable 2 to save a char data chain.
+//-----------------------------------------------
+// Declaration of data structure for SCIA peripheral:
+Data_Struct SCIA;                                                                  // Pointer to Data_Struct.
 //-----------------------------------------------------------------------------------------------------------------------
 void main(void){
     // Step 1. Initialize System Control:
@@ -80,16 +89,16 @@ void main(void){
     GPIO_SetupPinOptions(BLINKY_LED_GPIO_02, GPIO_OUTPUT, GPIO_PUSHPULL);           // Set behavior of Pin 13.
     GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                           // Turn LED GPIO 1 to OFF.
     //-----------------------------------------------
-    // Initializing the pins 84 and 85 for the SCI-A port (UART Communication - UART 0):
+    // Choosing the pins 84 and 85 to the SCI-A port (UART Communication - UART 0):
     EALLOW;
-    GpioCtrlRegs.GPCMUX2.bit.GPIO84 = 1;
-    GpioCtrlRegs.GPCMUX2.bit.GPIO85 = 1;
     GpioCtrlRegs.GPCGMUX2.bit.GPIO84 = 1;
+    GpioCtrlRegs.GPCMUX2.bit.GPIO84 = 1;
     GpioCtrlRegs.GPCGMUX2.bit.GPIO85 = 1;
+    GpioCtrlRegs.GPCMUX2.bit.GPIO85 = 1;
     EDIS;
 
     // Step 3. Clear all interrupts and initialize PIE vector table:
-    // Disable CPU interrupts
+    // Disable CPU interrupts:
     DINT;
 
     // Initialize the PIE control registers to their default state.
@@ -98,11 +107,6 @@ void main(void){
     // This function is found in the F2837xS_PieCtrl.c file.
     InitPieCtrl();
 
-    // Initializing SCIA:
-    scia_fifo_init();                                                               // Initialize the SCIA FIFO.
-    scia_init();                                                                    // Initialize the SCIA.
-    msg = "baqumau -- baqumau\n\0";
-
     // Disable CPU interrupts and clear all CPU interrupt flags:
     IER = 0x0000;
     IFR = 0x0000;
@@ -110,10 +114,15 @@ void main(void){
     // Initialize the PIE vector table with pointers to the shell Interrupt
     // Service Routines (ISR).
     // This will populate the entire table, even if the interrupt
-    // is not used in this example.  This is useful for debug purposes.
+    // is not used in this example. This is useful for debug purposes.
     // The shell ISR routines are found in F2837xS_DefaultIsr.c.
     // This function is found in F2837xS_PieVect.c.
     InitPieVectTable();
+
+    // Initializing SCIA:
+    scia_fifo_init();                                                               // Initialize the SCIA FIFO.
+    scia_init();                                                                    // Initialize the SCIA.
+    msg_1 = ":9\n\0";                                                               // Message to ask to MATLAB for data.
 
     // Interrupts that are used in this example are re-mapped to
     // ISR functions found within this file.
@@ -121,6 +130,7 @@ void main(void){
     PieVectTable.TIMER0_INT = &cpu_timer0_isr;
     PieVectTable.TIMER1_INT = &cpu_timer1_isr;
     PieVectTable.TIMER2_INT = &cpu_timer2_isr;
+    PieVectTable.SCIA_RX_INT = &scia_rx_isr;
     EDIS;                                                                           // This is needed to disable write to EALLOW protected registers.
 
     // Step 4. Initialize the Device Peripheral. This function can be
@@ -145,20 +155,30 @@ void main(void){
     // Step 5. User specific code, enable interrupts:
 
     // Enable CPU int1 which is connected to CPU-Timer 0, CPU int13
-    // which is connected to CPU-Timer 1, and CPU int 14, which is connected
+    // which is connected to CPU-Timer 1, and CPU int14, which is connected
     // to CPU-Timer 2:
     IER |= M_INT1;
     IER |= M_INT13;
     IER |= M_INT14;
+    //-----------------------------------------------
+    // Enabling CPU interrupt for SCIA:
+    IER |= M_INT9;                                                                  // Enable CPU INT9 (for SCIA interrupts).
 
     // Enable TINT0 in the PIE: Group 1 interrupt 7:
-    PieCtrlRegs.PIEIER1.bit.INTx7 = 1;
+    PieCtrlRegs.PIEIER1.bit.INTx7 = 1;                                              // Enable PIE Group 1, interrupt 7 (CPU Timer 0).
+    // Enable SCIRXINTA in the PIE: Group 9 interrupt 1:
+    PieCtrlRegs.PIEIER9.bit.INTx1 = 1;                                              // Enable PIE Group 9, interrupt 1 (SCIA RX).
 
     // Enable global Interrupts and higher priority real-time debug events:
-    EINT;  // Enable Global interrupt INTM
-    ERTM;  // Enable Global real-time interrupt DBGM
+    EINT;  // Enable Global interrupt INTM.
+    ERTM;  // Enable Global real-time interrupt DBGM.
 
-    // Step 6. IDLE loop. Just sit and loop forever (optional):
+    // Step 6. Defining data structure that will be used by this code:
+    // Definition of data structure for SCIA peripheral:
+    SCIA = createDataStruct(bufferSize,1,3*Robots_Qty,16);
+    init_charBuffer(&SCIA);                                                         // Initialize dedicated char-type data buffer of SCIA.
+
+    // Step 7. IDLE loop. Just sit and loop forever (optional):
     for(;;){
         //
         NOP;                                                                        // No Operation (burn a cycle).
@@ -171,7 +191,7 @@ void main(void){
 __interrupt void cpu_timer0_isr(void){
     CpuTimer0.InterruptCount++;
     //-----------------------------------------------
-    // Acknowledge this interrupt to receive more interrupts from group 1
+    // Acknowledge this interrupt to receive more interrupts from group 1:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 }
 //-----------------------------------------------------------------------------------------------------------------------
@@ -189,7 +209,6 @@ __interrupt void cpu_timer1_isr(void){
         flagcommand_1 = true;                                                       // Set flag command 1 to TRUE.
         CpuTimer1.InterruptCount = 0;                                               // Reset Timer 1 counter.
     }
-    scia_msg(msg);                                                                  // Send message via SCIA.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through CPU timer 2:
@@ -208,21 +227,47 @@ __interrupt void cpu_timer2_isr(void){
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------
+// Function to generate interrupt service through SCIA received data:
+__interrupt void scia_rx_isr(void){
+    // Checking how many bytes are in the FIFO (you can use this information):
+    uint16_t fifo_level = SciaRegs.SCIFFRX.bit.RXFFST;
+    // Loop to read all available data in the FIFO:
+    while(SciaRegs.SCIFFRX.bit.RXFFST > 0){
+        receivedChar = SciaRegs.SCIRXBUF.all;                                       // Read one byte from the RX buffer.
+        add_2_charBuffer(&SCIA,receivedChar);                                       // Adding character to data buffer assigned to SCIA peripheral.
+    }
+    if(SCIA.flag[1]){
+        strcpy(msg_2,SCIA.charBuffer);                                              // Copy the SCIA.charBuffer string into the message 2.
+        strcat(msg_2,"\n\0");                                                       // Concatenate the terminator string to the message 2.
+        scia_msg(msg_2);                                                            // Write message 2 through SCIA peripheral.
+        init_charBuffer(&SCIA);                                                     // Initialize dedicated char-type data buffer of SCIA.
+    }
+    //-----------------------------------------------
+    // Clearing the interrupt flag and acknowledge the interrupt:
+    SciaRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                            // Clear RX FIFO interrupt flag.
+    // Acknowledge this interrupt to receive more interrupts from group 9:
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;                                         // Acknowledge PIE group 9 interrupt.
+}
+//-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize SCIA (8-bit word, baud rate 0x000F, default, 1 STOP bit, no parity):
 void scia_init(){
-    // Note: Clocks were turned on to the SCIA peripheral
+    // Note: Clocks were turned on to the SCIA peripheral,
     // in the InitSysCtrl() function.
     SciaRegs.SCICCR.all = 0x0007;                                                   // 1 stop bit, no loop-back,
                                                                                     // no parity, 8 char bits,
                                                                                     // asynchronous mode, idle-line protocol.
     SciaRegs.SCICTL1.all = 0x0003;                                                  // Enable TX, RX, internal SCICLK,
                                                                                     // disable RX ERR, SLEEP, TXWAKE.
-    SciaRegs.SCICTL2.bit.TXINTENA = 1;
-    SciaRegs.SCICTL2.bit.RXBKINTENA = 1;
+    EALLOW;
+    GpioCtrlRegs.GPCQSEL2.bit.GPIO85 = 3;                                           // The GPIO input qualification of GPIO85 is settled to asynchronous mode.
+    EDIS;
+    // SciaRegs.SCICTL2.bit.TXINTENA = 1;                                              // Transmit interrupt enabled (standard SCIA).
+    // SciaRegs.SCICTL1.bit.RXERRINTENA = 1;                                           // Receive Error interrupt enabled (standard SCIA).
+    // SciaRegs.SCICTL2.bit.RXBKINTENA = 1;                                            // Receiver-buffer break interrupt enabled (standard SCIA).
     //-----------------------------------------------
-    // Setting baud rate:
-    SciaRegs.SCIHBAUD.all = 0x0000;                                                 // 115200 baud @LSPCLK = 22.5MHz (90 MHz SYSCLK).
-    SciaRegs.SCILBAUD.all = 53;
+    // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
+    SciaRegs.SCIHBAUD.all = 0x0000;                                                 // Desired baud_rate = 2E6, @LSPCLK = 50MHz (200 MHz SYSCLK).
+    SciaRegs.SCILBAUD.all = 0x0002;
     //-----------------------------------------------
     SciaRegs.SCICTL1.all = 0x0023;                                                  // Relinquish SCI from Reset.
     //-----------------------------------------------
@@ -231,23 +276,25 @@ void scia_init(){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize the SCIA FIFO:
 void scia_fifo_init(void){
-    SciaRegs.SCIFFTX.all = 0xE040;
-    SciaRegs.SCIFFRX.all = 0x2044;
+    SciaRegs.SCIFFTX.all = 0xE040;                                                  // Enable SCIA FIFO mode,
+                                                                                    // transmission FIFO interrupt is disabled.
+    SciaRegs.SCIFFRX.all = 0x2061;                                                  // Enable reception FIFO interrupt,
+                                                                                    // with interrupt FIFO level 1.
     SciaRegs.SCIFFCT.all = 0x0;
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit a character through the SCIA:
-void scia_xmit(int a){
-    while(SciaRegs.SCIFFTX.bit.TXFFST != 0)
+void scia_xmit(char a){
+    while(SciaRegs.SCIFFTX.bit.TXFFST != 0);
+    // while(SciaRegs.SCICTL2.bit.TXRDY == 0);                                         // Wait until TX is ready (standard SCIA).
     SciaRegs.SCITXBUF.all = a;
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit message via SCIA:
 void scia_msg(char *msg){
-    int i;
-    i = 0;
+    int i = 0;                                                                      // Declaration of i as integer variable.
     while(msg[i] != '\0'){
-        scia_xmit(msg[i]);
+        scia_xmit(msg[i]);                                                          // Transmit byte via SCIA peripheral.
         i++;
     }
 }
