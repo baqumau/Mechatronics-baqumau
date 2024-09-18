@@ -154,7 +154,7 @@ void start_timer_3_interrupt(){
   T3CONSET = 0x8000;                                                    // Start the Timer 3.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Timer 4 interrupt (125 Hz):
+// Timer 4 interrupt (80 Hz):
 void __attribute__((interrupt)) Timer_4_Handler(){
   IFS0CLR = 0x00010000;                                                 // Clear the Timer 4 interrupt status flag.
   int i;                                                                // Declaration of i as integer iteration variable.
@@ -168,6 +168,12 @@ void __attribute__((interrupt)) Timer_4_Handler(){
     digitalWrite(PIN_LED4,LOW);                                         // Turn led 4 off (1 second).
   }
   if(iterations <= final_iteration){
+    //---------------------------------------------------------------------------------------------------------
+    // Updating the state variables to current values:
+    for(i = 0; i < 3*Robots_Qty; i++){
+      FMR.q_k[i] = atof(UART1.MAT3.data[0][i]);                         // Saving pose of OMRs formation along global reference frame.
+    }
+    computeCSVariables(FMR);                                            // Compute the cluster space variables of FMR formation.
     //-----------------------------------------------------------------------------------------------------------
     // Computing the desired reference tracking-trajectories:
     // computeCircumference01(REF,consys,iterations);                      // Compute desired reference profiles for OMRs synchronization.
@@ -279,15 +285,15 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
   // If streaming data is completely added to char buffer of UART1 struct:
   if(UART1.flag[1]){
     classify_charBuffer(&UART1);                                        // Classify data from assigned buffer to UART1 struct data matrix. 
-    for(i = 0; i < 3*Robots_Qty; i++){
-      FMR.q_k[i] = atof(UART1.MAT3.data[0][i]);                         // Saving pose of OMRs formation along global reference frame.
-    }
-    if(consys == SMC_CS){
-      computeCSVariables(FMR);                                          // Compute the cluster space variables of FMR formation.
-    }
     init_charBuffer(&UART1);                                            // Initialize char-type data buffer associated to UART 1.
     digitalWrite(PIN_LED6,LOW);                                         // Turn led 6 off.
     if(!flagcommand_0){
+      //---------------------------------------------------------------------------------------------------------
+      // Saving initial state variables:
+      for(i = 0; i < 3*Robots_Qty; i++){
+        FMR.q_k[i] = atof(UART1.MAT3.data[0][i]);                       // Saving pose of OMRs formation along global reference frame.
+      }
+      computeCSVariables(FMR);                                          // Compute the cluster space variables of FMR formation.
       //---------------------------------------------------------------------------------------------------------
       // Initializing the selected control system:
       switch(consys){
