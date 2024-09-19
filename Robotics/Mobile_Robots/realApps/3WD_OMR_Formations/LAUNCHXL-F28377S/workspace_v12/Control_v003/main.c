@@ -98,6 +98,8 @@ char *measurements;                                                             
 Data_Struct SCIA;                                                                  // Data structure to arrange data from SCIA.
 // Declaration of data structure for SCIB peripheral:
 Data_Struct SCIB;                                                                  // Data structure to arrange data from SCIB.
+// Declaration of a robot formation structure for arranging their relevant variables:
+Formation FMR;                                                                     // Declaration of OMRs formation structure.
 //-----------------------------------------------------------------------------------------------------------------------
 void main(void){
     // Step 1. Initialize System Control:
@@ -229,8 +231,10 @@ void main(void){
     SCIA = createDataStruct(bufferSize,1,3*Robots_Qty,16);
     init_charBuffer(&SCIA);                                                         // Initialize dedicated char-type data buffer of SCIA.
     // Definition of data structure for SCIB peripheral (required for getting and arranging data from XBee):
-    SCIB = createDataStruct(bufferSize,2,3,16);
+    SCIB = createDataStruct(bufferSize,1,3*Robots_Qty,16);
     init_charBuffer(&SCIB);                                                         // Initialize dedicated char-type data buffer of SCIB.
+    // Creating a robot formation structure for arranging their relevant variables:
+    FMR = createFormation(Robots_Qty);                                              // Create the OMRs formation structure.
 
     // Step 7. IDLE loop. Just sit and loop forever (optional):
     for(;;){
@@ -279,7 +283,7 @@ __interrupt void cpu_timer2_isr(void){
         flagcommand_2 = true;                                                       // Set flag command 2 to TRUE.
         CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
-    scia_msg(msg_1);                                                                // Write message 1 through SCIA peripheral.
+    // scia_msg(msg_1);                                                                // Write message 1 through SCIA peripheral.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through SCIA received data:
@@ -306,7 +310,19 @@ __interrupt void scia_rx_isr(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through SCIB received data:
 __interrupt void scib_rx_isr(void){
-    NOP;                                                                            // No Operation (burn a cycle).
+    // Checking how many bytes are in the FIFO (you can use this information):
+    uint16_t fifo_level = ScibRegs.SCIFFRX.bit.RXFFST;
+    // Loop to read all available data in the FIFO:
+    while(ScibRegs.SCIFFRX.bit.RXFFST > 0){
+        receivedChar = ScibRegs.SCIRXBUF.all;                                       // Read one byte from the RX buffer.
+        add_2_charBuffer(&SCIB,receivedChar);                                       // Adding character to data buffer assigned to SCIB peripheral.
+    }
+    if(SCIB.flag[1]){
+        strcpy(measurements,SCIB.charBuffer);                                       // Copy the SCIB.charBuffer string into the measurements data chain.
+        strcat(measurements,"\n\0");                                                // Concatenate the terminator string to the measurements data chain.
+        scia_msg(measurements);                                                     // Write measurements data chain through SCIA peripheral.
+        init_charBuffer(&SCIB);                                                     // Initialize dedicated char-type data buffer of SCIB.
+    }
     //-----------------------------------------------
     // Clearing the interrupt flag and acknowledge the interrupt:
     ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                            // Clear RX FIFO interrupt flag.

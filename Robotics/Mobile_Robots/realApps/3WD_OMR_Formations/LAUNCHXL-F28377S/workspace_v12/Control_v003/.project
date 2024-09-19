@@ -26,6 +26,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>3WD_OMRs_Controllers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/baqumau-LIBs/C_CPP_ti/3WD_OMRs_Controllers.c</locationURI>
+		</link>
+		<link>
 			<name>F2837xS_CodeStartBranch.asm</name>
 			<type>1</type>
 			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_CodeStartBranch.asm</locationURI>
