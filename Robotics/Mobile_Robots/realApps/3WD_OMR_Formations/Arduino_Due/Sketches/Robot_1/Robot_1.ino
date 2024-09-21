@@ -37,11 +37,13 @@ const unsigned int Q2B = 51;                                      // Choosing th
 const unsigned int Q3A = 52;                                      // Choosing this pin for encoder's channel A on wheel 3.
 const unsigned int Q3B = 53;                                      // Choosing this pin for encoder's channel B on wheel 3.
 const unsigned int buffer = 128;                                  // buffer length.
+bool flagcommand_1 = false;                                       // Available flag command 1.
+bool flagcommand_2 = false;                                       // Available flag command 2.
 int Ibuff = 0x00;                                                 // Index: next char in cbuff.
-int flagcommand;                                                  // Available command flag.
 int direction_1 = 0;                                              // Variable to save the turning direction of wheel 1.
 int direction_2 = 0;                                              // Variable to save the turning direction of wheel 2.
 int direction_3 = 0;                                              // Variable to save the turning direction of wheel 3.
+int identifier = 0;                                               // Variable to identify if operation on PS3 mode or Optitrack mode.
 unsigned int counterflag_1 = 0;                                   // Defined flag for encoder of wheel 1.
 unsigned int counterflag_2 = 0;                                   // Defined flag for encoder of wheel 2.
 unsigned int counterflag_3 = 0;                                   // Defined flag for encoder of wheel 3.
@@ -54,7 +56,7 @@ int long counter_6 = 0;                                           // Counter of 
 unsigned int long pulsetime_1 = 0;                                // Variable to save pulse time a for encoder of wheel 1.
 unsigned int long pulsetime_2 = 0;                                // Variable to save pulse time a for encoder of wheel 2.
 unsigned int long pulsetime_3 = 0;                                // Variable to save pulse time a for encoder of wheel 3.
-char datoO[16], datoP[16], datoQ[16];                             // Character vectors.
+char datoN[16], datoO[16], datoP[16], datoQ[16];                  // Character vectors.
 char chain[buffer];                                               // Reception buffer.
 char angular_velocities[32];                                      // Variable to save the angular displacements of robot wheels.
 char ControlSignals[64];                                          // Variable to save all the control signal values.
@@ -139,13 +141,13 @@ void TC8_Handler(){
   counterflag_1 = 0; counterflag_2 = 0; counterflag_3 = 0;        // Turning the counter flags to zero.
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":0,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
-  Serial2.println(angular_velocities);
+  if(identifier == 0) Serial2.println(angular_velocities);        // Send angular velocities values through UART 2.
 }
 //-----------------------------------------------------------------------------------------------------------------------------
 // initializing buffer:
 void init_cbuff(void){
   int i;
-  flagcommand = 0;                                                // Reset flagcommand value.
+  flagcommand_1 = false;                                          // Reset value of flag command 1.
   for(i = 0; i < buffer; i++){                                    // Bucle that set to 0 all.
     chain[i] = 0x00;                                              // characters in buffer.
   }
@@ -156,10 +158,10 @@ void init_cbuff(void){
 void add_2_cbuff(char c){
   switch(c){
     case 0x0D:                                                    // Line Feed 1 -> Enable flag.
-    flagcommand = 1;
+    flagcommand_1 = true;
     break;
     case 0x0A:                                                    // Line Feed 2 -> Enable flag.
-    flagcommand = 1;
+    flagcommand_1 = true;
     break;
     case 0x08:                                                    // Del -> Delete last character from buffer.
     if(Ibuff > 0) chain[--Ibuff] = 0x00;
@@ -171,11 +173,14 @@ void add_2_cbuff(char c){
 //-----------------------------------------------------------------------------------------------------------------------------
 // Changing character string to floating numbers:
 void string2float(){
-  int i = 0; int j = 0; int r = 0; int s = 0; int t = 0;
+  int i = 0; int j = 0; int q = 0; int r = 0; int s = 0; int t = 0;
   // separating received data from UART module:
   for(i = 0; i < Ibuff; i++){
     if(chain[i] == ','){                                          // Detecting ',' within data chain.
       j++;
+    }
+    else if(chain[i] != ':' && chain[i] != ',' && j == 0){
+      datoN[q++] = chain[i];                                      // Store value string to dato0.
     }
     else if(chain[i] != ',' && j == 1){
       datoO[r++] = chain[i];                                      // Store value string to dato0.
@@ -189,6 +194,7 @@ void string2float(){
     else NOP;                                                     // No operation.
   }
 // Saving the orientation matrix values to a floating number matrix.
+identifier = atoi(datoN);                                         // Getting identification about operation mode is executing.
 Control_1 = atof(datoO);                                          // Getting control signal value for moving wheel 1 (-100 to 100).
 Control_2 = atof(datoP);                                          // Getting control signal value for moving wheel 2 (-100 to 100).
 Control_3 = atof(datoQ);                                          // Getting control signal value for moving wheel 3 (-100 to 100).
@@ -416,14 +422,14 @@ void loop(){
     character = Serial2.read();                                   // Last received character.
     add_2_cbuff(character);                                       // Add character to buffer.
   }
-  if(flagcommand == 1){
+  if(flagcommand_1){
+    flagcommand_2 = true;                                         // Change value of flag command 2.
     string2float();                                               // Call string2float() function. 
     init_cbuff();                                                 // Clear buffer.
     MovingWheel_1(Control_1);                                     // Calling function that moves wheel 1.
     MovingWheel_2(Control_2);                                     // Calling function that moves wheel 2.
     MovingWheel_3(Control_3);                                     // Calling function that moves wheel 3.
-    delayMicroseconds(1);                                         // 1 microsecond delay.
   }
-  else delayMicroseconds(2);                                      // 2 microseconds delay.
+  else NOP;                                                       // No operation cycle.
 }
 //-----------------------------------------------------------------------------------------------------------------------------

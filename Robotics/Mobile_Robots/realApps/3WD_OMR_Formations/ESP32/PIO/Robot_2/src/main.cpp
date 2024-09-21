@@ -47,6 +47,7 @@ const unsigned int IN4 = 18;                                                    
 const unsigned int ENC = 21;                                                      // Choosing this pin to generate PWM on wheel 3.
 const unsigned int IN5 = 22;                                                      // Choosing this pin to set the turning sense on wheel 3.
 const unsigned int IN6 = 23;                                                      // Choosing this pin to set the turning sense on wheel 3.
+// const unsigned int RST = 33;                                                      // RST pin of the XBee USB adapter is connected to a GPIO pin on your microcontroller for reset the XBee module.
 const unsigned int Q1A = 13;                                                      // Choosing this pin for encoder's channel A on wheel 1.
 const unsigned int Q1B = 12;                                                      // Choosing this pin for encoder's channel B on wheel 1.
 const unsigned int Q2A = 14;                                                      // Choosing this pin for encoder's channel A on wheel 2.
@@ -55,7 +56,8 @@ const unsigned int Q3A = 26;                                                    
 const unsigned int Q3B = 25;                                                      // Choosing this pin for encoder's channel B on wheel 3.
 const unsigned int bufferSize_str = 64;                                           // buffer length for characters string.
 int Ibuff = 0x00;                                                                 // Index: next char in character-chain.
-bool flagcommand;                                                                 // Available command flag.
+bool flagcommand_1 = false;                                                       // Available flag command 1.
+bool flagcommand_2 = false;                                                       // Available flag command 2.
 int direction_1 = 0;                                                              // Variable to save the turning direction of wheel 1.
 int direction_2 = 0;                                                              // Variable to save the turning direction of wheel 2.
 int direction_3 = 0;                                                              // Variable to save the turning direction of wheel 3.
@@ -138,6 +140,7 @@ void setup(){
   pinMode(ENC,OUTPUT);                                                            // Configuring pin 21 as output.
   pinMode(IN5,OUTPUT);                                                            // Configuring pin 22 as output.
   pinMode(IN6,OUTPUT);                                                            // Configuring pin 23 as output.
+  // pinMode(RST,OUTPUT);                                                            // Configuring pin 33 as output.
   pinMode(Q1A,INPUT);                                                             // Configuring pin 13 as input.
   pinMode(Q1B,INPUT);                                                             // Configuring pin 12 as input.
   pinMode(Q2A,INPUT);                                                             // Configuring pin 14 as input.
@@ -153,6 +156,7 @@ void setup(){
                                                                                   // ESP32 has 256 bytes.
                                                                                   // Call must come before begin().
   MySerial.begin(Baud_Rate,SERIAL_8N1,RXD2,TXD2);                                 // Open serial connection to UART 2.
+  // digitalWrite(RST,HIGH);                                                         // Turn RST pin to HIGH for establishing UART communication with Xbee.
   init_cbuff();                                                                   // Clear buffer.
   //---------------------------------------------------------------------------------
   // Configuring PS3 controller:
@@ -214,7 +218,8 @@ void loop(){
       add_2_cbuff(character);                                                     // Adding character to data buffer assigned to UART 2 module.
     }
     // Taking values from UART 2 module:
-    if(flagcommand && !Ps3.isConnected()){
+    if(flagcommand_1 && !Ps3.isConnected()){
+      flagcommand_2 = true;                                                       // Flag command 2 settled to true.
       string2float();                                                             // Call string2float() function.
       init_cbuff();                                                               // Clear buffer.
       MovingWheel_1(Control_1*d_th21_max/100.0f);                                 // Calling function that moves wheel 1 at certain desired angular velocity.
@@ -252,7 +257,7 @@ void loop(){
       sprintf(PS3_analog_data,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",ps3_v_k[0],ps3_v_k[1],ps3_v_k[2],ps3_v_k[3],ps3_v_k[4],ps3_v_k[5]);
       //--------------------------------------
       // Arranging and sending control signals:
-      sprintf(ControlSignals,":0,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
+      sprintf(ControlSignals,":1,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
       MySerial.println(ControlSignals);
     }
     else NOP();                                                                   // No operation cycle.
@@ -265,7 +270,7 @@ void loop(){
 // Initializing buffer:
 void init_cbuff(void){
   int i;                                                                          // Declaration of i as integer variable.
-  flagcommand = false;                                                            // Reset flagcommand state.
+  flagcommand_1 = false;                                                          // Reset flagcommand_1 state.
   for(i = 0; i < bufferSize_str; i++){                                            // Bucle that set to 0 all.
     chain[i] = 0x00;                                                              // Characters in buffer.
   }
@@ -276,10 +281,10 @@ void init_cbuff(void){
 void add_2_cbuff(char c){
   switch(c){
     case 0x0D:                                                                    // Line Feed 1 -> Enable flag.
-    flagcommand = true;
+    flagcommand_1 = true;
     break;
     case 0x0A:                                                                    // Line Feed 2 -> Enable flag.
-    flagcommand = true;
+    flagcommand_1 = true;
     break;
     case 0x08:                                                                    // Del -> Delete last character from buffer.
     if(Ibuff > 0) chain[--Ibuff] = 0x00;
@@ -544,7 +549,7 @@ void Timer3_Setup(){
 void IRAM_ATTR Timer2_ISR(){
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
-  if(!Ps3.isConnected()){
+  if(!Ps3.isConnected() && flagcommand_2){
     MySerial.println(angular_velocities);                                         // Print angular velocities by serial peripheral.
   }
 }
