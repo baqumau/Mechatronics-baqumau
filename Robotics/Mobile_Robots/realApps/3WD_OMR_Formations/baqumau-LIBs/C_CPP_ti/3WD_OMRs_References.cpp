@@ -186,7 +186,7 @@ void computeCircumference01(Reference REF, enum Control_System consys, int itera
         }
         // Computing ecuations for circumference profiles generation in the cluster space:
         float Vc = 40.0f;                                                                   // [mm/s], linear velocity of cluster centroid.
-        float Rc = 2000.0f;                                                                 // [mm], desired radius of planned trajectory.
+        float Rc = 1200.0f;                                                                 // [mm], desired radius of planned trajectory.
         float Ac = Vc*Vc/Rc;                                                                // Precompute angular acceleration Vc^2/Rc.
         switch(Robots_Qty){
             case 2:{
@@ -284,7 +284,7 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF struct.
         }
         // Computing ecuations for infinity reference profiles generation in the cluster space:
-        float Sc = 2000.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
+        float Sc = 1200.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
         float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
         float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
         float Wc2 = Wc1/Kc;                                                                 // Precompute operation Sc/(Kc^3).
@@ -401,7 +401,7 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF struct.
         }
         // Computing ecuations for infinity reference profiles generation in the cluster space:
-        float Sc = 2000.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
+        float Sc = 1200.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
         float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
         float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
         float Wc2 = Wc1/Kc;                                                                 // Precompute operation Sc/(Kc^3).

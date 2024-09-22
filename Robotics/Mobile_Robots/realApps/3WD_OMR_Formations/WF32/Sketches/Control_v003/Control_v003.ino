@@ -52,8 +52,8 @@ volatile uint32_t counter_5 = 0;                                        // Inter
 volatile uint32_t iterations = 0;                                       // Iterations counter in the program.
 char controlSignals[bufferSize];                                        // Variable to save control signals data and subsequently send via UART 4 module.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
-enum Control_System consys = SMC_CS;                                    // Declare the control system type.
-enum Reference_Type reftype = MINGYUE_01;                               // Declare the reference shape type.
+enum Control_System consys = ADRC_RS;                                   // Declare the control system type.
+enum Reference_Type reftype = CIRCUMFERENCE_01;                         // Declare the reference shape type.
 //---------------------------------------------------------------------------------------------------------------
 // Configuring the ADRC RS strategy:
 const float sampleTime = 1.0f/freq_hz_4;                                // Float parameter to define sample time of observer RSO.
@@ -343,40 +343,40 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
       // Initializing the selected reference trajectory profiles:
       switch(reftype){
         case CIRCUMFERENCE_01:{
-          // Configuring initial parameteres for circumference-shape trajectory:
-          float Cx_0 = 5000.0f;                                         // [mm], initial reference's centre along workspace's x axis.
-          float Cy_0 = 5000.0f;                                         // [mm], initial reference's centre along workspace's y axis.
-          float Rc_0 = 2000.0f;                                         // [mm], initial desired radius of planned circumference-shape trajectory.
+          // Configuring initial parameteres for circumference-shape trajectory (check that Rc_0 and Vc_0 are equals to Rc and Vc placed in the trajectory generation source code):
+          float Cx_0 = 1800.0f;                                         // [mm], initial reference's centre along workspace's x axis.
+          float Cy_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's y axis.
+          float Rc_0 = 1200.0f;                                         // [mm], initial desired radius of planned circumference-shape trajectory.
           float Vc_0 = 40.0f;                                           // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
-          float Dr_0 = 200.0f;                                          // [mm], initial desired half distance between robots.
+          float Dr_0 = 150.0f;                                          // [mm], initial desired half distance between robots.
           // Arraying initial conditions for circumference-shape reference trajectory profiles:
-          float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cos(M_PI_4), Vc_0*cos(M_PI_4), Vc_0/Rc_0, .0, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+          float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cos(M_PI_4), Vc_0*cos(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
           // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cos(M_PI_4), Vc_0*sin(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
           initReference(REF,consys,reftype,ref_z0);                     // Initialize reference builder.
           break;
         }
         case MINGYUE_01:{
-          // Configuring initial parameteres for first Mingyue's infinity-shape trajectory:
-          float Cx_0 = 5000.0f;                                         // [mm], initial reference's centre along workspace's x axis.
-          float Cy_0 = 5000.0f;                                         // [mm], initial reference's centre along workspace's y axis.
-          float Sc_0 = 2000.0f;                                         // [mm], initial scope of infinity-shape trajectory on workspace.
+          // Configuring initial parameteres for first Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
+          float Cx_0 = 1800.0f;                                         // [mm], initial reference's centre along workspace's x axis.
+          float Cy_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's y axis.
+          float Sc_0 = 1200.0f;                                         // [mm], initial scope of infinity-shape trajectory on workspace.
           float Kc_0 = 25.0f;                                           // Velocity desired gain of planned trajectory.
           float Vcx_0 = Sc_0/Kc_0;                                      // [mm/s], initial cluster's forward speed along x axis.
           float Vcy_0 = 2.0f*Sc_0/Kc_0;                                 // [mm/s], initial cluster's forward speed along y axis.
-          float Dr_0 = 200.0f;                                          // [mm], initial desired half distance between robots.
+          float Dr_0 = 150.0f;                                          // [mm], initial desired half distance between robots.
           float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2(Vcx_0,Vcy_0), -2.0f*atan2(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
           initReference(REF,consys,reftype,ref_z0);                     // Initialize reference builder.
           break;
         }
         case MINGYUE_02:{
-          // Configuring initial parameteres for second Mingyue's infinity-shape trajectory:
-          float Cx_0 = 5000.0f;                                         // [mm], initial reference's centre along workspace's x axis.
-          float Cy_0 = 5000.0f;                                         // [mm], initial reference's centre along workspace's y axis.
-          float Sc_0 = 2000.0f;                                         // [mm], initial scope of infinity-shape trajectory on workspace.
+          // Configuring initial parameteres for second Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
+          float Cx_0 = 1800.0f;                                         // [mm], initial reference's centre along workspace's x axis.
+          float Cy_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's y axis.
+          float Sc_0 = 1200.0f;                                         // [mm], initial scope of infinity-shape trajectory on workspace.
           float Kc_0 = 25.0f;                                           // Velocity desired gain of planned trajectory.
           float Vcx_0 = Sc_0/Kc_0;                                      // [mm/s], initial cluster's forward speed along x axis.
           float Vcy_0 = 2.0f*Sc_0/Kc_0;                                 // [mm/s], initial cluster's forward speed along y axis.
-          float Dr_0 = 200.0f;                                          // [mm], initial desired half distance between robots.
+          float Dr_0 = 150.0f;                                          // [mm], initial desired half distance between robots.
           float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2(Vcx_0,Vcy_0)-M_PI_2, -atan2(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
           initReference(REF,consys,reftype,ref_z0);                     // Initialize reference builder.
           break;
@@ -539,7 +539,7 @@ void loop(){
     Serial.println(":10");                                              // Write stop command by UART 1.
   }
   else if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == true){
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.v_k[0],FMR.v_k[1],FMR.v_k[2],FMR.v_k[3],FMR.v_k[4],FMR.v_k[5],iterations);
+    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",REF.y_k[0],REF.y_k[1],REF.y_k[2],REF.y_k[3],REF.y_k[4],REF.y_k[5],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.
