@@ -16,7 +16,6 @@ Unfortunately ChipKit WF32 with ARDUINO framework does not work appropriately.*/
 #define freq_hz_5 10                                                    // Frequency in Hz for instructions execution of Timer 5.
 #define ticks_per_second 80E6                                           // Ticks per seconds of machine's clock.
 #define exe_minutes 4                                                   // Run time minutes.
-#define final_iteration 60*exe_minutes*freq_hz_4                        // Final iteration of program execution (4 minutes at "freq_hz_4" in Hz).
 #define NOP __asm__ __volatile__ ("nop\n\t")                            // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
 // Including libraries to the program:
@@ -44,6 +43,7 @@ const unsigned int RST = 38;                                            // RST p
 //---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
 const unsigned int bufferSize = 128;                                    // buffer length.
+const unsigned long final_iteration = 60*exe_minutes*freq_hz_4;         // Final iteration of program execution (4 minutes at "freq_hz_4" in Hz).
 uint32_t matlab_counter = 0;                                            // Variable to save the external counter by MATLAB.
 volatile bool flagcommand_0 = false;                                    // Available command flag 0.
 volatile bool flagcommand_5 = false;                                    // Available command flag 5.
@@ -173,11 +173,15 @@ void __attribute__((interrupt)) Timer_4_Handler(){
     for(i = 0; i < 3*Robots_Qty; i++){
       FMR.q_k[i] = atof(UART1.MAT3.data[0][i]);                         // Saving pose of OMRs formation along global reference frame.
     }
+    float angles_k[Robots_Qty] = {FMR.q_k[2], FMR.q_k[5]};              // Orientation vector in the robot space, obtained from streaming.
+    angleConversion(FMR.CORq,angles_k);                                 // Compute angle conversion to the absolute domain.
+    FMR.q_k[2] = FMR.CORq.y_k[0];                                       // Determines ph1(k).
+    FMR.q_k[5] = FMR.CORq.y_k[1];                                       // Determines ph2(k).
     computeCSVariables(FMR);                                            // Compute the cluster space variables of FMR formation.
     //-----------------------------------------------------------------------------------------------------------
     // Computing the desired reference tracking-trajectories:
-    // computeCircumference01(REF,consys,iterations);                      // Compute desired reference profiles for OMRs synchronization.
-    computeInfinity01(REF,consys,iterations);                           // Compute desired reference profiles for OMRs synchronization.
+    computeCircumference01(REF,consys,iterations);                      // Compute desired reference profiles for OMRs synchronization.
+    // computeInfinity01(REF,consys,iterations);                           // Compute desired reference profiles for OMRs synchronization.
     //-----------------------------------------------------------------------------------------------------------
     // Computing the designed control strategy:
     switch(consys){
@@ -293,6 +297,10 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
       for(i = 0; i < 3*Robots_Qty; i++){
         FMR.q_k[i] = atof(UART1.MAT3.data[0][i]);                       // Saving pose of OMRs formation along global reference frame.
       }
+      float angles_k[Robots_Qty] = {FMR.q_k[2], FMR.q_k[5]};            // Initial orientation vector in the robot space.
+      if(FMR.CORq.flag[0] == false){
+        initAngleConverter(FMR.CORq,angles_k);                          // Initialize angle conversion to absolute domain in the robot space.
+      }
       computeCSVariables(FMR);                                          // Compute the cluster space variables of FMR formation.
       //---------------------------------------------------------------------------------------------------------
       // Initializing the selected control system:
@@ -389,7 +397,7 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
       }
       t_cl += 8.0f;                                                     // Final value of clutch interval time.
       //---------------------------------------------------------------------------------------------------------
-      iterations = 0;                                                   // Reset interations.
+      iterations = 0;                                                   // Reset iterations.
       flagcommand_0 = true;                                             // Setting flag 0 to true.
     }
   }
@@ -539,7 +547,7 @@ void loop(){
     Serial.println(":10");                                              // Write stop command by UART 1.
   }
   else if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == true){
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",REF.y_k[0],REF.y_k[1],REF.y_k[2],REF.y_k[3],REF.y_k[4],REF.y_k[5],iterations);
+    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.

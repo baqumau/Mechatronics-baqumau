@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
-#include <xc.h>                                                                 // Header file that allows code in the source file to access compiler-specific or device-specific features.
-                                                                                // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
-                                                                                // header file.
+#include <xc.h>                                                                             // Header file that allows code in the source file to access compiler-specific or device-specific features.
+                                                                                            // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
+                                                                                            // header file.
 #include "3WD_OMRs_Controllers.h"
 //---------------------------------------------------------------------------------------------------------------
 // Developing control functions:
@@ -1466,7 +1466,8 @@ Formation createFormation(int qty){
     FMR.u_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the control torques vector u(k).
     FMR.v_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the control voltages vector v(k).
     FMR.params = (float *)malloc(25*qty * sizeof(float));                                   // Allocate memory for precomputation of several constant values required by the formation control systems.
-    FMR.COR = createAngleConverter(qty-1);                                                  // Creating the angle correction COR struct within FMR.
+    FMR.CORq = createAngleConverter(qty);                                                   // Creating the angle correction CORq structure within FMR.
+    FMR.CORc = createAngleConverter(qty-1);                                                 // Creating the angle correction CORc structure within FMR.
     //-----------------------------------------------
     switch(qty){
         case 2:
@@ -1532,16 +1533,16 @@ void computeCSVariables(Formation FMR){
         case 2:{
             FMR.c_k[0] = (FMR.q_k[0] + FMR.q_k[3])/2.0f;                                    // Determines xc(k).
             FMR.c_k[1] = (FMR.q_k[1] + FMR.q_k[4])/2.0f;                                    // Determines yc(k).
-            float subt1_k = FMR.q_k[0]-FMR.q_k[3];                                          // Precompute subtraction 1.
-            float subt2_k = FMR.q_k[1]-FMR.q_k[4];                                          // Precompute subtraction 2.
+            float subt1_k = FMR.q_k[0] - FMR.q_k[3];                                        // Precompute subtraction 1.
+            float subt2_k = FMR.q_k[1] - FMR.q_k[4];                                        // Precompute subtraction 2.
             //-----------------------------------------------
             float angles_k[1] = {atan2(subt1_k,subt2_k)};                                   // Compute partial cluster's orientation.
-            if(FMR.COR.flag[0] == false){
-                initAngleConverter(FMR.COR,angles_k);                                       // Initialize angle conversion to absolute domain.
+            if(FMR.CORc.flag[0] == false){
+                initAngleConverter(FMR.CORc,angles_k);                                      // Initialize angle conversion to absolute domain.
             }
-            else angleConversion(FMR.COR,angles_k);                                         // Compute angle conversion to absolute domain.
+            else angleConversion(FMR.CORc,angles_k);                                        // Compute angle conversion to absolute domain.
             //-----------------------------------------------
-            FMR.c_k[2] = FMR.COR.y_k[0];                                                    // Determines thc(k).
+            FMR.c_k[2] = FMR.CORc.y_k[0];                                                   // Determines thc(k).
             FMR.c_k[3] = sqrt(subt1_k*subt1_k + subt2_k*subt2_k)/2.0f;                      // Determines dc(k):
             FMR.c_k[4] = FMR.q_k[2] - FMR.c_k[2];                                           // Determines psi1(k).
             FMR.c_k[5] = FMR.q_k[5] - FMR.c_k[2];                                           // Determines psi2(k).

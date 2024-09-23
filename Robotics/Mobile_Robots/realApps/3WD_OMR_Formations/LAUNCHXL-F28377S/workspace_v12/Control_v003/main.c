@@ -29,7 +29,6 @@
 #define freq_hz_1 10                                                                // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 250                                                               // Frequency in Hz for instructions execution of Timer 2.
 #define exe_minutes 4                                                               // Run time minutes.
-#define final_iteration 60*exe_minutes*freq_hz_2                                    // Final iteration of program execution (4 minutes at "freq_hz_2" in Hz).
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
 #include <math.h>
@@ -85,8 +84,10 @@ void scic_xmit(char a);
 // Function to transmit message via SCIC:
 void scic_msg(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
-// Global variables used here:
+// Global dynamic variables and constant are defined here:
 const Uint16 bufferSize = 128;                                                      // buffer length.
+const Uint32 final_iteration = 60*(Uint32)(exe_minutes)*(Uint32)(freq_hz_0);        // Final iteration of program execution (4 minutes at "freq_hz_0" in Hz).
+bool flagcommand_0 = false;                                                         // Setting flag command 0 to false (This flag indicates that initial conditions must be configured).
 bool flagcommand_1 = false;                                                         // Setting flag command 1 to false.
 bool flagcommand_2 = false;                                                         // Setting flag command 2 to false.
 volatile char receivedChar;                                                         // Variable to save received character from SCIA.
@@ -95,11 +96,11 @@ char *msg_2;                                                                    
 char *measurements;                                                                 // Variable to save a char data chain that contains the desired measurements.
 //-----------------------------------------------
 // Declaration of data structure for SCIA peripheral:
-Data_Struct SCIA;                                                                  // Data structure to arrange data from SCIA.
+Data_Struct SCIA;                                                                   // Data structure to arrange data from SCIA.
 // Declaration of data structure for SCIB peripheral:
-Data_Struct SCIB;                                                                  // Data structure to arrange data from SCIB.
+Data_Struct SCIB;                                                                   // Data structure to arrange data from SCIB.
 // Declaration of a robot formation structure for arranging their relevant variables:
-Formation FMR;                                                                     // Declaration of OMRs formation structure.
+Formation FMR;                                                                      // Declaration of OMRs formation structure.
 //-----------------------------------------------------------------------------------------------------------------------
 void main(void){
     // Step 1. Initialize System Control:
@@ -212,7 +213,7 @@ void main(void){
     IER |= M_INT13;
     IER |= M_INT14;
     //-----------------------------------------------
-    // Enabling PIE group 9 interrupts in CPU (SCIA and SCIB):
+    // Enabling PIE interrupt group 9 globally at the CPU level (SCIA and SCIB):
     IER |= M_INT9;                                                                  // Enable CPU INT9 (for SCIA interrupts).
 
     // Enable TINT0 in the PIE: Group 1 interrupt 7:
@@ -231,7 +232,7 @@ void main(void){
     SCIA = createDataStruct(bufferSize,1,3*Robots_Qty,16);
     init_charBuffer(&SCIA);                                                         // Initialize dedicated char-type data buffer of SCIA.
     // Definition of data structure for SCIB peripheral (required for getting and arranging data from XBee):
-    SCIB = createDataStruct(bufferSize,1,3*Robots_Qty,16);
+    SCIB = createDataStruct(bufferSize,2,3,16);
     init_charBuffer(&SCIB);                                                         // Initialize dedicated char-type data buffer of SCIB.
     // Creating a robot formation structure for arranging their relevant variables:
     FMR = createFormation(Robots_Qty);                                              // Create the OMRs formation structure.
@@ -269,7 +270,7 @@ __interrupt void cpu_timer1_isr(void){
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timer 2:
+// Function to generate interrupt service through CPU timer 2 (streaming data from MATLAB):
 __interrupt void cpu_timer2_isr(void){
     CpuTimer2.InterruptCount++;
     // The CPU acknowledges the interrupt.
@@ -283,11 +284,17 @@ __interrupt void cpu_timer2_isr(void){
         flagcommand_2 = true;                                                       // Set flag command 2 to TRUE.
         CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
-    // scia_msg(msg_1);                                                                // Write message 1 through SCIA peripheral.
+    if(CpuTimer0.InterruptCount <= (Uint32)(final_iteration)) scia_msg(msg_1);      // Write message 1 through SCIA peripheral.
+    else{
+        scia_msg(msg_2);                                                            // Write message 1 through SCIA peripheral.
+        CpuTimer0.InterruptCount = 0;                                               // Reset counter of CPU timer 0.
+        IER &= ~M_INT14;                                                            // Disable CPU timer 2 interrupt.
+    }
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through SCIA received data:
 __interrupt void scia_rx_isr(void){
+    int i;                                                                          // Declaration of i as index integer variable.
     // Checking how many bytes are in the FIFO (you can use this information):
     uint16_t fifo_level = SciaRegs.SCIFFRX.bit.RXFFST;
     // Loop to read all available data in the FIFO:
@@ -296,10 +303,19 @@ __interrupt void scia_rx_isr(void){
         add_2_charBuffer(&SCIA,receivedChar);                                       // Adding character to data buffer assigned to SCIA peripheral.
     }
     if(SCIA.flag[1]){
-        strcpy(measurements,SCIA.charBuffer);                                       // Copy the SCIA.charBuffer string into the measurements data chain.
-        strcat(measurements,"\n\0");                                                // Concatenate the terminator string to the measurements data chain.
-        scia_msg(measurements);                                                     // Write measurements data chain through SCIA peripheral.
-        init_charBuffer(&SCIA);                                                     // Initialize dedicated char-type data buffer of SCIA.
+        classify_charBuffer(&SCIA);                                                 // Classify data from assigned buffer to UART1 structure data matrix.
+        init_charBuffer(&SCIA);                                                     // Initialize char-type data buffer associated to UART 1.
+        if(!flagcommand_0){
+            //-----------------------------------------------------------------------------------------------------------
+            // Saving initial state variables:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                FMR.q_k[i] = atof(SCIA.MAT3.data[0][i]);                            // Saving pose of OMRs formation along global reference frame.
+            }
+            // computeCSVariables(FMR);                                                // Compute the cluster space variables of FMR formation.
+            //-----------------------------------------------------------------------------------------------------------
+            CpuTimer0.InterruptCount = 0;                                           // Reset iterations.
+            flagcommand_0 = true;                                                   // Setting flag 0 to true.
+        }
     }
     //-----------------------------------------------
     // Clearing the interrupt flag and acknowledge the interrupt:
@@ -459,19 +475,19 @@ void scic_init(){
 void scic_fifo_init(void){
     ScicRegs.SCIFFTX.all = 0xE040;                                                  // Enable SCIC FIFO mode,
                                                                                     // transmission FIFO interrupt is disabled.
-    ScicRegs.SCIFFRX.all = 0x0000;                                                  // Disable reception FIFO interrupt,
+    ScicRegs.SCIFFRX.all = 0x0000;                                                  // Reception FIFO interrupt is disabled,
                                                                                     // without interrupt FIFO level.
     ScicRegs.SCIFFCT.all = 0x0;
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to transmit a character through the SCIA:
+// Function to transmit a character through the SCIC:
 void scic_xmit(char a){
-    while(ScicRegs.SCIFFTX.bit.TXFFST != 0);                                        // Wait until FIFO TX is ready.
-    // while(ScicRegs.SCICTL2.bit.TXRDY == 0);                                         // Wait until TX is ready (standard SCIC).
-    ScicRegs.SCITXBUF.all = a;                                                      // Load character to SCIC TX buffer.
+    if(ScicRegs.SCIFFTX.bit.TXFFST <= 8) ScicRegs.SCITXBUF.all = a;                 // Load character to SCIC TX buffer.
+    else while(ScicRegs.SCIFFTX.bit.TXFFST != 0);                                   // Wait until FIFO TX is ready.
+    // while(ScicRegs.SCICTL2.bit.TXRDY == 0);                                      // Wait until TX is ready (standard SCIC).
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to transmit message via SCIA:
+// Function to transmit message via SCIC:
 void scic_msg(char *msg){
     int i = 0;                                                                      // Declaration of i as integer variable.
     while(msg[i] != '\0'){

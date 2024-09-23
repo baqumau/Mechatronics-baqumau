@@ -9,6 +9,7 @@ will be implemented in this library to run ADRC-RS and SMC-CS control systems in
 #include <stdio.h>
 #include <stdbool.h>
 #include <float.h>
+#include <math.h>
 #include <xc.h>                                                                 // Header file that allows code in the source file to access compiler-specific or device-specific features.
                                                                                 // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
                                                                                 // header file.
@@ -16,6 +17,7 @@ will be implemented in this library to run ADRC-RS and SMC-CS control systems in
 /* Define _USE_MATH_DEFINES before including 3WD-OMRs_Controllers.h to expose their macro definitions for common
 math constants. */
 #define M_PI_6 0.523598775598299                                                // Math definition.
+#define F_PI (float)(M_PI)                                                      // PI conversion to float type number.
 //---------------------------------------------------------------------------------------------------------------
 // Definition of kinematic and dynamical parameters of OMRs that will be exported by the library:
 #define Robots_Qty 2                                                            // [Un], Qty of robots in the formation;
@@ -86,7 +88,8 @@ typedef struct{
     float *u_k;                                                                 // [N.mm], control signal applied to each omni-wheel is arranged in this vector.
     float *v_k;                                                                 // [%(PWM)], control signal applied to each omni-wheel is arranged in this vector.
     float *params;                                                              // Several constant values needed in the formation control system.
-    Correction_Struct COR;                                                      // Adding angle correction structure for obtained angles through atan2(.) function.
+    Correction_Struct CORq;                                                     // Adding angle correction structure for measured angles in the robot space.
+    Correction_Struct CORc;                                                     // Adding angle correction structure for obtained angles through atan2(.) function in the cluster space.
 } Formation;
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement trapezoidal integrators:

@@ -1,0 +1,6 @@
+{
+    "port": "COM6",
+    "configuration": "USB=a_cdcacm",
+    "board": "chipKIT:pic32:chipkit_WF32",
+    "sketch": "Control_v002.ino"
+}
