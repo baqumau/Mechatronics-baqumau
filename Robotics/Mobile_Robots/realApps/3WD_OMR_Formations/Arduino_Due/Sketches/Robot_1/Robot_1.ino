@@ -141,7 +141,8 @@ void TC8_Handler(){
   counterflag_1 = 0; counterflag_2 = 0; counterflag_3 = 0;        // Turning the counter flags to zero.
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":0,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
-  if(identifier == 0) Serial2.println(angular_velocities);        // Send angular velocities values through UART 2.
+  // Sending angular velocities values through UART 2:
+  if(identifier == 0 && flagcommand_2 == 1) Serial2.println(angular_velocities);
 }
 //-----------------------------------------------------------------------------------------------------------------------------
 // initializing buffer:
@@ -418,12 +419,12 @@ void Q3B_Interrupt(){
 //-----------------------------------------------------------------------------------------------------------------------------
 void loop(){
   while(Serial2.available() > 0){
+    flagcommand_2 = true;                                         // Change value of flag command 2.
     character = 0x00;
     character = Serial2.read();                                   // Last received character.
     add_2_cbuff(character);                                       // Add character to buffer.
   }
   if(flagcommand_1){
-    flagcommand_2 = true;                                         // Change value of flag command 2.
     string2float();                                               // Call string2float() function. 
     init_cbuff();                                                 // Clear buffer.
     MovingWheel_1(Control_1);                                     // Calling function that moves wheel 1.

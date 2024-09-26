@@ -545,7 +545,7 @@ void loop(){
       sprintf(PS3_analog_data,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",ps3_v_k[0],ps3_v_k[1],ps3_v_k[2],ps3_v_k[3],ps3_v_k[4],ps3_v_k[5]);
       //--------------------------------------
       // Arranging and sending control signals:
-      sprintf(ControlSignals,":0,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
+      sprintf(ControlSignals,":1,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
       Serial.println(ControlSignals);                                             // Print computed control signals via UART 1.
       MySerial.println(ControlSignals);                                           // Print computed control signals via UART 2.
     }
