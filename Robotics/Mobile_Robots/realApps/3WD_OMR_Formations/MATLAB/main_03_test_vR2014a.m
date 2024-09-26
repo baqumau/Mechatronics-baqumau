@@ -21,8 +21,11 @@ x7_t = zeros(iter_stop,1);                                                  % Pr
 %--------------------------------------------------------------------------
 % A serial port object is constructed:
 BaudRate = 2000000;                                                         % Specify baud rate for UART communication.
-% Creating Serial Object (COM6 is specified):
-S1 = serial('COM6','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
+% Creating Serial Object (COM6 is specified for WF32):
+% S1 = serial('COM6','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
+%--------------------------------------------------------------------------
+% Creating Serial Object (COM16 is specified for TI LAUNCHPAD):
+S1 = serial('COM16','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
 fopen(S1);                                                                  % Establishes serial communication via S1.
 %--------------------------------------------------------------------------
 tic

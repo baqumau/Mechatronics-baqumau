@@ -111,7 +111,7 @@ void add_2_charBuffer(Data_Struct *DAT, char c){
 // Classify char-type data from developed buffer within data structure as DAT:
 void classify_charBuffer(Data_Struct *DAT){
     int i, j = 0, k = 0;                                                                    // Declaration of i, j, and k as index integer variables.
-    char charValue[DAT->MAT3.zSize];                                                        // Declaration of char variable to temporarily store a value from buffer data set.
+    char *charValue = (char *)malloc(DAT->MAT3.zSize * sizeof(char));                       // Declaration of char variable to temporarily store a value from buffer data set.
     if(DAT->flag[0]){
         // separating data consigned in buffer:
         for(i = 0; i < DAT->bufferIndex; i++){

@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <HardwareSerial.h>
+#include "driver/mcpwm.h"
 #include "src/baqumau/3WD_OMRs_Controllers.h"
 //-----------------------------------------------------------------------------------
 // Assign UART2:
@@ -43,6 +44,7 @@ const unsigned int IN4 = 18;                                                    
 const unsigned int ENC = 21;                                                      // Choosing this pin to generate PWM on wheel 3.
 const unsigned int IN5 = 22;                                                      // Choosing this pin to set the turning sense on wheel 3.
 const unsigned int IN6 = 23;                                                      // Choosing this pin to set the turning sense on wheel 3.
+const unsigned int RST = 33;                                                      // RST pin of the XBee USB adapter is connected to a GPIO pin on your microcontroller for reset the XBee module.
 const unsigned int Q1A = 13;                                                      // Choosing this pin for encoder's channel A on wheel 1.
 const unsigned int Q1B = 12;                                                      // Choosing this pin for encoder's channel B on wheel 1.
 const unsigned int Q2A = 14;                                                      // Choosing this pin for encoder's channel A on wheel 2.
@@ -56,7 +58,8 @@ int Ibuff = 0x00;                                                               
 int direction_1 = 0;                                                              // Variable to save the turning direction of wheel 1.
 int direction_2 = 0;                                                              // Variable to save the turning direction of wheel 2.
 int direction_3 = 0;                                                              // Variable to save the turning direction of wheel 3.
-int flagcommand;                                                                  // Available command flag.
+int flagcommand_1;                                                                // Available flag command 1.
+int flagcommand_2;                                                                // Available flag command 2.
 unsigned int counterflag_1 = 0;                                                   // Defined flag for encoder of wheel 1.
 unsigned int counterflag_2 = 0;                                                   // Defined flag for encoder of wheel 2.
 unsigned int counterflag_3 = 0;                                                   // Defined flag for encoder of wheel 3.
@@ -127,8 +130,8 @@ void IRAM_ATTR Timer3_ISR();                                                    
 void IRAM_ATTR Timer2_ISR(){
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
-  if(!Ps3.isConnected()){
-    Serial.println(angular_velocities);                                           // Print angular velocities by serial peripheral.
+  if(!Ps3.isConnected() && flagcommand_2 == 1){
+    MySerial.println(angular_velocities);                                         // Print angular velocities via UART 2 peripheral.
   }
 }
 //-----------------------------------------------------------------------------------
@@ -162,6 +165,7 @@ void setup(){
   pinMode(ENC,OUTPUT);                                                            // Configuring pin 21 as output.
   pinMode(IN5,OUTPUT);                                                            // Configuring pin 22 as output.
   pinMode(IN6,OUTPUT);                                                            // Configuring pin 23 as output.
+  pinMode(RST,OUTPUT);                                                            // Configuring pin 33 as output.
   pinMode(Q1A,INPUT);                                                             // Configuring pin 13 as input.
   pinMode(Q1B,INPUT);                                                             // Configuring pin 12 as input.
   pinMode(Q2A,INPUT);                                                             // Configuring pin 14 as input.
@@ -170,9 +174,9 @@ void setup(){
   pinMode(Q3B,INPUT);                                                             // Configuring pin 25 as input.
   //---------------------------------------------------------------------------------
   // Configuring LEDC PWMs:
-  ledcAttach(ENA,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENA = 15 as PWM output signal with desired frequency and resolution of this PWM signal.
-  ledcAttach(ENB,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENB = 16 as PWM output signal with desired frequency and resolution of this PWM signal.
-  ledcAttach(ENC,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENC = 18 as PWM output signal with desired frequency and resolution of this PWM signal.
+  // ledcAttach(ENA,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENA = 15 as PWM output signal with desired frequency and resolution of this PWM signal.
+  // ledcAttach(ENB,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENB = 16 as PWM output signal with desired frequency and resolution of this PWM signal.
+  // ledcAttach(ENC,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENC = 18 as PWM output signal with desired frequency and resolution of this PWM signal.
   //---------------------------------------------------------------------------------
   // Enabling UART communications:
   // Initialize serial monitor (UART 0):
@@ -182,12 +186,33 @@ void setup(){
                                                                                   // ESP32 has 256 bytes.
                                                                                   // Call must come before begin().
   MySerial.begin(Baud_Rate,SERIAL_8N1,RXD2,TXD2);                                 // Open a serial connection (UART 2).
+  digitalWrite(RST,HIGH);                                                         // Turn RST pin to HIGH for establishing UART communication with Xbee.
   init_cbuff();                                                                   // Clear buffer.
   //---------------------------------------------------------------------------------
   // Configuring PS3 controller:
   ps3SetBluetoothMacAddress(new_mac);                                             // Setting MAC address for PS3 controller.
   Ps3.begin("c0:14:3d:63:9e:ca");                                                 // Enable PS3 controller communication.
   Serial.println("PS3 Controller is --Ready.");
+  //---------------------------------------------------------------------------------
+  // Configuring MCPWMs:
+  mcpwm_config_t pwm_config;                                                      // MCPWM structure for configuration parameters.
+  pwm_config.frequency = PWMs_Frequency;                                          // Frequency = 1 KHz.
+  pwm_config.cmpr_a = 0;                                                          // Duty cycle of PWMxA = 0
+  pwm_config.cmpr_b = 0;                                                          // Duty cycle of PWMxB = 0
+  pwm_config.counter_mode = MCPWM_UP_COUNTER;
+  pwm_config.duty_mode = MCPWM_DUTY_MODE_0;
+  // Initialize PWMs:
+  mcpwm_init(MCPWM_UNIT_0,MCPWM_TIMER_0,&pwm_config);                             // Configure PWM0A timer 0 with above settings.
+  mcpwm_init(MCPWM_UNIT_0,MCPWM_TIMER_1,&pwm_config);                             // Configure PWM0A timer 1 with above settings.
+  mcpwm_init(MCPWM_UNIT_0,MCPWM_TIMER_2,&pwm_config);                             // Configure PWM0A timer 1 with above settings.
+  // Set the GPIO pins for PWMs output:
+  mcpwm_gpio_init(MCPWM_UNIT_0,MCPWM0A,ENA);                                      // Setting pin ENA = 15 as MCPWM with channel 0A assigned.
+  mcpwm_gpio_init(MCPWM_UNIT_0,MCPWM1A,ENB);                                      // Setting pin ENB = 16 as MCPWM with channel 1A assigned.
+  mcpwm_gpio_init(MCPWM_UNIT_0,MCPWM2A,ENC);                                      // Setting pin ENC = 18 as MCPWM with channel 2A assigned.
+  // Start the MCPWM modules:
+  mcpwm_start(MCPWM_UNIT_0,MCPWM_TIMER_0);                                        // Start MCPWM module connected to ENA.
+  mcpwm_start(MCPWM_UNIT_0,MCPWM_TIMER_1);                                        // Start MCPWM module connected to ENB.
+  mcpwm_start(MCPWM_UNIT_0,MCPWM_TIMER_2);                                        // Start MCPWM module connected to ENC.
   //---------------------------------------------------------------------------------
   // Activate interrupts for counting pulses on attached encoders on robot's wheels:
   attachInterrupt(digitalPinToInterrupt(Q1A),Q1A_Interrupt,CHANGE);
@@ -222,7 +247,7 @@ void Timer3_Setup(){
 // initializing buffer:
 void init_cbuff(void){
   int i;
-  flagcommand = 0;                                                                // Reset flagcommand value.
+  flagcommand_1 = 0;                                                              // Reset value of flag command 1.
   for(i = 0; i < bufferSize_str; i++){                                            // Bucle that set to 0 all.
     chain[i] = 0x00;                                                              // Characters in buffer.
   }
@@ -233,10 +258,10 @@ void init_cbuff(void){
 void add_2_cbuff(char c){
   switch(c){
     case 0x0D:                                                                    // Line Feed 1 -> Enable flag.
-    flagcommand = 1;
+    flagcommand_1 = 1;
     break;
     case 0x0A:                                                                    // Line Feed 2 -> Enable flag.
-    flagcommand = 1;
+    flagcommand_1 = 1;
     break;
     case 0x08:                                                                    // Del -> Delete last character from buffer.
     if(Ibuff > 0) chain[--Ibuff] = 0x00;
@@ -289,7 +314,8 @@ void MovingWheel_1(float value){
     digitalWrite(IN1,LOW);
     digitalWrite(IN2,HIGH);
   }
-  ledcWrite(PWM_Channel_0,PWMdc);                                                 // Setting duty cycle value in PWM of wheel 1 (1 Khz).
+  float duty_cycle = PWMdc*100.0f/(float)(pow(2,PWMs_Resolution));                // Duty cycle value for MCPWM_OPR_A of MCPWM_TIMER_0.
+  mcpwm_set_duty(MCPWM_UNIT_0,MCPWM_TIMER_0,MCPWM_OPR_A,duty_cycle);              // Set the duty cycle for PWM0A.
 }
 //-----------------------------------------------------------------------------------
 // Motion generation for wheel 2 (according to control signal):
@@ -308,7 +334,8 @@ void MovingWheel_2(float value){
     digitalWrite(IN3,LOW);
     digitalWrite(IN4,HIGH);
   }
-  ledcWrite(PWM_Channel_1,PWMdc);                                                 // Setting duty cycle value in PWM of wheel 2 (1 Khz).
+  float duty_cycle = PWMdc*100.0f/(float)(pow(2,PWMs_Resolution));                // Duty cycle value for MCPWM_OPR_A of MCPWM_TIMER_1.
+  mcpwm_set_duty(MCPWM_UNIT_0,MCPWM_TIMER_1,MCPWM_OPR_A,duty_cycle);              // Set the duty cycle for PWM1A.
 }
 //-----------------------------------------------------------------------------------
 // Motion generation for wheel 3 (according to control signal):
@@ -327,7 +354,8 @@ void MovingWheel_3(float value){
     digitalWrite(IN5,LOW);
     digitalWrite(IN6,HIGH);
   }
-  ledcWrite(PWM_Channel_2,PWMdc);                                                 // Setting duty cycle value in PWM of wheel 3 (1 Khz).
+  float duty_cycle = PWMdc*100.0f/(float)(pow(2,PWMs_Resolution));                // Duty cycle value for MCPWM_OPR_A of MCPWM_TIMER_2.
+  mcpwm_set_duty(MCPWM_UNIT_0,MCPWM_TIMER_2,MCPWM_OPR_A,duty_cycle);              // Set the duty cycle for PWM2A.
 }
 //-----------------------------------------------------------------------------------
 // Interruption by change of signal A of encoder attached on wheel 1:
@@ -472,20 +500,21 @@ void loop(){
   // Putting the main code here, to run repeatedly:
   int i, j;                                                                       // Declaration of i and j as integer variables.
   if(Ps3.isConnected() || MySerial.available() > 0){
+    flagcommand_2 = 1;                                                            // Set flag command 2 to 1.
     while(MySerial.available() > 0){
       character = 0x00;                                                           // Defining character.
       character = MySerial.read();                                                // Last received character.
       add_2_cbuff(character);                                                     // Adding character to data buffer assigned to UART 2 module.
     }
     // Taking values from UART 2 module:
-    if(flagcommand == 1 &&  && !Ps3.isConnected()){
+    if(flagcommand_1 == 1 && !Ps3.isConnected()){
       string2float();                                                             // Call string2float() function.
       init_cbuff();                                                               // Clear buffer.
       MovingWheel_1(Control_1*d_th21_max/100.0f);                                 // Calling function that moves wheel 1 at certain desired angular velocity.
       MovingWheel_2(Control_2*d_th22_max/100.0f);                                 // Calling function that moves wheel 2 at certain desired angular velocity.
       MovingWheel_3(Control_3*d_th23_max/100.0f);                                 // Calling function that moves wheel 3 at certain desired angular velocity.
     }
-    if(Ps3.isConnected()){
+    else if(Ps3.isConnected()){
       // Arranging velocity command data obtained from PS3 controller, in [mm/s] and [rad/s] units:
       float ps3_u_k[6] = {                                         -(float)(Ps3.data.analog.stick.rx)*V1_x_max/128.0f,
                                                                     (float)(Ps3.data.analog.stick.ry)*V1_y_max/128.0f,
@@ -517,8 +546,10 @@ void loop(){
       //--------------------------------------
       // Arranging and sending control signals:
       sprintf(ControlSignals,":0,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
-      MySerial.println(ControlSignals);
+      Serial.println(ControlSignals);                                             // Print computed control signals via UART 1.
+      MySerial.println(ControlSignals);                                           // Print computed control signals via UART 2.
     }
+    else NOP();                                                                   // No operation cycle.
   }
-  delay(50);                                                                      // 50 milliseconds delay.
+  delayMicroseconds(2);                                                           // 2 microseconds delay.
 }

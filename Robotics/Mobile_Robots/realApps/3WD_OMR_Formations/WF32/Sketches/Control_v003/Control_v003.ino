@@ -167,7 +167,7 @@ void __attribute__((interrupt)) Timer_4_Handler(){
     counter_4 = 0;                                                      // Reset counter.
     digitalWrite(PIN_LED4,LOW);                                         // Turn led 4 off (1 second).
   }
-  if(iterations <= final_iteration){
+  if(iterations <= final_iteration && flagcommand_0){
     //---------------------------------------------------------------------------------------------------------
     // Updating the state variables to current values:
     for(i = 0; i < 3*Robots_Qty; i++){
@@ -288,7 +288,7 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
   // Taking values from UART 1 module:
   // If streaming data is completely added to char buffer of UART1 struct:
   if(UART1.flag[1]){
-    classify_charBuffer(&UART1);                                        // Classify data from assigned buffer to UART1 struct data matrix. 
+    classify_charBuffer(&UART1);                                        // Classify data from assigned buffer to UART 1 structure data matrix. 
     init_charBuffer(&UART1);                                            // Initialize char-type data buffer associated to UART 1.
     digitalWrite(PIN_LED6,LOW);                                         // Turn led 6 off.
     if(!flagcommand_0){
@@ -411,7 +411,7 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
   add_2_charBuffer(&UART4,character);                                   // Adding character to data buffer assigned to UART 4 module.
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 4 module:
-  // If streaming data is completely added to the char buffer of UART 4 struct:
+  // If streaming data is completely added to the char buffer of UART 4 structure:
   if(UART4.flag[1]){
     classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART4 struct data matrix.
     for(i = 0; i < 3; i++){
@@ -428,7 +428,7 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
 void start_uart_1_module(){
   uint16_t baudrate_reg = ((FPB/desired_baudrate_1)/4) - 1;             // Calculating baud rate register with BRGH = 1.
   U1BRG = baudrate_reg;                                                 // Setting Baud rate.
-  U1STA = 0x0;                                                          // Clear UART1 Status and Control Register.
+  U1STA = 0x0;                                                          // Clear UART 1 Status and Control Register.
   U1MODE = 0x8008;                                                      // Enable UART 1 module for BRGH = 1, 8-bit data, no parity, and 1 stop bit.
   U1STASET = 0x1005400;                                                 // Enable Transmit and Receive;
                                                                         // Automatic Address Detect mode is enabled.
@@ -444,7 +444,7 @@ void start_uart_1_module(){
 void start_uart_4_module(){
   uint16_t baudrate_reg = round(((FPB/desired_baudrate_4)/16) - 1);     // Calculating baud rate register with BRGH = 0.
   U4BRG = baudrate_reg;                                                 // Setting Baud rate.
-  U4STA = 0x0;                                                          // Clear UART4 Status and Control Register.
+  U4STA = 0x0;                                                          // Clear UART 4 Status and Control Register.
   U4MODE = 0x8000;                                                      // Enable UART 4 module for BRGH = 0, 8-bit data, no parity, and 1 stop bit.
   U4STASET = 0x1005400;                                                 // Enable Transmit and Receive;
                                                                         // Automatic Address Detect mode is enabled.

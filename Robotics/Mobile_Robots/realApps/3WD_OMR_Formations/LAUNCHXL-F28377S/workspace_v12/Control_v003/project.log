@@ -6,3 +6,19 @@
 
 		!WARNING: Unresolved target-tool option 'com.ti.ccstudio.buildDefinitions.C2000_15.12.compilerID.ABI'
 
+
+
+!CONFIGURATION: 'Debug' (com.ti.ccstudio.buildDefinitions.C2000.Debug.1336175088) [Mon Sep 23 15:57:31 ART 2024]
+
+	!TOOL: 'C2000 Compiler' (com.ti.ccstudio.buildDefinitions.C2000_15.12.exe.compilerDebug.1799643340)
+
+		!WARNING: Unresolved target-tool option 'com.ti.ccstudio.buildDefinitions.C2000_15.12.compilerID.ABI'
+
+
+
+!CONFIGURATION: 'Release' (com.ti.ccstudio.buildDefinitions.C2000.Release.1297758130) [Mon Sep 23 15:58:02 ART 2024]
+
+	!TOOL: 'C2000 Compiler' (com.ti.ccstudio.buildDefinitions.C2000_15.12.exe.compilerRelease.1226800695)
+
+		!WARNING: Unresolved target-tool option 'com.ti.ccstudio.buildDefinitions.C2000_15.12.compilerID.ABI'
+
