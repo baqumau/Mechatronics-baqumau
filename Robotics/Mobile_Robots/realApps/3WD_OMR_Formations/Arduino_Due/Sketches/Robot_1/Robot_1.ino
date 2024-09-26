@@ -43,7 +43,7 @@ int Ibuff = 0x00;                                                 // Index: next
 int direction_1 = 0;                                              // Variable to save the turning direction of wheel 1.
 int direction_2 = 0;                                              // Variable to save the turning direction of wheel 2.
 int direction_3 = 0;                                              // Variable to save the turning direction of wheel 3.
-int identifier = 0;                                               // Variable to identify if operation on PS3 mode or Optitrack mode.
+int identifier = 0;                                               // Variable to identify if operation on Optitrack (0) mode or PS3 mode (1).
 unsigned int counterflag_1 = 0;                                   // Defined flag for encoder of wheel 1.
 unsigned int counterflag_2 = 0;                                   // Defined flag for encoder of wheel 2.
 unsigned int counterflag_3 = 0;                                   // Defined flag for encoder of wheel 3.
@@ -53,6 +53,7 @@ int long counter_3 = 0;                                           // Counter of 
 int long counter_4 = 0;                                           // Counter of signal B status on encoder of wheel 2.
 int long counter_5 = 0;                                           // Counter of signal A status on encoder of wheel 3.
 int long counter_6 = 0;                                           // Counter of signal B status on encoder of wheel 3.
+int long counter_7 = 0;                                           // Time out counter.
 unsigned int long pulsetime_1 = 0;                                // Variable to save pulse time a for encoder of wheel 1.
 unsigned int long pulsetime_2 = 0;                                // Variable to save pulse time a for encoder of wheel 2.
 unsigned int long pulsetime_3 = 0;                                // Variable to save pulse time a for encoder of wheel 3.
@@ -142,7 +143,12 @@ void TC8_Handler(){
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":0,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   // Sending angular velocities values through UART 2:
-  if(identifier == 0 && flagcommand_2 == 1) Serial2.println(angular_velocities);
+  if(identifier == 0 && flagcommand_2){
+    Serial2.println(angular_velocities);                          // Print angular velocities via UART 2.
+    flagcommand_2 = false;                                        // Reset flag command 2.
+  }
+  else if(identifier > 0 && flagcommand_2) flagcommand_2 = false; // Reset flag command 2.
+  else NOP;                                                       // No operation cycle.
 }
 //-----------------------------------------------------------------------------------------------------------------------------
 // initializing buffer:
@@ -419,12 +425,12 @@ void Q3B_Interrupt(){
 //-----------------------------------------------------------------------------------------------------------------------------
 void loop(){
   while(Serial2.available() > 0){
-    flagcommand_2 = true;                                         // Change value of flag command 2.
     character = 0x00;
     character = Serial2.read();                                   // Last received character.
     add_2_cbuff(character);                                       // Add character to buffer.
   }
   if(flagcommand_1){
+    flagcommand_2 = true;                                         // Change value of flag command 2 to TRUE.
     string2float();                                               // Call string2float() function. 
     init_cbuff();                                                 // Clear buffer.
     MovingWheel_1(Control_1);                                     // Calling function that moves wheel 1.

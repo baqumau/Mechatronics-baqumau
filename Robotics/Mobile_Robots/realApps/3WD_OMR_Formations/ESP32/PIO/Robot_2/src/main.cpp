@@ -27,8 +27,6 @@
 #include <stdbool.h>
 #include <math.h>
 #include "driver/mcpwm.h"
-#include "soc/mcpwm_reg.h"
-#include "soc/mcpwm_struct.h"
 #include "3WD_OMRs_Controllers.h"
 //-----------------------------------------------------------------------------------
 // Assign UART2:
@@ -85,10 +83,9 @@ float Control_3;                                                                
 float r1_Control_1;                                                               // Variable to save control signal value of OMR 1 (u_1 from PS3 Controller).
 float r1_Control_2;                                                               // Variable to save control signal value of OMR 1 (u_2 from PS3 Controller).
 float r1_Control_3;                                                               // Variable to save control signal value of OMR 1 (u_3 from PS3 Controller).
-volatile double ang_vel_1;                                                        // Angular velocity in rad/s of wheel 1.
-volatile double ang_vel_2;                                                        // Angular velocity in rad/s of wheel 2.
-volatile double ang_vel_3;                                                        // Angular velocity in rad/s of wheel 3.
-volatile uint32_t iterations = 0;                                                 // Iterations counter in the execution of this program.
+volatile double ang_vel_1 = 0.0;                                                  // Angular velocity in rad/s of wheel 1.
+volatile double ang_vel_2 = 0.0;                                                  // Angular velocity in rad/s of wheel 2.
+volatile double ang_vel_3 = 0.0;                                                  // Angular velocity in rad/s of wheel 3.
 hw_timer_t *Timer2_Cfg = NULL;                                                    // Pointer declaration for timer 2 execution.
 hw_timer_t *Timer3_Cfg = NULL;                                                    // Pointer declaration for timer 3 execution.
 // Arranging a constant matrix W1, that serves to find PWM actuation signals for each wheel of involved vehicles in the OMR formation:
@@ -162,7 +159,7 @@ void setup(){
   // Configuring PS3 controller:
   ps3SetBluetoothMacAddress(new_mac);                                             // Setting MAC address for PS3 controller.
   Ps3.begin("c0:14:3d:63:9e:ca");                                                 // Enable PS3 controller communication.
-  Serial.println("Ready.");                                                       // Print to indicate successful connection.
+  Serial.println("PS3 Controller is --Ready.");                                   // Print to indicate successful connection.
   //---------------------------------------------------------------------------------
   // Configuring MCPWMs:
   // mcpwm_config_t pwm_config;                                                      // MCPWM structure for configuration parameters.
@@ -212,7 +209,6 @@ void loop(){
   // Putting the main code here, to run repeatedly:
   int i, j;                                                                       // Declaration of i and j as integer variables.
   if(Ps3.isConnected() || MySerial.available() > 0){
-    flagcommand_2 = 1;                                                            // Set flag command 2 to 1.
     while(MySerial.available() > 0){
       character = 0x00;                                                           // Defining first value of character.
       character = MySerial.read();                                                // Last received character.
@@ -220,14 +216,19 @@ void loop(){
     }
     // Taking values from UART 2 module:
     if(flagcommand_1 == 1 && !Ps3.isConnected()){
+      flagcommand_2 = 1;                                                          // Set flag command 2 to 1.
       string2float();                                                             // Call string2float() function.
-      Serial.println(chain);                                                      // Print adquired data chain from UART 2.
       init_cbuff();                                                               // Clear buffer.
       MovingWheel_1(Control_1*d_th21_max/100.0f);                                 // Calling function that moves wheel 1 at certain desired angular velocity.
       MovingWheel_2(Control_2*d_th22_max/100.0f);                                 // Calling function that moves wheel 2 at certain desired angular velocity.
       MovingWheel_3(Control_3*d_th23_max/100.0f);                                 // Calling function that moves wheel 3 at certain desired angular velocity.
     }
     else if(Ps3.isConnected()){
+      // Reseting start indicator:
+      if(flagcommand_2 == 1){
+        init_cbuff();                                                             // Clear buffer.
+        flagcommand_2 = 0;                                                        // Reset flag command 2.
+      }
       // Arranging velocity command data obtained from PS3 controller, in [mm/s] and [rad/s] units:
       float ps3_u_k[6] = {                                         -(float)(Ps3.data.analog.stick.rx)*V1_x_max/128.0f,
                                                                     (float)(Ps3.data.analog.stick.ry)*V1_y_max/128.0f,
@@ -258,8 +259,9 @@ void loop(){
       sprintf(PS3_analog_data,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",ps3_v_k[0],ps3_v_k[1],ps3_v_k[2],ps3_v_k[3],ps3_v_k[4],ps3_v_k[5]);
       //--------------------------------------
       // Arranging and sending control signals:
-      sprintf(ControlSignals,":1,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
-      MySerial.println(ControlSignals);
+      sprintf(ControlSignals,":2,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
+      MySerial.println(ControlSignals);                                           // Print computed control signals via UART 2.
+      Serial.println(ControlSignals);                                             // Print computed control signals via UART 1 (to check correct functionality).
     }
     else NOP();                                                                   // No operation cycle.
   }
@@ -297,7 +299,7 @@ void add_2_cbuff(char c){
 //-----------------------------------------------------------------------------------
 // Changing character string to floating numbers:
 void string2float(){
-  int i = 0; int j = 0; int r = 0; int s = 0; int t = 0;                          // Declaration of i, j, r, s and t as integer variable.
+  int i, j = 0, r = 0, s = 0, t = 0;                                              // Declaration of i, j, r, s and t as integer variables.
   // separating received data from UART module:
   for(i = 0; i < Ibuff; i++){
     if(chain[i] == ','){                                                          // Detecting ',' within data chain.
@@ -552,12 +554,12 @@ void IRAM_ATTR Timer2_ISR(){
   sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   if(!Ps3.isConnected() && flagcommand_2 == 1){
     MySerial.println(angular_velocities);                                         // Print angular velocities by serial peripheral.
+    flagcommand_2 = 0;                                                            // Reset flag command 2.
   }
 }
 //-----------------------------------------------------------------------------------
 // Timer 3 interrupt at 10 Hz:
 void IRAM_ATTR Timer3_ISR(){
-  iterations++;                                                                   // Increasing execution iterations.
   if(direction_1 == 0){
     ang_vel_1 = 0.0;                                                              // Setting angular velocity of robot wheel 1 to zero.
   }

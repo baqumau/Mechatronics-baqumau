@@ -115,7 +115,7 @@ float diff_fc = 45.0f;                                                  // Assig
 // Creating data structure for UART 1 peripheral:
 Data_Struct UART1 = createDataStruct(bufferSize,1,3*Robots_Qty,16);
 // Creating data structure for UART 4 peripheral:
-Data_Struct UART4 = createDataStruct(bufferSize,2,3,16);
+Data_Struct UART4 = createDataStruct(bufferSize,3,3,16);
 // Creating data structure for a high-gain observer in the robot space:
 RS_Observer RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
 // Creating data structure for a high-gain observer in the cluster space:

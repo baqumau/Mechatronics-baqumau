@@ -87,7 +87,6 @@ float r1_Control_3;                                                             
 volatile double ang_vel_1 = 0.0;                                                  // Angular velocity in rad/s of wheel 1.
 volatile double ang_vel_2 = 0.0;                                                  // Angular velocity in rad/s of wheel 2.
 volatile double ang_vel_3 = 0.0;                                                  // Angular velocity in rad/s of wheel 3.
-volatile uint32_t iterations = 0;                                                 // Iterations counter in the execution of this program.
 hw_timer_t *Timer2_Cfg = NULL;                                                    // Pointer declaration for timer 2 execution.
 hw_timer_t *Timer3_Cfg = NULL;                                                    // Pointer declaration for timer 3 execution.
 // Arranging a constant matrix W1, that serves to find PWM actuation signals for each wheel of involved vehicles in the OMR formation:
@@ -131,7 +130,8 @@ void IRAM_ATTR Timer2_ISR(){
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   if(!Ps3.isConnected() && flagcommand_2 == 1){
-    MySerial.println(angular_velocities);                                         // Print angular velocities via UART 2 peripheral.
+    MySerial.println(angular_velocities);                                         // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
+    flagcommand_2 = 0;                                                            // Reset flag command 2.
   }
 }
 //-----------------------------------------------------------------------------------
@@ -172,11 +172,6 @@ void setup(){
   pinMode(Q2B,INPUT);                                                             // Configuring pin 27 as input.
   pinMode(Q3A,INPUT);                                                             // Configuring pin 26 as input.
   pinMode(Q3B,INPUT);                                                             // Configuring pin 25 as input.
-  //---------------------------------------------------------------------------------
-  // Configuring LEDC PWMs:
-  // ledcAttach(ENA,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENA = 15 as PWM output signal with desired frequency and resolution of this PWM signal.
-  // ledcAttach(ENB,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENB = 16 as PWM output signal with desired frequency and resolution of this PWM signal.
-  // ledcAttach(ENC,PWMs_Frequency,PWMs_Resolution);                                 // Setting pin ENC = 18 as PWM output signal with desired frequency and resolution of this PWM signal.
   //---------------------------------------------------------------------------------
   // Enabling UART communications:
   // Initialize serial monitor (UART 0):
@@ -273,7 +268,7 @@ void add_2_cbuff(char c){
 //-----------------------------------------------------------------------------------
 // Changing character string to floating numbers:
 void string2float(){
-  int i = 0; int j = 0; int r = 0; int s = 0; int t = 0;
+  int i, j = 0, r = 0, s = 0, t = 0;                                              // Declaration of i, j, r, s and t as integer variables.
   // separating received data from UART module:
   for(i = 0; i < Ibuff; i++){
     if(chain[i] == ','){                                                          // Detecting ',' within data chain.
@@ -500,7 +495,6 @@ void loop(){
   // Putting the main code here, to run repeatedly:
   int i, j;                                                                       // Declaration of i and j as integer variables.
   if(Ps3.isConnected() || MySerial.available() > 0){
-    flagcommand_2 = 1;                                                            // Set flag command 2 to 1.
     while(MySerial.available() > 0){
       character = 0x00;                                                           // Defining character.
       character = MySerial.read();                                                // Last received character.
@@ -508,6 +502,7 @@ void loop(){
     }
     // Taking values from UART 2 module:
     if(flagcommand_1 == 1 && !Ps3.isConnected()){
+      flagcommand_2 = 1;                                                          // Set flag command 2 to 1.
       string2float();                                                             // Call string2float() function.
       init_cbuff();                                                               // Clear buffer.
       MovingWheel_1(Control_1*d_th21_max/100.0f);                                 // Calling function that moves wheel 1 at certain desired angular velocity.
@@ -515,6 +510,11 @@ void loop(){
       MovingWheel_3(Control_3*d_th23_max/100.0f);                                 // Calling function that moves wheel 3 at certain desired angular velocity.
     }
     else if(Ps3.isConnected()){
+      // Reseting start indicator:
+      if(flagcommand_2 == 1){
+        init_cbuff();                                                             // Clear buffer.
+        flagcommand_2 = 0;                                                        // Reset flag command 2.
+      }
       // Arranging velocity command data obtained from PS3 controller, in [mm/s] and [rad/s] units:
       float ps3_u_k[6] = {                                         -(float)(Ps3.data.analog.stick.rx)*V1_x_max/128.0f,
                                                                     (float)(Ps3.data.analog.stick.ry)*V1_y_max/128.0f,
@@ -545,8 +545,8 @@ void loop(){
       sprintf(PS3_analog_data,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",ps3_v_k[0],ps3_v_k[1],ps3_v_k[2],ps3_v_k[3],ps3_v_k[4],ps3_v_k[5]);
       //--------------------------------------
       // Arranging and sending control signals:
-      sprintf(ControlSignals,":1,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
-      Serial.println(ControlSignals);                                             // Print computed control signals via UART 1.
+      sprintf(ControlSignals,":2,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
+      Serial.println(ControlSignals);                                             // Print computed control signals via UART 1 (to check correct functionality).
       MySerial.println(ControlSignals);                                           // Print computed control signals via UART 2.
     }
     else NOP();                                                                   // No operation cycle.
