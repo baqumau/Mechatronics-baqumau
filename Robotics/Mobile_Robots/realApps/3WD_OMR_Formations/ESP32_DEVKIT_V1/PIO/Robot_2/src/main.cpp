@@ -261,7 +261,7 @@ void loop(){
       // Arranging and sending control signals:
       sprintf(ControlSignals,":2,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f;",r1_Control_1,r1_Control_2,r1_Control_3,Control_1,Control_2,Control_3);
       MySerial.println(ControlSignals);                                           // Print computed control signals via UART 2.
-      Serial.println(ControlSignals);                                             // Print computed control signals via UART 1 (to check correct functionality).
+      // Serial.println(ControlSignals);                                             // Print computed control signals via UART 1 (to check correct functionality).
     }
     else NOP();                                                                   // No operation cycle.
   }
@@ -273,7 +273,7 @@ void loop(){
 // Initializing buffer:
 void init_cbuff(void){
   int i;                                                                          // Declaration of i as integer variable.
-  flagcommand_1 = 0;                                                                // Reset flag command state to 0.
+  flagcommand_1 = 0;                                                              // Reset flag command state to 0.
   for(i = 0; i < bufferSize_str; i++){                                            // Bucle that set to 0 all.
     chain[i] = 0x00;                                                              // Characters in buffer.
   }
