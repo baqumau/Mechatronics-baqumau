@@ -145,7 +145,11 @@ void TC8_Handler(){
   // Sending angular velocities values through UART 2:
   if(identifier == 0 && flagcommand_2){
     Serial2.println(angular_velocities);                          // Print angular velocities via UART 2.
-    flagcommand_2 = false;                                        // Reset flag command 2.
+    if(counter_7 >= 20){
+      flagcommand_2 = false;                                      // Reset flag command 2.
+      counter_7 = 0;                                              // Reset counter 7.
+    }
+    else counter_7++;                                             // Increasing counter 7.
   }
   else if(identifier > 0 && flagcommand_2) flagcommand_2 = false; // Reset flag command 2.
   else NOP;                                                       // No operation cycle.

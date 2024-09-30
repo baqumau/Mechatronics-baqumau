@@ -15,7 +15,7 @@ Unfortunately ChipKit WF32 with ARDUINO framework does not work appropriately.*/
 #define prescaler_5 256                                                 // Prescaler for the ticks of Timer 5.
 #define freq_hz_5 10                                                    // Frequency in Hz for instructions execution of Timer 5.
 #define ticks_per_second 80E6                                           // Ticks per seconds of machine's clock.
-#define exe_minutes 4                                                   // Run time minutes.
+#define exe_minutes 2                                                   // Run time minutes.
 #define NOP __asm__ __volatile__ ("nop\n\t")                            // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
 // Including libraries to the program:
@@ -513,6 +513,7 @@ void setup(){
   start_timer_3_interrupt();                                            // Start Timer 3 interrupt (MATLAB communication).
   start_timer_4_interrupt();                                            // Start Timer 4 interrupt (Control loop).
   start_timer_5_interrupt();                                            // Start Timer 5 interrupt (Saving data).
+  Serial1.println(":0,0.00,0.00,0.00,0.00,0.00,0.00;");                 // Write initial control signals through UART 4.
   delayMicroseconds(100);                                               // 100 microseconds delay.
 }
 //---------------------------------------------------------------------------------------------------------------
