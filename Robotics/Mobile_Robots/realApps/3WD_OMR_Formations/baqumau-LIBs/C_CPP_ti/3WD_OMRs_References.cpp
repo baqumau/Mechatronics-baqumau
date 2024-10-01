@@ -496,3 +496,90 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
+// Compute the statical reference trajectory n: 01, for OMRs control system:
+void computeStatical01(Reference REF, enum Control_System consys){
+    int i;                                                                                  // Declaration of i as integer variable.
+    // Executing builder algorithm for static trajectory:
+    if(REF.flag[0]){
+        // Updating algorithm:
+        for(i = 0; i < 3*Robots_Qty; i++){
+            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF struct.
+            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF struct.
+            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF struct.
+            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF struct.
+            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF struct.
+            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF struct.
+            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF struct.
+        }
+        // Computing ecuations for generation of statical reference profiles in the cluster space:
+        switch(Robots_Qty){
+            case 2:{
+                float d_ph1_k = 0.25f;                                                      // Desired angular velocity of robot 1 (rad/s).
+                float d_ph2_k = -0.25f;                                                     // Desired angular velocity of robot 2 (rad/s).
+                //------------------------------Cluster Space--------------------------------
+                REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
+                REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.
+                REF.z2_kp1[2] = 0.0f;                                                       // Computing d(thc)/dt.
+                REF.z2_kp1[3] = 0.0f;                                                       // Computing d(dc)/dt.
+                REF.z2_kp1[4] = d_ph1_k;                                                    // Computing d(psi_1)/dt.
+                REF.z2_kp1[5] = d_ph2_k;                                                    // Computing d(psi_2)/dt.
+                //------------------------------
+                REF.z3_kp1[0] = 0.0f;                                                       // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = 0.0f;                                                       // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[2] = 0.0f;                                                       // Computing d^2(thc)/dt^2.
+                REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
+                REF.z3_kp1[4] = 0.0f;                                                       // Computing d^2(psi_1)/dt^2.
+                REF.z3_kp1[5] = 0.0f;                                                       // Computing d^2(psi_2)/dt^2.
+                //-------------------------------Robot Space---------------------------------
+                float SC2_kp1 = sin(REF.z1_kp1[2]);                                         // Precompute sin(thc).
+                float CC2_kp1 = cos(REF.z1_kp1[2]);                                         // Precompute cos(thc).
+                float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                      // Precompute operation OP1(k).
+                float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                      // Precompute operation OP2(k).
+                //------------------------------
+                REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
+                REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
+                REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
+                REF.x1_kp1[3] = REF.z1_kp1[0] - OP1_kp1;
+                REF.x1_kp1[4] = REF.z1_kp1[1] - OP2_kp1;
+                REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
+                //------------------------------
+                REF.x2_kp1[0] = 0.0f;
+                REF.x2_kp1[1] = 0.0f;
+                REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
+                REF.x2_kp1[3] = 0.0f;
+                REF.x2_kp1[4] = 0.0f;
+                REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
+                //------------------------------
+                REF.x3_kp1[0] = 0.0f;
+                REF.x3_kp1[1] = 0.0f;
+                REF.x3_kp1[2] = 0.0f;
+                REF.x3_kp1[3] = 0.0f;
+                REF.x3_kp1[4] = 0.0f;
+                REF.x3_kp1[5] = 0.0f;
+                //------------------------------
+                Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
+                break;
+            }
+        }
+        switch(consys){
+            case ADRC_RS:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the robot space:
+                REF.y_k[i] = roundToThreeDecimals(REF.x1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.x2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.x3_k[i]);
+            }
+            break;
+            case SMC_CS:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the cluster space:
+                REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+            }
+            break;
+        }
+    }
+    else NOP;                                                                               // No operation.
+}
+//---------------------------------------------------------------------------------------------------------------

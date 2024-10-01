@@ -15,7 +15,7 @@ control systems in the OMRs formation.*/
 #include <xc.h>                                                                 // Header file that allows code in the source file to access compiler-specific or device-specific features.
                                                                                 // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
                                                                                 // header file.
-#include "3WD_OMRs_Controllers.h"
+#include "3WD_OMRs_Controllers.h"                                               // Controllers library for OMRs.
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement a set of reference trajectory profiles on workspace:
 typedef struct{
@@ -50,7 +50,8 @@ enum Reference_Type{
     CIRCUMFERENCE_01,                                                           // Circumference-shape trajectory with OMRs orientation angles synchronized to the whole cluster orientation.
     CIRCUMFERENCE_02,                                                           // Circumference-shape trajectory with OMRs orientation angles fixed to a desired value.
     MINGYUE_01,                                                                 // Infinity-shape trajectory with OMRs orientation angles synchronized to the whole cluster orientation.
-    MINGYUE_02                                                                  // Infinity-shape trajectory with OMRs orientation angles fixed to a desired value.
+    MINGYUE_02,                                                                 // Infinity-shape trajectory with OMRs orientation angles fixed to a desired value.
+    STATIC_01                                                                   // Trivial static-formation trajectory 1, where robots are placed in a fixed position while turning on the normal axis to 1/4 rad/s.
 };
 //---------------------------------------------------------------------------------------------------------------
 // Declaration of functions library:
@@ -65,6 +66,8 @@ extern void computeCircumference01(Reference REF, enum Control_System consys, in
 extern void computeInfinity01(Reference REF, enum Control_System consys, int iterations);
 // Compute the instantaneous mingyue's infinity-shape reference trajectory n: 02, for OMRs control system:
 extern void computeInfinity02(Reference REF, enum Control_System consys, int iterations);
+// Compute the statical reference trajectory n: 01, for OMRs control system:
+extern void computeStatical01(Reference REF, enum Control_System consys);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _3WD_OMRs_REFERENCES_H_ */
 //---------------------------------------------------------------------------------------------------------------
