@@ -111,11 +111,23 @@ void onTimer1(void* arg){
   sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   if(flagcommand_2 == 1){
     MySerial.println(angular_velocities);                                         // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
-    if(counter_7 >= 20){
-      flagcommand_2 = 0;                                                          // Reset flag command 2.
+    if(counter_7 >= 11) flagcommand_2 = 0;                                        // Reset flag command 2.
+    else counter_7++;                                                             // Increasing counter 7.
+  }
+  else{
+    if(counter_7 >= 34){
       counter_7 = 0;                                                              // Reset counter 7.
     }
-    else counter_7++;                                                             // Increasing counter 7.
+    else if(counter_7 > 11 && counter_7 < 34){
+      if(counter_7 == 20){
+        MovingWheel_1(0.0f);                                                      // Calling function that moves wheel 1 at certain desired angular velocity (turn motion off for omni wheel 1).
+        MovingWheel_2(0.0f);                                                      // Calling function that moves wheel 2 at certain desired angular velocity (turn motion off for omni wheel 2).
+        MovingWheel_3(0.0f);                                                      // Calling function that moves wheel 3 at certain desired angular velocity (turn motion off for omni wheel 3).
+      }
+      counter_7++;                                                                // Increasing counter 7.
+      MySerial.println(angular_velocities);                                       // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
+    }
+    else NOP();                                                                   // No operation cycle.
   }
 }
 //-----------------------------------------------------------------------------------
@@ -513,6 +525,4 @@ void loop(){
   }
   else NOP();                                                                   // No operation cycle.
   delayMicroseconds(2);                                                         // 2 microseconds delay.
-  // int64_t current_time = esp_timer_get_time();
-  // Serial.printf("Current system time: %lld microseconds\n", current_time);
 }
