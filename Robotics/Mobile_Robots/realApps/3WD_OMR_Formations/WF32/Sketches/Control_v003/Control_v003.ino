@@ -53,7 +53,7 @@ volatile uint32_t iterations = 0;                                       // Itera
 char controlSignals[bufferSize];                                        // Variable to save control signals data and subsequently send via UART 4 module.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
 enum Control_System consys = ADRC_RS;                                   // Declare the control system type.
-enum Reference_Type reftype = CIRCUMFERENCE_01;                         // Declare the reference shape type.
+enum Reference_Type reftype = STATIC_01;                                // Declare the reference shape type.
 //---------------------------------------------------------------------------------------------------------------
 // Configuring the ADRC RS strategy:
 const float sampleTime = 1.0f/freq_hz_4;                                // Float parameter to define sample time of observer RSO.
@@ -180,8 +180,9 @@ void __attribute__((interrupt)) Timer_4_Handler(){
     computeCSVariables(FMR);                                            // Compute the cluster space variables of FMR formation.
     //-----------------------------------------------------------------------------------------------------------
     // Computing the desired reference tracking-trajectories:
-    computeCircumference01(REF,consys,iterations);                      // Compute desired reference profiles for OMRs synchronization.
+    // computeCircumference01(REF,consys,iterations);                      // Compute desired reference profiles for OMRs synchronization.
     // computeInfinity01(REF,consys,iterations);                           // Compute desired reference profiles for OMRs synchronization.
+    computeStatical01(REF,consys);                                      // Compute desired reference profiles for OMRs synchronization.
     //-----------------------------------------------------------------------------------------------------------
     // Computing the designed control strategy:
     switch(consys){
@@ -389,6 +390,20 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
           initReference(REF,consys,reftype,ref_z0);                     // Initialize reference builder.
           break;
         }
+        case STATIC_01:{
+          // Configuring initial parameteres for first statical trivial trajectory (vehicles must turn on a fixed position in the workspace):
+          float xc_0 = 1400.0f;                                         // [mm], initial position of whole cluster along workspace's x axis.
+          float yc_0 = 1500.0f;                                         // [mm], initial position of whole cluster along workspace's y axis.
+          float thc_0 = M_PI_2;                                         // [rad], initial orientation of whole cluster in the workspace.
+          float dc_0 = 150.0f;                                          // [mm], initial distance between both OMRs.
+          float ph1_0 = 0.0f;                                           // [rad], initial orientation of robot 1.
+          float ph2_0 = 0.0f;                                           // [rad], initial orientation of robot 2.
+          float d_ph1_0 = 0.25f;                                        // [rad/s], desired initial angular velocity of robot 1.
+          float d_ph2_0 = -0.25f;                                       // [rad/s], desired initial angular velocity of robot 2.
+          float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+          initReference(REF,consys,reftype,ref_z0);                     // Initialize reference builder.
+          break;
+        }
       }
       //---------------------------------------------------------------------------------------------------------
       // Adjusting the clutch interval time (t_cl):
@@ -548,7 +563,7 @@ void loop(){
     Serial.println(":10");                                              // Write stop command by UART 1.
   }
   else if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == true){
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],iterations);
+    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.q_k[0]-REF.y_k[0],FMR.q_k[1]-REF.y_k[1],FMR.q_k[2]-REF.y_k[2],FMR.q_k[3]-REF.y_k[3],FMR.q_k[4]-REF.y_k[4],FMR.q_k[5]-REF.y_k[5],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.
