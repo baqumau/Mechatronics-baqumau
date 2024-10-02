@@ -144,26 +144,23 @@ void TC8_Handler(){
   sprintf(angular_velocities,":0,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   // Sending angular velocities values through UART 2:
   if(identifier == 0 && flagcommand_2){
-    MySerial.println(angular_velocities);                         // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
-    if(counter_7 >= 11) flagcommand_2 = false;                    // Reset flag command 2.
+    Serial2.println(angular_velocities);                          // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
+    if(counter_7 >= 20 && counter_7 < 26){
+      MovingWheel_1(0.0f);                                        // Calling function that moves wheel 1 at certain desired angular velocity (turn motion off for omni wheel 1).
+      MovingWheel_2(0.0f);                                        // Calling function that moves wheel 2 at certain desired angular velocity (turn motion off for omni wheel 2).
+      MovingWheel_3(0.0f);                                        // Calling function that moves wheel 3 at certain desired angular velocity (turn motion off for omni wheel 3).
+      counter_7++;                                                // Increasing counter 7.
+    }
+    else if(counter_7 >= 40){
+      flagcommand_2 = false;                                      // Reset flag command 2.
+      counter_7 = 0;                                              // Reset 7th counter.
+    }
     else counter_7++;                                             // Increasing counter 7.
   }
-  else if(identifier == 0 && !flagcommand_2){
-    if(counter_7 >= 34){
-      counter_7 = 0;                                              // Reset counter 7.
-    }
-    else if(counter_7 > 11 && counter_7 < 34){
-      if(counter_7 == 20){
-        MovingWheel_1(0.0f);                                      // Calling function that moves wheel 1 at certain desired angular velocity (turn motion off for omni wheel 1).
-        MovingWheel_2(0.0f);                                      // Calling function that moves wheel 2 at certain desired angular velocity (turn motion off for omni wheel 2).
-        MovingWheel_3(0.0f);                                      // Calling function that moves wheel 3 at certain desired angular velocity (turn motion off for omni wheel 3).
-      }
-      counter_7++;                                                // Increasing counter 7.
-      MySerial.println(angular_velocities);                       // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
-    }
-    else NOP;                                                     // No operation cycle.
+  else if(identifier > 0 && flagcommand_2){
+    flagcommand_2 = false;                                        // Reset flag command 2.
+    counter_7 = 0;                                                // Reset 7th counter.
   }
-  else if(identifier > 0 && flagcommand_2) flagcommand_2 = false; // Reset flag command 2.
   else NOP;                                                       // No operation cycle.
 }
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -447,6 +444,7 @@ void loop(){
   }
   if(flagcommand_1){
     flagcommand_2 = true;                                         // Change value of flag command 2 to TRUE.
+    counter_7 = 0;                                                // Reset 7th counter.
     string2float();                                               // Call string2float() function. 
     init_cbuff();                                                 // Clear buffer.
     MovingWheel_1(Control_1);                                     // Calling function that moves wheel 1.
