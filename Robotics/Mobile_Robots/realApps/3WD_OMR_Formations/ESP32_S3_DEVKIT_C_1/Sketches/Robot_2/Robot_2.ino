@@ -111,7 +111,7 @@ void onTimer1(void* arg){
   sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   if(flagcommand_2 == 1){
     MySerial.println(angular_velocities);                                         // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
-    if(counter_7 >= 20 && counter_7 < 26){
+    if(counter_7 >= 12 && counter_7 < 18){
       MovingWheel_1(0.0f);                                                        // Calling function that moves wheel 1 at certain desired angular velocity (turn motion off for omni wheel 1).
       MovingWheel_2(0.0f);                                                        // Calling function that moves wheel 2 at certain desired angular velocity (turn motion off for omni wheel 2).
       MovingWheel_3(0.0f);                                                        // Calling function that moves wheel 3 at certain desired angular velocity (turn motion off for omni wheel 3).

@@ -15,7 +15,7 @@ Unfortunately ChipKit WF32 with ARDUINO framework does not work appropriately.*/
 #define prescaler_5 256                                                 // Prescaler for the ticks of Timer 5.
 #define freq_hz_5 10                                                    // Frequency in Hz for instructions execution of Timer 5.
 #define ticks_per_second 80E6                                           // Ticks per seconds of machine's clock.
-#define exe_minutes 2                                                   // Run time minutes.
+#define exe_minutes 5                                                   // Run time minutes.
 #define NOP __asm__ __volatile__ ("nop\n\t")                            // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
 // Including libraries to the program:
@@ -143,7 +143,7 @@ void __attribute__((interrupt)) Timer_3_Handler(){
 // Configuring Timer 3 to generate timer interrupts:
 void start_timer_3_interrupt(){
   uint16_t period = ticks_per_second/(prescaler_3*freq_hz_3);           // Setting interrupt period calculated in ticks.
-  T3CON = 0x0;                                                          // Stop 16-bit Timer 5 and clear control register.
+  T3CON = 0x0;                                                          // Stop 16-bit Timer 3 and clear control register.
   T3CONSET = 0x0040;                                                    // Enable 16-bit mode, prescaler at 1:16.
   TMR3 = 0x0;                                                           // Clear timer register.
   PR3 = period;                                                         // Setting the period on Timer 3.
@@ -563,7 +563,7 @@ void loop(){
     Serial.println(":10");                                              // Write stop command by UART 1.
   }
   else if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == true){
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.q_k[0]-REF.y_k[0],FMR.q_k[1]-REF.y_k[1],FMR.q_k[2]-REF.y_k[2],FMR.q_k[3]-REF.y_k[3],FMR.q_k[4]-REF.y_k[4],FMR.q_k[5]-REF.y_k[5],iterations);
+    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.u_k[0],FMR.u_k[1],FMR.u_k[2],FMR.u_k[3],FMR.u_k[4],FMR.u_k[5],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.
