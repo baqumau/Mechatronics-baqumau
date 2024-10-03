@@ -226,6 +226,10 @@ void __attribute__((interrupt)) Timer_4_Handler(){
           FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
           FMR.u_k[i+3] = clutch(saturation(SMC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,iterations);
           FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
+          //-----------------------------------------------------------------------------------------------------
+          // Computing tracking errors:
+          errors_k[i] = FMR.q_k[i] - REF.x1_k[i];
+          errors_k[i+3] = FMR.q_k[i+3] - REF.x1_k[i+3];
         }
         break;
       }
@@ -395,7 +399,7 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
           float xc_0 = 1400.0f;                                         // [mm], initial position of whole cluster along workspace's x axis.
           float yc_0 = 1500.0f;                                         // [mm], initial position of whole cluster along workspace's y axis.
           float thc_0 = M_PI_2;                                         // [rad], initial orientation of whole cluster in the workspace.
-          float dc_0 = 150.0f;                                          // [mm], initial distance between both OMRs.
+          float dc_0 = 220.0f;                                          // [mm], initial distance between both OMRs.
           float ph1_0 = 0.0f;                                           // [rad], initial orientation of robot 1.
           float ph2_0 = 0.0f;                                           // [rad], initial orientation of robot 2.
           float d_ph1_0 = 0.25f;                                        // [rad/s], desired initial angular velocity of robot 1.
@@ -563,7 +567,7 @@ void loop(){
     Serial.println(":10");                                              // Write stop command by UART 1.
   }
   else if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == true){
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.u_k[0],FMR.u_k[1],FMR.u_k[2],FMR.u_k[3],FMR.u_k[4],FMR.u_k[5],iterations);
+    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",roundToThreeDecimals(errors_k[0]),roundToThreeDecimals(errors_k[1]),roundToThreeDecimals(errors_k[2]),roundToThreeDecimals(errors_k[3]),roundToThreeDecimals(errors_k[4]),roundToThreeDecimals(errors_k[5]),iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.
