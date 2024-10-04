@@ -258,8 +258,8 @@ void main(void){
     // Step 7. IDLE loop. Just sit and loop forever (optional):
     for(;;){
         if(flagcommand_3){
-            GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                           // Turn LED GPIO 1 to OFF.
-            GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                           // Turn LED GPIO 1 to OFF.
+            GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                   // Turn LED GPIO 1 to OFF.
+            GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                   // Turn LED GPIO 1 to OFF.
             //-----------------------------------------------
             IER &= ~M_INT1;                                                         // Disable CPU timer 0 interrupt.
             IER &= ~M_INT13;                                                        // Disable CPU timer 1 interrupt.
@@ -273,7 +273,7 @@ void main(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Putting function definitions here:
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timer 0:
+// Function to generate interrupt service through CPU timer 0 (200 Hz):
 __interrupt void cpu_timer0_isr(void){
     CpuTimer0.InterruptCount++;
     int i;                                                                          // Declaration of i as integer iteration variable.
@@ -294,7 +294,7 @@ __interrupt void cpu_timer0_isr(void){
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timer 1:
+// Function to generate interrupt service through CPU timer 1 (10 Hz):
 __interrupt void cpu_timer1_isr(void){
     CpuTimer1.InterruptCount++;
     // The CPU acknowledges the interrupt.
@@ -321,7 +321,7 @@ __interrupt void cpu_timer1_isr(void){
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timer 2 (streaming data from MATLAB):
+// Function to generate interrupt service through CPU timer 2 (streaming data from MATLAB at 250 Hz):
 __interrupt void cpu_timer2_isr(void){
     CpuTimer2.InterruptCount++;
     // The CPU acknowledges the interrupt.

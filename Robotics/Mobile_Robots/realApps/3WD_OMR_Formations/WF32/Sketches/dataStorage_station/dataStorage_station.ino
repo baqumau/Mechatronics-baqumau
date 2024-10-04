@@ -1,5 +1,5 @@
 /* This program was made for using WF32 as data storage station through uSD card peripheral.
-Unfortunately ChipKit WF32 with ARDUINO framework does not work appropriately.*/
+Unfortunately ChipKit WF32 with PLATFORMIO framework does not work appropriately.*/
 // ChipKit WF32 works to 80 Mhz...
 //---------------------------------------------------------------------------------------------------------------
 // Defining mathematical values:
@@ -30,17 +30,18 @@ const unsigned int chipSelect_SD_default = 51;                          // Selec
 const unsigned int chipSelect_SD = chipSelect_SD_default;
 //---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
-const unsigned int bufferSize = 128;                                    // buffer length.
-char dataChain[bufferSize];                                             // Auxilliary string-type variable to arrange obtained data from UART 1.
+const unsigned int bufferSize = 256;                                    // buffer length.
 //---------------------------------------------------------------------------------------------------------------
 // Creating data structure for UART 4 peripheral:
-Data_Struct UART4 = createDataStruct(bufferSize,2,6*Robots_Qty,16);
+Data_Struct UART4 = createDataStruct(bufferSize,2,9*Robots_Qty,16);
 //---------------------------------------------------------------------------------------------------------------
 // Receiving data interrupt for UART 1 module:
 void __attribute__((interrupt)) UART1_RX_Handler(){
   //-------------------------------------------------------------------------------------------------------------
   // Put interrupt code here:
-  // ...
+  int i;                                                                // Declaration of i as index integer variable.
+  char character = U1RXREG;                                             // Variable to save received character by UART 1 module.
+  Serial.println(UART4.charBuffer);                                     // Print character through UART 1.
   //-------------------------------------------------------------------------------------------------------------
   IFS0CLR = 0x08000000;                                                 // Clear the UART 1 receiver interrupt status flag.
 }
@@ -58,6 +59,7 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
     switch(UART4.identifier){
       case 0:
       baqumau.println(UART4.charBuffer);                                // Writing data in microSD.
+      Serial.println(UART4.charBuffer);                                 // Print data in UART4.charBuffer structure through UART 1.
       digitalWrite(PIN_LED3,HIGH);                                      // Turn led 3 on to indicate that board is writing on microSD.
       break;
       case 1:
@@ -75,7 +77,7 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
 void start_uart_1_module(){
   uint16_t baudrate_reg = ((FPB/desired_baudrate_1)/4) - 1;             // Calculating baud rate register with BRGH = 1.
   U1BRG = baudrate_reg;                                                 // Setting Baud rate.
-  U1STA = 0x0;                                                          // Clear UART1 Status and Control Register.
+  U1STA = 0x0;                                                          // Clear UART 1 Status and Control Register.
   U1MODE = 0x8008;                                                      // Enable UART 1 module for BRGH = 1, 8-bit data, no parity, and 1 stop bit.
   U1STASET = 0x1005400;                                                 // Enable Transmit and Receive;
                                                                         // Automatic Address Detect mode is enabled.
@@ -152,7 +154,7 @@ void setup(){
   baqumau = SD.open("Sep2224a.txt",FILE_WRITE);                         // Open the file for start to write.
   baqumau.print("measurements = [");                                    // Writing data in microSD.
   Serial.println("Done...");
-  delayMicroseconds(100);                                               // 100 microseconds delay.
+  // delayMicroseconds(100);                                               // 100 microseconds delay.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Main loop instructions:
