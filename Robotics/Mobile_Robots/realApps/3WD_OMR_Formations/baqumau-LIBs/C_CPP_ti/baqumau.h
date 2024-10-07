@@ -42,6 +42,12 @@ extern void init_charBuffer(Data_Struct *DAT);
 extern void add_2_charBuffer(Data_Struct *DAT, char c);
 // Classify char-type data from developed buffer within data structure as DAT:
 extern void classify_charBuffer(Data_Struct *DAT);
+// A helper function to reverse a string:
+extern void reverse(char *str, int len);
+// Utility function to convert an integer to a string:
+extern int intToStr(int x, char str[], int d);
+// Convert a floating-point number (such as float or double) to a string representation:
+extern void ftoa(float num, char *res, int afterpoint);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _baqumau_H_ */
 //---------------------------------------------------------------------------------------------------------------

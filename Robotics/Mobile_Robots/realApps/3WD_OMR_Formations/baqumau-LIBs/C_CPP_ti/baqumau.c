@@ -133,3 +133,50 @@ void classify_charBuffer(Data_Struct *DAT){
     }
 }
 //---------------------------------------------------------------------------------------------------------------
+// A helper function to reverse a string:
+void reverse(char *str, int len){
+    int i = 0, j = len - 1, temp;                                                           // Declaration of i, j and temp as integer variables.
+    while(i < j){
+        temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+        i++;
+        j--;
+    }
+}
+//---------------------------------------------------------------------------------------------------------------
+// Utility function to convert an integer to a string:
+int intToStr(int x, char str[], int dig){
+    int i = 0;                                                                              // Declaration of i as index integer variable.
+    if(x == 0) str[i++] = '0';                                                              // Add character '0' to output string.
+    else{
+        while(x){
+            str[i++] = (x % 10) + '0';
+            x = x / 10;
+        }
+    }
+    // If number of digits required is more, then add '0's:
+    while(i < dig) str[i++] = '0';
+    reverse(str, i);                                                                        // Reverse the string.
+    str[i] = '\0';
+    return i;
+}
+//---------------------------------------------------------------------------------------------------------------
+// Convert a floating-point number (such as float or double) to a string representation:
+void ftoa(float num, char *res, int afterpoint){
+    // Extracting integer part:
+    int ipart = (int)num;
+    // Extracting floating part:
+    float fpart = num - (float)ipart;
+    // Converting integer part to string:
+    int i = intToStr(ipart, res, 0);
+    // If there is no need for fractional part, stop here:
+    if(afterpoint != 0){
+        res[i] = '.';                                                                       // Add decimal point.
+        // Multiplying the fractional part by 10^afterpoint:
+        fpart = fpart * pow(10, afterpoint);
+        // Converting fractional part to string:
+        intToStr((int)fpart, res + i + 1, afterpoint);
+    }
+}
+//---------------------------------------------------------------------------------------------------------------

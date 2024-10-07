@@ -21,7 +21,7 @@
 // $Release start: Wed May 22 of 2024 $
 //#######################################################################################################################
 // Defining configuration macros:
-#define _LAUNCHXL_F2837xS
+#define _LAUNCHXL_F28377S
 #define DEVICE_SYSCLK_FREQ 200000000                                                // Native working system clock frequency.
 #define BLINKY_LED_GPIO_01 12                                                       // Define pin number for LED 01.
 #define BLINKY_LED_GPIO_02 13                                                       // Define pin number for LED 02.
@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <stdarg.h>
 #include <3WD_OMRs_Controllers.h>                                                   // Controllers library.
 #include <3WD_OMRs_References.h>                                                    // Reference library.
 #include <baqumau.h>                                                                // My library.
@@ -86,7 +87,7 @@ void scic_xmit(char a);
 void scic_msg(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
 // Global dynamic variables and constants are declared here:
-const Uint16 bufferSize = 128;                                                      // buffer length.
+const Uint16 bufferSize = 256;                                                      // buffer length.
 const Uint32 final_iteration = 60*(Uint32)(exe_minutes)*(Uint32)(freq_hz_0);        // Final iteration of program execution (4 minutes at "freq_hz_0" in Hz).
 bool flagcommand_0;                                                                 // Declare flag command 0 (This flag indicates that initial conditions must be configured).
 bool flagcommand_1;                                                                 // Declare flag command 1 (Used for ON\OFF LED).
@@ -97,7 +98,8 @@ char *msg_1;                                                                    
 char *msg_2;                                                                        // Variable 2 to save a char data chain.
 char *msg_3;
 char *msg_4;
-char *measurements;                                                                 // Variable to save a char data chain that contains the desired measurements.
+float value = 3.141534;
+char *measurements;                                                                 // Variable to save a char data chain that contains the measured signals.
 char *controlSignals;                                                               // Variable to save a char data chain that contains the computed control signals.
 char *angularVelocities;                                                            // Variable to save a char data chain that contains the angular velocities of robots' wheels.
 //-----------------------------------------------
@@ -141,9 +143,9 @@ void main(void){
     GpioCtrlRegs.GPCMUX2.bit.GPIO87 = 1;
     // Choosing the pins 89 and 90 to the SCI-C port (UART Communication - UART 2):
     GpioCtrlRegs.GPCGMUX2.bit.GPIO89 = 1;                                           // SCIC TXD.
-    GpioCtrlRegs.GPCMUX2.bit.GPIO89 = 1;
+    GpioCtrlRegs.GPCMUX2.bit.GPIO89 = 2;
     GpioCtrlRegs.GPCGMUX2.bit.GPIO90 = 1;                                           // SCIC RXD.
-    GpioCtrlRegs.GPCMUX2.bit.GPIO90 = 1;
+    GpioCtrlRegs.GPCMUX2.bit.GPIO90 = 2;
     EDIS;
 
     // Step 3. Clear all interrupts and initialize PIE vector table:
@@ -174,13 +176,14 @@ void main(void){
     flagcommand_2 = false;                                                          // Set flag command 2 to FALSE.
     flagcommand_3 = false;                                                          // Set flag command 3 to FALSE.
 
-    // Initializing SCIA:
-    scia_fifo_init();                                                               // Initialize the SCIA FIFO.
-    scia_init();                                                                    // Initialize the SCIA.
+    // Some messages to control SCIA, SCIB and SCIC peripherals:
     msg_1 = ":9\r\n\0";                                                             // Message to ask to MATLAB for data.
     msg_2 = ":10\r\n\0";                                                            // Message to stop streaming data with MATLAB.
     msg_3 = ":0,123.456,654.321;\r\n\0";
     msg_4 = ":1,0.0;\r\n\0";
+    // Initializing SCIA:
+    scia_fifo_init();                                                               // Initialize the SCIA FIFO.
+    scia_init();                                                                    // Initialize the SCIA.
     // Initializing SCIB:
     scib_fifo_init();                                                               // Initialize the SCIB FIFO.
     scib_init();                                                                    // Initialize the SCIB.
@@ -311,13 +314,17 @@ __interrupt void cpu_timer1_isr(void){
     if(CpuTimer0.InterruptCount <= final_iteration && flagcommand_0){
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the measurement variables of OMRs formation:
-        // snprintf(measurements,sizeof(measurements),":0,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%lu;\n",FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],(unsigned long)(CpuTimer0.InterruptCount));
-        scic_msg(msg_3);                                                     // Write measured variables through SCIC peripheral.
+        // snprintf(measurements,bufferSize,":0,1234.567,456.789,765.432;\n");
+        // snprintf(measurements,bufferSize,":0,%lu;\n",(unsigned long)(CpuTimer0.InterruptCount));
+        ftoa(FMR.q_k[3],measurements,3);
+        strcat(measurements,"\n\0");                                                // Concatenate the terminator string to the measurements data chain.
+        scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
     }
     else if(CpuTimer0.InterruptCount > final_iteration && flagcommand_0){
         // Stopping the streaming of measurement variables:
-        // snprintf(measurements,sizeof(measurements),":1,0;\n");
-        scic_msg(msg_4);                                                     // Write streaming stop command via SCIC peripheral.
+        snprintf(measurements,bufferSize,":1,0;\n");
+        scic_msg(measurements);                                                     // Write streaming stop command via SCIC peripheral.
+        flagcommand_0 = false;                                                      // Reset flag command 0.
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------
@@ -536,11 +543,9 @@ void scic_fifo_init(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit a character through the SCIC:
 void scic_xmit(char a){
-    // if(ScicRegs.SCIFFTX.bit.TXFFST < 16) ScicRegs.SCITXBUF.all = a;                 // Load character to SCIC TX buffer.
-    // else while(ScicRegs.SCIFFTX.bit.TXFFST != 0);                                   // Wait until FIFO TX is ready.
+    if(ScicRegs.SCIFFTX.bit.TXFFST < 16) ScicRegs.SCITXBUF.all = a;                 // Load character to SCIC TX buffer.
+    else while(ScicRegs.SCIFFTX.bit.TXFFST != 0);                                   // Wait until FIFO TX is ready.
     // while(ScicRegs.SCICTL2.bit.TXRDY == 0);                                      // Wait until TX is ready (standard SCIC).
-    while(ScicRegs.SCIFFTX.bit.TXFFST != 0);                                        // Wait until FIFO TX is ready.
-    ScicRegs.SCITXBUF.all = a;                                                      // Load character to SCIC TX buffer.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit message via SCIC:
