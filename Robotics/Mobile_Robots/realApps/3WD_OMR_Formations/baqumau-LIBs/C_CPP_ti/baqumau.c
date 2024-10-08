@@ -162,15 +162,31 @@ int intToStr(int x, char str[], int dig){
     return i;
 }
 //---------------------------------------------------------------------------------------------------------------
-// Convert a floating-point number (such as float or double) to a string representation:
+// Convert any floating-point number (such as float or double) to a string representation:
 void ftoa(float num, char *res, int afterpoint){
+    int j;                                                                                  // Declaration of j as integer variable.
+    // Handling negative numbers:
+    int isNegative = 0;
+    if(num < 0){
+        isNegative = 1;                                                                     // Indicates when float number is negative.
+        num = -num;                                                                         // Float number is changed to positive.
+    }
     // Extracting integer part:
     int ipart = (int)num;
     // Extracting floating part:
     float fpart = num - (float)ipart;
     // Converting integer part to string:
     int i = intToStr(ipart, res, 0);
-    // If there is no need for fractional part, stop here:
+    // Adding negative sign if needed:
+    if(isNegative){
+        for(j = i; j > 0; j--){
+            res[j] = res[j - 1];
+        }
+        res[0] = '-';
+        i++;
+    }
+    // If there is no need for fractional part, stop here...
+    //-----------------------------------------------
     if(afterpoint != 0){
         res[i] = '.';                                                                       // Add decimal point.
         // Multiplying the fractional part by 10^afterpoint:

@@ -89,16 +89,16 @@ void scic_msg(char *msg);
 // Global dynamic variables and constants are declared here:
 const Uint16 bufferSize = 256;                                                      // buffer length.
 const Uint32 final_iteration = 60*(Uint32)(exe_minutes)*(Uint32)(freq_hz_0);        // Final iteration of program execution (4 minutes at "freq_hz_0" in Hz).
-bool flagcommand_0;                                                                 // Declare flag command 0 (This flag indicates that initial conditions must be configured).
-bool flagcommand_1;                                                                 // Declare flag command 1 (Used for ON\OFF LED).
-bool flagcommand_2;                                                                 // Declare flag command 2 (Used for ON\OFF LED).
-bool flagcommand_3;                                                                 // Declare flag command 3 (Used for happy ending).
+volatile bool flagcommand_0;                                                        // Declare flag command 0 (This flag indicates that initial conditions must be configured).
+volatile bool flagcommand_1;                                                        // Declare flag command 1 (Used for ON\OFF LED).
+volatile bool flagcommand_2;                                                        // Declare flag command 2 (Used for ON\OFF LED).
+volatile bool flagcommand_3;                                                        // Declare flag command 3 (Used for happy ending).
 volatile char receivedChar;                                                         // Variable to save received character from SCIA.
 char *msg_1;                                                                        // Variable 1 to save a char data chain.
 char *msg_2;                                                                        // Variable 2 to save a char data chain.
-char *msg_3;
-char *msg_4;
-float value = 3.141534;
+char *msg_3;                                                                        // Variable 3 to save a char data chain.
+char *msg_4;                                                                        // Variable 4 to save a char data chain.
+char *floatStr;
 char *measurements;                                                                 // Variable to save a char data chain that contains the measured signals.
 char *controlSignals;                                                               // Variable to save a char data chain that contains the computed control signals.
 char *angularVelocities;                                                            // Variable to save a char data chain that contains the angular velocities of robots' wheels.
@@ -179,8 +179,7 @@ void main(void){
     // Some messages to control SCIA, SCIB and SCIC peripherals:
     msg_1 = ":9\r\n\0";                                                             // Message to ask to MATLAB for data.
     msg_2 = ":10\r\n\0";                                                            // Message to stop streaming data with MATLAB.
-    msg_3 = ":0,123.456,654.321;\r\n\0";
-    msg_4 = ":1,0.0;\r\n\0";
+    msg_3 = ":1,0;\r\n\0";                                                          // Message to stop the saving data process.
     // Initializing SCIA:
     scia_fifo_init();                                                               // Initialize the SCIA FIFO.
     scia_init();                                                                    // Initialize the SCIA.
@@ -192,6 +191,7 @@ void main(void){
     scic_init();                                                                    // Initialize the SCIC.
 
     // Preallocating memory for used *variables:
+    floatStr = (char *)malloc(bufferSize/8 * sizeof(char));                         // Preallocate memory for auxiliary string variable.
     measurements = (char *)malloc(bufferSize * sizeof(char));                       // Preallocate memory for measurement data set.
     controlSignals = (char *)malloc(bufferSize * sizeof(char));                     // Preallocate memory for control signals data set.
     angularVelocities = (char *)malloc(bufferSize * sizeof(char));                  // Preallocate memory for angular velocities data set.
@@ -312,18 +312,21 @@ __interrupt void cpu_timer1_isr(void){
         CpuTimer1.InterruptCount = 0;                                               // Reset Timer 1 counter.
     }
     if(CpuTimer0.InterruptCount <= final_iteration && flagcommand_0){
+        int i;                                                                      // Declaration of i as integer iteration variable.
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the measurement variables of OMRs formation:
-        // snprintf(measurements,bufferSize,":0,1234.567,456.789,765.432;\n");
-        // snprintf(measurements,bufferSize,":0,%lu;\n",(unsigned long)(CpuTimer0.InterruptCount));
-        ftoa(FMR.q_k[3],measurements,3);
-        strcat(measurements,"\n\0");                                                // Concatenate the terminator string to the measurements data chain.
+        strcpy(measurements,":0,");                                                 // Initial command number for measurements streaming data chain.
+        for(i = 0; i < 3*Robots_Qty; i++){
+            ftoa(FMR.q_k[i],floatStr,3);                                            // Converts floating-point format of robot space variable to string.
+            if(i < 3*Robots_Qty) strcat(floatStr,",");                              // Concatenate colon to the data chain.
+            strcat(measurements,floatStr);                                          // Concatenate variable to the measurements data chain.
+        }
+        strcat(measurements,";\n\0");                                               // Concatenate the terminator string to the measurements data chain.
         scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
     }
     else if(CpuTimer0.InterruptCount > final_iteration && flagcommand_0){
         // Stopping the streaming of measurement variables:
-        snprintf(measurements,bufferSize,":1,0;\n");
-        scic_msg(measurements);                                                     // Write streaming stop command via SCIC peripheral.
+        scic_msg(msg_3);                                                            // Write streaming stop command via SCIC peripheral.
         flagcommand_0 = false;                                                      // Reset flag command 0.
     }
 }
