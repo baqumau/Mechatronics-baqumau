@@ -55,7 +55,7 @@ math constants. */
 // Another constant parameters:
 #define NOP __asm__(" NOP")                                                     // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
-// Data structure to arrange matrices:
+// Data structure to arrange floating-point number matrices:
 typedef struct{
     int rows;                                                                   // Size of rows.
     int cols;                                                                   // Size of columns.
@@ -82,10 +82,15 @@ typedef struct{
 typedef struct{
     int qty;                                                                    // OMRs quantity in the formation.
     float *q_k;                                                                 // [mm;rad], pose of OMRs formation in the robot space is arranged in this vector.
+    char **qs_k;                                                                // [mm;rad], pose of OMRs formation in the robot space is arranged in string-format within this vector.
     float *c_k;                                                                 // [mm;rad], pose of OMRs formation in the cluster space is arranged in this vector.
+    char **cs_k;                                                                // [mm;rad], pose of OMRs formation in the cluster space is arranged in string-format within this vector.
     float *w_k;                                                                 // [rad/s], angular velocity reached by each omni-wheel is arranged in this vector.
+    char **ws_k;                                                                // [rad/s], angular velocity reached by each omni-wheel is arranged in string-format within this vector.
     float *u_k;                                                                 // [N.mm], control signal applied to each omni-wheel is arranged in this vector.
+    float **us_k;                                                               // [N.mm], control signal applied to each omni-wheel is arranged in string-format within this vector.
     float *v_k;                                                                 // [%(PWM)], control signal applied to each omni-wheel is arranged in this vector.
+    float **vs_k;                                                               // [%(PWM)], control signal applied to each omni-wheel is arranged in string-format within this vector.
     float *params;                                                              // Several constant values needed in the formation control system.
     Correction_Struct CORq;                                                     // Adding angle correction structure for measured angles in the robot space.
     Correction_Struct CORc;                                                     // Adding angle correction structure for obtained angles through atan2(.) function in the cluster space.
@@ -263,7 +268,7 @@ extern float roundToFourDecimals(float num);
 extern float saturation(float signal, float minValue, float maxValue);
 // Clutch function to attenuate high-peaking phenomena during the initial seconds of runtime:
 extern float clutch(float signal_k, float t_cl, float sampleTime, int iterations);
-// Function to allocate memory for the matrix in the struct:
+// Function to allocate memory for the matrix in the structure (floating-point numbers array):
 extern bool allocateMatrix(Matrix *MAT, int rows, int cols);
 // Function to free memory for the matrix in the struct:
 extern void freeMatrix(Matrix *MAT);

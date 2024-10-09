@@ -12,6 +12,7 @@ will be implemented to facilite posterior implementations.*/
 #include <xc.h>                                                                 // Header file that allows code in the source file to access compiler-specific or device-specific features.
                                                                                 // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
                                                                                 // header file.
+#include "3WD_OMRs_Controllers.h"
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to get values from streming data set:
 typedef struct{

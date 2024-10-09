@@ -46,7 +46,9 @@ const unsigned int bufferSize = 128;                                    // buffe
 const unsigned long final_iteration = 60*exe_minutes*freq_hz_4;         // Final iteration of program execution (4 minutes at "freq_hz_4" in Hz).
 uint32_t matlab_counter = 0;                                            // Variable to save the external counter by MATLAB.
 volatile bool flagcommand_0 = false;                                    // Available flag command 0.
+volatile bool flagcommand_1 = false;                                    // Available flag command 1 (Auxiliary flag for time out protocole).
 volatile bool flagcommand_5 = false;                                    // Available flag command 5.
+volatile uint16_t counter_1 = 0;                                        // Time out counter.
 volatile uint32_t counter_4 = 0;                                        // Interrupts counter (Timer 4).
 volatile uint32_t counter_5 = 0;                                        // Interrupts counter (Timer 5).
 volatile uint32_t iterations = 0;                                       // Iterations counter in the program.
@@ -115,7 +117,7 @@ float diff_fc = 45.0f;                                                  // Assig
 // Creating data structure for UART 1 peripheral:
 Data_Struct UART1 = createDataStruct(bufferSize,1,3*Robots_Qty,16);
 // Creating data structure for UART 4 peripheral:
-Data_Struct UART4 = createDataStruct(bufferSize,3,3,16);
+Data_Struct UART4 = createDataStruct(bufferSize,2,3,16);
 // Creating data structure for a high-gain observer in the robot space:
 RS_Observer RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
 // Creating data structure for a high-gain observer in the cluster space:
@@ -227,7 +229,7 @@ void __attribute__((interrupt)) Timer_4_Handler(){
           FMR.u_k[i+3] = clutch(saturation(SMC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,iterations);
           FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
           //-----------------------------------------------------------------------------------------------------
-          // Computing tracking errors:
+          // Computing tracking errors states:
           errors_k[i] = FMR.q_k[i] - REF.x1_k[i];
           errors_k[i+3] = FMR.q_k[i+3] - REF.x1_k[i+3];
         }
@@ -293,6 +295,8 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
   // Taking values from UART 1 module:
   // If streaming data is completely added to char buffer of UART1 struct:
   if(UART1.flag[1]){
+    flagcommand_1 = true;                                               // Start to check the time out state for UART 1 receiving data.
+    counter_1 = 0;                                                      // Reset counter 1.
     classify_charBuffer(&UART1);                                        // Classify data from assigned buffer to UART 1 structure data matrix. 
     init_charBuffer(&UART1);                                            // Initialize char-type data buffer associated to UART 1.
     digitalWrite(PIN_LED6,LOW);                                         // Turn led 6 off.
@@ -343,7 +347,7 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
           // Initializing SMC strategy:
           initSMC_Controller(SMC,REF.Z_0,obs_z0,SLS.E_0,FMR.params);    // Initialize SMC strategy.
           //-----------------------------------------------------------------------------------------------------
-          // Initializing input torque control as FMR.u_k and omni-wheel angular velocities as FMR.w_k:
+          // Initializing input torque control as FMR.u_k, PWM control signals as FMR.v_k and omni-wheel angular velocities as FMR.w_k:
           for(i = 0; i < 3*Robots_Qty; i++){
             FMR.u_k[i] = 0.0f;                                          // Initial torque control in the formation.
             FMR.v_k[i] = 0.0f;                                          // Initial voltage control in the formation.
@@ -461,7 +465,7 @@ void start_uart_1_module(){
 //---------------------------------------------------------------------------------------------------------------
 // Configuring and enabling UART 4 module (with receiving data interrupt):
 void start_uart_4_module(){
-  uint16_t baudrate_reg = round(((FPB/desired_baudrate_4)/16) - 1);     // Calculating baud rate register with BRGH = 0.
+  uint16_t baudrate_reg = ((FPB/desired_baudrate_4)/16) - 1;            // Calculating baud rate register with BRGH = 0.
   U4BRG = baudrate_reg;                                                 // Setting Baud rate.
   U4STA = 0x0;                                                          // Clear UART 4 Status and Control Register.
   U4MODE = 0x8000;                                                      // Enable UART 4 module for BRGH = 0, 8-bit data, no parity, and 1 stop bit.
@@ -473,6 +477,20 @@ void start_uart_4_module(){
   IPC12SET = 0x00001100;                                                // Set interrupt priority of UART 4 receiver to nivel 4, and sub-priority to nivel 1.
   IFS2CLR = 0x00000010;                                                 // Clear the UART 4 receiver interrupt status flag.
   IEC2SET = 0x00000010;                                                 // Enable the UART 4 receiver interrupt.
+}
+//---------------------------------------------------------------------------------------------------------------
+// Desabling UART 1 module:
+void stop_uart_1_module(){
+  U1STA = 0x0;                                                          // Clear UART 1 Status and Control Register.
+  U1MODE = 0x00;                                                        // Disable UART 1 module.
+  IEC0CLR = 0x08000000;                                                 // Disable the UART 1 receiver interrupt.
+}
+//---------------------------------------------------------------------------------------------------------------
+// Desabling UART 4 module:
+void stop_uart_4_module(){
+  U4STA = 0x0;                                                          // Clear UART 4 Status and Control Register.
+  U4MODE = 0x00;                                                        // Disable UART 4 module.
+  IEC2CLR = 0x00000010;                                                 // Disable the UART 4 receiver interrupt.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Main setup instructions:
@@ -538,15 +556,16 @@ void setup(){
 //---------------------------------------------------------------------------------------------------------------
 // Main loop instructions:
 void loop(){
-  if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == false){
+  int i;                                                                // Declaration of i as integer variable.
+  if(iterations <= final_iteration && flagcommand_5 && !REF.flag[0]){
     // Arranging data into the measurements vector:
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%i,%u;",FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],REF.flag[0],iterations);
+    snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%i,%u;",FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],REF.flag[0],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.
     Serial.println(measurements);                                       // Write measurements via UART 1.
   }
-  else if(iterations > final_iteration && baqumau){
+  else if((iterations > final_iteration && baqumau) || counter_1 >= 20){
     baqumau.println("];");                                              // Writing on microSD.
     baqumau.close();                                                    // Closing the write file.
     digitalWrite(PIN_LED3,LOW);                                         // Turn led 3 off for show finish of writing on microSD.
@@ -565,13 +584,33 @@ void loop(){
       break;
     }
     Serial.println(":10");                                              // Write stop command by UART 1.
+    flagcommand_0 = false;                                              // Clear flag command 0.
+    flagcommand_1 = false;                                              // Clear flag command 1.
+    counter_1 = 0;                                                      // Reset counter 1.
+    // Ending input torque control as FMR.u_k and PWM control signals as FMR.v_k:
+    for(i = 0; i < 3*Robots_Qty; i++){
+      FMR.u_k[i] = 0.0f;                                                // Initial torque control in the formation.
+      FMR.v_k[i] = 0.0f;                                                // Initial voltage control in the formation.
+    }
+    Serial1.println(":0,0.0,0.0,0.0,0.0,0.0,0.0;\r");                   // Write final PWM control signals through UART 4.
+    delayMicroseconds(500);                                             // 500 microseconds delay.
+    stop_uart_1_module();                                               // Stop and disable UART 1 module.
+    stop_uart_4_module();                                               // Stop and disable UART 4 module.
   }
-  else if(iterations <= final_iteration && flagcommand_5 == true && REF.flag[0] == true){
-    snprintf(measurements,sizeof(measurements),"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",roundToThreeDecimals(errors_k[0]),roundToThreeDecimals(errors_k[1]),roundToThreeDecimals(errors_k[2]),roundToThreeDecimals(errors_k[3]),roundToThreeDecimals(errors_k[4]),roundToThreeDecimals(errors_k[5]),iterations);
+  else if(iterations <= final_iteration && flagcommand_5 && REF.flag[0]){
+    snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.w_k[0],FMR.w_k[1],FMR.w_k[2],FMR.w_k[3],FMR.w_k[4],FMR.w_k[5],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
-    flagcommand_5 = false;                                              // Setting flag 5 to false.
     // Serial.println(measurements);                                       // Write measurements by UART 1.
+    //-----------------------------------------------------------------------------------------------------------
+    // Time out protocole:
+    if(flagcommand_1 && counter_1 >= 10){
+      flagcommand_1 = false;                                            // Reset flag command 1.
+      counter_1++;                                                      // Increasing counter 1.
+    }
+    else if(flagcommand_0) counter_1++;                                 // Increasing counter 1.
+    else NOP;                                                           // No operation.
+    flagcommand_5 = false;                                              // Setting flag 5 to false.
   }
   else NOP;                                                             // No operation.
 }

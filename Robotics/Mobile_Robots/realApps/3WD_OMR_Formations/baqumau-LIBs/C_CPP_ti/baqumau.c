@@ -131,6 +131,7 @@ void classify_charBuffer(Data_Struct *DAT){
             }
         }
     }
+    else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
 // A helper function to reverse a string:

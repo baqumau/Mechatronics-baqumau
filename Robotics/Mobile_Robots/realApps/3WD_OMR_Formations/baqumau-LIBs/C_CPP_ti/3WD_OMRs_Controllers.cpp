@@ -34,7 +34,7 @@ float clutch(float signal_k, float t_cl, float sampleTime, int iterations){
     else return signal_k;                                                                   // Final value of clutch function.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Creating matrix structure:
+// Creating matrix structure for floating-point numbers array:
 bool allocateMatrix(Matrix *MAT, int rows, int cols){
     int i, j;                                                                               // Declaration of i and j as integer variables.
     MAT->rows = rows;                                                                       // Assign value for size of matrix rows.

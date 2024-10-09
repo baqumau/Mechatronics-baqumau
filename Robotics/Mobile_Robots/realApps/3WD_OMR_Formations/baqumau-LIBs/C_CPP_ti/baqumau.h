@@ -9,6 +9,7 @@ were implemented for facilitating posterior code creations.*/
 #include <stdio.h>
 #include <stdbool.h>
 #include <float.h>
+#include "3WD_OMRs_Controllers.h"
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to get values from streming data set:
 typedef struct{
