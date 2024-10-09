@@ -598,7 +598,7 @@ void loop(){
     stop_uart_4_module();                                               // Stop and disable UART 4 module.
   }
   else if(iterations <= final_iteration && flagcommand_5 && REF.flag[0]){
-    snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",FMR.w_k[0],FMR.w_k[1],FMR.w_k[2],FMR.w_k[3],FMR.w_k[4],FMR.w_k[5],iterations);
+    snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",roundToThreeDecimals(errors_k[0]),roundToThreeDecimals(errors_k[1]),roundToThreeDecimals(errors_k[2]),roundToThreeDecimals(errors_k[3]),roundToThreeDecimals(errors_k[4]),roundToThreeDecimals(errors_k[5]),iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     // Serial.println(measurements);                                       // Write measurements by UART 1.
