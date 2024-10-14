@@ -55,7 +55,6 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
 void __attribute__((interrupt)) UART4_RX_Handler(){
   character = U4RXREG;                                                  // Variable to save received character by UART 4 module.
   add_2_charBuffer(&UART4,character);                                   // Adding character to data buffer assigned to UART 4 module.
-  Serial.print(character);                                              // Print measured data through UART 1.
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 4 module:
   // If streaming data is completely added to char buffer of UART 4 structure:
@@ -167,7 +166,8 @@ void loop(){
   if(UART4.identifier == 0 && flagcommand_0){
     flagcommand_0 = false;                                              // Reset flag command 0 to FALSE.
     snprintf(measurements,bufferSize,"%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5]);
-    baqumau.println(measurements);                                        // Writes data in microSD.
+    baqumau.println(measurements);                                      // Writes data in microSD.
+    Serial.println(measurements);                                       // Print measured data through UART 1.
     initString(measurements,bufferSize);                                // Clear measurements buffer.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on to indicate that board is writing on microSD.
   }
