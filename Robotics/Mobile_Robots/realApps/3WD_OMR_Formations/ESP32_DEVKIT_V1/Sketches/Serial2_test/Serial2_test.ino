@@ -3,7 +3,7 @@
 #define APB_CLK 80.0E6                                                            // Clock of the Advanced Peripheral Bus (80 Mhz).
 #define bufferSize_uart 256                                                       // Value for setting the receiving buffer size.
 #define Baud_Rate_1 921600                                                        // Baud rate value for UART 0 communication.
-#define Baud_Rate_2 115200                                                          // Baud rate value for UART 2 communication.
+#define Baud_Rate_2 20E5                                                          // Baud rate value for UART 2 communication.
 //-----------------------------------------------------------------------------------
 // Including libraries to the program:
 #include <HardwareSerial.h>

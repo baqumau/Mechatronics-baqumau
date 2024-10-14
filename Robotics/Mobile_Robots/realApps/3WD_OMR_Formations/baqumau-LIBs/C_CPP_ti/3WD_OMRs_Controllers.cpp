@@ -71,6 +71,53 @@ void freeMatrix(Matrix *MAT){
     MAT->data = NULL;                                                                       // Data of MAT to empty.
 }
 //---------------------------------------------------------------------------------------------------------------
+// Function to allocate memory for the matrix in the structure (string-format elements array):
+bool allocateStMatrix(St_Matrix *SMAT, int elem_size, int buff_size){
+    int i, j;                                                                               // Declaration of i and j as integer variables.
+    SMAT->bufferSize = buff_size;                                                           // Assign value for the buffer size or matrix columns.
+    SMAT->elementSize = elem_size;                                                          // Assign value for size of elements in the structure, or matrix rows.
+    // Allocate memory for the element pointers:
+    SMAT->data = (char **)malloc(elem_size * sizeof(char *));
+    if(SMAT->data == NULL){
+        return false;                                                                       // Memory allocation failed.
+    }
+    // Allocate memory for each element:
+    for(i = 0; i < elem_size; i++){
+        SMAT->data[i] = (char *)malloc(buff_size * sizeof(char));
+        if(SMAT->data[i] == NULL){
+            // If allocation fails, free any already allocated memory:
+            for(j = 0; j < i; j++){
+                free(SMAT->data[j]);
+            }
+            free(SMAT->data);
+            return false;                                                                   // Memory allocation failed.
+        }
+    }
+    return true;                                                                            // Memory allocation successful.
+}
+//---------------------------------------------------------------------------------------------------------------
+// Function to free memory for the string matrix in the structure:
+void freeStMatrix(St_Matrix *SMAT){
+    int i;                                                                                  // Declaration of i as integer variable.
+    for(i = 0; i < SMAT->elementSize; i++){
+        free(SMAT->data[i]);                                                                // Liberate space for SMAT structure.
+    }
+    free(SMAT->data);
+    SMAT->elementSize = 0;                                                                  // Set elements size of SMAT to zero.
+    SMAT->bufferSize = 0;                                                                   // Set buffer size of SMAT to zero.
+    SMAT->data = NULL;                                                                      // Data of SMAT to empty.
+}
+//---------------------------------------------------------------------------------------------------------------
+// Function to initialize char-type data-matrix buffer:
+void initStMatrix(St_Matrix *SMAT){
+    int i, j;                                                                               // Declaration of i and j as integer variables.
+    for(i = 0; i < SMAT->elementSize; i++){                                                 // Bucle that set to 0 all.
+        for(j = 0; j < SMAT->bufferSize; j++){
+            SMAT->data[i][j] = 0x00;                                                        // Clear character in the jth position of ith element.
+        }
+    }
+}
+//---------------------------------------------------------------------------------------------------------------
 // Create integrator structure:
 Integrator createIntegrator(int inputSize, float sampleTime, float gain){
     // Configuring the members of the Integrator structure:
@@ -1453,6 +1500,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
 //---------------------------------------------------------------------------------------------------------------
 // Creating formation structure:
 Formation createFormation(int qty){
+    int i, j, s = 3*qty;                                                                    // Declaration of i, j and s as integer variables.
     // Configuring the members of the OMRs formation structure:
     Formation FMR;                                                                          // Creates a formation struct (FMR).
     FMR.qty = qty;                                                                          // OMRs quantity in the formation as FMR.
@@ -1463,8 +1511,22 @@ Formation createFormation(int qty){
     FMR.u_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the control torques vector u(k).
     FMR.v_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the control voltages vector v(k).
     FMR.params = (float *)malloc(25*qty * sizeof(float));                                   // Allocate memory for precomputation of several constant values required by the formation control systems.
+    FMR.flag = (bool *)malloc(2*qty * sizeof(bool));                                        // Allocate memory for the control voltages vector v(k).
     FMR.CORq = createAngleConverter(qty);                                                   // Creating the angle correction CORq structure within FMR.
     FMR.CORc = createAngleConverter(qty-1);                                                 // Creating the angle correction CORc structure within FMR.
+    //-----------------------------------------------
+    if(allocateStMatrix(&FMR.qs_k,s,16) && allocateStMatrix(&FMR.cs_k,s,16) && allocateStMatrix(&FMR.ws_k,s,16) && allocateStMatrix(&FMR.us_k,s,16)){
+        FMR.flag[0] = true;                                                                 // Set flag 0 to HIGH.
+        // Initializing values for allocated matrix:
+        for(i = 0; i < s; i++){
+            for(j = 0; j < 16; j++){
+                FMR.qs_k.data[i][j] = 0x00;                                                 // Assigning initial zero values to the string-format elements of qs_k matrix.
+                FMR.cs_k.data[i][j] = 0x00;                                                 // Assigning initial zero values to the string-format elements of cs_k matrix.
+                FMR.ws_k.data[i][j] = 0x00;                                                 // Assigning initial zero values to the string-format elements of ws_k matrix.
+                FMR.us_k.data[i][j] = 0x00;                                                 // Assigning initial zero values to the string-format elements of us_k matrix.
+            }
+        }
+    }
     //-----------------------------------------------
     switch(qty){
         case 2:

@@ -11,7 +11,7 @@ were implemented for facilitating posterior code creations.*/
 #include <float.h>
 #include "3WD_OMRs_Controllers.h"
 //---------------------------------------------------------------------------------------------------------------
-// Data structure to get values from streming data set:
+// Three-dimension matrix structure to arrange values from whichever streming data set:
 typedef struct{
     int xSize;                                                                  // First dimension [*]** of data member.
     int ySize;                                                                  // Second dimension *[*]* of data member.
@@ -49,6 +49,8 @@ extern void reverse(char *str, int len);
 extern int intToStr(int x, char str[], int d);
 // Convert a floating-point number (such as float or double) to a string representation:
 extern void ftoa(float num, char *res, int afterpoint);
+// Function to initialize whichever char-type data string:
+extern void initString(char *str, int strSize);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _baqumau_H_ */
 //---------------------------------------------------------------------------------------------------------------

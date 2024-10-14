@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <float.h>
 #include "baqumau.h"
@@ -111,7 +112,7 @@ void add_2_charBuffer(Data_Struct *DAT, char c){
 // Classify char-type data from developed buffer within data structure as DAT:
 void classify_charBuffer(Data_Struct *DAT){
     int i, j = 0, k = 0;                                                                    // Declaration of i, j, and k as index integer variables.
-    char charValue[DAT->MAT3.zSize];                                                        // Declaration of char variable to temporarily store a value from buffer data set.
+    char *charValue = (char *)malloc(DAT->MAT3.zSize * sizeof(char));                       // Declaration of char variable to temporarily store a value from buffer data set.
     if(DAT->flag[0]){
         // separating data consigned in buffer:
         for(i = 0; i < DAT->bufferIndex; i++){
@@ -166,34 +167,51 @@ int intToStr(int x, char str[], int dig){
 // Convert any floating-point number (such as float or double) to a string representation:
 void ftoa(float num, char *res, int afterpoint){
     int j;                                                                                  // Declaration of j as integer variable.
-    // Handling negative numbers:
-    int isNegative = 0;
-    if(num < 0){
-        isNegative = 1;                                                                     // Indicates when float number is negative.
-        num = -num;                                                                         // Float number is changed to positive.
+    int isNegative = 0;                                                                     // Flag indicator that float number is negative.
+    // handling special cases:
+    if(isnan(num)){
+        strcpy(res,"nan");
     }
-    // Extracting integer part:
-    int ipart = (int)num;
-    // Extracting floating part:
-    float fpart = num - (float)ipart;
-    // Converting integer part to string:
-    int i = intToStr(ipart, res, 0);
-    // Adding negative sign if needed:
-    if(isNegative){
-        for(int j = i; j > 0; j--){
-            res[j] = res[j - 1];
+    else if (isinf(num)){
+        strcpy(res,"inf");
+    }
+    else{
+        // Handling negative numbers:
+        if(num < 0){
+            isNegative = 1;                                                                 // Indicates when float number is negative.
+            num = -num;                                                                     // Float number is changed to positive.
         }
-        res[0] = '-';
-        i++;
+        // Extracting integer part:
+        int ipart = (int)num;
+        // Extracting floating part:
+        float fpart = num - (float)ipart;
+        // Converting integer part to string:
+        int i = intToStr(ipart, res, 0);
+        // Adding negative sign if needed:
+        if(isNegative){
+            for(j = i; j > 0; j--){
+                res[j] = res[j - 1];
+            }
+            res[0] = '-';
+            i++;
+        }
+        // If there is no need for fractional part, stop here...
+        //-----------------------------------------------
+        if(afterpoint != 0){
+            res[i] = '.';                                                                   // Add decimal point.
+            // Multiplying the fractional part by 10^afterpoint:
+            fpart = fpart * pow(10, afterpoint);
+            // Converting fractional part to string:
+            intToStr((int)fpart, res + i + 1, afterpoint);
+        }
     }
-    // If there is no need for fractional part, stop here...
-    //-----------------------------------------------
-    if(afterpoint != 0){
-        res[i] = '.';                                                                       // Add decimal point.
-        // Multiplying the fractional part by 10^afterpoint:
-        fpart = fpart * pow(10, afterpoint);
-        // Converting fractional part to string:
-        intToStr((int)fpart, res + i + 1, afterpoint);
+}
+//---------------------------------------------------------------------------------------------------------------
+// Function to initialize whichever char-type data string:
+void initString(char *str, int strSize){
+    int i;                                                                                  // Declaration of i as integer variable.
+    for(i = 0; i < strSize; i++){                                                           // Bucle that set to 0 all.
+        str[i] = 0x00;                                                                      // Characters in buffer.
     }
 }
 //---------------------------------------------------------------------------------------------------------------

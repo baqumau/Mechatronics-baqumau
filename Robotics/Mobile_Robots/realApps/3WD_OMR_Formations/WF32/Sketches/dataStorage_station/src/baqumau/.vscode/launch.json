@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/mbaquero/Downloads/Argentina/ITBA/Doctorate Work/Experiments/Omnidirectional Robots/WF32/Sketches/Control_v002/src/3WD_OMRs_Controllers",
-      "program": "c:/Users/mbaquero/Downloads/Argentina/ITBA/Doctorate Work/Experiments/Omnidirectional Robots/WF32/Sketches/Control_v002/src/3WD_OMRs_Controllers/build/Debug/outDebug",
+      "cwd": "c:/Users/mbaquero/Mechatronics-baqumau/Robotics/Mobile_Robots/realApps/3WD_OMR_Formations/WF32/Sketches/dataStorage_station/src/baqumau",
+      "program": "c:/Users/mbaquero/Mechatronics-baqumau/Robotics/Mobile_Robots/realApps/3WD_OMR_Formations/WF32/Sketches/dataStorage_station/src/baqumau/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

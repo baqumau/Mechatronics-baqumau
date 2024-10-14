@@ -7,7 +7,7 @@ Unfortunately ChipKit WF32 with PLATFORMIO framework does not work appropriately
 // Defining configuration values:
 #define FPB 80E6                                                        // Peripheral bus clock (PBCLK) frequency.
 #define desired_baudrate_1 20E5                                         // Desired baud rate for communication via UART 1 module.
-#define desired_baudrate_4 20E5                                         // Desired baud rate for communication via UART 4 module.
+#define desired_baudrate_4 1250000                                      // Desired baud rate for communication via UART 4 module.
 #define NOP __asm__ __volatile__ ("nop\n\t")                            // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
 // Including libraries to the program:
@@ -30,16 +30,21 @@ const unsigned int chipSelect_SD_default = 51;                          // Selec
 const unsigned int chipSelect_SD = chipSelect_SD_default;
 //---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
-const unsigned int bufferSize = 256;                                    // buffer length.
+const unsigned int bufferSize = 128;                                    // buffer length.
+const unsigned int varQty = 3*Robots_Qty;                               // Quantity of state varaibles that must be saved.
+char character = 0x00;                                                  // Variable where received character is saved.
+char measurements[bufferSize];                                          // Variable to arrange the measured variables.
+bool flagcommand_0 = false;                                             // Available flag command 0 (It is used to control UART receiving data).
 //---------------------------------------------------------------------------------------------------------------
 // Creating data structure for UART 4 peripheral:
-Data_Struct UART4 = createDataStruct(bufferSize,2,9*Robots_Qty,16);
+Data_Struct UART4 = createDataStruct(bufferSize,2,varQty,16);
+// Creating a robot formation structure for arranging their relevant variables:
+Formation FMR = createFormation(Robots_Qty);                            // Create the OMRs formation structure.
 //---------------------------------------------------------------------------------------------------------------
 // Receiving data interrupt for UART 1 module:
 void __attribute__((interrupt)) UART1_RX_Handler(){
   //-------------------------------------------------------------------------------------------------------------
   // Put interrupt code here:
-  int i;                                                                // Declaration of i as index integer variable.
   char character = U1RXREG;                                             // Variable to save received character by UART 1 module.
   Serial.println(UART4.charBuffer);                                     // Print character through UART 1.
   //-------------------------------------------------------------------------------------------------------------
@@ -48,28 +53,23 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
 //---------------------------------------------------------------------------------------------------------------
 // Receiving data interrupt for UART 4 module:
 void __attribute__((interrupt)) UART4_RX_Handler(){
-  int i;                                                                // Declaration of i as index integer variable.
-  char character = U4RXREG;                                             // Variable to save received character by UART 4 module.
+  character = U4RXREG;                                                  // Variable to save received character by UART 4 module.
   add_2_charBuffer(&UART4,character);                                   // Adding character to data buffer assigned to UART 4 module.
+  Serial.print(character);                                              // Print measured data through UART 1.
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 4 module:
   // If streaming data is completely added to char buffer of UART 4 structure:
   if(UART4.flag[1]){
-    classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART 4 struct data matrix.
-    switch(UART4.identifier){
-      case 0:
-      baqumau.println(UART4.charBuffer);                                // Writing data in microSD.
-      Serial.println(UART4.charBuffer);                                 // Print data in UART4.charBuffer structure through UART 1.
-      digitalWrite(PIN_LED3,HIGH);                                      // Turn led 3 on to indicate that board is writing on microSD.
-      break;
-      case 1:
-      baqumau.println("];");                                            // Writing on microSD.
-      baqumau.close();                                                  // Closing the write file.
-      digitalWrite(PIN_LED3,LOW);                                       // Turn led 3 off for show finish of writing on microSD.
-      break;
+    int i;                                                              // Declaration of i as index integer variable.
+    digitalWrite(PIN_LED5,HIGH);                                        // Turn led 5 on to indicate that data is completely added to the char buffer of UART 4 structure.
+    for(i = 0; i < varQty; i++){
+      initString(UART4.MAT3.data[0][i],10);                             // Initialize string-type data set arranged in MAT3 within UART4 structure.
     }
+    classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART 4 struct data matrix.
     init_charBuffer(&UART4);                                            // Initialize char-type data buffer associated to UART 4.
+    flagcommand_0 = true;                                               // Set flagcommand 0 to TRUE.
   }
+  digitalWrite(PIN_LED5,LOW);                                           // Turn led 5 off to indicate that board is exiting from this interrupt.
   IFS2CLR = 0x00000010;                                                 // Clear the UART 4 receiver interrupt status flag.
 }
 //---------------------------------------------------------------------------------------------------------------
@@ -107,6 +107,7 @@ void start_uart_4_module(){
 //---------------------------------------------------------------------------------------------------------------
 // Main setup instructions:
 void setup(){
+  int i;                                                                // Declaration of i as integer variable.
   pinMode(PIN_LED3,OUTPUT);                                             // Configuring LED 3 as output.
   pinMode(PIN_LED4,OUTPUT);                                             // Configuring LED 4 as output.
   pinMode(PIN_LED5,OUTPUT);                                             // Configuring LED 5 as output.
@@ -124,6 +125,9 @@ void setup(){
   start_uart_1_module();                                                // Enable UART 1 module.
   start_uart_4_module();                                                // Enable UART 4 module.
   init_charBuffer(&UART4);                                              // Initialize char-type data buffer of UART 4.
+  for(i = 0; i < 3*Robots_Qty; i++){
+    initString(UART4.MAT3.data[0][i],10);                               // Initialize string-type data set arranged in MAT3 within UART4 structure.
+  }
   //-------------------------------------------------------------------------------------------------------------
   // Configuring SD Card:
   pinMode(chipSelect_SD_default,OUTPUT);
@@ -154,12 +158,30 @@ void setup(){
   baqumau = SD.open("Sep2224a.txt",FILE_WRITE);                         // Open the file for start to write.
   baqumau.print("measurements = [");                                    // Writing data in microSD.
   Serial.println("Done...");
-  // delayMicroseconds(100);                                               // 100 microseconds delay.
+  delayMicroseconds(50);                                                // 50 microseconds delay.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Main loop instructions:
 void loop(){
-  NOP;                                                                  // No operation cycle.
+  int i;                                                                // Declaration of i as index integer variable.
+  if(UART4.identifier == 0 && flagcommand_0){
+    flagcommand_0 = false;                                              // Reset flag command 0 to FALSE.
+    snprintf(measurements,bufferSize,"%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5]);
+    baqumau.println(measurements);                                        // Writes data in microSD.
+    initString(measurements,bufferSize);                                // Clear measurements buffer.
+    digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on to indicate that board is writing on microSD.
+  }
+  else if(UART4.identifier == 1 && flagcommand_0){
+    flagcommand_0 = false;                                              // Reset flag command 0 to FALSE.
+    baqumau.println("];");                                              // Writing on microSD.
+    baqumau.close();                                                    // Closing the writing file.
+    Serial.println("Streaming data was completed..!");                  // Print ending message via UART 1.
+    for(i = 0; i < 3*Robots_Qty; i++){
+      initString(UART4.MAT3.data[0][i],16);                             // Initialize string-type data set arranged in MAT3 within UART4 structure.
+    }
+    digitalWrite(PIN_LED3,LOW);                                         // Turn led 3 off for show finish of writing on microSD.
+  }
+  else NOP;                                                             // No operation cycle.
 }
 //---------------------------------------------------------------------------------------------------------------
 // No more...

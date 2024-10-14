@@ -5,14 +5,14 @@
 //
 // OBJECTIVES:
 // 1. Blink functionality of LED 09 and LED 10, with timer interrupts.
-// 2. Timer 0 interrupt to 200 Hz.
-// 3. Timer 1 interrupt to 10 Hz.
-// 4. Timer 2 interrupt to 250 Hz.
-// 5. SCIA communication (UART).
-// 6. Receiving FIFO interrupt via SCIA.
-// 7. SCIB communication (UART).
-// 8. Receiving FIFO interrupt via SCIB.
-// 9. SCIC communication (UART).
+// 2. Timer 0 interrupt to 250 Hz (Higher priority).
+// 3. SCIA communication (UART).
+// 4. Receiving FIFO interrupt via SCIA.
+// 5. SCIB communication (UART).
+// 6. Receiving FIFO interrupt via SCIB.
+// 7. SCIC communication (UART).
+// 8. Timer 1 interrupt to 200 Hz.
+// 9. Timer 2 interrupt to 10 Hz (Lower priority).
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
@@ -25,9 +25,9 @@
 #define DEVICE_SYSCLK_FREQ 200000000                                                // Native working system clock frequency.
 #define BLINKY_LED_GPIO_01 12                                                       // Define pin number for LED 01.
 #define BLINKY_LED_GPIO_02 13                                                       // Define pin number for LED 02.
-#define freq_hz_0 200                                                               // Frequency in Hz for instructions execution of Timer 0.
-#define freq_hz_1 10                                                                // Frequency in Hz for instructions execution of Timer 1.
-#define freq_hz_2 250                                                               // Frequency in Hz for instructions execution of Timer 2.
+#define freq_hz_0 250                                                               // Frequency in Hz for instructions execution of Timer 0.
+#define freq_hz_1 200                                                               // Frequency in Hz for instructions execution of Timer 1.
+#define freq_hz_2 10                                                                // Frequency in Hz for instructions execution of Timer 2.
 #define exe_minutes 4                                                               // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------------------------------------------------
 // Putting function declarations here:
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timers 1, 2 and 3:
+// Function to generate interrupt service through CPU timers 0, 1 and 2:
 __interrupt void cpu_timer0_isr(void);
 __interrupt void cpu_timer1_isr(void);
 __interrupt void cpu_timer2_isr(void);
@@ -88,17 +88,16 @@ void scic_msg(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
 // Global dynamic variables and constants are declared here:
 const Uint16 bufferSize = 256;                                                      // buffer length.
-const Uint32 final_iteration = 60*(Uint32)(exe_minutes)*(Uint32)(freq_hz_0);        // Final iteration of program execution (4 minutes at "freq_hz_0" in Hz).
+const Uint32 final_iteration = 60*(Uint32)(exe_minutes)*(Uint32)(freq_hz_1);        // Final iteration of program execution (4 minutes at "freq_hz_0" in Hz).
 volatile bool flagcommand_0;                                                        // Declare flag command 0 (This flag indicates that initial conditions must be configured).
-volatile bool flagcommand_1;                                                        // Declare flag command 1 (Used for ON\OFF LED).
-volatile bool flagcommand_2;                                                        // Declare flag command 2 (Used for ON\OFF LED).
+volatile bool flagcommand_1;                                                        // Declare flag command 1 (Used for ON\OFF LED 01).
+volatile bool flagcommand_2;                                                        // Declare flag command 2 (Used for ON\OFF LED 02).
 volatile bool flagcommand_3;                                                        // Declare flag command 3 (Used for happy ending).
 volatile char receivedChar;                                                         // Variable to save received character from SCIA.
 char *msg_1;                                                                        // Variable 1 to save a char data chain.
 char *msg_2;                                                                        // Variable 2 to save a char data chain.
 char *msg_3;                                                                        // Variable 3 to save a char data chain.
 char *msg_4;                                                                        // Variable 4 to save a char data chain.
-char *floatStr;
 char *measurements;                                                                 // Variable to save a char data chain that contains the measured signals.
 char *controlSignals;                                                               // Variable to save a char data chain that contains the computed control signals.
 char *angularVelocities;                                                            // Variable to save a char data chain that contains the angular velocities of robots' wheels.
@@ -179,7 +178,7 @@ void main(void){
     // Some messages to control SCIA, SCIB and SCIC peripherals:
     msg_1 = ":9\r\n\0";                                                             // Message to ask to MATLAB for data.
     msg_2 = ":10\r\n\0";                                                            // Message to stop streaming data with MATLAB.
-    msg_3 = ":1,0;\r\n\0";                                                          // Message to stop the saving data process.
+    msg_3 = ":1,0.0;\n";                                                            // Message to stop the saving data process.
     // Initializing SCIA:
     scia_fifo_init();                                                               // Initialize the SCIA FIFO.
     scia_init();                                                                    // Initialize the SCIA.
@@ -191,12 +190,11 @@ void main(void){
     scic_init();                                                                    // Initialize the SCIC.
 
     // Preallocating memory for used *variables:
-    floatStr = (char *)malloc(bufferSize/8 * sizeof(char));                         // Preallocate memory for auxiliary string variable.
     measurements = (char *)malloc(bufferSize * sizeof(char));                       // Preallocate memory for measurement data set.
     controlSignals = (char *)malloc(bufferSize * sizeof(char));                     // Preallocate memory for control signals data set.
     angularVelocities = (char *)malloc(bufferSize * sizeof(char));                  // Preallocate memory for angular velocities data set.
 
-    // Interrupts that are used in this example are re-mapped to
+    // Interrupts that are used in this project are re-mapped to
     // ISR functions found within this file.
     EALLOW;                                                                         // This is needed to write to EALLOW protected registers.
     PieVectTable.TIMER0_INT = &cpu_timer0_isr;
@@ -211,11 +209,11 @@ void main(void){
     InitCpuTimers();                                                                // Initialize the CPU Timers.
 
     // Configure CPU-Timer 0, 1, and 2 to interrupt every second:
-    // Timer 0 -> 200MHz CPU Frequency, 1/200 seconds of Period (in uSeconds):
+    // Timer 0 -> 200MHz CPU Frequency, 1/250 seconds of Period (in uSeconds):
     ConfigCpuTimer(&CpuTimer0,200.0f,1000000.0f/freq_hz_0);
-    // Timer 1 -> 200MHz CPU Frequency, 1/10 seconds of Period (in uSeconds):
+    // Timer 1 -> 200MHz CPU Frequency, 1/200 seconds of Period (in uSeconds):
     ConfigCpuTimer(&CpuTimer1,200.0f,1000000.0f/freq_hz_1);
-    // Timer 2 -> 200MHz CPU Frequency, 1/250 seconds of Period (in uSeconds):
+    // Timer 2 -> 200MHz CPU Frequency, 1/10 seconds of Period (in uSeconds):
     ConfigCpuTimer(&CpuTimer2,200.0f,1000000.0f/freq_hz_2);
 
     // To ensure precise timing, use write-only instructions to write to the entire register. Therefore, if any
@@ -257,6 +255,7 @@ void main(void){
     init_charBuffer(&SCIB);                                                         // Initialize dedicated char-type data buffer of SCIB.
     // Creating a robot formation structure for arranging their relevant variables:
     FMR = createFormation(Robots_Qty);                                              // Create the OMRs formation structure.
+    while(!FMR.flag[0]) FMR = createFormation(Robots_Qty);                          // Create the OMRs formation structure.
 
     // Step 7. IDLE loop. Just sit and loop forever (optional):
     for(;;){
@@ -267,7 +266,7 @@ void main(void){
             IER &= ~M_INT1;                                                         // Disable CPU timer 0 interrupt.
             IER &= ~M_INT13;                                                        // Disable CPU timer 1 interrupt.
             IER &= ~M_INT14;                                                        // Disable CPU timer 2 interrupt.
-            CpuTimer0.InterruptCount = 0;                                           // Reset counter of CPU timer 0.
+            CpuTimer1.InterruptCount = 0;                                           // Reset counter of CPU timer 1.
             flagcommand_3 = false;                                                  // Reset flag command 3.
         }
         else NOP;                                                                   // No Operation (burn a cycle).
@@ -276,11 +275,48 @@ void main(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Putting function definitions here:
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timer 0 (200 Hz):
+// Function to generate interrupt service through CPU timer 0 (streaming data from MATLAB at 250 Hz):
 __interrupt void cpu_timer0_isr(void){
     CpuTimer0.InterruptCount++;
+    //-----------------------------------------------
+    // Blinking LED GPIO 1:
+    if(flagcommand_1 && CpuTimer0.InterruptCount == freq_hz_0 && CpuTimer1.InterruptCount <= final_iteration){
+        GPIO_WritePin(BLINKY_LED_GPIO_01, 0);                                       // Turn LED GPIO 1 to ON.
+        flagcommand_1 = false;                                                      // Set flag command 1 to FALSE.
+        CpuTimer0.InterruptCount = 0;                                               // Reset Timer 0 counter.
+    }
+    else if(!flagcommand_1 && CpuTimer0.InterruptCount == freq_hz_0 && CpuTimer1.InterruptCount <= final_iteration){
+        GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                       // Turn LED GPIO 1 to OFF.
+        flagcommand_1 = true;                                                       // Set flag command 1 to TRUE.
+        CpuTimer0.InterruptCount = 0;                                               // Reset Timer 0 counter.
+    }
+    //-----------------------------------------------
+    // Sending command to MATLAB:
+    if(CpuTimer1.InterruptCount <= final_iteration) scia_msg(msg_1);                // Write message 1 through SCIA peripheral.
+    else{
+        scia_msg(msg_2);                                                            // Write message 1 through SCIA peripheral.
+    }
+    //-----------------------------------------------
+    // Clearing the interrupt flag:
+    CpuTimer0Regs.TCR.bit.TIF = 1;                                                  // Clear the Timer 0 interrupt flag.
+    //-----------------------------------------------
+    // Acknowledge this interrupt to receive more interrupts from group 1:
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+}
+//-----------------------------------------------------------------------------------------------------------------------
+// Function to generate interrupt service through CPU timer 1 (Control system is implemented here at 200 Hz):
+__interrupt void cpu_timer1_isr(void){
     int i;                                                                          // Declaration of i as integer iteration variable.
-    if(CpuTimer0.InterruptCount <= final_iteration && flagcommand_0){
+    // Clearing the interrupt flag:
+    CpuTimer1Regs.TCR.bit.TIF = 1;                                                  // Clear the Timer 1 interrupt flag.
+    // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
+    EINT;
+    // Increasing counter on Timer 1:
+    CpuTimer1.InterruptCount++;
+    //-----------------------------------------------
+    // -- (The CPU acknowledges the interrupt) --
+    //-----------------------------------------------
+    if(CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
         //---------------------------------------------------------------------------------------------------------------
         // Updating the state variables to current values:
         for(i = 0; i < 3*Robots_Qty; i++){
@@ -291,68 +327,58 @@ __interrupt void cpu_timer0_isr(void){
         FMR.q_k[2] = FMR.CORq.y_k[0];                                               // Determines ph1(k).
         FMR.q_k[5] = FMR.CORq.y_k[1];                                               // Determines ph2(k).
         computeCSVariables(FMR);                                                    // Compute the cluster space variables of FMR formation.
+        // Saving OMRs formation data in a string-format version:
+        for(i = 0; i < 3*Robots_Qty; i++){
+            initString(FMR.qs_k.data[i],FMR.qs_k.bufferSize);                       // Initialize or clear string-format data chain.
+            ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);              // Saving same pose of OMRs formation, but in string-format.
+        }
     }
     //-----------------------------------------------
-    // Acknowledge this interrupt to receive more interrupts from group 1:
-    PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+    // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
+    DINT;
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timer 1 (10 Hz):
-__interrupt void cpu_timer1_isr(void){
-    CpuTimer1.InterruptCount++;
-    // The CPU acknowledges the interrupt.
-    if(flagcommand_1 && CpuTimer1.InterruptCount == freq_hz_1 && CpuTimer0.InterruptCount <= final_iteration){
-        GPIO_WritePin(BLINKY_LED_GPIO_01, 0);                                       // Turn LED GPIO 1 to ON.
-        flagcommand_1 = false;                                                      // Set flag command 1 to FALSE.
-        CpuTimer1.InterruptCount = 0;                                               // Reset Timer 1 counter.
-    }
-    else if(!flagcommand_1 && CpuTimer1.InterruptCount == freq_hz_1 && CpuTimer0.InterruptCount <= final_iteration){
-        GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                       // Turn LED GPIO 1 to OFF.
-        flagcommand_1 = true;                                                       // Set flag command 1 to TRUE.
-        CpuTimer1.InterruptCount = 0;                                               // Reset Timer 1 counter.
-    }
-    if(CpuTimer0.InterruptCount <= final_iteration && flagcommand_0){
-        int i;                                                                      // Declaration of i as integer iteration variable.
-        //---------------------------------------------------------------------------------------------------------------
-        // Packing and streaming the measurement variables of OMRs formation:
-        strcpy(measurements,":0,");                                                 // Initial command number for measurements streaming data chain.
-        for(i = 0; i < 3*Robots_Qty; i++){
-            ftoa(FMR.q_k[i],floatStr,3);                                            // Converts floating-point format of robot space variable to string.
-            if(i < 3*Robots_Qty) strcat(floatStr,",");                              // Concatenate colon to the data chain.
-            strcat(measurements,floatStr);                                          // Concatenate variable to the measurements data chain.
-        }
-        strcat(measurements,";\n\0");                                               // Concatenate the terminator string to the measurements data chain.
-        scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
-    }
-    else if(CpuTimer0.InterruptCount > final_iteration && flagcommand_0){
-        // Stopping the streaming of measurement variables:
-        scic_msg(msg_3);                                                            // Write streaming stop command via SCIC peripheral.
-        flagcommand_0 = false;                                                      // Reset flag command 0.
-    }
-}
-//-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timer 2 (streaming data from MATLAB at 250 Hz):
+// Function to generate interrupt service through CPU timer 2 (Sending OMRs formation variables to ChipKit WF32 board at 10 Hz):
 __interrupt void cpu_timer2_isr(void){
+    // Clearing the interrupt flag:
+    CpuTimer2Regs.TCR.bit.TIF = 1;                                                  // Clear the Timer 2 interrupt flag.
+    // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
+    EINT;
+    // Increasing counter on Timer 2:
     CpuTimer2.InterruptCount++;
-    // The CPU acknowledges the interrupt.
-    if(flagcommand_2 && CpuTimer2.InterruptCount == freq_hz_2 && CpuTimer0.InterruptCount <= final_iteration){
+    //-----------------------------------------------
+    // -- (The CPU acknowledges the interrupt) --
+    //-----------------------------------------------
+    // Blinking LED GPIO 2:
+    if(flagcommand_2 && CpuTimer2.InterruptCount == freq_hz_2 && CpuTimer1.InterruptCount <= final_iteration){
         GPIO_WritePin(BLINKY_LED_GPIO_02, 0);                                       // Turn LED GPIO 2 to ON.
         flagcommand_2 = false;                                                      // Set flag command 2 to FALSE.
         CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
-    else if(!flagcommand_2 && CpuTimer2.InterruptCount == freq_hz_2 && CpuTimer0.InterruptCount <= final_iteration){
+    else if(!flagcommand_2 && CpuTimer2.InterruptCount == freq_hz_2 && CpuTimer1.InterruptCount <= final_iteration){
         GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                       // Turn LED GPIO 2 to OFF.
         flagcommand_2 = true;                                                       // Set flag command 2 to TRUE.
         CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
-    if(CpuTimer0.InterruptCount <= final_iteration) scia_msg(msg_1);                // Write message 1 through SCIA peripheral.
-    else{
-        scia_msg(msg_2);                                                            // Write message 1 through SCIA peripheral.
-        flagcommand_3 = true;                                                       // Set flag command 3 to TRUE.
+    if(CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
+        //---------------------------------------------------------------------------------------------------------------
+        // Packing and streaming the measurement variables of OMRs formation:
+        initString(measurements,bufferSize);                                        // Initialize measurements data chain.
+        snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],(unsigned long)(CpuTimer1.InterruptCount));
+        scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
     }
+    else if(CpuTimer1.InterruptCount > final_iteration && flagcommand_0){
+        // Stopping the streaming of measurement variables:
+        scic_msg(msg_3);                                                            // Write streaming stop command via SCIC peripheral.
+        flagcommand_0 = false;                                                      // Reset flag command 0.
+        flagcommand_3 = true;                                                       // Set flag command 3 to TRUE (disable interrupts).
+    }
+    //-----------------------------------------------
+    // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
+    DINT;
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through SCIA received data:
+// Function to generate interrupt service through SCIA received data (Receiving data from MATLAB):
 __interrupt void scia_rx_isr(void){
     int i;                                                                          // Declaration of i as index integer variable.
     // Checking how many bytes are in the FIFO (you can use this information):
@@ -370,6 +396,7 @@ __interrupt void scia_rx_isr(void){
             // Saving initial state variables:
             for(i = 0; i < 3*Robots_Qty; i++){
                 FMR.q_k[i] = atof(SCIA.MAT3.data[0][i]);                            // Saving pose of OMRs formation along global reference frame.
+                ftoa(FMR.q_k[i],FMR.qs_k.data[i],5);                                // Saving same pose of OMRs formation, but in string-format.
             }
             float angles_k[Robots_Qty] = {FMR.q_k[2], FMR.q_k[5]};                  // Initial orientation vector in the robot space.
             if(FMR.CORq.flag[0] == false){
@@ -377,7 +404,7 @@ __interrupt void scia_rx_isr(void){
             }
             computeCSVariables(FMR);                                                // Compute the cluster space variables of FMR formation.
             //-----------------------------------------------------------------------------------------------------------
-            CpuTimer0.InterruptCount = 0;                                           // Reset iterations.
+            CpuTimer1.InterruptCount = 0;                                           // Reset CPU timer 1 (iterations).
             flagcommand_0 = true;                                                   // Setting flag 0 to true.
         }
     }
@@ -388,8 +415,13 @@ __interrupt void scia_rx_isr(void){
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;                                         // Acknowledge PIE group 9 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through SCIB received data:
+// Function to generate interrupt service through SCIB received data (Receiving data from OMRs):
 __interrupt void scib_rx_isr(void){
+    // Clearing the interrupt flag and acknowledge the interrupt:
+    ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                            // Clear RX FIFO interrupt flag.
+    // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
+    EINT;
+    //-----------------------------------------------
     // Checking how many bytes are in the FIFO (you can use this information):
     uint16_t fifo_level = ScibRegs.SCIFFRX.bit.RXFFST;
     // Loop to read all available data in the FIFO:
@@ -404,8 +436,8 @@ __interrupt void scib_rx_isr(void){
         init_charBuffer(&SCIB);                                                     // Initialize dedicated char-type data buffer of SCIB.
     }
     //-----------------------------------------------
-    // Clearing the interrupt flag and acknowledge the interrupt:
-    ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                            // Clear RX FIFO interrupt flag.
+    // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
+    DINT;
     // Acknowledge this interrupt to receive more interrupts from group 9:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;                                         // Acknowledge PIE group 9 interrupt.
 }
@@ -527,8 +559,8 @@ void scic_init(){
     // ScicRegs.SCICTL2.bit.RXBKINTENA = 1;                                            // Receiver-buffer break interrupt enabled (standard SCIC).
     //-----------------------------------------------
     // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
-    ScicRegs.SCIHBAUD.all = 0x0000;                                                 // Desired baud_rate = 2E6, @LSPCLK = 50MHz (200 MHz SYSCLK).
-    ScicRegs.SCILBAUD.all = 0x0002;
+    ScicRegs.SCIHBAUD.all = 0x0000;                                                 // Desired baud_rate = 1250000, @LSPCLK = 50MHz (200 MHz SYSCLK).
+    ScicRegs.SCILBAUD.all = 0x0004;
     //-----------------------------------------------
     ScicRegs.SCICTL1.all = 0x0023;                                                  // Relinquish SCI from Reset.
     //-----------------------------------------------
@@ -541,14 +573,18 @@ void scic_fifo_init(void){
                                                                                     // transmission FIFO interrupt is disabled.
     ScicRegs.SCIFFRX.all = 0x2000;                                                  // Reception FIFO interrupt is disabled,
                                                                                     // without interrupt FIFO level.
-    ScicRegs.SCIFFCT.all = 0x0;
+    ScicRegs.SCIFFCT.all = 0x0002;                                                  // Generates a FIFO transfer execution with an internal delay of 2 baud rate cycles.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit a character through the SCIC:
 void scic_xmit(char a){
-    if(ScicRegs.SCIFFTX.bit.TXFFST < 16) ScicRegs.SCITXBUF.all = a;                 // Load character to SCIC TX buffer.
-    else while(ScicRegs.SCIFFTX.bit.TXFFST != 0);                                   // Wait until FIFO TX is ready.
-    // while(ScicRegs.SCICTL2.bit.TXRDY == 0);                                      // Wait until TX is ready (standard SCIC).
+    if(ScicRegs.SCIFFTX.bit.TXFFST < 15) ScicRegs.SCITXBUF.all = a;                 // Load character to SCIC TX buffer.
+    else{
+        ScicRegs.SCITXBUF.all = a;                                                  // Load character to SCIC TX buffer.
+        while(ScicRegs.SCIFFTX.bit.TXFFST > 1);                                     // Wait until FIFO TX is ready.
+    }
+    // while(ScicRegs.SCICTL2.bit.TXRDY == 0);                                         // Wait until TX is ready (standard SCIC).
+    // ScicRegs.SCITXBUF.all = a;                                                      // Load character to SCIC TX buffer.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit message via SCIC:

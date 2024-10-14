@@ -62,6 +62,13 @@ typedef struct{
     float **data;                                                               // Matrix data.
 } Matrix;
 //---------------------------------------------------------------------------------------------------------------
+// Data structure to arrange string-format matrices:
+typedef struct{
+    int bufferSize;                                                             // Buffer size.
+    int elementSize;                                                            // Size of the elements group.
+    char **data;                                                                // Matrix data.
+} St_Matrix;
+//---------------------------------------------------------------------------------------------------------------
 // Angles correction structure to convert from {-M_PI,M_PI} format orientation to absolute orientation:
 typedef struct{
     int s_in;                                                                   // Size of input.
@@ -82,18 +89,18 @@ typedef struct{
 typedef struct{
     int qty;                                                                    // OMRs quantity in the formation.
     float *q_k;                                                                 // [mm;rad], pose of OMRs formation in the robot space is arranged in this vector.
-    char **qs_k;                                                                // [mm;rad], pose of OMRs formation in the robot space is arranged in string-format within this vector.
     float *c_k;                                                                 // [mm;rad], pose of OMRs formation in the cluster space is arranged in this vector.
-    char **cs_k;                                                                // [mm;rad], pose of OMRs formation in the cluster space is arranged in string-format within this vector.
     float *w_k;                                                                 // [rad/s], angular velocity reached by each omni-wheel is arranged in this vector.
-    char **ws_k;                                                                // [rad/s], angular velocity reached by each omni-wheel is arranged in string-format within this vector.
     float *u_k;                                                                 // [N.mm], control signal applied to each omni-wheel is arranged in this vector.
-    float **us_k;                                                               // [N.mm], control signal applied to each omni-wheel is arranged in string-format within this vector.
     float *v_k;                                                                 // [%(PWM)], control signal applied to each omni-wheel is arranged in this vector.
-    float **vs_k;                                                               // [%(PWM)], control signal applied to each omni-wheel is arranged in string-format within this vector.
     float *params;                                                              // Several constant values needed in the formation control system.
+    St_Matrix qs_k;                                                             // [mm;rad], pose of OMRs formation in the robot space is arranged in string-format within this vector.
+    St_Matrix cs_k;                                                             // [mm;rad], pose of OMRs formation in the cluster space is arranged in string-format within this vector.
+    St_Matrix ws_k;                                                             // [rad/s], angular velocity reached by each omni-wheel is arranged in string-format within this vector.
+    St_Matrix us_k;                                                             // [N.mm], control signal applied to each omni-wheel is arranged in string-format within this vector.
     Correction_Struct CORq;                                                     // Adding angle correction structure for measured angles in the robot space.
     Correction_Struct CORc;                                                     // Adding angle correction structure for obtained angles through atan2(.) function in the cluster space.
+    bool *flag;                                                                 // Configuration and execution flags.
 } Formation;
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement trapezoidal integrators:
@@ -272,6 +279,12 @@ extern float clutch(float signal_k, float t_cl, float sampleTime, int iterations
 extern bool allocateMatrix(Matrix *MAT, int rows, int cols);
 // Function to free memory for the matrix in the struct:
 extern void freeMatrix(Matrix *MAT);
+// Function to allocate memory for the matrix in the structure (string-format elements array):
+extern bool allocateStMatrix(St_Matrix *SMAT, int elem_size, int buff_size);
+// Function to initialize char-type data-matrix buffer:
+extern void initStMatrix(St_Matrix *SMAT);
+// Function to free memory for the string matrix in the structure:
+extern void freeStMatrix(St_Matrix *SMAT);
 // Creating integrator structure:
 extern Integrator createIntegrator(int inputSize, float sampleTime, float gain);
 // Adding initial conditions to INT Integrator struct:

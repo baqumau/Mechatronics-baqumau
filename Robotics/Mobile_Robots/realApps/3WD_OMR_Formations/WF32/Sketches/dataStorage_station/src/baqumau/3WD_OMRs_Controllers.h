@@ -88,7 +88,8 @@ typedef struct{
     float *u_k;                                                                 // [N.mm], control signal applied to each omni-wheel is arranged in this vector.
     float *v_k;                                                                 // [%(PWM)], control signal applied to each omni-wheel is arranged in this vector.
     float *params;                                                              // Several constant values needed in the formation control system.
-    Correction_Struct COR;                                                      // Adding angle correction structure for obtained angles through atan2(.) function.
+    Correction_Struct CORq;                                                     // Adding angle correction structure for measured angles in the robot space.
+    Correction_Struct CORc;                                                     // Adding angle correction structure for obtained angles through atan2(.) function in the cluster space.
 } Formation;
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement trapezoidal integrators:
