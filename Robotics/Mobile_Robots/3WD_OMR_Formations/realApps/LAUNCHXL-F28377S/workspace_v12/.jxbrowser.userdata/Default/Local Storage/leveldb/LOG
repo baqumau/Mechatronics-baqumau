@@ -1,2 +1,3 @@
-2024/09/05-08:49:26.332 2e28 Creating DB C:\Users\mbaquero\Mechatronics-baqumau\Robotics\Mobile_Robots\realApps\3WD_OMR_Formations\LAUNCHXL-F28377S\workspace_v12\.jxbrowser.userdata\Default\Local Storage\leveldb since it was missing.
-2024/09/05-08:49:26.338 2e28 Reusing MANIFEST C:\Users\mbaquero\Mechatronics-baqumau\Robotics\Mobile_Robots\realApps\3WD_OMR_Formations\LAUNCHXL-F28377S\workspace_v12\.jxbrowser.userdata\Default\Local Storage\leveldb/MANIFEST-000001
+2024/10/15-10:01:12.969 3184 Reusing MANIFEST C:\Users\mbaquero\Mechatronics-baqumau\Robotics\Mobile_Robots\3WD_OMR_Formations\realApps\LAUNCHXL-F28377S\workspace_v12\.jxbrowser.userdata\Default\Local Storage\leveldb/MANIFEST-000001
+2024/10/15-10:01:12.970 3184 Recovering log #3
+2024/10/15-10:01:12.970 3184 Reusing old log C:\Users\mbaquero\Mechatronics-baqumau\Robotics\Mobile_Robots\3WD_OMR_Formations\realApps\LAUNCHXL-F28377S\workspace_v12\.jxbrowser.userdata\Default\Local Storage\leveldb/000003.log 
