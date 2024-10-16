@@ -52,6 +52,8 @@ volatile uint16_t counter_1 = 0;                                        // Time 
 volatile uint32_t counter_4 = 0;                                        // Interrupts counter (Timer 4).
 volatile uint32_t counter_5 = 0;                                        // Interrupts counter (Timer 5).
 volatile uint32_t iterations = 0;                                       // Iterations counter in the program.
+char character_1;                                                       // Variable to save received character from UART 1.
+char character_4;                                                       // Variable to save received character from UART 4.
 char controlSignals[bufferSize];                                        // Variable to save control signals data and subsequently send via UART 4 module.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
 enum Control_System consys = ADRC_RS;                                   // Declare the control system type.
@@ -289,8 +291,8 @@ void start_timer_5_interrupt(){
 void __attribute__((interrupt)) UART1_RX_Handler(){
   int i;                                                                // Declaration of i as index integer variable.
   digitalWrite(PIN_LED6,HIGH);                                          // Turn led 6 on.
-  char character = U1RXREG;                                             // Variable to save received character by UART 1 module.
-  add_2_charBuffer(&UART1,character);                                   // Adding character to data buffer assigned to UART 1 module.
+  character_1 = U1RXREG;                                                // Variable to save received character by UART 1 module.
+  add_2_charBuffer(&UART1,character_1);                                 // Adding character to data buffer assigned to UART 1 module.
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 1 module:
   // If streaming data is completely added to char buffer of UART1 struct:
@@ -430,17 +432,17 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
 // Receiving data interrupt for UART 4 module:
 void __attribute__((interrupt)) UART4_RX_Handler(){
   int i;                                                                // Declaration of i as index integer variable.
-  char character = U4RXREG;                                             // Variable to save received character by UART 4 module.
-  add_2_charBuffer(&UART4,character);                                   // Adding character to data buffer assigned to UART 4 module.
+  character_4 = U4RXREG;                                                // Variable to save received character by UART 4 module.
+  add_2_charBuffer(&UART4,character_4);                                 // Adding character to data buffer assigned to UART 4 module.
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 4 module:
   // If streaming data is completely added to the char buffer of UART 4 structure:
   if(UART4.flag[1]){
-    classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART4 struct data matrix.
-    for(i = 0; i < 3; i++){
-      FMR.w_k[i] = atof(UART4.MAT3.data[0][i]);                         // Saving angular velocities of omni-wheels attached on vehicle 1.
-      FMR.w_k[i+3] = atof(UART4.MAT3.data[1][i]);                       // Saving angular velocities of omni-wheels attached on vehicle 2.
-    }
+    // classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART4 struct data matrix.
+    // for(i = 0; i < 3; i++){
+    //   FMR.w_k[i] = atof(UART4.MAT3.data[0][i]);                         // Saving angular velocities of omni-wheels attached on vehicle 1.
+    //   FMR.w_k[i+3] = atof(UART4.MAT3.data[1][i]);                       // Saving angular velocities of omni-wheels attached on vehicle 2.
+    // }
     init_charBuffer(&UART4);                                            // Initialize char-type data buffer associated to UART 4.
   }
   //-------------------------------------------------------------------------------------------------------------
@@ -564,6 +566,7 @@ void loop(){
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     flagcommand_5 = false;                                              // Setting flag 5 to false.
     Serial.println(measurements);                                       // Write measurements via UART 1.
+    initString(measurements,bufferSize);                                // Clear measurements data string.
   }
   else if((iterations > final_iteration && baqumau) || counter_1 >= 20){
     baqumau.println("];");                                              // Writing on microSD.
@@ -592,8 +595,8 @@ void loop(){
       FMR.u_k[i] = 0.0f;                                                // Initial torque control in the formation.
       FMR.v_k[i] = 0.0f;                                                // Initial voltage control in the formation.
     }
-    Serial1.println(":0,0.0,0.0,0.0,0.0,0.0,0.0;\r");                   // Write final PWM control signals through UART 4.
-    delayMicroseconds(500);                                             // 500 microseconds delay.
+    Serial1.println(":0,0.0,0.0,0.0,0.0,0.0,0.0;");                     // Write final PWM control signals through UART 4.
+    delayMicroseconds(10);                                              // 10 microseconds delay.
     stop_uart_1_module();                                               // Stop and disable UART 1 module.
     stop_uart_4_module();                                               // Stop and disable UART 4 module.
   }
@@ -601,9 +604,10 @@ void loop(){
     snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",roundToThreeDecimals(errors_k[0]),roundToThreeDecimals(errors_k[1]),roundToThreeDecimals(errors_k[2]),roundToThreeDecimals(errors_k[3]),roundToThreeDecimals(errors_k[4]),roundToThreeDecimals(errors_k[5]),iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
+    initString(measurements,bufferSize);                                // Clear measurements data string.
     // Serial.println(measurements);                                       // Write measurements by UART 1.
     //-----------------------------------------------------------------------------------------------------------
-    // Time out protocole:
+    // Time out protocol:
     if(flagcommand_1 && counter_1 >= 10){
       flagcommand_1 = false;                                            // Reset flag command 1.
       counter_1++;                                                      // Increasing counter 1.

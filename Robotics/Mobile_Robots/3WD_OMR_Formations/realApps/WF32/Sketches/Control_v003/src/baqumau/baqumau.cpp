@@ -137,3 +137,11 @@ void classify_charBuffer(Data_Struct *DAT){
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
+// Function to initialize whichever char-type data string:
+void initString(char *str, int strSize){
+    int i;                                                                                  // Declaration of i as integer variable.
+    for(i = 0; i < strSize; i++){                                                           // Bucle that set to 0 all.
+        str[i] = 0x00;                                                                      // Characters in buffer.
+    }
+}
+//---------------------------------------------------------------------------------------------------------------

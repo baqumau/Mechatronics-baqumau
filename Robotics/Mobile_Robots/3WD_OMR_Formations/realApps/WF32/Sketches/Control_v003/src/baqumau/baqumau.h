@@ -46,6 +46,8 @@ extern void init_charBuffer(Data_Struct *DAT);
 extern void add_2_charBuffer(Data_Struct *DAT, char c);
 // Classify char-type data from developed buffer within data structure as DAT:
 extern void classify_charBuffer(Data_Struct *DAT);
+// Function to initialize whichever char-type data string:
+extern void initString(char *str, int strSize);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _baqumau_H_ */
 //---------------------------------------------------------------------------------------------------------------
