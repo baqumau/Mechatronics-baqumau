@@ -206,9 +206,9 @@ void __attribute__((interrupt)) Timer_4_Handler(){
         //-------------------------------------------------------------------------------------------------------
         // Conditioning input torque control for OMRs formation:
         for(i = 0; i < 3; i++){
-          FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-100.0f/ke_1,100.0f/ke_1),t_cl,sampleTime,iterations);
+          FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-50.0f/ke_1,50.0f/ke_1),t_cl,sampleTime,iterations);
           FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
-          FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,iterations);
+          FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-50.0f/ke_2,50.0f/ke_2),t_cl,sampleTime,iterations);
           FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
         }
         break;
@@ -319,11 +319,11 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
         case ADRC_RS:{
           //------------------------------------------ADRC_RS----------------------------------------------------
           // Float vector x_0 to define inital conditions for states of HGO observer in the robot space:
-          float obs_x0[9*Robots_Qty] = {FMR.q_k[0], FMR.q_k[1], FMR.q_k[2], FMR.q_k[3], FMR.q_k[4], FMR.q_k[5], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+          float obs_x0[9*Robots_Qty] = {FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
           init_RS_Observer(RSO,obs_x0);                                 // Initialize the observer RSO.
           //-----------------------------------------------------------------------------------------------------
           // Float vector x_0 to define inital conditions for states of GPI controller:
-          float gpi_x0[6*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+          float gpi_x0[6*Robots_Qty] = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
           initGPI_Controller(GPI,gpi_x0);                               // Initialize GPI controller.
           //-----------------------------------------------------------------------------------------------------
           // Initializing ADRC control law:
@@ -437,12 +437,12 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 4 module:
   // If streaming data is completely added to the char buffer of UART 4 structure:
-  if(UART4.flag[1]){
-    // classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART4 struct data matrix.
-    // for(i = 0; i < 3; i++){
-    //   FMR.w_k[i] = atof(UART4.MAT3.data[0][i]);                         // Saving angular velocities of omni-wheels attached on vehicle 1.
-    //   FMR.w_k[i+3] = atof(UART4.MAT3.data[1][i]);                       // Saving angular velocities of omni-wheels attached on vehicle 2.
-    // }
+  if(UART4.flag[1] && iterations <= final_iteration && flagcommand_0){
+    classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART4 struct data matrix.
+    for(i = 0; i < 3; i++){
+      // Saving the angular velocities of omni-wheels attached on both vehicles.
+      FMR.w_k[i+3*UART4.identifier] = atof(UART4.MAT3.data[UART4.identifier][i]);
+    }
     init_charBuffer(&UART4);                                            // Initialize char-type data buffer associated to UART 4.
   }
   //-------------------------------------------------------------------------------------------------------------
@@ -604,8 +604,8 @@ void loop(){
     snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",roundToThreeDecimals(errors_k[0]),roundToThreeDecimals(errors_k[1]),roundToThreeDecimals(errors_k[2]),roundToThreeDecimals(errors_k[3]),roundToThreeDecimals(errors_k[4]),roundToThreeDecimals(errors_k[5]),iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
-    initString(measurements,bufferSize);                                // Clear measurements data string.
     // Serial.println(measurements);                                       // Write measurements by UART 1.
+    initString(measurements,bufferSize);                                // Clear measurements data string.
     //-----------------------------------------------------------------------------------------------------------
     // Time out protocol:
     if(flagcommand_1 && counter_1 >= 10){

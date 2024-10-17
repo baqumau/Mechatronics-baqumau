@@ -105,7 +105,7 @@ void IRAM_ATTR Q3B_Interrupt();                                                 
 void onTimer1(void* arg);                                                         // Declaration of onTimer1 interrupt function.
 void onTimer2(void* arg);                                                         // Declaration of onTimer2 interrupt function.
 //-----------------------------------------------------------------------------------
-// Callback function for the Timer 1 to 10 Hz:
+// Callback function for the Timer 1 at 10 Hz:
 void onTimer1(void* arg){
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);

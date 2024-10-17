@@ -57,21 +57,21 @@ while true
             % Getting and arraying sinusoidal signals:
             data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',x1_t(counter+1),x2_t(counter+1),x3_t(counter+1),x4_t(counter+1),x5_t(counter+1),x6_t(counter+1));
             fprintf(S1,data_s);                                             % Write data to serial peripheral.
-%             flush(S1);
+            % flush(S1);
             counter = counter + 1;                                          % Increasing the counter.
             time_x(counter,1) = toc;
             tic
         end
         if (command == 10)
             disp('10th arrived...');
-%             flush(S1);
+            % flush(S1);
             break
         end
     end
     if (counter == iter_stop || toc >= 10)
         flag_1 = 1;
         disp('10th did not arrive..!');
-%         flush(S1);
+        % flush(S1);
         break
     end
 end

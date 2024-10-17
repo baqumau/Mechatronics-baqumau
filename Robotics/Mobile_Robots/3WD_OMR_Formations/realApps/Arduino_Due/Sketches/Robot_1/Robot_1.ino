@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
-#include <Servo.h>
 //-----------------------------------------------------------------------------------------------------------------------------
 // Defining the used variables in this sketch:
 const unsigned int ENA = 2;                                       // Choosing this pin to generate PWM on wheel 1.
@@ -97,6 +96,9 @@ void setup(){
   digitalWrite(RST,HIGH);                                         // Turn RST pin to HIGH for establishing UART communication with Xbee.
   init_cbuff();                                                   // Clear buffer.
   //---------------------------------------------------------------------------------------------------------------------------
+  // Enable Timer TC7 interrupt at 10 Hz:
+  TC3_setup();                                                    // Call TC4_setup function.
+  delay(100);                                                     // 100 milliseconds delay.
   // Enable Timer TC8 interrupt at 10 Hz:
   TC8_setup();                                                    // Call TC8_setup function.
   //---------------------------------------------------------------------------------------------------------------------------
@@ -107,6 +109,19 @@ void setup(){
   attachInterrupt(digitalPinToInterrupt(Q2B),Q2B_Interrupt,CHANGE);
   attachInterrupt(digitalPinToInterrupt(Q3A),Q3A_Interrupt,CHANGE);
   attachInterrupt(digitalPinToInterrupt(Q3B),Q3B_Interrupt,CHANGE);
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+// Setting Timer TC5 and TC5 interrupt:
+void TC3_setup(){
+  pmc_set_writeprotect(false);                                    // Disables the write protection.
+  PMC -> PMC_PCER0 |= PMC_PCER0_PID30;                            // TC3 power ON: Timer counter 1 channel 0 is TC3.
+  TC1 -> TC_CHANNEL[0].TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1        // MCK/2 = 42 MHz, clk on rising edge.
+                                | TC_CMR_WAVE                     // Waveform mode.
+                                | TC_CMR_WAVSEL_UP_RC;            // Up mode with automatic trigger on RC compare.
+  TC1 -> TC_CHANNEL[0].TC_RC = 4200000;                           // Frequency = (MCK/2)/TC_RC Hz.
+  TC1 -> TC_CHANNEL[0].TC_IER = TC_IER_CPCS;                      // Enables the RC Compare Interrupt.
+  TC1 -> TC_CHANNEL[0].TC_CCR = TC_CCR_SWTRG | TC_CCR_CLKEN;      // Software trigger TC1 and counter clock enabled.
+  NVIC_EnableIRQ(TC3_IRQn);                                       // Enables TC3 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------------
 // Setting Timer TC8 and TC8 interrupt:
@@ -122,24 +137,9 @@ void TC8_setup(){
   NVIC_EnableIRQ(TC8_IRQn);                                       // Enables TC8 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-// TC8 interrupt at 10 Hz.
-void TC8_Handler(){
-  TC2 -> TC_CHANNEL[2].TC_SR;                                     // Read and clear status register.
-  iterations++;                                                   // Increasing execution iterations.
-  if(direction_1 == 0){
-    ang_vel_1 = 0.0;                                              // Setting angular velocity of robot wheel 1 to zero.
-  }
-  if(direction_2 == 0){
-    ang_vel_2 = 0.0;                                              // Setting angular velocity of robot wheel 2 to zero.
-  }
-  if(direction_3 == 0){
-    ang_vel_3 = 0.0;                                              // Setting angular velocity of robot wheel 3 to zero.
-  }
-  counter_1 = 0; counter_2 = 0; counter_3 = 0;                    // Set counters to zero.
-  counter_4 = 0; counter_5 = 0; counter_6 = 0;                    // Set counters to zero.
-  pulsetime_1 = 0; pulsetime_2 = 0; pulsetime_3 = 0;              // Pulse time variables to zero.
-  direction_1 = 0; direction_2 = 0; direction_3 = 0;              // Turning direction of robot wheels to zero.
-  counterflag_1 = 0; counterflag_2 = 0; counterflag_3 = 0;        // Turning the counter flags to zero.
+// TC7 interrupt at 10 Hz:
+void TC3_Handler(){
+  TC1 -> TC_CHANNEL[0].TC_SR;                                     // Read and clear status register.
   // Packing and streaming the angular velocities of this OMR:
   sprintf(angular_velocities,":0,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   // Sending angular velocities values through UART 2:
@@ -157,7 +157,7 @@ void TC8_Handler(){
     }
     else counter_7++;                                             // Increasing counter 7.
   }
-  else if(identifier > 0 && flagcommand_2){
+  else if(identifier > 0 && flagcommand_2){                       // It for the case when PS3 controller is being used.
     if(counter_7 >= 15){
       flagcommand_2 = false;                                      // Reset flag command 2.
       counter_7 = 0;                                              // Reset 7th counter.
@@ -165,6 +165,26 @@ void TC8_Handler(){
     else counter_7++;                                             // Increasing counter 7.
   }
   else NOP;                                                       // No operation cycle.
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+// TC8 interrupt at 10 Hz:
+void TC8_Handler(){
+  TC2 -> TC_CHANNEL[2].TC_SR;                                     // Read and clear status register.
+  iterations++;                                                   // Increasing execution iterations.
+  if(direction_1 == 0){
+    ang_vel_1 = 0.0;                                              // Setting angular velocity of robot wheel 1 to zero.
+  }
+  if(direction_2 == 0){
+    ang_vel_2 = 0.0;                                              // Setting angular velocity of robot wheel 2 to zero.
+  }
+  if(direction_3 == 0){
+    ang_vel_3 = 0.0;                                              // Setting angular velocity of robot wheel 3 to zero.
+  }
+  counter_1 = 0; counter_2 = 0; counter_3 = 0;                    // Set counters to zero.
+  counter_4 = 0; counter_5 = 0; counter_6 = 0;                    // Set counters to zero.
+  pulsetime_1 = 0; pulsetime_2 = 0; pulsetime_3 = 0;              // Pulse time variables to zero.
+  direction_1 = 0; direction_2 = 0; direction_3 = 0;              // Turning direction of robot wheels to zero.
+  counterflag_1 = 0; counterflag_2 = 0; counterflag_3 = 0;        // Turning the counter flags to zero.
 }
 //-----------------------------------------------------------------------------------------------------------------------------
 // initializing buffer:
