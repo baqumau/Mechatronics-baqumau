@@ -7,6 +7,8 @@ angles = zeros(2,3);                                                        % Pr
 time_x = []';                                                               % Variable to save tic toc working time.
 dataRate = 0;                                                               % Variable to save streaming data rate.
 %--------------------------------------------------------------------------
+% Load session in Motive -> Session 24-10-21, Hour 01:15 pm
+%--------------------------------------------------------------------------
 % Create an instance of the natnet client class:
 fprintf('Creating natnet class object...\n')
 natnetclient = natnet;
@@ -70,7 +72,7 @@ while true
                 angles(i,:) = euler(q,'XYZ','frame');
             end
             % Getting and arraying data from NatNet SDK:
-            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',(1500 - positions(1,1)),(1400 + positions(1,3)),angleCorrection_1(angles(1,2),angles(1,3)),(1500 - positions(2,1)),(1400 + positions(2,3)),angleCorrection_1(angles(2,2),angles(2,3)));
+            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',(1500 - positions(1,1)),(1400 + positions(1,3)),angleCorrection_1(angles(1,2),angles(1,1)),(1500 - positions(2,1)),(1400 + positions(2,3)),angleCorrection_1(angles(2,2),angles(2,1)));
             % Sending data via UART communication:
             fprintf(S1,data_s);                                             % Write data to serial peripheral.
             % flush(S1);

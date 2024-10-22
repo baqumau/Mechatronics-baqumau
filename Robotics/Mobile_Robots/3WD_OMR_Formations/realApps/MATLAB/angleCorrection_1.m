@@ -21,9 +21,11 @@ end
 % Correction algorithm for the input angle [u] to the specific range between
 % -pi to pi:
 % Recogning cuadrant of the input angle:
-if (angle >= 0) && (angle < pi/2) && (aux_angle < 2*pi/3) 
+if (angle >= 0) && (angle < pi/2) && (aux_angle >= 0) && (aux_angle < 2*pi/3) 
     data_1.f2 = 1;
 elseif (angle > 0) && (angle <= pi/2) && (aux_angle >= 2*pi/3) 
+    data_1.f2 = 2;
+elseif (angle > 0) && (angle <= pi/2) && (aux_angle <= -2*pi/3)
     data_1.f2 = 2;
 elseif (angle < 0) && (angle >= -pi/2) && (aux_angle >= 2*pi/3)
     data_1.f2 = 3;
