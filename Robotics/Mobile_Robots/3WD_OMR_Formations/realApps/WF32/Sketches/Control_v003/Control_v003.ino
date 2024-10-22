@@ -445,6 +445,9 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
     }
     init_charBuffer(&UART4);                                            // Initialize char-type data buffer associated to UART 4.
   }
+  // Initializing char-type data buffer associated to UART 4 when control system is not running:
+  else if(UART4.flag[1] && iterations > final_iteration && !flagcommand_0) init_charBuffer(&UART4);
+  else NOP;                                                             // No operation.
   //-------------------------------------------------------------------------------------------------------------
   IFS2CLR = 0x00000010;                                                 // Clear the UART 4 receiver interrupt status flag.
 }

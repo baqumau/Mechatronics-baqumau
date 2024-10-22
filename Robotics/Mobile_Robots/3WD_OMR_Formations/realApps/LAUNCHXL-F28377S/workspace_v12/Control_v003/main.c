@@ -93,7 +93,8 @@ volatile bool flagcommand_0;                                                    
 volatile bool flagcommand_1;                                                        // Declare flag command 1 (Used for ON\OFF LED 01).
 volatile bool flagcommand_2;                                                        // Declare flag command 2 (Used for ON\OFF LED 02).
 volatile bool flagcommand_3;                                                        // Declare flag command 3 (Used for happy ending).
-volatile char receivedChar;                                                         // Variable to save received character from SCIA.
+volatile char receivedChar_a;                                                       // Variable to save received character from SCIA.
+volatile char receivedChar_b;                                                       // Variable to save received character from SCIB.
 char *msg_1;                                                                        // Variable 1 to save a char data chain.
 char *msg_2;                                                                        // Variable 2 to save a char data chain.
 char *msg_3;                                                                        // Variable 3 to save a char data chain.
@@ -385,9 +386,10 @@ __interrupt void scia_rx_isr(void){
     uint16_t fifo_level = SciaRegs.SCIFFRX.bit.RXFFST;
     // Loop to read all available data in the FIFO:
     while(SciaRegs.SCIFFRX.bit.RXFFST > 0){
-        receivedChar = SciaRegs.SCIRXBUF.all;                                       // Read one byte from the RX buffer.
-        add_2_charBuffer(&SCIA,receivedChar);                                       // Adding character to data buffer assigned to SCIA peripheral.
+        receivedChar_a = SciaRegs.SCIRXBUF.all;                                     // Read one byte from the RX buffer.
+        add_2_charBuffer(&SCIA,receivedChar_a);                                     // Adding character to data buffer assigned to SCIA peripheral.
     }
+    // If streaming data is completely added to the char buffer of SCIA structure:
     if(SCIA.flag[1]){
         classify_charBuffer(&SCIA);                                                 // Classify data from assigned buffer to UART1 structure data matrix.
         init_charBuffer(&SCIA);                                                     // Initialize char-type data buffer associated to UART 1.
@@ -417,24 +419,38 @@ __interrupt void scia_rx_isr(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through SCIB received data (Receiving data from OMRs):
 __interrupt void scib_rx_isr(void){
+    int i;                                                                          // Declaration of i as index integer variable.
     // Clearing the interrupt flag and acknowledge the interrupt:
     ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                            // Clear RX FIFO interrupt flag.
     // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
     EINT;
     //-----------------------------------------------
     // Checking how many bytes are in the FIFO (you can use this information):
-    uint16_t fifo_level = ScibRegs.SCIFFRX.bit.RXFFST;
+    Uint16 fifo_level = ScibRegs.SCIFFRX.bit.RXFFST;                                // Checks how many characters are available in SCIB FIFO peripheral.
     // Loop to read all available data in the FIFO:
     while(ScibRegs.SCIFFRX.bit.RXFFST > 0){
-        receivedChar = ScibRegs.SCIRXBUF.all;                                       // Read one byte from the RX buffer.
-        add_2_charBuffer(&SCIB,receivedChar);                                       // Adding character to data buffer assigned to SCIB peripheral.
+        receivedChar_b = ScibRegs.SCIRXBUF.all;                                     // Read one byte from the RX buffer.
+        add_2_charBuffer(&SCIB,receivedChar_b);                                     // Adding character to data buffer assigned to SCIB peripheral.
     }
-    if(SCIB.flag[1]){
-        strcpy(angularVelocities,SCIB.charBuffer);                                  // Copy the SCIB.charBuffer string into the measurements data chain.
-        strcat(angularVelocities,"\n\0");                                           // Concatenate the terminator string to the measurements data chain.
-        scia_msg(angularVelocities);                                                // Write measurements data chain through SCIA peripheral.
+    // If streaming data is completely added to the char buffer of SCIB structure:
+    if(SCIB.flag[1] && CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
+        classify_charBuffer(&SCIB);                                                 // Classify data from assigned buffer to SCIB structure data matrix.
+        for(i = 0; i < 3; i++){
+            // Saving the angular velocities of omni-wheels attached on OMRs formation.
+            FMR.w_k[i+3*SCIB.identifier] = atof(SCIB.MAT3.data[SCIB.identifier][i]);
+            // Saving the angular velocities of moni-wheels attached on OMRs formation, but in a string-format version:
+            initString(FMR.ws_k.data[i+3*SCIB.identifier],FMR.ws_k.bufferSize);     // Initialize or clear string-format data chain.
+            // Saving same angular velocities of OMRs formation, but in string-format:
+            ftoa(roundToThreeDecimals(FMR.w_k[i+3*SCIB.identifier]),FMR.ws_k.data[i+3*SCIB.identifier],3);
+        }
         init_charBuffer(&SCIB);                                                     // Initialize dedicated char-type data buffer of SCIB.
+        // Packing and streaming the measurement variables of OMRs formation:
+        initString(angularVelocities,bufferSize);                                   // Initialize measurements data chain.
+        snprintf(angularVelocities,bufferSize,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
     }
+    // Initializing char-type data buffer associated to SCIB when control system is not running:
+    else if(SCIB.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_charBuffer(&SCIB);
+    else NOP;                                                                       // No Operation (burn a cycle).
     //-----------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
     DINT;
