@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.474"
+    ComputedModelVersion    "1.477"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -63,11 +63,11 @@ Model {
 	$ObjectID		6
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	ViewObjType		"SimulinkSubsys"
-	LoadSaveID		"2376"
+	ViewObjType		"SimulinkTopLevel"
+	LoadSaveID		"0"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, 0.0]
+	Offset			[0.0, 22.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Oct 24 10:29:04 2024"
-  RTWModifiedTimeStamp	  651666532
-  ModelVersionFormat	  "1.%<AutoIncrement:474>"
+  LastModifiedDate	  "Thu Oct 24 16:10:06 2024"
+  RTWModifiedTimeStamp	  651676072
+  ModelVersionFormat	  "1.%<AutoIncrement:477>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1135,7 +1135,7 @@ Model {
   System {
     Name		    "conSys_2robots_2_vR2014a"
     Location		    [-8, -8, 1374, 736]
-    Open		    off
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1176,8 +1176,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "1711.54"
-      YMax		      "1711.54"
+      YMin		      "-20"
+      YMax		      "20"
       SaveName		      "ScopeData3"
       LimitDataPoints	      off
     }
@@ -1208,7 +1208,7 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-1"
+      YMin		      "-200"
       YMax		      "20"
       SaveName		      "ScopeData6"
       LimitDataPoints	      off
@@ -1240,8 +1240,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-1"
-      YMax		      "1"
+      YMin		      "-10"
+      YMax		      "20"
       SaveName		      "ScopeData9"
       LimitDataPoints	      off
     }
@@ -1272,8 +1272,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-1"
-      YMax		      "1"
+      YMin		      "-20"
+      YMax		      "20"
       SaveName		      "ScopeData2"
       LimitDataPoints	      off
     }
@@ -1304,8 +1304,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-1"
-      YMax		      "1"
+      YMin		      "-15"
+      YMax		      "18"
       SaveName		      "ScopeData10"
       LimitDataPoints	      off
     }
@@ -1336,8 +1336,8 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-1"
-      YMax		      "1"
+      YMin		      "-15"
+      YMax		      "15"
       SaveName		      "ScopeData11"
       LimitDataPoints	      off
     }
@@ -1411,7 +1411,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Clutch 1"
-	    Location		    [-8, 0, 1374, 744]
+	    Location		    [-8, -8, 1374, 736]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2714,7 +2714,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "From robot space to cluster space"
-	    Location		    [-4, 0, 1370, 732]
+	    Location		    [-8, -8, 1374, 736]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -5558,6 +5558,7 @@ Model {
 	  Location		  [5, 48, 1371, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
@@ -18849,7 +18850,7 @@ Model {
       System {
 	Name			"Omni Two-Robot ADAMS Model v2015"
 	Location		[-8, -8, 1374, 736]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"

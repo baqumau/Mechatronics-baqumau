@@ -54,7 +54,7 @@ T2.time = T1.time;
 T2.signals.values = sign(randn(length(T1.time),1))*mag;                     % Señal de entrada PRBS (2).
 T3.time = T1.time;
 T3.signals.values = sign(randn(length(T1.time),1))*mag;                     % Señal de entrada PRBS (3).
-%% Control sytem gains:
+%% Control system gains:
 % Control law gains for cluster's position:
 [K,P] = charatioass(3,1.3,20,4.5);                                          % Desired characteristic polynomial in the tracking error dynamics.
 lambda_2 = K(1,2); lambda_1 = K(1,3); lambda_0 = K(1,4);
