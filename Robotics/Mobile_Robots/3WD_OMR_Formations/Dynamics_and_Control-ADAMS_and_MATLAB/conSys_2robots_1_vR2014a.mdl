@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.432"
+    ComputedModelVersion    "1.436"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1382.0, 744.0]
+      Location		      [-8.0, 0.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -58,28 +58,16 @@ Model {
 	$ClassName		"Simulink.ExplorerBarInfo"
 	Visible			[1]
       }
-      Array {
-	Type			"Simulink.EditorInfo"
-	Dimension		2
-	Object {
-	  $ObjectID		  6
-	  IsActive		  [1]
-	  ViewObjType		  "SimulinkTopLevel"
-	  LoadSaveID		  "0"
-	  Extents		  [1332.0, 566.0]
-	  ZoomFactor		  [1.0]
-	  Offset		  [0.0, 52.0]
-	}
-	Object {
-	  $ObjectID		  7
-	  IsActive		  [0]
-	  ViewObjType		  "SimulinkSubsys"
-	  LoadSaveID		  "783"
-	  Extents		  [1332.0, 566.0]
-	  ZoomFactor		  [1.0]
-	  Offset		  [-4.0, 59.0]
-	}
-	PropName		"EditorsInfo"
+      Object {
+	$PropName		"EditorsInfo"
+	$ObjectID		6
+	$ClassName		"Simulink.EditorInfo"
+	IsActive		[1]
+	ViewObjType		"SimulinkSubsys"
+	LoadSaveID		"3148"
+	Extents			[1332.0, 569.0]
+	ZoomFactor		[1.0]
+	Offset			[0.0, 0.0]
       }
     }
   }
@@ -89,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Oct 23 16:06:52 2024"
-  RTWModifiedTimeStamp	  651600279
-  ModelVersionFormat	  "1.%<AutoIncrement:432>"
+  LastModifiedDate	  "Thu Oct 24 10:35:07 2024"
+  RTWModifiedTimeStamp	  651666905
+  ModelVersionFormat	  "1.%<AutoIncrement:436>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -131,7 +119,7 @@ Model {
   TryForcingSFcnDF	  off
   Object {
     $PropName		    "DataLoggingOverride"
-    $ObjectID		    8
+    $ObjectID		    7
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Control_Schematic_11a"
     overrideMode_	    [0.0]
@@ -194,13 +182,13 @@ Model {
     Type		    "Handle"
     Dimension		    1
     Simulink.ConfigSet {
-      $ObjectID		      9
+      $ObjectID		      8
       Version		      "1.14.2"
       Array {
 	Type			"Handle"
 	Dimension		9
 	Simulink.SolverCC {
-	  $ObjectID		  10
+	  $ObjectID		  9
 	  Version		  "1.14.2"
 	  StartTime		  "0.0"
 	  StopTime		  "200"
@@ -235,7 +223,7 @@ Model {
 	  InsertRTBMode		  "Whenever possible"
 	}
 	Simulink.DataIOCC {
-	  $ObjectID		  11
+	  $ObjectID		  10
 	  Version		  "1.14.2"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
@@ -268,7 +256,7 @@ Model {
 	  Refine		  "1"
 	}
 	Simulink.OptimizationCC {
-	  $ObjectID		  12
+	  $ObjectID		  11
 	  Version		  "1.14.2"
 	  Array {
 	    Type		    "Cell"
@@ -328,7 +316,7 @@ Model {
 	  ParallelExecutionInRapidAccelerator on
 	}
 	Simulink.DebuggingCC {
-	  $ObjectID		  13
+	  $ObjectID		  12
 	  Version		  "1.14.2"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
@@ -418,7 +406,7 @@ Model {
 	  SFTransitionActionBeforeConditionDiag	"warning"
 	}
 	Simulink.HardwareCC {
-	  $ObjectID		  14
+	  $ObjectID		  13
 	  Version		  "1.14.2"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
@@ -459,7 +447,7 @@ Model {
 	  ProdEqTarget		  on
 	}
 	Simulink.ModelReferenceCC {
-	  $ObjectID		  15
+	  $ObjectID		  14
 	  Version		  "1.14.2"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
 	  CheckModelReferenceTargetMessage "error"
@@ -474,7 +462,7 @@ Model {
 	  SupportModelReferenceSimTargetCustomCode off
 	}
 	Simulink.SFSimCC {
-	  $ObjectID		  16
+	  $ObjectID		  15
 	  Version		  "1.14.2"
 	  SFSimEnableDebug	  on
 	  SFSimOverflowDetection  on
@@ -490,7 +478,7 @@ Model {
 	}
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
-	  $ObjectID		  17
+	  $ObjectID		  16
 	  Version		  "1.14.2"
 	  Array {
 	    Type		    "Cell"
@@ -577,7 +565,7 @@ Model {
 	    Type		    "Handle"
 	    Dimension		    2
 	    Simulink.CodeAppCC {
-	      $ObjectID		      18
+	      $ObjectID		      17
 	      Version		      "1.14.2"
 	      Array {
 		Type			"Cell"
@@ -648,7 +636,7 @@ Model {
 	    }
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
-	      $ObjectID		      19
+	      $ObjectID		      18
 	      Version		      "1.14.2"
 	      Array {
 		Type			"Cell"
@@ -732,7 +720,7 @@ Model {
 	  }
 	}
 	hdlcoderui.hdlcc {
-	  $ObjectID		  20
+	  $ObjectID		  19
 	  Version		  "1.14.2"
 	  Description		  "HDL Coder custom configuration component"
 	  Name			  "HDL Coder"
@@ -754,11 +742,11 @@ Model {
   }
   Simulink.ConfigSet {
     $PropName		    "ActiveConfigurationSet"
-    $ObjectID		    9
+    $ObjectID		    8
   }
   Object {
     $PropName		    "DataTransfer"
-    $ObjectID		    21
+    $ObjectID		    20
     $ClassName		    "Simulink.GlobalDataTransfer"
     DefaultTransitionBetweenSyncTasks "Ensure deterministic transfer (maximum delay)"
     DefaultTransitionBetweenAsyncTasks "Ensure data integrity only"
@@ -1146,8 +1134,8 @@ Model {
   }
   System {
     Name		    "conSys_2robots_1_vR2014a"
-    Location		    [-8, -8, 1374, 736]
-    Open		    on
+    Location		    [-8, 0, 1374, 744]
+    Open		    off
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1364,8 +1352,8 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references"
-	Location		[-8, -8, 1374, 736]
-	Open			on
+	Location		[-8, 0, 1374, 744]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -3251,7 +3239,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Reference Variables"
-	    Location		    [-4, 0, 1370, 732]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -3537,7 +3525,7 @@ Model {
 	      Position		      [295, 150, 365, 180]
 	      ZOrder		      2787
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a"
+	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
 	    }
 	    Block {
 	      BlockType		      MATLABFcn
@@ -3547,7 +3535,7 @@ Model {
 	      Position		      [295, 225, 365, 255]
 	      ZOrder		      2817
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a"
+	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
 	    }
 	    Block {
 	      BlockType		      From
@@ -8776,8 +8764,8 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Omni Two-Robot ADAMS Model v2015"
-	Location		[-8, -8, 1374, 736]
-	Open			off
+	Location		[-8, 0, 1374, 744]
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -8889,7 +8877,7 @@ Model {
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "ADAMS Plant1"
+	  Name			  "ADAMS Plant"
 	  SID			  "3254"
 	  Ports			  [1, 1]
 	  Position		  [210, 370, 310, 420]
@@ -8946,7 +8934,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  Object {
 	    $PropName		    "MaskObject"
-	    $ObjectID		    22
+	    $ObjectID		    21
 	    $ClassName		    "Simulink.Mask"
 	    Type		    "Adams Plant"
 	    Description		    "Simulate any Adams plant model either in Adams/Solver form (.adm file) or in Adams/View form (."
@@ -8980,7 +8968,7 @@ Model {
 	      Type		      "Simulink.MaskParameter"
 	      Dimension		      23
 	      Object {
-		$ObjectID		23
+		$ObjectID		22
 		Type			"edit"
 		Name			"exevie"
 		Prompt			"Adams install directory"
@@ -8988,7 +8976,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		24
+		$ObjectID		23
 		Type			"edit"
 		Name			"nam_in"
 		Prompt			"Adams/View input names"
@@ -8996,7 +8984,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		25
+		$ObjectID		24
 		Type			"edit"
 		Name			"namout"
 		Prompt			"Adams/View output names"
@@ -9004,21 +8992,21 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		26
+		$ObjectID		25
 		Type			"edit"
 		Name			"nampre"
 		Prompt			"Adams model file prefix"
 		Value			"ADAMS_prefix"
 	      }
 	      Object {
-		$ObjectID		27
+		$ObjectID		26
 		Type			"edit"
 		Name			"outfil"
 		Prompt			"Output files prefix (opt.: if blank - no output)"
 		Value			"ADAMS_prefix"
 	      }
 	      Object {
-		$ObjectID		28
+		$ObjectID		27
 		Type			"edit"
 		Name			"exesol"
 		Prompt			"User executable (opt.: if blank - use standard)"
@@ -9036,7 +9024,7 @@ Model {
 		"arams_states({'modsim','modani'},{'off','off'},'MaskEnables',gcb)\n  end\nend\n\n\n\n"
 	      }
 	      Object {
-		$ObjectID		29
+		$ObjectID		28
 		Type			"edit"
 		Name			"stat"
 		Prompt			"Initial static simulation flag "
@@ -9044,7 +9032,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		30
+		$ObjectID		29
 		Type			"edit"
 		Name			"inicmd"
 		Prompt			"Initialization commands"
@@ -9052,7 +9040,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		31
+		$ObjectID		30
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9069,7 +9057,7 @@ Model {
 		"ran';\nend"
 	      }
 	      Object {
-		$ObjectID		32
+		$ObjectID		31
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9088,7 +9076,7 @@ Model {
 		",{'on','on'},'MaskVisibilities',gcb)\nend\nend"
 	      }
 	      Object {
-		$ObjectID		33
+		$ObjectID		32
 		Type			"edit"
 		Name			"workdir"
 		Prompt			"Adams working directory"
@@ -9096,7 +9084,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		34
+		$ObjectID		33
 		Type			"edit"
 		Name			"ada_host"
 		Prompt			"Adams host"
@@ -9104,7 +9092,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		35
+		$ObjectID		34
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9119,7 +9107,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		36
+		$ObjectID		35
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9145,7 +9133,7 @@ Model {
 		"nd"
 	      }
 	      Object {
-		$ObjectID		37
+		$ObjectID		36
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9158,10 +9146,9 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
-		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		38
+		$ObjectID		37
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9185,7 +9172,7 @@ Model {
 		"es({'pin_interp_order','pout_extrap_order'},{'off','off'},'MaskVisibilities',gcb) \nend\nend"
 	      }
 	      Object {
-		$ObjectID		39
+		$ObjectID		38
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9200,7 +9187,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		40
+		$ObjectID		39
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9215,7 +9202,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		41
+		$ObjectID		40
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9231,7 +9218,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		42
+		$ObjectID		41
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9247,21 +9234,21 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		43
+		$ObjectID		42
 		Type			"edit"
 		Name			"dt_out"
 		Prompt			"Communication interval"
 		Value			"Ts"
 	      }
 	      Object {
-		$ObjectID		44
+		$ObjectID		43
 		Type			"edit"
 		Name			"o_rate"
 		Prompt			"Number of communications per output step"
 		Value			"1"
 	      }
 	      Object {
-		$ObjectID		45
+		$ObjectID		44
 		Type			"checkbox"
 		Name			"more"
 		Prompt			"More parameters"
@@ -9278,7 +9265,7 @@ Model {
 	    }
 	  }
 	  System {
-	    Name		    "ADAMS Plant1"
+	    Name		    "ADAMS Plant"
 	    Location		    [181, 52, 537, 336]
 	    Open		    off
 	    ModelBrowserVisibility  off
@@ -9511,14 +9498,14 @@ Model {
 	}
 	Block {
 	  BlockType		  Clock
-	  Name			  "Clock1"
+	  Name			  "Clock"
 	  SID			  "3258"
 	  Position		  [125, 657, 150, 683]
 	  ZOrder		  4515
 	}
 	Block {
 	  BlockType		  Demux
-	  Name			  "Demux1"
+	  Name			  "Demux"
 	  SID			  "3259"
 	  Ports			  [1, 12]
 	  Position		  [365, 46, 420, 744]
@@ -9866,6 +9853,16 @@ Model {
 	}
 	Block {
 	  BlockType		  Mux
+	  Name			  "Mux"
+	  SID			  "3260"
+	  Ports			  [11, 1]
+	  Position		  [110, 157, 160, 633]
+	  ZOrder		  4513
+	  BackgroundColor	  "green"
+	  Inputs		  "11"
+	}
+	Block {
+	  BlockType		  Mux
 	  Name			  "Mux1"
 	  SID			  "3238"
 	  Ports			  [6, 1]
@@ -9874,16 +9871,6 @@ Model {
 	  ShowName		  off
 	  Inputs		  "6"
 	  DisplayOption		  "bar"
-	}
-	Block {
-	  BlockType		  Mux
-	  Name			  "Mux2"
-	  SID			  "3260"
-	  Ports			  [11, 1]
-	  Position		  [110, 157, 160, 633]
-	  ZOrder		  4513
-	  BackgroundColor	  "green"
-	  Inputs		  "11"
 	}
 	Block {
 	  BlockType		  Mux
@@ -10038,12 +10025,12 @@ Model {
 	}
 	Block {
 	  BlockType		  ToWorkspace
-	  Name			  "T To Workspace1"
+	  Name			  "T To Workspace"
 	  SID			  "3261"
 	  Ports			  [1]
 	  Position		  [210, 522, 310, 548]
 	  ZOrder		  4512
-	  VariableName		  "ADAMS_tout1"
+	  VariableName		  "ADAMS_tout"
 	  MaxDataPoints		  "100000"
 	}
 	Block {
@@ -10078,23 +10065,23 @@ Model {
 	}
 	Block {
 	  BlockType		  ToWorkspace
-	  Name			  "U To Workspace1"
+	  Name			  "U To Workspace"
 	  SID			  "3262"
 	  Ports			  [1]
 	  Position		  [210, 295, 310, 345]
 	  ZOrder		  4511
-	  VariableName		  "ADAMS_uout1"
+	  VariableName		  "ADAMS_uout"
 	  MaxDataPoints		  "100000"
 	}
 	Block {
 	  BlockType		  ToWorkspace
-	  Name			  "Y To Workspace1"
+	  Name			  "Y To Workspace"
 	  SID			  "3263"
 	  Ports			  [1]
 	  Position		  [210, 445, 310, 495]
 	  ZOrder		  4510
 	  BlockMirror		  on
-	  VariableName		  "ADAMS_yout1"
+	  VariableName		  "ADAMS_yout"
 	  MaxDataPoints		  "100000"
 	}
 	Block {
@@ -10208,82 +10195,82 @@ Model {
 	  ZOrder		  319
 	  SrcBlock		  "FY_2"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  11
 	}
 	Line {
 	  ZOrder		  317
 	  SrcBlock		  "FY_1"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  10
 	}
 	Line {
 	  ZOrder		  316
 	  SrcBlock		  "FX_2"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  9
 	}
 	Line {
 	  ZOrder		  320
 	  SrcBlock		  "FX_1"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  8
 	}
 	Line {
 	  ZOrder		  318
 	  SrcBlock		  "FD"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  7
 	}
 	Line {
 	  ZOrder		  315
 	  SrcBlock		  "T_23"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  6
 	}
 	Line {
 	  ZOrder		  312
 	  SrcBlock		  "T_22"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  5
 	}
 	Line {
 	  ZOrder		  314
 	  SrcBlock		  "T_21"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  4
 	}
 	Line {
 	  ZOrder		  313
 	  SrcBlock		  "T_13"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  3
 	}
 	Line {
 	  ZOrder		  311
 	  SrcBlock		  "T_12"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  2
 	}
 	Line {
 	  ZOrder		  310
 	  SrcBlock		  "T_11"
 	  SrcPort		  1
-	  DstBlock		  "Mux2"
+	  DstBlock		  "Mux"
 	  DstPort		  1
 	}
 	Line {
 	  ZOrder		  347
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  1
 	  Points		  [30, 0]
 	  Branch {
@@ -10299,7 +10286,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  346
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  2
 	  Points		  [30, 0]
 	  Branch {
@@ -10329,7 +10316,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  344
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  4
 	  Points		  [30, 0]
 	  Branch {
@@ -10345,7 +10332,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  343
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  5
 	  Points		  [30, 0]
 	  Branch {
@@ -10445,7 +10432,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  341
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  7
 	  DstBlock		  "Sum5"
 	  DstPort		  1
@@ -10459,7 +10446,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  340
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  8
 	  DstBlock		  "Sum6"
 	  DstPort		  1
@@ -10473,7 +10460,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  339
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  9
 	  DstBlock		  "Sum7"
 	  DstPort		  1
@@ -10487,7 +10474,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  338
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  10
 	  DstBlock		  "Sum8"
 	  DstPort		  1
@@ -10501,7 +10488,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  337
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  11
 	  DstBlock		  "Sum9"
 	  DstPort		  1
@@ -10515,7 +10502,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  336
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  12
 	  DstBlock		  "Sum10"
 	  DstPort		  1
@@ -10529,14 +10516,14 @@ Model {
 	}
 	Line {
 	  ZOrder		  345
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  3
 	  DstBlock		  "O_1"
 	  DstPort		  1
 	}
 	Line {
 	  ZOrder		  342
-	  SrcBlock		  "Demux1"
+	  SrcBlock		  "Demux"
 	  SrcPort		  6
 	  DstBlock		  "O_2"
 	  DstPort		  1
@@ -10715,43 +10702,43 @@ Model {
 	}
 	Line {
 	  ZOrder		  302
-	  SrcBlock		  "Clock1"
+	  SrcBlock		  "Clock"
 	  SrcPort		  1
 	  Points		  [30, 0; 0, -135]
-	  DstBlock		  "T To Workspace1"
+	  DstBlock		  "T To Workspace"
 	  DstPort		  1
 	}
 	Line {
 	  ZOrder		  305
-	  SrcBlock		  "Mux2"
+	  SrcBlock		  "Mux"
 	  SrcPort		  1
 	  Points		  [20, 0]
 	  Branch {
 	    ZOrder		    335
 	    Points		    [0, -75]
-	    DstBlock		    "U To Workspace1"
+	    DstBlock		    "U To Workspace"
 	    DstPort		    1
 	  }
 	  Branch {
 	    ZOrder		    309
-	    DstBlock		    "ADAMS Plant1"
+	    DstBlock		    "ADAMS Plant"
 	    DstPort		    1
 	  }
 	}
 	Line {
 	  ZOrder		  308
-	  SrcBlock		  "ADAMS Plant1"
+	  SrcBlock		  "ADAMS Plant"
 	  SrcPort		  1
 	  Points		  [15, 0]
 	  Branch {
 	    ZOrder		    307
 	    Points		    [0, 75]
-	    DstBlock		    "Y To Workspace1"
+	    DstBlock		    "Y To Workspace"
 	    DstPort		    1
 	  }
 	  Branch {
 	    ZOrder		    306
-	    DstBlock		    "Demux1"
+	    DstBlock		    "Demux"
 	    DstPort		    1
 	  }
 	}
@@ -10904,7 +10891,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Robot Space Controller"
-	Location		[-4, 0, 1370, 732]
+	Location		[-8, -8, 1374, 736]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
