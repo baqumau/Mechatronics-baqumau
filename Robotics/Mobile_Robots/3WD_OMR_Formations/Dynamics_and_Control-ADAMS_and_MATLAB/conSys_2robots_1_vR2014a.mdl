@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.428"
+    ComputedModelVersion    "1.432"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-4.0, 0.0, 1374.0, 732.0]
+      Location		      [-8.0, -8.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -58,16 +58,28 @@ Model {
 	$ClassName		"Simulink.ExplorerBarInfo"
 	Visible			[1]
       }
-      Object {
-	$PropName		"EditorsInfo"
-	$ObjectID		6
-	$ClassName		"Simulink.EditorInfo"
-	IsActive		[1]
-	ViewObjType		"SimulinkTopLevel"
-	LoadSaveID		"0"
-	Extents			[1324.0, 558.0]
-	ZoomFactor		[1.0]
-	Offset			[0.0, 0.0]
+      Array {
+	Type			"Simulink.EditorInfo"
+	Dimension		2
+	Object {
+	  $ObjectID		  6
+	  IsActive		  [1]
+	  ViewObjType		  "SimulinkTopLevel"
+	  LoadSaveID		  "0"
+	  Extents		  [1332.0, 566.0]
+	  ZoomFactor		  [1.0]
+	  Offset		  [0.0, 52.0]
+	}
+	Object {
+	  $ObjectID		  7
+	  IsActive		  [0]
+	  ViewObjType		  "SimulinkSubsys"
+	  LoadSaveID		  "783"
+	  Extents		  [1332.0, 566.0]
+	  ZoomFactor		  [1.0]
+	  Offset		  [-4.0, 59.0]
+	}
+	PropName		"EditorsInfo"
       }
     }
   }
@@ -75,11 +87,11 @@ Model {
   Creator		  "baqumau"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "baqumau"
+  LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Oct 18 14:51:09 2024"
-  RTWModifiedTimeStamp	  651163865
-  ModelVersionFormat	  "1.%<AutoIncrement:428>"
+  LastModifiedDate	  "Wed Oct 23 16:06:52 2024"
+  RTWModifiedTimeStamp	  651600279
+  ModelVersionFormat	  "1.%<AutoIncrement:432>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -119,7 +131,7 @@ Model {
   TryForcingSFcnDF	  off
   Object {
     $PropName		    "DataLoggingOverride"
-    $ObjectID		    7
+    $ObjectID		    8
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Control_Schematic_11a"
     overrideMode_	    [0.0]
@@ -182,13 +194,13 @@ Model {
     Type		    "Handle"
     Dimension		    1
     Simulink.ConfigSet {
-      $ObjectID		      8
+      $ObjectID		      9
       Version		      "1.14.2"
       Array {
 	Type			"Handle"
 	Dimension		9
 	Simulink.SolverCC {
-	  $ObjectID		  9
+	  $ObjectID		  10
 	  Version		  "1.14.2"
 	  StartTime		  "0.0"
 	  StopTime		  "200"
@@ -209,8 +221,8 @@ Model {
 	  SolverMode		  "Auto"
 	  EnableConcurrentExecution off
 	  ConcurrentTasks	  off
-	  Solver		  "ode3"
-	  SolverName		  "ode3"
+	  Solver		  "FixedStepDiscrete"
+	  SolverName		  "FixedStepDiscrete"
 	  SolverJacobianMethodControl "auto"
 	  ShapePreserveControl	  "DisableAll"
 	  ZeroCrossControl	  "UseLocalSettings"
@@ -223,7 +235,7 @@ Model {
 	  InsertRTBMode		  "Whenever possible"
 	}
 	Simulink.DataIOCC {
-	  $ObjectID		  10
+	  $ObjectID		  11
 	  Version		  "1.14.2"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
@@ -256,7 +268,7 @@ Model {
 	  Refine		  "1"
 	}
 	Simulink.OptimizationCC {
-	  $ObjectID		  11
+	  $ObjectID		  12
 	  Version		  "1.14.2"
 	  Array {
 	    Type		    "Cell"
@@ -316,7 +328,7 @@ Model {
 	  ParallelExecutionInRapidAccelerator on
 	}
 	Simulink.DebuggingCC {
-	  $ObjectID		  12
+	  $ObjectID		  13
 	  Version		  "1.14.2"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
@@ -406,7 +418,7 @@ Model {
 	  SFTransitionActionBeforeConditionDiag	"warning"
 	}
 	Simulink.HardwareCC {
-	  $ObjectID		  13
+	  $ObjectID		  14
 	  Version		  "1.14.2"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
@@ -447,7 +459,7 @@ Model {
 	  ProdEqTarget		  on
 	}
 	Simulink.ModelReferenceCC {
-	  $ObjectID		  14
+	  $ObjectID		  15
 	  Version		  "1.14.2"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
 	  CheckModelReferenceTargetMessage "error"
@@ -462,7 +474,7 @@ Model {
 	  SupportModelReferenceSimTargetCustomCode off
 	}
 	Simulink.SFSimCC {
-	  $ObjectID		  15
+	  $ObjectID		  16
 	  Version		  "1.14.2"
 	  SFSimEnableDebug	  on
 	  SFSimOverflowDetection  on
@@ -478,7 +490,7 @@ Model {
 	}
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
-	  $ObjectID		  16
+	  $ObjectID		  17
 	  Version		  "1.14.2"
 	  Array {
 	    Type		    "Cell"
@@ -565,7 +577,7 @@ Model {
 	    Type		    "Handle"
 	    Dimension		    2
 	    Simulink.CodeAppCC {
-	      $ObjectID		      17
+	      $ObjectID		      18
 	      Version		      "1.14.2"
 	      Array {
 		Type			"Cell"
@@ -636,7 +648,7 @@ Model {
 	    }
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
-	      $ObjectID		      18
+	      $ObjectID		      19
 	      Version		      "1.14.2"
 	      Array {
 		Type			"Cell"
@@ -720,7 +732,7 @@ Model {
 	  }
 	}
 	hdlcoderui.hdlcc {
-	  $ObjectID		  19
+	  $ObjectID		  20
 	  Version		  "1.14.2"
 	  Description		  "HDL Coder custom configuration component"
 	  Name			  "HDL Coder"
@@ -736,17 +748,17 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 127, 4, 1239, 720 ] 
+      ConfigPrmDlgPosition     [ 30, 12, 1222, 672 ] 
     }
     PropName		    "ConfigurationSets"
   }
   Simulink.ConfigSet {
     $PropName		    "ActiveConfigurationSet"
-    $ObjectID		    8
+    $ObjectID		    9
   }
   Object {
     $PropName		    "DataTransfer"
-    $ObjectID		    20
+    $ObjectID		    21
     $ClassName		    "Simulink.GlobalDataTransfer"
     DefaultTransitionBetweenSyncTasks "Ensure deterministic transfer (maximum delay)"
     DefaultTransitionBetweenAsyncTasks "Ensure data integrity only"
@@ -1134,7 +1146,7 @@ Model {
   }
   System {
     Name		    "conSys_2robots_1_vR2014a"
-    Location		    [-4, 0, 1370, 732]
+    Location		    [-8, -8, 1374, 736]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1148,7 +1160,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "3253"
+    SIDHighWatermark	    "3263"
     Block {
       BlockType		      Scope
       Name		      "Angular Velocity of Wheel 11"
@@ -1352,8 +1364,8 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references"
-	Location		[-4, 0, 1370, 732]
-	Open			off
+	Location		[-8, -8, 1374, 736]
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -8754,7 +8766,7 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Omni Two-Robot ADAMS Model"
+      Name		      "Omni Two-Robot ADAMS Model v2015"
       SID		      "3148"
       Ports		      [11, 12]
       Position		      [965, 16, 1010, 579]
@@ -8763,8 +8775,8 @@ Model {
       ShowPortLabels	      "none"
       RequestExecContextInheritance off
       System {
-	Name			"Omni Two-Robot ADAMS Model"
-	Location		[-4, 0, 1370, 732]
+	Name			"Omni Two-Robot ADAMS Model v2015"
+	Location		[-8, -8, 1374, 736]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -8781,7 +8793,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "T_11"
 	  SID			  "3149"
-	  Position		  [25, 72, 50, 98]
+	  Position		  [35, 157, 60, 183]
 	  ZOrder		  14
 	  IconDisplay		  "Port number"
 	}
@@ -8789,7 +8801,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "T_12"
 	  SID			  "3150"
-	  Position		  [25, 117, 50, 143]
+	  Position		  [35, 202, 60, 228]
 	  ZOrder		  15
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -8798,7 +8810,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "T_13"
 	  SID			  "3151"
-	  Position		  [25, 162, 50, 188]
+	  Position		  [35, 247, 60, 273]
 	  ZOrder		  16
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -8807,7 +8819,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "T_21"
 	  SID			  "3152"
-	  Position		  [25, 207, 50, 233]
+	  Position		  [35, 292, 60, 318]
 	  ZOrder		  17
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -8816,7 +8828,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "T_22"
 	  SID			  "3153"
-	  Position		  [25, 252, 50, 278]
+	  Position		  [35, 337, 60, 363]
 	  ZOrder		  18
 	  Port			  "5"
 	  IconDisplay		  "Port number"
@@ -8825,7 +8837,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "T_23"
 	  SID			  "3154"
-	  Position		  [25, 297, 50, 323]
+	  Position		  [35, 382, 60, 408]
 	  ZOrder		  19
 	  Port			  "6"
 	  IconDisplay		  "Port number"
@@ -8834,7 +8846,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "FD"
 	  SID			  "3155"
-	  Position		  [25, 342, 50, 368]
+	  Position		  [35, 427, 60, 453]
 	  ZOrder		  20
 	  Port			  "7"
 	  IconDisplay		  "Port number"
@@ -8843,7 +8855,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "FX_1"
 	  SID			  "3156"
-	  Position		  [25, 387, 50, 413]
+	  Position		  [35, 472, 60, 498]
 	  ZOrder		  21
 	  Port			  "8"
 	  IconDisplay		  "Port number"
@@ -8852,7 +8864,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "FX_2"
 	  SID			  "3157"
-	  Position		  [25, 432, 50, 458]
+	  Position		  [35, 517, 60, 543]
 	  ZOrder		  22
 	  Port			  "9"
 	  IconDisplay		  "Port number"
@@ -8861,7 +8873,7 @@ Model {
 	  BlockType		  Inport
 	  Name			  "FY_1"
 	  SID			  "3158"
-	  Position		  [25, 477, 50, 503]
+	  Position		  [35, 562, 60, 588]
 	  ZOrder		  23
 	  Port			  "10"
 	  IconDisplay		  "Port number"
@@ -8870,18 +8882,18 @@ Model {
 	  BlockType		  Inport
 	  Name			  "FY_2"
 	  SID			  "3159"
-	  Position		  [25, 522, 50, 548]
+	  Position		  [35, 607, 60, 633]
 	  ZOrder		  24
 	  Port			  "11"
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  SubSystem
-	  Name			  "ADAMS Plant"
-	  SID			  "3244"
+	  Name			  "ADAMS Plant1"
+	  SID			  "3254"
 	  Ports			  [1, 1]
-	  Position		  [225, 360, 325, 410]
-	  ZOrder		  4509
+	  Position		  [210, 370, 310, 420]
+	  ZOrder		  4516
 	  BackgroundColor	  "red"
 	  LoadFcn		  "%check based on dialog box setting for when setting by popup menu                                      "
 	  "       \nif exist('ADAMS_solver_type')                                                                             "
@@ -8916,17 +8928,9 @@ Model {
 	  "                                \n    set_param(gcb,'modani','batch')                                              "
 	  "                             \n    %disable the direct feedthrough, sim mode, anim mode parameters                 "
 	  "                          \n    set_some_params_states({'modsim','modani'},{'off','off'},'MaskEnables',gcb)        "
-	  "                       \n  end\n  if and(strcmp(get_param(gcb,'exesol'),'ADAMS_exec'),strcmp(ADAMS_exec,'apre_solve"
-	  "r'))                       \n    %set the sim mode to discrete -- only supported mode                              "
-	  "                        \n    set_param(gcb,'modsim','discrete')                                                   "
-	  "                     \n     %turn off direct feedthrough option                                                    "
-	  "                  \n     set_some_params_states({'dft'},{'off'},'MaskVisibilities',gcb)                            "
-	  "               \n    %set the animation mode to batch -- only supported mode                                       "
-	  "            \n    set_param(gcb,'modani','batch')                                                                  "
-	  "         \n    %disable the direct feedthrough, sim mode, anim mode parameters                                     "
-	  "      \n    set_some_params_states({'modsim','modani'},{'off','off'},'MaskEnables',gcb)                            "
-	  "   \n  end                                                                                                  \nend  "
-	  "                                                                                                         "
+	  "                       \n  end                                                                                     "
+	  "                    \nend                                                                                          "
+	  "                 "
 	  InitFcn		  "clear mex"
 	  OpenFcn		  "open_system(gcb,'mask')                                                                                "
 	  "                                          \nif not(exist('set_some_params_states'))                                "
@@ -8934,7 +8938,7 @@ Model {
 	  "                                                                                                          \nwarning"
 	  "('The script \"set_some_params_states.m\" cannot be found in the MATLAB PATH.  Cannot update the ADAMS Plant S-Func"
 	  "tion parameters.')       \n                                                                                        "
-	  "                                                         \nwarning('Recommended action(optional):  run the Adams Co"
+	  "                                                         \nwarning('Recommended action(optional):  run the Adams/Co"
 	  "ntrols .m file first to help choose the correct settings in the Adams S-Function block.')\n                        "
 	  "                                                                                                                   "
 	  "      \nend                                                                                                        "
@@ -8942,41 +8946,41 @@ Model {
 	  RequestExecContextInheritance	off
 	  Object {
 	    $PropName		    "MaskObject"
-	    $ObjectID		    21
+	    $ObjectID		    22
 	    $ClassName		    "Simulink.Mask"
 	    Type		    "Adams Plant"
-	    Description		    "Simulate any Adams plant model either in Adams Solver form (.adm file) or in Adams View form (."
+	    Description		    "Simulate any Adams plant model either in Adams/Solver form (.adm file) or in Adams/View form (."
 	    "cmd file)"
 	    Help		    "<html>\nThis S-Function represents the non-linear Adams Plant with the inputs sent to the Adams model "
-	    "<br>\n and the outputs generated by the Adams model.  See the Adams Controls documentation for more <br>\ninforma"
+	    "<br>\n and the outputs generated by the Adams model.  See the Adams/Controls documentation for more <br>\ninforma"
 	    "tion.  This plant uses the following variables:<br>\n<br>\n<b>ADAMS_sysdir  :</b> Adams installation directory<br"
 	    ">\n<b>ADAMS_inputs  :</b> Input variables View names vector<br>\n<b>ADAMS_outputs :</b> Outputs variables View na"
 	    "mes vector<br>\n<b>ADAMS_prefix  : </b>ADAMS model files prefix (.adm, .cmd); also doubles as output files prefix"
-	    "<br>\n<b>ADAMS_exec :</b> Adams Solver user library or keyword (e.g., acar_solver)<br> \n<b>ADAMS_static :</b> ye"
+	    "<br>\n<b>ADAMS_exec :</b> Adams/Solver user library or keyword (e.g., acar_solver)<br> \n<b>ADAMS_static :</b> ye"
 	    "s|no - initial static before Co-simulation(discrete)/Function Evaluation(continuous)<br>\n<b>ADAMS_init :</b>Init"
-	    "ialization commands (i.e., Adams View or Solver commands, depending on setting for Animation mode)<br>\n<b>ADAMS_"
+	    "ialization commands (i.e., Adams/View or Solver commands, depending on setting for Animation mode)<br>\n<b>ADAMS_"
 	    "cwd : </b> Current working directory (for TCP/IP)<br>\n<b>ADAMS_host : </b>Name of Adams server host (for TCP/IP)"
 	    "<br>\n<b>ADAMS_mode :</b> Linear or non-linear (i.e., co-sim, function eval)<br>\n<b>ADAMS_solver_type :</b>Fortr"
 	    "an or C++ (used to set popup menu when first loaded) <br>\n\n\n<br>\nThe following settings can be chosen:<br>\n<"
-	    "br>\n<b>Adams Solver type:</b>  Fortran or C++ (will also set ADAMS_solver_type)<br>\n<b>Interprocess option:</b>"
-	    " Pipe(DDE), TCP/IP or DIRECT; TCP/IP can allow different machines run Adams and MATLAB<br>\n<b>Animation mode:</b"
-	    "> batch (Solver, uses .adm) or interactive (View, uses .cmd)<br>\n<b>Simulation mode:</b> discrete (Co-simulation"
-	    ") or continuous (Function Evaluation)<br>\n<b>Discrete Computational Order - Simulink Lead Adams:</b> for discret"
-	    "e mode, chooses if Simulink leads the integration (yes) or lags (no);<br> if set to \"no\", can remove algebraic "
-	    "loop<br>\n<b>Plant input interpolation order:</b> 0 = zero-order hold; 1 = linear (discrete mode only, where Simu"
-	    "link leads)<br>\n<b>Plant output extrapolation order:</b> 0 = zero-order hold;1 = linear(discrete mode only, wher"
-	    "e Simulink leads)<br>\n<b>Plant input extrapolation order:</b> 0 = zero-order hold; 1 = linear (discrete mode onl"
-	    "y, where Adams leads)<br>\n<b>Plant output interpolation order:</b> 0 = zero-order hold;1 = linear(discrete mode "
-	    "only, where Adams leads)<br>\n<b>Direct feedthrough:</b> yes|no - yes = Input directly effect output(continuous m"
-	    "ode-only)<br> \n<b>Communication interval:</b> Time step at which Co-simulation exchange information (e.g.,0.005)"
-	    "; also controls <br>output for continuous mode (Function Evaluation)<br>\n<b>Number of communications per output "
-	    "step: </b>Sets Adams output rate (.res, .req, .gra) integer value (default: 1)<br>\n</html>"
+	    "br>\n<b>Adams/Solver type:</b>  Fortran or C++ (will also set ADAMS_solver_type)<br>\n<b>Interprocess option:</b>"
+	    " Pipe(DDE) or TCP/IP; TCP/IP can allow different machines run Adams and MATLAB<br>\n<b>Animation mode:</b> batch "
+	    "(Solver, uses .adm) or interactive (View, uses .cmd)<br>\n<b>Simulation mode:</b> discrete (Co-simulation) or con"
+	    "tinuous (Function Evaluation)<br>\n<b>Discrete Computational Order - Simulink Lead Adams:</b> for discrete mode, "
+	    "chooses if Simulink leads the integration (yes) or lags (no);<br> if set to \"no\", can remove algebraic loop<br>"
+	    "\n<b>Plant input interpolation order:</b> 0 = zero-order hold; 1 = linear (discrete mode only, where Simulink lea"
+	    "ds)<br>\n<b>Plant output extrapolation order:</b> 0 = zero-order hold;1 = linear(discrete mode only, where Simuli"
+	    "nk leads)<br>\n<b>Plant input extrapolation order:</b> 0 = zero-order hold; 1 = linear (discrete mode only, where"
+	    " Adams leads)<br>\n<b>Plant output interpolation order:</b> 0 = zero-order hold;1 = linear(discrete mode only, wh"
+	    "ere Adams leads)<br>\n<b>Direct feedthrough:</b> yes|no - yes = Input directly effect output(continuous mode-only"
+	    ")<br> \n<b>Communication interval:</b> Time step at which Co-simulation exchange information (e.g.,0.005); also c"
+	    "ontrols <br>output for continuous mode (Function Evaluation)<br>\n<b>Number of communications per output step: </"
+	    "b>Sets Adams output rate (.res, .req, .gra) integer value (default: 1)<br>\n</html>"
 	    Display		    "disp( 'MSC Software' )"
 	    Array {
 	      Type		      "Simulink.MaskParameter"
 	      Dimension		      23
 	      Object {
-		$ObjectID		22
+		$ObjectID		23
 		Type			"edit"
 		Name			"exevie"
 		Prompt			"Adams install directory"
@@ -8984,37 +8988,37 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		23
+		$ObjectID		24
 		Type			"edit"
 		Name			"nam_in"
-		Prompt			"Adams View input names"
+		Prompt			"Adams/View input names"
 		Value			"ADAMS_inputs"
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		24
+		$ObjectID		25
 		Type			"edit"
 		Name			"namout"
-		Prompt			"Adams View output names"
+		Prompt			"Adams/View output names"
 		Value			"ADAMS_outputs"
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		25
+		$ObjectID		26
 		Type			"edit"
 		Name			"nampre"
 		Prompt			"Adams model file prefix"
 		Value			"ADAMS_prefix"
 	      }
 	      Object {
-		$ObjectID		26
+		$ObjectID		27
 		Type			"edit"
 		Name			"outfil"
 		Prompt			"Output files prefix (opt.: if blank - no output)"
 		Value			"ADAMS_prefix"
 	      }
 	      Object {
-		$ObjectID		27
+		$ObjectID		28
 		Type			"edit"
 		Name			"exesol"
 		Prompt			"User executable (opt.: if blank - use standard)"
@@ -9032,7 +9036,7 @@ Model {
 		"arams_states({'modsim','modani'},{'off','off'},'MaskEnables',gcb)\n  end\nend\n\n\n\n"
 	      }
 	      Object {
-		$ObjectID		28
+		$ObjectID		29
 		Type			"edit"
 		Name			"stat"
 		Prompt			"Initial static simulation flag "
@@ -9040,7 +9044,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		29
+		$ObjectID		30
 		Type			"edit"
 		Name			"inicmd"
 		Prompt			"Initialization commands"
@@ -9048,7 +9052,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		30
+		$ObjectID		31
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9058,34 +9062,33 @@ Model {
 		  PropName		  "TypeOptions"
 		}
 		Name			"exetyp"
-		Prompt			"Adams Solver type"
+		Prompt			"Adams/Solver type"
 		Value			"C++"
 		Evaluate		"off"
 		Callback		"if strcmp(get_param(gcb,'exetyp'),'C++')\n    ADAMS_solver_type='C++';\nelse\n    ADAMS_solver_type='Fort"
 		"ran';\nend"
 	      }
 	      Object {
-		$ObjectID		31
+		$ObjectID		32
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
-		  Dimension		  3
+		  Dimension		  2
 		  Cell			  "PIPE(DDE)"
 		  Cell			  "TCP/IP"
-		  Cell			  "DIRECT"
 		  PropName		  "TypeOptions"
 		}
 		Name			"comtyp"
 		Prompt			"Interprocess option"
 		Value			"PIPE(DDE)"
 		Evaluate		"off"
-		Callback		"if exist('set_some_params_states')\nif strcmp(get_param(gcb,'comtyp'),'PIPE(DDE)') || strcmp(get_param(gc"
-		"b,'comtyp'),'DIRECT')\n    %turn off cwd, host options\n    set_some_params_states({'ada_host','workdir'},{'off','of"
-		"f'},'MaskVisibilities',gcb)\nelse%if strcmp(get_param(gcb,'modsim'),'TCP/IP')\n    %turn on cwd, host options\n    s"
-		"et_some_params_states({'ada_host','workdir'},{'on','on'},'MaskVisibilities',gcb)\nend\nend"
+		Callback		"if exist('set_some_params_states')\nif strcmp(get_param(gcb,'comtyp'),'PIPE(DDE)')\n    %turn off cwd, ho"
+		"st options\n    set_some_params_states({'ada_host','workdir'},{'off','off'},'MaskVisibilities',gcb)\nelse%if strcmp("
+		"get_param(gcb,'modsim'),'TCP/IP')\n    %turn on cwd, host options\n    set_some_params_states({'ada_host','workdir'}"
+		",{'on','on'},'MaskVisibilities',gcb)\nend\nend"
 	      }
 	      Object {
-		$ObjectID		32
+		$ObjectID		33
 		Type			"edit"
 		Name			"workdir"
 		Prompt			"Adams working directory"
@@ -9093,7 +9096,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		33
+		$ObjectID		34
 		Type			"edit"
 		Name			"ada_host"
 		Prompt			"Adams host"
@@ -9101,7 +9104,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		34
+		$ObjectID		35
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9116,7 +9119,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		35
+		$ObjectID		36
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9142,7 +9145,7 @@ Model {
 		"nd"
 	      }
 	      Object {
-		$ObjectID		36
+		$ObjectID		37
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9158,7 +9161,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		37
+		$ObjectID		38
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9182,7 +9185,7 @@ Model {
 		"es({'pin_interp_order','pout_extrap_order'},{'off','off'},'MaskVisibilities',gcb) \nend\nend"
 	      }
 	      Object {
-		$ObjectID		38
+		$ObjectID		39
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9197,7 +9200,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		39
+		$ObjectID		40
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9212,7 +9215,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		40
+		$ObjectID		41
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9228,7 +9231,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		41
+		$ObjectID		42
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -9244,21 +9247,21 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		42
+		$ObjectID		43
 		Type			"edit"
 		Name			"dt_out"
 		Prompt			"Communication interval"
 		Value			"Ts"
 	      }
 	      Object {
-		$ObjectID		43
+		$ObjectID		44
 		Type			"edit"
 		Name			"o_rate"
 		Prompt			"Number of communications per output step"
 		Value			"1"
 	      }
 	      Object {
-		$ObjectID		44
+		$ObjectID		45
 		Type			"checkbox"
 		Name			"more"
 		Prompt			"More parameters"
@@ -9275,8 +9278,8 @@ Model {
 	    }
 	  }
 	  System {
-	    Name		    "ADAMS Plant"
-	    Location		    [102, 359, 641, 860]
+	    Name		    "ADAMS Plant1"
+	    Location		    [181, 52, 537, 336]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -9292,7 +9295,7 @@ Model {
 	    Block {
 	      BlockType		      Inport
 	      Name		      "ADAMS inputs"
-	      SID		      "3245"
+	      SID		      "3255"
 	      Position		      [25, 25, 75, 75]
 	      ZOrder		      -1
 	      IconDisplay	      "Port number"
@@ -9300,7 +9303,7 @@ Model {
 	    Block {
 	      BlockType		      S-Function
 	      Name		      "S-Function"
-	      SID		      "3246"
+	      SID		      "3256"
 	      Ports		      [1, 1]
 	      Position		      [100, 25, 200, 75]
 	      ZOrder		      -2
@@ -9314,7 +9317,7 @@ Model {
 	    Block {
 	      BlockType		      Outport
 	      Name		      "ADAMS outputs"
-	      SID		      "3247"
+	      SID		      "3257"
 	      Position		      [225, 25, 275, 75]
 	      ZOrder		      -3
 	      IconDisplay	      "Port number"
@@ -9341,7 +9344,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 1"
 	  SID			  "3206"
 	  Ports			  [0, 1]
-	  Position		  [765, 270, 785, 290]
+	  Position		  [725, 270, 745, 290]
 	  ZOrder		  4471
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9358,7 +9361,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 10"
 	  SID			  "3207"
 	  Ports			  [0, 1]
-	  Position		  [680, 445, 700, 465]
+	  Position		  [640, 445, 660, 465]
 	  ZOrder		  4486
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9375,7 +9378,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 2"
 	  SID			  "3208"
 	  Ports			  [0, 1]
-	  Position		  [765, 310, 785, 330]
+	  Position		  [725, 310, 745, 330]
 	  ZOrder		  4472
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9392,7 +9395,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 3"
 	  SID			  "3209"
 	  Ports			  [0, 1]
-	  Position		  [765, 350, 785, 370]
+	  Position		  [725, 350, 745, 370]
 	  ZOrder		  4475
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9409,7 +9412,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 4"
 	  SID			  "3210"
 	  Ports			  [0, 1]
-	  Position		  [765, 390, 785, 410]
+	  Position		  [725, 390, 745, 410]
 	  ZOrder		  4476
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9426,7 +9429,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 5"
 	  SID			  "3211"
 	  Ports			  [0, 1]
-	  Position		  [765, 430, 785, 450]
+	  Position		  [725, 430, 745, 450]
 	  ZOrder		  4479
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9443,7 +9446,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 6"
 	  SID			  "3212"
 	  Ports			  [0, 1]
-	  Position		  [765, 470, 785, 490]
+	  Position		  [725, 470, 745, 490]
 	  ZOrder		  4480
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9460,7 +9463,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 7"
 	  SID			  "3213"
 	  Ports			  [0, 1]
-	  Position		  [680, 310, 700, 330]
+	  Position		  [640, 310, 660, 330]
 	  ZOrder		  4483
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9477,7 +9480,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 8"
 	  SID			  "3214"
 	  Ports			  [0, 1]
-	  Position		  [680, 355, 700, 375]
+	  Position		  [640, 355, 660, 375]
 	  ZOrder		  4484
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9494,7 +9497,7 @@ Model {
 	  Name			  "Band-Limited\nWhite Noise 9"
 	  SID			  "3215"
 	  Ports			  [0, 1]
-	  Position		  [680, 400, 700, 420]
+	  Position		  [640, 400, 660, 420]
 	  ZOrder		  4485
 	  ShowName		  off
 	  LibraryVersion	  "1.287"
@@ -9508,18 +9511,18 @@ Model {
 	}
 	Block {
 	  BlockType		  Clock
-	  Name			  "Clock"
-	  SID			  "3248"
-	  Position		  [115, 617, 140, 643]
-	  ZOrder		  4508
+	  Name			  "Clock1"
+	  SID			  "3258"
+	  Position		  [125, 657, 150, 683]
+	  ZOrder		  4515
 	}
 	Block {
 	  BlockType		  Demux
-	  Name			  "Demux"
-	  SID			  "3249"
+	  Name			  "Demux1"
+	  SID			  "3259"
 	  Ports			  [1, 12]
-	  Position		  [390, 27, 455, 743]
-	  ZOrder		  4507
+	  Position		  [365, 46, 420, 744]
+	  ZOrder		  4514
 	  BackgroundColor	  "blue"
 	  Outputs		  "12"
 	}
@@ -9527,7 +9530,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto1"
 	  SID			  "3216"
-	  Position		  [715, 330, 745, 345]
+	  Position		  [675, 330, 705, 345]
 	  ZOrder		  4468
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9537,7 +9540,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto10"
 	  SID			  "3182"
-	  Position		  [470, 30, 500, 45]
+	  Position		  [440, 40, 470, 55]
 	  ZOrder		  4463
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9547,7 +9550,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto11"
 	  SID			  "3183"
-	  Position		  [470, 90, 500, 105]
+	  Position		  [440, 100, 470, 115]
 	  ZOrder		  4464
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9557,7 +9560,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto12"
 	  SID			  "3184"
-	  Position		  [470, 210, 500, 225]
+	  Position		  [440, 220, 470, 235]
 	  ZOrder		  4465
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9567,7 +9570,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto13"
 	  SID			  "3185"
-	  Position		  [470, 270, 500, 285]
+	  Position		  [440, 280, 470, 295]
 	  ZOrder		  4466
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9577,7 +9580,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto2"
 	  SID			  "3217"
-	  Position		  [715, 420, 745, 435]
+	  Position		  [675, 420, 705, 435]
 	  ZOrder		  4470
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9587,7 +9590,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto27"
 	  SID			  "3218"
-	  Position		  [715, 285, 745, 300]
+	  Position		  [675, 285, 705, 300]
 	  ZOrder		  4467
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9597,7 +9600,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto3"
 	  SID			  "3219"
-	  Position		  [715, 375, 745, 390]
+	  Position		  [675, 375, 705, 390]
 	  ZOrder		  4469
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9607,7 +9610,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto4"
 	  SID			  "3220"
-	  Position		  [795, 250, 825, 265]
+	  Position		  [755, 250, 785, 265]
 	  ZOrder		  4473
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9617,7 +9620,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto5"
 	  SID			  "3221"
-	  Position		  [795, 290, 825, 305]
+	  Position		  [755, 290, 785, 305]
 	  ZOrder		  4474
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9627,7 +9630,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto6"
 	  SID			  "3222"
-	  Position		  [795, 330, 825, 345]
+	  Position		  [755, 330, 785, 345]
 	  ZOrder		  4477
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9637,7 +9640,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto7"
 	  SID			  "3223"
-	  Position		  [795, 370, 825, 385]
+	  Position		  [755, 370, 785, 385]
 	  ZOrder		  4478
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9647,7 +9650,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto8"
 	  SID			  "3224"
-	  Position		  [795, 410, 825, 425]
+	  Position		  [755, 410, 785, 425]
 	  ZOrder		  4481
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9657,7 +9660,7 @@ Model {
 	  BlockType		  Goto
 	  Name			  "Goto9"
 	  SID			  "3225"
-	  Position		  [795, 450, 825, 465]
+	  Position		  [755, 450, 785, 465]
 	  ZOrder		  4482
 	  BlockRotation		  270
 	  ShowName		  off
@@ -9667,7 +9670,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque1"
 	  SID			  "3186"
-	  Position		  [475, 133, 505, 147]
+	  Position		  [445, 143, 475, 157]
 	  ZOrder		  4448
 	  ShowName		  off
 	  GotoTag		  "n2"
@@ -9676,7 +9679,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque10"
 	  SID			  "3226"
-	  Position		  [905, 403, 945, 417]
+	  Position		  [865, 403, 905, 417]
 	  ZOrder		  4497
 	  ShowName		  off
 	  GotoTag		  "O1"
@@ -9685,7 +9688,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque11"
 	  SID			  "3187"
-	  Position		  [475, 73, 505, 87]
+	  Position		  [445, 83, 475, 97]
 	  ZOrder		  4447
 	  ShowName		  off
 	  GotoTag		  "n1"
@@ -9694,7 +9697,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque12"
 	  SID			  "3227"
-	  Position		  [905, 423, 945, 437]
+	  Position		  [865, 423, 905, 437]
 	  ZOrder		  4498
 	  ShowName		  off
 	  GotoTag		  "X2r"
@@ -9703,7 +9706,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque13"
 	  SID			  "3228"
-	  Position		  [905, 443, 945, 457]
+	  Position		  [865, 443, 905, 457]
 	  ZOrder		  4499
 	  ShowName		  off
 	  GotoTag		  "Y2r"
@@ -9712,7 +9715,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque14"
 	  SID			  "3229"
-	  Position		  [905, 463, 945, 477]
+	  Position		  [865, 463, 905, 477]
 	  ZOrder		  4500
 	  ShowName		  off
 	  GotoTag		  "O2"
@@ -9721,7 +9724,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque15"
 	  SID			  "3230"
-	  Position		  [905, 363, 945, 377]
+	  Position		  [865, 363, 905, 377]
 	  ZOrder		  4495
 	  ShowName		  off
 	  GotoTag		  "X1r"
@@ -9730,7 +9733,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque16"
 	  SID			  "3231"
-	  Position		  [905, 383, 945, 397]
+	  Position		  [865, 383, 905, 397]
 	  ZOrder		  4496
 	  ShowName		  off
 	  GotoTag		  "Y1r"
@@ -9739,7 +9742,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque2"
 	  SID			  "3188"
-	  Position		  [475, 253, 505, 267]
+	  Position		  [445, 263, 475, 277]
 	  ZOrder		  4449
 	  ShowName		  off
 	  GotoTag		  "n3"
@@ -9748,7 +9751,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque3"
 	  SID			  "3189"
-	  Position		  [475, 313, 505, 327]
+	  Position		  [445, 323, 475, 337]
 	  ZOrder		  4450
 	  ShowName		  off
 	  GotoTag		  "n4"
@@ -9757,7 +9760,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque33"
 	  SID			  "3232"
-	  Position		  [905, 258, 945, 272]
+	  Position		  [865, 258, 905, 272]
 	  ZOrder		  4489
 	  ShowName		  off
 	  GotoTag		  "O1"
@@ -9766,7 +9769,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque34"
 	  SID			  "3233"
-	  Position		  [905, 278, 945, 292]
+	  Position		  [865, 278, 905, 292]
 	  ZOrder		  4490
 	  ShowName		  off
 	  GotoTag		  "X2"
@@ -9775,7 +9778,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque35"
 	  SID			  "3234"
-	  Position		  [905, 298, 945, 312]
+	  Position		  [865, 298, 905, 312]
 	  ZOrder		  4491
 	  ShowName		  off
 	  GotoTag		  "Y2"
@@ -9784,7 +9787,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque36"
 	  SID			  "3235"
-	  Position		  [905, 318, 945, 332]
+	  Position		  [865, 318, 905, 332]
 	  ZOrder		  4492
 	  ShowName		  off
 	  GotoTag		  "O2"
@@ -9793,7 +9796,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque37"
 	  SID			  "3236"
-	  Position		  [905, 218, 945, 232]
+	  Position		  [865, 218, 905, 232]
 	  ZOrder		  4487
 	  ShowName		  off
 	  GotoTag		  "X1"
@@ -9802,7 +9805,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque38"
 	  SID			  "3237"
-	  Position		  [905, 238, 945, 252]
+	  Position		  [865, 238, 905, 252]
 	  ZOrder		  4488
 	  ShowName		  off
 	  GotoTag		  "Y1"
@@ -9811,7 +9814,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque4"
 	  SID			  "3190"
-	  Position		  [470, 433, 500, 447]
+	  Position		  [440, 443, 470, 457]
 	  ZOrder		  4452
 	  ShowName		  off
 	  GotoTag		  "nw1"
@@ -9820,7 +9823,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque5"
 	  SID			  "3191"
-	  Position		  [470, 493, 500, 507]
+	  Position		  [440, 503, 470, 517]
 	  ZOrder		  4454
 	  ShowName		  off
 	  GotoTag		  "nw2"
@@ -9829,7 +9832,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque6"
 	  SID			  "3192"
-	  Position		  [470, 553, 500, 567]
+	  Position		  [440, 563, 470, 577]
 	  ZOrder		  4456
 	  ShowName		  off
 	  GotoTag		  "nw3"
@@ -9838,7 +9841,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque7"
 	  SID			  "3193"
-	  Position		  [470, 613, 500, 627]
+	  Position		  [440, 623, 470, 637]
 	  ZOrder		  4458
 	  ShowName		  off
 	  GotoTag		  "nw4"
@@ -9847,7 +9850,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque8"
 	  SID			  "3194"
-	  Position		  [470, 673, 500, 687]
+	  Position		  [440, 683, 470, 697]
 	  ZOrder		  4460
 	  ShowName		  off
 	  GotoTag		  "nw5"
@@ -9856,27 +9859,17 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque9"
 	  SID			  "3195"
-	  Position		  [470, 733, 500, 747]
+	  Position		  [440, 743, 470, 757]
 	  ZOrder		  4462
 	  ShowName		  off
 	  GotoTag		  "nw6"
 	}
 	Block {
 	  BlockType		  Mux
-	  Name			  "Mux"
-	  SID			  "3250"
-	  Ports			  [11, 1]
-	  Position		  [100, 52, 155, 568]
-	  ZOrder		  4506
-	  BackgroundColor	  "green"
-	  Inputs		  "11"
-	}
-	Block {
-	  BlockType		  Mux
 	  Name			  "Mux1"
 	  SID			  "3238"
 	  Ports			  [6, 1]
-	  Position		  [970, 352, 975, 488]
+	  Position		  [930, 352, 935, 488]
 	  ZOrder		  4501
 	  ShowName		  off
 	  Inputs		  "6"
@@ -9884,10 +9877,20 @@ Model {
 	}
 	Block {
 	  BlockType		  Mux
+	  Name			  "Mux2"
+	  SID			  "3260"
+	  Ports			  [11, 1]
+	  Position		  [110, 157, 160, 633]
+	  ZOrder		  4513
+	  BackgroundColor	  "green"
+	  Inputs		  "11"
+	}
+	Block {
+	  BlockType		  Mux
 	  Name			  "Mux4"
 	  SID			  "3239"
 	  Ports			  [6, 1]
-	  Position		  [970, 207, 975, 343]
+	  Position		  [930, 207, 935, 343]
 	  ZOrder		  4493
 	  ShowName		  off
 	  Inputs		  "6"
@@ -9898,7 +9901,7 @@ Model {
 	  Name			  "Sum1"
 	  SID			  "3196"
 	  Ports			  [2, 1]
-	  Position		  [505, 225, 525, 245]
+	  Position		  [475, 235, 495, 255]
 	  ZOrder		  4445
 	  ShowName		  off
 	  IconShape		  "round"
@@ -9912,7 +9915,7 @@ Model {
 	  Name			  "Sum10"
 	  SID			  "3197"
 	  Ports			  [2, 1]
-	  Position		  [500, 705, 520, 725]
+	  Position		  [470, 715, 490, 735]
 	  ZOrder		  4461
 	  ShowName		  off
 	  IconShape		  "round"
@@ -9926,7 +9929,7 @@ Model {
 	  Name			  "Sum2"
 	  SID			  "3198"
 	  Ports			  [2, 1]
-	  Position		  [505, 45, 525, 65]
+	  Position		  [475, 55, 495, 75]
 	  ZOrder		  4443
 	  ShowName		  off
 	  IconShape		  "round"
@@ -9940,7 +9943,7 @@ Model {
 	  Name			  "Sum3"
 	  SID			  "3199"
 	  Ports			  [2, 1]
-	  Position		  [505, 105, 525, 125]
+	  Position		  [475, 115, 495, 135]
 	  ZOrder		  4444
 	  ShowName		  off
 	  IconShape		  "round"
@@ -9954,7 +9957,7 @@ Model {
 	  Name			  "Sum4"
 	  SID			  "3200"
 	  Ports			  [2, 1]
-	  Position		  [505, 285, 525, 305]
+	  Position		  [475, 295, 495, 315]
 	  ZOrder		  4446
 	  ShowName		  off
 	  IconShape		  "round"
@@ -9968,7 +9971,7 @@ Model {
 	  Name			  "Sum5"
 	  SID			  "3201"
 	  Ports			  [2, 1]
-	  Position		  [500, 405, 520, 425]
+	  Position		  [470, 415, 490, 435]
 	  ZOrder		  4451
 	  ShowName		  off
 	  IconShape		  "round"
@@ -9982,7 +9985,7 @@ Model {
 	  Name			  "Sum6"
 	  SID			  "3202"
 	  Ports			  [2, 1]
-	  Position		  [500, 465, 520, 485]
+	  Position		  [470, 475, 490, 495]
 	  ZOrder		  4453
 	  ShowName		  off
 	  IconShape		  "round"
@@ -9996,7 +9999,7 @@ Model {
 	  Name			  "Sum7"
 	  SID			  "3203"
 	  Ports			  [2, 1]
-	  Position		  [500, 525, 520, 545]
+	  Position		  [470, 535, 490, 555]
 	  ZOrder		  4455
 	  ShowName		  off
 	  IconShape		  "round"
@@ -10010,7 +10013,7 @@ Model {
 	  Name			  "Sum8"
 	  SID			  "3204"
 	  Ports			  [2, 1]
-	  Position		  [500, 585, 520, 605]
+	  Position		  [470, 595, 490, 615]
 	  ZOrder		  4457
 	  ShowName		  off
 	  IconShape		  "round"
@@ -10024,7 +10027,7 @@ Model {
 	  Name			  "Sum9"
 	  SID			  "3205"
 	  Ports			  [2, 1]
-	  Position		  [500, 645, 520, 665]
+	  Position		  [470, 655, 490, 675]
 	  ZOrder		  4459
 	  ShowName		  off
 	  IconShape		  "round"
@@ -10035,21 +10038,20 @@ Model {
 	}
 	Block {
 	  BlockType		  ToWorkspace
-	  Name			  "T To Workspace"
-	  SID			  "3251"
+	  Name			  "T To Workspace1"
+	  SID			  "3261"
 	  Ports			  [1]
-	  Position		  [225, 512, 325, 538]
-	  ZOrder		  4505
-	  VariableName		  "ADAMS_tout"
+	  Position		  [210, 522, 310, 548]
+	  ZOrder		  4512
+	  VariableName		  "ADAMS_tout1"
 	  MaxDataPoints		  "100000"
-	  SampleTime		  "Ts"
 	}
 	Block {
 	  BlockType		  ToWorkspace
 	  Name			  "To Workspace 1"
 	  SID			  "3240"
 	  Ports			  [1]
-	  Position		  [1000, 410, 1110, 430]
+	  Position		  [960, 410, 1070, 430]
 	  ZOrder		  4502
 	  ShowName		  off
 	  VariableName		  "robots_pose_real"
@@ -10064,7 +10066,7 @@ Model {
 	  Name			  "To Workspace 3"
 	  SID			  "3241"
 	  Ports			  [1]
-	  Position		  [1000, 265, 1110, 285]
+	  Position		  [960, 265, 1070, 285]
 	  ZOrder		  4494
 	  ShowName		  off
 	  VariableName		  "robots_pose_noised"
@@ -10076,32 +10078,30 @@ Model {
 	}
 	Block {
 	  BlockType		  ToWorkspace
-	  Name			  "U To Workspace"
-	  SID			  "3252"
+	  Name			  "U To Workspace1"
+	  SID			  "3262"
 	  Ports			  [1]
-	  Position		  [225, 285, 325, 335]
-	  ZOrder		  4504
-	  VariableName		  "ADAMS_uout"
+	  Position		  [210, 295, 310, 345]
+	  ZOrder		  4511
+	  VariableName		  "ADAMS_uout1"
 	  MaxDataPoints		  "100000"
-	  SampleTime		  "-1"
 	}
 	Block {
 	  BlockType		  ToWorkspace
-	  Name			  "Y To Workspace"
-	  SID			  "3253"
+	  Name			  "Y To Workspace1"
+	  SID			  "3263"
 	  Ports			  [1]
-	  Position		  [225, 435, 325, 485]
-	  ZOrder		  4503
+	  Position		  [210, 445, 310, 495]
+	  ZOrder		  4510
 	  BlockMirror		  on
-	  VariableName		  "ADAMS_yout"
+	  VariableName		  "ADAMS_yout1"
 	  MaxDataPoints		  "100000"
-	  SampleTime		  "-1"
 	}
 	Block {
 	  BlockType		  Outport
 	  Name			  "X_1"
 	  SID			  "3170"
-	  Position		  [545, 42, 570, 68]
+	  Position		  [515, 52, 540, 78]
 	  ZOrder		  2
 	  IconDisplay		  "Port number"
 	}
@@ -10109,7 +10109,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Y_1"
 	  SID			  "3171"
-	  Position		  [545, 102, 570, 128]
+	  Position		  [515, 112, 540, 138]
 	  ZOrder		  3
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -10118,7 +10118,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "O_1"
 	  SID			  "3172"
-	  Position		  [545, 162, 570, 188]
+	  Position		  [515, 172, 540, 198]
 	  ZOrder		  4
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -10127,7 +10127,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "X_2"
 	  SID			  "3173"
-	  Position		  [545, 222, 570, 248]
+	  Position		  [515, 232, 540, 258]
 	  ZOrder		  5
 	  Port			  "4"
 	  IconDisplay		  "Port number"
@@ -10136,7 +10136,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "Y_2"
 	  SID			  "3174"
-	  Position		  [545, 282, 570, 308]
+	  Position		  [515, 292, 540, 318]
 	  ZOrder		  6
 	  Port			  "5"
 	  IconDisplay		  "Port number"
@@ -10145,7 +10145,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "O_2"
 	  SID			  "3175"
-	  Position		  [545, 342, 570, 368]
+	  Position		  [515, 352, 540, 378]
 	  ZOrder		  7
 	  Port			  "6"
 	  IconDisplay		  "Port number"
@@ -10154,7 +10154,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "W_11"
 	  SID			  "3176"
-	  Position		  [540, 402, 565, 428]
+	  Position		  [510, 412, 535, 438]
 	  ZOrder		  8
 	  Port			  "7"
 	  IconDisplay		  "Port number"
@@ -10163,7 +10163,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "W_12"
 	  SID			  "3177"
-	  Position		  [540, 462, 565, 488]
+	  Position		  [510, 472, 535, 498]
 	  ZOrder		  9
 	  Port			  "8"
 	  IconDisplay		  "Port number"
@@ -10172,7 +10172,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "W_13"
 	  SID			  "3178"
-	  Position		  [540, 522, 565, 548]
+	  Position		  [510, 532, 535, 558]
 	  ZOrder		  10
 	  Port			  "9"
 	  IconDisplay		  "Port number"
@@ -10181,7 +10181,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "W_21"
 	  SID			  "3179"
-	  Position		  [540, 582, 565, 608]
+	  Position		  [510, 592, 535, 618]
 	  ZOrder		  11
 	  Port			  "10"
 	  IconDisplay		  "Port number"
@@ -10190,7 +10190,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "W_22"
 	  SID			  "3180"
-	  Position		  [540, 642, 565, 668]
+	  Position		  [510, 652, 535, 678]
 	  ZOrder		  12
 	  Port			  "11"
 	  IconDisplay		  "Port number"
@@ -10199,93 +10199,93 @@ Model {
 	  BlockType		  Outport
 	  Name			  "W_23"
 	  SID			  "3181"
-	  Position		  [540, 702, 565, 728]
+	  Position		  [510, 712, 535, 738]
 	  ZOrder		  13
 	  Port			  "12"
 	  IconDisplay		  "Port number"
 	}
 	Line {
-	  ZOrder		  216
+	  ZOrder		  319
 	  SrcBlock		  "FY_2"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  11
 	}
 	Line {
-	  ZOrder		  218
+	  ZOrder		  317
 	  SrcBlock		  "FY_1"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  10
 	}
 	Line {
-	  ZOrder		  222
+	  ZOrder		  316
 	  SrcBlock		  "FX_2"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  9
 	}
 	Line {
-	  ZOrder		  214
+	  ZOrder		  320
 	  SrcBlock		  "FX_1"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  8
 	}
 	Line {
-	  ZOrder		  224
+	  ZOrder		  318
 	  SrcBlock		  "FD"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  7
 	}
 	Line {
-	  ZOrder		  221
+	  ZOrder		  315
 	  SrcBlock		  "T_23"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  6
 	}
 	Line {
-	  ZOrder		  220
+	  ZOrder		  312
 	  SrcBlock		  "T_22"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  5
 	}
 	Line {
-	  ZOrder		  223
+	  ZOrder		  314
 	  SrcBlock		  "T_21"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  4
 	}
 	Line {
-	  ZOrder		  215
+	  ZOrder		  313
 	  SrcBlock		  "T_13"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  3
 	}
 	Line {
-	  ZOrder		  217
+	  ZOrder		  311
 	  SrcBlock		  "T_12"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  2
 	}
 	Line {
-	  ZOrder		  219
+	  ZOrder		  310
 	  SrcBlock		  "T_11"
 	  SrcPort		  1
-	  DstBlock		  "Mux"
+	  DstBlock		  "Mux2"
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  203
-	  SrcBlock		  "Demux"
+	  ZOrder		  347
+	  SrcBlock		  "Demux1"
 	  SrcPort		  1
-	  Points		  [25, 0]
+	  Points		  [30, 0]
 	  Branch {
 	    ZOrder		    51
 	    DstBlock		    "Goto10"
@@ -10298,10 +10298,10 @@ Model {
 	  }
 	}
 	Line {
-	  ZOrder		  209
-	  SrcBlock		  "Demux"
+	  ZOrder		  346
+	  SrcBlock		  "Demux1"
 	  SrcPort		  2
-	  Points		  [25, 0]
+	  Points		  [30, 0]
 	  Branch {
 	    ZOrder		    54
 	    DstBlock		    "Goto11"
@@ -10328,10 +10328,10 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  202
-	  SrcBlock		  "Demux"
+	  ZOrder		  344
+	  SrcBlock		  "Demux1"
 	  SrcPort		  4
-	  Points		  [25, 0]
+	  Points		  [30, 0]
 	  Branch {
 	    ZOrder		    59
 	    DstBlock		    "Goto12"
@@ -10344,10 +10344,10 @@ Model {
 	  }
 	}
 	Line {
-	  ZOrder		  211
-	  SrcBlock		  "Demux"
+	  ZOrder		  343
+	  SrcBlock		  "Demux1"
 	  SrcPort		  5
-	  Points		  [25, 0]
+	  Points		  [30, 0]
 	  Branch {
 	    ZOrder		    62
 	    DstBlock		    "Goto13"
@@ -10444,8 +10444,8 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  ZOrder		  201
-	  SrcBlock		  "Demux"
+	  ZOrder		  341
+	  SrcBlock		  "Demux1"
 	  SrcPort		  7
 	  DstBlock		  "Sum5"
 	  DstPort		  1
@@ -10458,8 +10458,8 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  208
-	  SrcBlock		  "Demux"
+	  ZOrder		  340
+	  SrcBlock		  "Demux1"
 	  SrcPort		  8
 	  DstBlock		  "Sum6"
 	  DstPort		  1
@@ -10472,8 +10472,8 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  207
-	  SrcBlock		  "Demux"
+	  ZOrder		  339
+	  SrcBlock		  "Demux1"
 	  SrcPort		  9
 	  DstBlock		  "Sum7"
 	  DstPort		  1
@@ -10486,8 +10486,8 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  206
-	  SrcBlock		  "Demux"
+	  ZOrder		  338
+	  SrcBlock		  "Demux1"
 	  SrcPort		  10
 	  DstBlock		  "Sum8"
 	  DstPort		  1
@@ -10500,8 +10500,8 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  204
-	  SrcBlock		  "Demux"
+	  ZOrder		  337
+	  SrcBlock		  "Demux1"
 	  SrcPort		  11
 	  DstBlock		  "Sum9"
 	  DstPort		  1
@@ -10514,8 +10514,8 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  210
-	  SrcBlock		  "Demux"
+	  ZOrder		  336
+	  SrcBlock		  "Demux1"
 	  SrcPort		  12
 	  DstBlock		  "Sum10"
 	  DstPort		  1
@@ -10528,15 +10528,15 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  205
-	  SrcBlock		  "Demux"
+	  ZOrder		  345
+	  SrcBlock		  "Demux1"
 	  SrcPort		  3
 	  DstBlock		  "O_1"
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  212
-	  SrcBlock		  "Demux"
+	  ZOrder		  342
+	  SrcBlock		  "Demux1"
 	  SrcPort		  6
 	  DstBlock		  "O_2"
 	  DstPort		  1
@@ -10714,51 +10714,51 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  194
-	  SrcBlock		  "Clock"
+	  ZOrder		  302
+	  SrcBlock		  "Clock1"
 	  SrcPort		  1
-	  Points		  [65, 0]
-	  DstBlock		  "T To Workspace"
+	  Points		  [30, 0; 0, -135]
+	  DstBlock		  "T To Workspace1"
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  197
-	  SrcBlock		  "Mux"
+	  ZOrder		  305
+	  SrcBlock		  "Mux2"
 	  SrcPort		  1
-	  Points		  [40, 0]
+	  Points		  [20, 0]
 	  Branch {
-	    ZOrder		    213
-	    Points		    [0, 75]
-	    DstBlock		    "ADAMS Plant"
+	    ZOrder		    335
+	    Points		    [0, -75]
+	    DstBlock		    "U To Workspace1"
 	    DstPort		    1
 	  }
 	  Branch {
-	    ZOrder		    196
-	    DstBlock		    "U To Workspace"
+	    ZOrder		    309
+	    DstBlock		    "ADAMS Plant1"
 	    DstPort		    1
 	  }
 	}
 	Line {
-	  ZOrder		  200
-	  SrcBlock		  "ADAMS Plant"
+	  ZOrder		  308
+	  SrcBlock		  "ADAMS Plant1"
 	  SrcPort		  1
 	  Points		  [15, 0]
 	  Branch {
-	    ZOrder		    199
+	    ZOrder		    307
 	    Points		    [0, 75]
-	    DstBlock		    "Y To Workspace"
+	    DstBlock		    "Y To Workspace1"
 	    DstPort		    1
 	  }
 	  Branch {
-	    ZOrder		    198
-	    DstBlock		    "Demux"
+	    ZOrder		    306
+	    DstBlock		    "Demux1"
 	    DstPort		    1
 	  }
 	}
 	Annotation {
 	  SID			  "3242"
 	  Name			  "Noise Signals"
-	  Position		  [637, 287, 703, 302]
+	  Position		  [597, 287, 663, 302]
 	  InternalMargins	  [0, 0, 0, 0]
 	  FixedHeight		  off
 	  FixedWidth		  off
@@ -16491,7 +16491,7 @@ Model {
     }
     Line {
       ZOrder		      1049
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      1
       Points		      [35, 0]
       Branch {
@@ -16507,7 +16507,7 @@ Model {
     }
     Line {
       ZOrder		      1050
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      2
       Points		      [35, 0]
       Branch {
@@ -16523,7 +16523,7 @@ Model {
     }
     Line {
       ZOrder		      1051
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      3
       Points		      [35, 0]
       Branch {
@@ -16539,7 +16539,7 @@ Model {
     }
     Line {
       ZOrder		      1055
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      7
       Points		      [35, 0]
       Branch {
@@ -16555,7 +16555,7 @@ Model {
     }
     Line {
       ZOrder		      1058
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      10
       Points		      [35, 0]
       Branch {
@@ -16571,7 +16571,7 @@ Model {
     }
     Line {
       ZOrder		      1057
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      9
       Points		      [35, 0]
       Branch {
@@ -16587,7 +16587,7 @@ Model {
     }
     Line {
       ZOrder		      1052
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      4
       Points		      [35, 0]
       Branch {
@@ -16603,7 +16603,7 @@ Model {
     }
     Line {
       ZOrder		      1053
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      5
       Points		      [35, 0]
       Branch {
@@ -16619,7 +16619,7 @@ Model {
     }
     Line {
       ZOrder		      1054
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      6
       Points		      [35, 0]
       Branch {
@@ -16635,7 +16635,7 @@ Model {
     }
     Line {
       ZOrder		      1056
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      8
       Points		      [35, 0]
       Branch {
@@ -16651,7 +16651,7 @@ Model {
     }
     Line {
       ZOrder		      1059
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      11
       Points		      [35, 0]
       Branch {
@@ -16667,7 +16667,7 @@ Model {
     }
     Line {
       ZOrder		      1060
-      SrcBlock		      "Omni Two-Robot ADAMS Model"
+      SrcBlock		      "Omni Two-Robot ADAMS Model v2015"
       SrcPort		      12
       Points		      [35, 0]
       Branch {
@@ -17004,42 +17004,42 @@ Model {
       ZOrder		      1062
       SrcBlock		      "Left Torque14"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      1
     }
     Line {
       ZOrder		      1063
       SrcBlock		      "Left Torque15"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      2
     }
     Line {
       ZOrder		      1064
       SrcBlock		      "Left Torque16"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      3
     }
     Line {
       ZOrder		      1065
       SrcBlock		      "Left Torque19"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      4
     }
     Line {
       ZOrder		      1066
       SrcBlock		      "Left Torque21"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      5
     }
     Line {
       ZOrder		      1061
       SrcBlock		      "Left Torque22"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      6
     }
     Line {
@@ -17053,28 +17053,28 @@ Model {
       ZOrder		      1068
       SrcBlock		      "Constant 1"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      8
     }
     Line {
       ZOrder		      1070
       SrcBlock		      "Constant 3"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      10
     }
     Line {
       ZOrder		      1069
       SrcBlock		      "Constant 4"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      9
     }
     Line {
       ZOrder		      1071
       SrcBlock		      "Constant 5"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      11
     }
     Line {
@@ -17243,7 +17243,7 @@ Model {
       ZOrder		      1067
       SrcBlock		      "Gain 2"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model"
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      7
     }
   }

@@ -2,7 +2,7 @@
 clc, clear all
 clear functions;
 % Loading nonlinear Adams model:
-twoRobotsPlant_1_v2020
+twoRobotsPlant_1_v2015
 % adams_sys
 % Loading control system 1:
 conSys_2robots_1_vR2014a
