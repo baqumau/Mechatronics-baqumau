@@ -1,4 +1,4 @@
-function Beta_c = absoluteAngle_vR2014a(u)
+function Beta_c = absoluteAngle01_vR2014a(u)
 
 persistent data_1
 

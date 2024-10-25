@@ -6,7 +6,7 @@ twoRobotsPlant_1_v2015
 % adams_sys
 % Loading control system 2 (SMC-CS):
 conSys_2robots_2_vR2014a
-Ts = 1/250;                                                                 %Sample time.
+Ts = 1/80;                                                                  %Sample time.
 %% Mechanical and Physical Properties:
 % Parameters of Omnibot 1:
 par.delta_1 = pi/6;                                                         %[rad], Wheels 1 and 2 are placed at this angle, with respect to y_m axis.

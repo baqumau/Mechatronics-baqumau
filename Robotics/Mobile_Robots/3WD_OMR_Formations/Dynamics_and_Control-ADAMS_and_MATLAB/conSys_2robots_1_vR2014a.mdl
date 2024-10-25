@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.436"
+    ComputedModelVersion    "1.437"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -63,11 +63,11 @@ Model {
 	$ObjectID		6
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	ViewObjType		"SimulinkSubsys"
-	LoadSaveID		"3148"
+	ViewObjType		"SimulinkTopLevel"
+	LoadSaveID		"0"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, 0.0]
+	Offset			[0.0, 40.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Oct 24 10:35:07 2024"
-  RTWModifiedTimeStamp	  651666905
-  ModelVersionFormat	  "1.%<AutoIncrement:436>"
+  LastModifiedDate	  "Thu Oct 24 23:38:23 2024"
+  RTWModifiedTimeStamp	  651713871
+  ModelVersionFormat	  "1.%<AutoIncrement:437>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1135,7 +1135,7 @@ Model {
   System {
     Name		    "conSys_2robots_1_vR2014a"
     Location		    [-8, 0, 1374, 744]
-    Open		    off
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1873,7 +1873,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "J^{-1}"
-	    Location		    [-4, 0, 1370, 732]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -3525,7 +3525,7 @@ Model {
 	      Position		      [295, 150, 365, 180]
 	      ZOrder		      2787
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
+	      MATLABFcn		      "absoluteAngle01_vR2014a(u)"
 	    }
 	    Block {
 	      BlockType		      MATLABFcn
@@ -3535,7 +3535,7 @@ Model {
 	      Position		      [295, 225, 365, 255]
 	      ZOrder		      2817
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
+	      MATLABFcn		      "absoluteAngle02_vR2014a(u)"
 	    }
 	    Block {
 	      BlockType		      From
@@ -8765,7 +8765,7 @@ Model {
       System {
 	Name			"Omni Two-Robot ADAMS Model v2015"
 	Location		[-8, 0, 1374, 744]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -10891,7 +10891,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Robot Space Controller"
-	Location		[-8, -8, 1374, 736]
+	Location		[-8, 0, 1374, 744]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200

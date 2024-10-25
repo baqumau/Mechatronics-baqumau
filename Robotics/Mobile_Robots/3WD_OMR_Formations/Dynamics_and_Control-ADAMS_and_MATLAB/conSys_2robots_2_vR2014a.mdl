@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.477"
+    ComputedModelVersion    "1.478"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1382.0, 744.0]
+      Location		      [-8.0, 0.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Oct 24 16:10:06 2024"
-  RTWModifiedTimeStamp	  651676072
-  ModelVersionFormat	  "1.%<AutoIncrement:477>"
+  LastModifiedDate	  "Thu Oct 24 23:42:13 2024"
+  RTWModifiedTimeStamp	  651714104
+  ModelVersionFormat	  "1.%<AutoIncrement:478>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1134,7 +1134,7 @@ Model {
   }
   System {
     Name		    "conSys_2robots_2_vR2014a"
-    Location		    [-8, -8, 1374, 736]
+    Location		    [-8, 0, 1374, 744]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1352,7 +1352,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Cluster Space Controller"
-	Location		[-8, -8, 1374, 736]
+	Location		[-8, 0, 1374, 744]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -2714,7 +2714,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "From robot space to cluster space"
-	    Location		    [-8, -8, 1374, 736]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2995,7 +2995,7 @@ Model {
 	      Position		      [360, 420, 430, 450]
 	      ZOrder		      2992
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
+	      MATLABFcn		      "absoluteAngle03_vR2014a(u)"
 	      SampleTime	      "Ts"
 	    }
 	    Block {
@@ -7703,7 +7703,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references 1"
-	Location		[-8, -8, 1374, 736]
+	Location		[-8, 0, 1374, 744]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -8179,7 +8179,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "J^{-1}"
-	    Location		    [-8, -8, 1374, 736]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -9516,7 +9516,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Reference Variables"
-	    Location		    [-8, -8, 1374, 736]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -11536,7 +11536,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references 2"
-	Location		[-4, 0, 1370, 732]
+	Location		[-8, 0, 1374, 744]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -13372,7 +13372,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Reference Variables"
-	    Location		    [-4, 0, 1370, 732]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -13658,7 +13658,7 @@ Model {
 	      Position		      [295, 150, 365, 180]
 	      ZOrder		      2787
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
+	      MATLABFcn		      "absoluteAngle01_vR2014a(u)"
 	    }
 	    Block {
 	      BlockType		      MATLABFcn
@@ -13668,7 +13668,7 @@ Model {
 	      Position		      [295, 225, 365, 255]
 	      ZOrder		      2817
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
+	      MATLABFcn		      "absoluteAngle02_vR2014a(u)"
 	    }
 	    Block {
 	      BlockType		      From
@@ -16964,7 +16964,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Kalman Filters"
-	Location		[-4, 0, 1370, 732]
+	Location		[-8, 0, 1374, 744]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -18849,7 +18849,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Omni Two-Robot ADAMS Model v2015"
-	Location		[-8, -8, 1374, 736]
+	Location		[-8, 0, 1374, 744]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -19231,7 +19231,6 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
-		Visible			"off"
 	      }
 	      Object {
 		$ObjectID		37
@@ -19647,7 +19646,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "From robot space to cluster space 1"
-	    Location		    [-4, 0, 1370, 732]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -19928,7 +19927,7 @@ Model {
 	      Position		      [360, 420, 430, 450]
 	      ZOrder		      2992
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
+	      MATLABFcn		      "absoluteAngle07_vR2014a(u)"
 	      SampleTime	      "Ts"
 	    }
 	    Block {
@@ -21089,7 +21088,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "From robot space to cluster space 2"
-	    Location		    [-4, 0, 1370, 732]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -21370,7 +21369,7 @@ Model {
 	      Position		      [360, 420, 430, 450]
 	      ZOrder		      2992
 	      ShowName		      off
-	      MATLABFcn		      "absoluteAngle_vR2014a(u)"
+	      MATLABFcn		      "absoluteAngle06_vR2014a(u)"
 	      SampleTime	      "Ts"
 	    }
 	    Block {
@@ -22871,7 +22870,7 @@ Model {
 	  Position		  [535, 165, 605, 195]
 	  ZOrder		  4290
 	  ShowName		  off
-	  MATLABFcn		  "absoluteAngle_vR2014a(u)"
+	  MATLABFcn		  "absoluteAngle04_vR2014a(u)"
 	}
 	Block {
 	  BlockType		  MATLABFcn
@@ -22881,7 +22880,7 @@ Model {
 	  Position		  [525, 360, 595, 390]
 	  ZOrder		  4291
 	  ShowName		  off
-	  MATLABFcn		  "absoluteAngle_vR2014a(u)"
+	  MATLABFcn		  "absoluteAngle05_vR2014a(u)"
 	}
 	Block {
 	  BlockType		  From
