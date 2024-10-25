@@ -134,6 +134,9 @@ SECTIONS
    /* crc/checksum section configured as COPY section to avoid including in executable */
    .TI.memcrc          : type = COPY
 
+   /* Add FPUmathTables to a memory section */
+   FPUmathTables 	   : > FLASHA
+
 }
 
 /*

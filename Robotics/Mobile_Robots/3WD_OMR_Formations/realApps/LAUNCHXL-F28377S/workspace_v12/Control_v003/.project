@@ -81,4 +81,18 @@
 			<locationURI>PARENT-3-PROJECT_LOC/baqumau-LIBs/C_CPP_ti/baqumau.c</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>DRIVERLIB_ROOT</name>
+			<value>file:/C:/ti/c2000/C2000Ware_5_03_00_00/driverlib/f2837xs/driverlib</value>
+		</variable>
+		<variable>
+			<name>FASTRTS_MATH_LIB_ROOT</name>
+			<value>file:/C:/ti/c2000/C2000Ware_5_03_00_00/libraries/math/FPUfastRTS/c28</value>
+		</variable>
+		<variable>
+			<name>FPU_DSP_LIB_ROOT</name>
+			<value>file:/C:/ti/c2000/C2000Ware_5_03_00_00/libraries/dsp/FPU/c28</value>
+		</variable>
+	</variableList>
 </projectDescription>
