@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.437"
+    ComputedModelVersion    "1.439"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, 0.0, 1382.0, 744.0]
+      Location		      [-8.0, -8.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -67,7 +67,7 @@ Model {
 	LoadSaveID		"0"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, 40.0]
+	Offset			[0.0, 2.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Oct 24 23:38:23 2024"
-  RTWModifiedTimeStamp	  651713871
-  ModelVersionFormat	  "1.%<AutoIncrement:437>"
+  LastModifiedDate	  "Sat Oct 26 14:16:06 2024"
+  RTWModifiedTimeStamp	  651852963
+  ModelVersionFormat	  "1.%<AutoIncrement:439>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1134,7 +1134,7 @@ Model {
   }
   System {
     Name		    "conSys_2robots_1_vR2014a"
-    Location		    [-8, 0, 1374, 744]
+    Location		    [-8, -8, 1374, 736]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1343,7 +1343,7 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Cluster space references"
+      Name		      "Cluster space references 1"
       SID		      "783"
       Ports		      [0, 3]
       Position		      [110, 35, 150, 95]
@@ -1351,8 +1351,8 @@ Model {
       BackgroundColor	      "lightBlue"
       RequestExecContextInheritance off
       System {
-	Name			"Cluster space references"
-	Location		[-8, 0, 1374, 744]
+	Name			"Cluster space references 1"
+	Location		[-8, -8, 1374, 736]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -3239,7 +3239,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Reference Variables"
-	    Location		    [-8, 0, 1374, 744]
+	    Location		    [-8, -8, 1374, 736]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -8414,7 +8414,6 @@ Model {
       Position		      [775, 43, 810, 57]
       ZOrder		      4295
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "X1e"
     }
     Block {
@@ -8568,7 +8567,6 @@ Model {
       Position		      [775, 58, 810, 72]
       ZOrder		      4297
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "Y1e"
     }
     Block {
@@ -8587,7 +8585,6 @@ Model {
       Position		      [775, 113, 810, 127]
       ZOrder		      4300
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "Y2e"
     }
     Block {
@@ -8597,7 +8594,6 @@ Model {
       Position		      [775, 98, 810, 112]
       ZOrder		      4298
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "X2e"
     }
     Block {
@@ -9146,6 +9142,7 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
+		Visible			"off"
 	      }
 	      Object {
 		$ObjectID		37
@@ -10851,7 +10848,6 @@ Model {
       Ports		      [2]
       Position		      [830, 40, 860, 75]
       ZOrder		      4296
-      Commented		      "on"
       LibraryVersion	      "1.287"
       SourceBlock	      "simulink/Sinks/XY Graph"
       SourceType	      "XY scope."
@@ -10869,7 +10865,6 @@ Model {
       Ports		      [2]
       Position		      [830, 95, 860, 130]
       ZOrder		      4299
-      Commented		      "on"
       LibraryVersion	      "1.287"
       SourceBlock	      "simulink/Sinks/XY Graph"
       SourceType	      "XY scope."
@@ -10891,7 +10886,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Robot Space Controller"
-	Location		[-8, 0, 1374, 744]
+	Location		[-8, -8, 1374, 736]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -16801,21 +16796,21 @@ Model {
     }
     Line {
       ZOrder		      417
-      SrcBlock		      "Cluster space references"
+      SrcBlock		      "Cluster space references 1"
       SrcPort		      1
       DstBlock		      "Goto21"
       DstPort		      1
     }
     Line {
       ZOrder		      418
-      SrcBlock		      "Cluster space references"
+      SrcBlock		      "Cluster space references 1"
       SrcPort		      2
       DstBlock		      "Goto19"
       DstPort		      1
     }
     Line {
       ZOrder		      419
-      SrcBlock		      "Cluster space references"
+      SrcBlock		      "Cluster space references 1"
       SrcPort		      3
       DstBlock		      "Goto20"
       DstPort		      1

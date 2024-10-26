@@ -219,29 +219,29 @@ sys = [];
 %
 function sys=mdlUpdate(t,x,u,par)
 
-sys(1:6,1) = x(19:24,1) + (par.alpha_1/par.err)*(u(7:12,1) - x(7:12));
-sys(7:12,1) = (par.Ts/2)*(sys(1:6,1) + x(1:6,1)) + x(7:12,1);
+sys(1:6,1) = x(19:24,1) + (par.HGOcons11)*(u(7:12,1) - x(7:12));
+sys(7:12,1) = (par.Ts_2)*(sys(1:6,1) + x(1:6,1)) + x(7:12,1);
 %--------------------------------------------------------------------------
-D1 = diag([par.m_1 + (1.5*par.jw_1/(par.r_1^2)), par.m_1 + (1.5*par.jw_1/(par.r_1^2)), par.jr_1 + (3*par.jw_1*(par.l_1^2))/(par.r_1^2)]);
-D2 = diag([par.m_2 + (1.5*par.jw_2/(par.r_2^2)), par.m_2 + (1.5*par.jw_2/(par.r_2^2)), par.jr_2 + (3*par.jw_2*(par.l_2^2))/(par.r_2^2)]);
+D1 = diag([par.HGOcons01, par.HGOcons01, par.HGOcons02]);
+D2 = diag([par.HGOcons06, par.HGOcons06, par.HGOcons07]);
 D = [D1 zeros(3,3);zeros(3,3) D2];
 %--------------------------------------------------------------------------
-H1_dq = (3*par.jw_1/(2*par.r_1^2))*x(21)*[0 1 0;-1 0 0;0 0 0];
-H2_dq = (3*par.jw_2/(2*par.r_2^2))*x(24)*[0 1 0;-1 0 0;0 0 0];
+H1_dq = (par.HGOcons03)*x(21)*[0 1 0;-1 0 0;0 0 0];
+H2_dq = (par.HGOcons08)*x(24)*[0 1 0;-1 0 0;0 0 0];
 H_dq = [H1_dq zeros(3,3);zeros(3,3) H2_dq];
 %--------------------------------------------------------------------------
-B1 = (1/par.r_1)*[-sin(par.delta_1 + x(9)), -sin(par.delta_1 - x(9)), cos(x(9));...
-                   cos(par.delta_1 + x(9)), -cos(par.delta_1 - x(9)), sin(x(9));...
-                                   par.l_1,                  par.l_1,   par.l_1];
-B2 = (1/par.r_2)*[-sin(par.delta_2 + x(12)), -sin(par.delta_2 - x(12)), cos(x(12));...
-                   cos(par.delta_2 + x(12)), -cos(par.delta_2 - x(12)), sin(x(12));...
-                                    par.l_2,                   par.l_2,    par.l_2];
+B1 = [-sin(par.delta_1 + x(9))*par.HGOcons04, -sin(par.delta_1 - x(9))*par.HGOcons04, cos(x(9))*par.HGOcons04;...
+       cos(par.delta_1 + x(9))*par.HGOcons04, -cos(par.delta_1 - x(9))*par.HGOcons04, sin(x(9))*par.HGOcons04;...
+                               par.HGOcons05,                          par.HGOcons05,           par.HGOcons05];
+B2 = [-sin(par.delta_2 + x(12))*par.HGOcons09, -sin(par.delta_2 - x(12))*par.HGOcons09, cos(x(12))*par.HGOcons09;...
+       cos(par.delta_2 + x(12))*par.HGOcons09, -cos(par.delta_2 - x(12))*par.HGOcons09, sin(x(12))*par.HGOcons09;...
+                                par.HGOcons10,                           par.HGOcons10,            par.HGOcons10];
 B_q = [B1 zeros(3,3);zeros(3,3) B2];
 %--------------------------------------------------------------------------
-sys(13:18,1) = - D\(H_dq*x(19:24,1) - B_q*(1e3*u(1:6))) + (par.alpha_2/par.err^2)*(u(7:12,1) - x(7:12)) + x(31:36);
-sys(19:24,1) = (par.Ts/2)*(sys(13:18,1) + x(13:18,1)) + x(19:24,1);
-sys(25:30,1) = (par.alpha_3/par.err^3)*(u(7:12,1) - x(7:12));
-sys(31:36,1) = (par.Ts/2)*(sys(25:30,1) + x(25:30,1)) + x(31:36,1);
+sys(13:18,1) = - D\(H_dq*x(19:24,1) - B_q*(1e3*u(1:6))) + (par.HGOcons12)*(u(7:12,1) - x(7:12)) + x(31:36);
+sys(19:24,1) = (par.Ts_2)*(sys(13:18,1) + x(13:18,1)) + x(19:24,1);
+sys(25:30,1) = (par.HGOcons13)*(u(7:12,1) - x(7:12));
+sys(31:36,1) = (par.Ts_2)*(sys(25:30,1) + x(25:30,1)) + x(31:36,1);
 
 % end mdlUpdate
 

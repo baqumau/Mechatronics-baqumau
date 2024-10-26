@@ -219,20 +219,20 @@ sys = [];
 %
 function sys=mdlUpdate(t,x,u,par)
 
-D1 = diag([par.m_1 + (1.5*par.jw_1/(par.r_1^2)), par.m_1 + (1.5*par.jw_1/(par.r_1^2)), par.jr_1 + (3*par.jw_1*(par.l_1^2))/(par.r_1^2)]);
-D2 = diag([par.m_2 + (1.5*par.jw_2/(par.r_2^2)), par.m_2 + (1.5*par.jw_2/(par.r_2^2)), par.jr_2 + (3*par.jw_2*(par.l_2^2))/(par.r_2^2)]);
+D1 = diag([par.HGOcons01, par.HGOcons01, par.HGOcons02]);
+D2 = diag([par.HGOcons06, par.HGOcons06, par.HGOcons07]);
 D = [D1 zeros(3,3);zeros(3,3) D2];
 %--------------------------------------------------------------------------
-H1_dq = (3*par.jw_1/(2*par.r_1^2))*u(33)*[0 1 0;-1 0 0;0 0 0];
-H2_dq = (3*par.jw_2/(2*par.r_2^2))*u(36)*[0 1 0;-1 0 0;0 0 0];
+H1_dq = (par.HGOcons03)*u(33)*[0 1 0;-1 0 0;0 0 0];
+H2_dq = (par.HGOcons08)*u(36)*[0 1 0;-1 0 0;0 0 0];
 H_dq = [H1_dq zeros(3,3);zeros(3,3) H2_dq];
 %--------------------------------------------------------------------------
-B1 = (1e3/par.r_1)*[-sin(par.delta_1 + u(27)), -sin(par.delta_1 - u(27)), cos(u(27));...
-                     cos(par.delta_1 + u(27)), -cos(par.delta_1 - u(27)), sin(u(27));...
-                                      par.l_1,                   par.l_1,    par.l_1];
-B2 = (1e3/par.r_2)*[-sin(par.delta_2 + u(30)), -sin(par.delta_2 - u(30)), cos(u(30));...
-                     cos(par.delta_2 + u(30)), -cos(par.delta_2 - u(30)), sin(u(30));...
-                                      par.l_2,                   par.l_2,    par.l_2];
+B1 = (1e3)*[-sin(par.delta_1 + u(27))*par.HGOcons04, -sin(par.delta_1 - u(27))*par.HGOcons04, cos(u(27))*par.HGOcons04;...
+             cos(par.delta_1 + u(27))*par.HGOcons04, -cos(par.delta_1 - u(27))*par.HGOcons04, sin(u(27))*par.HGOcons04;...
+                                      par.HGOcons05,                           par.HGOcons05,            par.HGOcons05];
+B2 = (1e3)*[-sin(par.delta_2 + u(30))*par.HGOcons09, -sin(par.delta_2 - u(30))*par.HGOcons09, cos(u(30))*par.HGOcons09;...
+             cos(par.delta_2 + u(30))*par.HGOcons09, -cos(par.delta_2 - u(30))*par.HGOcons09, sin(u(30))*par.HGOcons09;...
+                                      par.HGOcons10,                           par.HGOcons10,            par.HGOcons10];
 B_q = [B1 zeros(3,3);zeros(3,3) B2];
 %--------------------------------------------------------------------------
 sys(1:6) = -(D\B_q)\(-D\H_dq*u(31:36) + u(37:42) - u(13:18) + u(43:48));

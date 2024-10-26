@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.478"
+    ComputedModelVersion    "1.479"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, 0.0, 1382.0, 744.0]
+      Location		      [-8.0, -8.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -63,11 +63,11 @@ Model {
 	$ObjectID		6
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	ViewObjType		"SimulinkTopLevel"
-	LoadSaveID		"0"
+	ViewObjType		"SimulinkSubsys"
+	LoadSaveID		"2376"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, 22.0]
+	Offset			[0.0, 0.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Oct 24 23:42:13 2024"
-  RTWModifiedTimeStamp	  651714104
-  ModelVersionFormat	  "1.%<AutoIncrement:478>"
+  LastModifiedDate	  "Fri Oct 25 15:41:26 2024"
+  RTWModifiedTimeStamp	  651771681
+  ModelVersionFormat	  "1.%<AutoIncrement:479>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1134,8 +1134,8 @@ Model {
   }
   System {
     Name		    "conSys_2robots_2_vR2014a"
-    Location		    [-8, 0, 1374, 744]
-    Open		    on
+    Location		    [-8, -8, 1374, 736]
+    Open		    off
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -18849,8 +18849,8 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Omni Two-Robot ADAMS Model v2015"
-	Location		[-8, 0, 1374, 744]
-	Open			off
+	Location		[-8, -8, 1374, 736]
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -19619,7 +19619,7 @@ Model {
 	  BlockType		  Constant
 	  Name			  "Constant 4"
 	  SID			  "3768"
-	  Position		  [575, 392, 595, 408]
+	  Position		  [580, 392, 600, 408]
 	  ZOrder		  4297
 	  ShowName		  off
 	  Value			  "pi"
@@ -22877,7 +22877,7 @@ Model {
 	  Name			  "Interpreted MATLAB\nFunction 2"
 	  SID			  "3762"
 	  Ports			  [1, 1]
-	  Position		  [525, 360, 595, 390]
+	  Position		  [530, 360, 600, 390]
 	  ZOrder		  4291
 	  ShowName		  off
 	  MATLABFcn		  "absoluteAngle05_vR2014a(u)"

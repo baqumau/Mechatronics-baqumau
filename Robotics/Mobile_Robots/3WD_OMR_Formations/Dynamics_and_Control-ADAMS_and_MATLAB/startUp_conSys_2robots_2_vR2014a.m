@@ -42,7 +42,8 @@ par.th2_0 = par.x0_r2(3) - par.phc_0;
 %--------------------------------------------------------------------------
 par.x0_c  = [par.xc_0 par.yc_0 par.phc_0 par.d_0 par.th1_0 par.th2_0 0 0 0 0 0 0]';
 % sample time:
-par.Ts = Ts;
+par.Ts = Ts;                                                                % Saving sample time for s-functions.
+par.Ts_2 = Ts/2;                                                            % Half sample time.
 Fz = c2d(tf(1,[.273 1]),Ts,'tustin');                                       % Discrte filter.
 %% Path tracking:
 % desired_path = My_paths(33,Ts);
@@ -140,5 +141,18 @@ par.dny_2 = 22;
 ck = max(abs([par.q0_r1;par.q0_r2] - [par.q0r_r1;par.q0r_r2]))*20/7000 + 6; % Time for cluch.
 %% Timer:
 % tic
-% myobj = sim('Control_Schematic_11a','SrcWorkspace','Current');
+% myobj = sim('startUp_conSys_2robots_2_vR2014a','SrcWorkspace','Current');
 % toc
+%% Several repetitive operations in the whole control system:
+par.oneThird = 1/3;                                                         % Precompute 1/3;
+par.twoThird = 2*par.oneThird;                                              % Precompute 2/3;
+par.sqrt3_3 = sqrt(3)*par.oneThird;                                         % Precompute sqrt(3)/3;
+par.EKFcons01 = par.r_1*par.oneThird;                                       % Precompute constant 1 of EKF 1 (par.r_1/3).
+par.EKFcons02 = par.r_1*par.twoThird;                                       % Precompute constant 2 of EKF 1 (2*(par.r_1/3)).
+par.EKFcons03 = par.r_1*par.sqrt3_3;                                        % Precompute constant 3 of EKF 1 (par.r_1*sqrt(3)/3).
+par.EKFcons04 = par.EKFcons01/par.l_1;                                      % Precompute constant 4 of EKF 1 (par.r_1/(3*par.l_1)).
+%-----------------------------------
+par.EKFcons05 = par.r_2*par.oneThird;                                       % Precompute constant 5 of EKF 1 (par.r_2/3).
+par.EKFcons06 = par.r_2*par.twoThird;                                       % Precompute constant 6 of EKF 1 (2*(par.r_2/3)).
+par.EKFcons07 = par.r_2*par.sqrt3_3;                                        % Precompute constant 7 of EKF 1 (par.r_2*sqrt(3)/3).
+par.EKFcons08 = par.EKFcons05/par.l_2;                                      % Precompute constant 8 of EKF 1 (par.r_2/(3*par.l_2)).
