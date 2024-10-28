@@ -1,7 +1,9 @@
 
 <figure>
+<p align="center">
 <img src="baqumau-GitHub.png" alt="baqumau-GitHub" style="height: 35vw"/>
 <figcaption>https://www.youtube.com/@baqumau-Mechatronics</figcaption>
+</p>
 </figure>
 
 - 👋 Hi, I’m @baqumau, creator of Mechatronics-baqumau YouTube channel: https://www.youtube.com/@baqumau-Mechatronics .

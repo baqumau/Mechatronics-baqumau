@@ -51,52 +51,83 @@ Fz = c2d(tf(1,[.273 1]),Ts,'tustin');                                       % Di
 % xc_0 = 8.5858e+03; yc_0 = 8.5858e+03; thc_0 = pi/4; d_0 = 200;
 % x1_0 = 8.7272e+03; y1_0 = 8.7272e+03; th1_0 = pi/4;
 % x2_0 = 8.4444e+03; y2_0 = 8.4444e+03; th2_0 = pi/4;
-% dxc_0 = -56.5685/2; dyc_0 = 56.5685/2; dthc_0 = 0.02; dd_0 = 0; dph1_0 = dthc_0; dph2_0 = dthc_0;
+% % With Cluster space references 2:
+% dxc_0 = -56.5685/2; dyc_0 = 56.5685/2; dthc_0 = 0.02; dd_0 = 0; dph1_0 = -.02 - dthc_0; dph2_0 = -.02 - dthc_0;
 % o1r_0 = th1_0 + dthc_0*Ts; o2r_0 = th2_0 + dthc_0*Ts; do1r_0 = -dthc_0; do2r_0 = -dthc_0;
+% %-----------------------------------
 % dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
 % dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
+%--------------------------------------------------------------------------
 % desired_path=My_paths(34,Ts);
 % % Initial conditions for references builder:
 % xc_0 = 10e+03; yc_0 = 10e+03; thc_0 = atan2(1/25,1/12.5)+pi/2; d_0 = 200;
 % x1_0 = 1.0179e+04; y1_0 = 9.9106e+03; th1_0 = -atan2(1/25,1/12.5);
 % x2_0 = 9.8211e+03; y2_0 = 1.0089e+04; th2_0 = -atan2(1/25,1/12.5);
+% % With Cluster space references 2:
 % dxc_0 = 4000/50; dyc_0 = 4000/25; dthc_0 = 0; dd_0 = 0; dph1_0 = dthc_0; dph2_0 = dthc_0;
 % o1r_0 = th1_0 + dthc_0*Ts; o2r_0 = th2_0 + dthc_0*Ts; do1r_0 = -dthc_0; do2r_0 = -dthc_0;
+% %-----------------------------------
 % dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
 % dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
+%--------------------------------------------------------------------------
 % desired_path=My_paths(35,Ts);
 % % Initial conditions for references builder:
 % xc_0 = 7.1716e+03; yc_0 = 7.1716e+03; thc_0 = pi/4; d_0 = 200;
 % x1_0 = 7.3130e+03; y1_0 = 7.3130e+03; th1_0 = pi/4;
 % x2_0 = 7.0302e+03; y2_0 = 7.0302e+03; th2_0 = pi/4;
-% dxc_0 = -35.3553; dyc_0 = 35.3553; dthc_0 = 0.0125; dd_0 = 0; dph1_0 = -.0125 - dthc_0; dph2_0 = -.0125 - dthc_0;
+% % With Cluster space references 1:
+% dxc_0 = -35.3553; dyc_0 = 35.3553; dthc_0 = .0125; dd_0 = 0; dph1_0 = -.2 - dthc_0; dph2_0 = -.3 - dthc_0;
+% o1r_0 = th1_0 + dthc_0*Ts; o2r_0 = th2_0 + dthc_0*Ts; do1r_0 = -.2; do2r_0 = -.3;
+% % With Cluster space references 2:
+% dxc_0 = -35.3553; dyc_0 = 35.3553; dthc_0 = .0125; dd_0 = 0; dph1_0 = -.0125 - dthc_0; dph2_0 = -.0125 - dthc_0;
 % o1r_0 = th1_0 + dthc_0*Ts; o2r_0 = th2_0 + dthc_0*Ts; do1r_0 = -dthc_0; do2r_0 = -dthc_0;
+% %-----------------------------------
 % dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
 % dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
+%--------------------------------------------------------------------------
 % desired_path=My_paths(36,Ts);
 % % Initial conditions for references builder:
 % xc_0 = 3e+03; yc_0 = 3e+03; thc_0 = atan2(1/25,1/12.5) + pi/2; d_0 = 200;
 % x1_0 = 3.1789e+03; y1_0 = 2.9106e+03; th1_0 = -atan2(1/25,1/12.5);
 % x2_0 = 2.8211e+03; y2_0 = 3.0894e+03; th2_0 = -atan2(1/25,1/12.5);
+% % With Cluster space references 2:
 % dxc_0 = 2000/25; dyc_0 = 2000/12.5; dthc_0 = 0; dd_0 = 0; dph1_0 = dthc_0; dph2_0 = dthc_0;
 % o1r_0 = th1_0 + dthc_0*Ts; o2r_0 = th2_0 + dthc_0*Ts; do1r_0 = -dthc_0; do2r_0 = -dthc_0;
+% %-----------------------------------
 % dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
 % dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
-desired_path = My_paths(37,Ts);
+%--------------------------------------------------------------------------
+% desired_path = My_paths(37,Ts);
+% % Initial conditions for references builder:
+% xc_0 = 13e+03; yc_0 = 13e+03; thc_0 = atan2(1/25,1/12.5) + pi/2; d_0 = 200;
+% x1_0 = 13.1789e+03; y1_0 = 12.9106e+03; th1_0 = -atan2(1/25,1/12.5);
+% x2_0 = 12.8211e+03; y2_0 = 13.0894e+03; th2_0 = -atan2(1/25,1/12.5);
+% % With Cluster space references 2:
+% dxc_0 = 2000/25; dyc_0 = 2000/12.5; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
+% o1r_0 = pi/2 - thc_0; o2r_0 = pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
+% %-----------------------------------
+% dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
+% dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
+% dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
+% dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
+%--------------------------------------------------------------------------
+desired_path = My_paths(38,Ts);
 % Initial conditions for references builder:
-xc_0 = 13e+03; yc_0 = 13e+03; thc_0 = atan2(1/25,1/12.5) + pi/2; d_0 = 200;
-x1_0 = 13.1789e+03; y1_0 = 12.9106e+03; th1_0 = -atan2(1/25,1/12.5);
-x2_0 = 12.8211e+03; y2_0 = 13.0894e+03; th2_0 = -atan2(1/25,1/12.5);
-dxc_0 = 2000/25; dyc_0 = 2000/12.5; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
+xc_0 = 10000; yc_0 = 10000; thc_0 = pi/2; d_0 = 2000;
+x1_0 = 12000; y1_0 = 10000; th1_0 = 0;
+x2_0 = 8000; y2_0 = 10000; th2_0 = 0;
+% With Cluster space references 1:
+dxc_0 = 0; dyc_0 = 0; dthc_0 = 0; dd_0 = 0; dph1_0 = .2; dph2_0 = -.2;
 o1r_0 = pi/2 - thc_0; o2r_0 = pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
+%-----------------------------------
 dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
 dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
@@ -123,6 +154,7 @@ par.err = .42;
 % Tuning parameters:
 par.S_b = [280 280 9.5 150 9.5 9.5]';                                       % Constant for saturate sigma surface.
 par.N = [55 55 35 55 35 35]';                                               % Constant of derivative filter.
+par.NTs = par.N*par.Ts;                                                     % Other constant of derivative filter.
 par.Eta = [1.44 1.44 1.44 1.44 1.44 1.44]';                                 % Constant for bounding the sliding surface dynamics.
 par.Delta = [1/5 1/20 1/25]';                                               % Constant for bounding the uncertainty model.
 par.Rho_1 = (3/4)*ones(3,1)*(par.m_1)*(par.l_1/par.r_1)^2;                  % Constant for bounding the input torque disturbnces in robot 1.
@@ -156,3 +188,19 @@ par.EKFcons05 = par.r_2*par.oneThird;                                       % Pr
 par.EKFcons06 = par.r_2*par.twoThird;                                       % Precompute constant 6 of EKF 1 (2*(par.r_2/3)).
 par.EKFcons07 = par.r_2*par.sqrt3_3;                                        % Precompute constant 7 of EKF 1 (par.r_2*sqrt(3)/3).
 par.EKFcons08 = par.EKFcons05/par.l_2;                                      % Precompute constant 8 of EKF 1 (par.r_2/(3*par.l_2)).
+%-----------------------------------
+par.HGOcons01 = par.m_1 + (1.5*par.jw_1/(par.r_1^2));                       % Precompute constant 1 of HGO 1 (par.m_1 + (1.5*par.jw_1/(par.r_1^2))).
+par.HGOcons02 = par.jr_1 + (3*par.jw_1*(par.l_1^2))/(par.r_1^2);            % Precompute constant 2 of HGO 1 (par.jr_1 + (3*par.jw_1*(par.l_1^2))/(par.r_1^2)).
+par.HGOcons03 = par.HGOcons01 - par.m_1;                                    % Precompute constant 3 of HGO 1 (1.5*par.jw_1/(par.r_1^2)).
+par.HGOcons04 = 1/par.r_1;                                                  % Precompute constant 4 of HGO 1 (1/par.r_1).
+par.HGOcons05 = par.l_1*par.HGOcons04;                                      % Precompute constant 5 of HGO 1 (par.l_1/par.r_1).
+%-----------------------------------
+par.HGOcons06 = par.m_2 + (1.5*par.jw_2/(par.r_2^2));                       % Precompute constant 6 of HGO 1 (par.m_2 + (1.5*par.jw_2/(par.r_2^2))).
+par.HGOcons07 = par.jr_2 + (3*par.jw_2*(par.l_2^2))/(par.r_2^2);            % Precompute constant 7 of HGO 1 (par.jr_2 + (3*par.jw_2*(par.l_2^2))/(par.r_2^2)).
+par.HGOcons08 = par.HGOcons06 - par.m_2;                                    % Precompute constant 8 of HGO 1 (1.5*par.jw_2/(par.r_2^2)).
+par.HGOcons09 = 1/par.r_2;                                                  % Precompute constant 9 of HGO 1 (1/par.r_2).
+par.HGOcons10 = par.l_2*par.HGOcons09;                                      % Precompute constant 10 of HGO 1 (par.l_2/par.r_2).
+%-----------------------------------
+par.HGOcons11 = par.alpha_1/par.err;                                        % Precompute constant 11 of HGO 1 (par.alpha_1/par.err).
+par.HGOcons12 = par.alpha_2/par.err^2;                                      % Precompute constant 12 of HGO 1 (par.alpha_2/par.err^2).
+par.HGOcons13 = par.alpha_3/par.err^3;                                      % Precompute constant 13 of HGO 1 (par.alpha_3/par.err^3).

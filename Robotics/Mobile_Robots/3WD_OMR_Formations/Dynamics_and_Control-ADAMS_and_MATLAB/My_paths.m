@@ -293,7 +293,7 @@ switch n
         % x_2(0) = x_c(0) - d(0)*sin(\theta_c(0)) = 4.8211e+03; y_2(0) = x_c(0) - d(0)*cos(\theta_c(0)) = 5.0894e+03; \theta_2(0) = -atan2(1/25,1/12.5) = -0.4636;
     case 33
         % This trajectory is a circumference with a constant linear
-        % velocity for the multirobot system (two-robot cluster [Cluster_5]).
+        % velocity for the multirobot system (two-robot cluster).
         desired_path.time = [0:Ts:5000]';                                       %[sec] Time of simulation.
         Vc = 80/2;                                                              %[mm/s] linear velocity of cluster centriod.
         Thc0 = pi/4;
@@ -352,7 +352,7 @@ switch n
         % x_2(0) = x_c(0) - d(0)*sin(\theta_c(0)) = 9.8211e+03; y_2(0) = x_c(0) - d(0)*cos(\theta_c(0)) = 1.0089e+04; \theta_2(0) = -atan2(1/25,1/12.5) = -0.4636;
     case 35
         % This trajectory is a circumference with a constant linear
-        % velocity for the multirobot system (two-robot cluster [Cluster_5]).
+        % velocity for the multirobot system (two-robot cluster).
         desired_path.time = [0:Ts:5000]';                                       %[sec] Time of simulation.
         Vc = 80/1.6;                                                            %[mm/s] linear velocity of cluster centriod.
         Thc0 = pi/4;

@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.439"
+    ComputedModelVersion    "1.458"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1382.0, 744.0]
+      Location		      [-8.0, 0.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -67,7 +67,7 @@ Model {
 	LoadSaveID		"0"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, 2.0]
+	Offset			[51.0, 2.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Oct 26 14:16:06 2024"
-  RTWModifiedTimeStamp	  651852963
-  ModelVersionFormat	  "1.%<AutoIncrement:439>"
+  LastModifiedDate	  "Sun Oct 27 21:45:09 2024"
+  RTWModifiedTimeStamp	  651966293
+  ModelVersionFormat	  "1.%<AutoIncrement:458>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -191,7 +191,7 @@ Model {
 	  $ObjectID		  9
 	  Version		  "1.14.2"
 	  StartTime		  "0.0"
-	  StopTime		  "200"
+	  StopTime		  "350"
 	  AbsTol		  "auto"
 	  FixedStep		  "Ts"
 	  InitialStep		  "auto"
@@ -1134,7 +1134,7 @@ Model {
   }
   System {
     Name		    "conSys_2robots_1_vR2014a"
-    Location		    [-8, -8, 1374, 736]
+    Location		    [-8, 0, 1374, 744]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1148,7 +1148,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "3263"
+    SIDHighWatermark	    "3520"
     Block {
       BlockType		      Scope
       Name		      "Angular Velocity of Wheel 11"
@@ -1349,10 +1349,11 @@ Model {
       Position		      [110, 35, 150, 95]
       ZOrder		      4047
       BackgroundColor	      "lightBlue"
+      Commented		      "on"
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references 1"
-	Location		[-8, -8, 1374, 736]
+	Location		[-8, 0, 1374, 744]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -3239,7 +3240,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Reference Variables"
-	    Location		    [-8, -8, 1374, 736]
+	    Location		    [-8, 0, 1374, 744]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -3809,7 +3810,7 @@ Model {
 	      Location		      [5, 48, 1367, 727]
 	      Open		      off
 	      NumInputPorts	      "1"
-	      ZoomMode		      "xonly"
+	      ZoomMode		      "yonly"
 	      List {
 		ListType		AxesTitles
 		axes1			"%<SignalLabel>"
@@ -5005,7 +5006,7 @@ Model {
 	  Location		  [5, 48, 1371, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
-	  ZoomMode		  "xonly"
+	  ZoomMode		  "yonly"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
@@ -5239,8 +5240,8 @@ Model {
 	  }
 	  ShowLegends		  off
 	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
+	  YMin			  "-1"
+	  YMax			  "1"
 	  SaveName		  "ScopeData53"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
@@ -5258,7 +5259,7 @@ Model {
 	  Location		  [5, 48, 1371, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
-	  ZoomMode		  "xonly"
+	  ZoomMode		  "yonly"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
@@ -5275,8 +5276,8 @@ Model {
 	  }
 	  ShowLegends		  off
 	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
+	  YMin			  "-1"
+	  YMax			  "1"
 	  SaveName		  "ScopeData79"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
@@ -5329,7 +5330,6 @@ Model {
 	  Location		  [9, 56, 676, 719]
 	  Open			  off
 	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
 	  List {
 	    ListType		    AxesTitles
 	    axes1		    "%<SignalLabel>"
@@ -5452,8 +5452,8 @@ Model {
 	  }
 	  ShowLegends		  off
 	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
+	  YMin			  "-1"
+	  YMax			  "1"
 	  SaveName		  "ScopeData65"
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
@@ -6508,6 +6508,4611 @@ Model {
       }
     }
     Block {
+      BlockType		      SubSystem
+      Name		      "Cluster space references 2"
+      SID		      "3264"
+      Ports		      [0, 3]
+      Position		      [260, 35, 300, 95]
+      ZOrder		      4433
+      BackgroundColor	      "lightBlue"
+      RequestExecContextInheritance off
+      System {
+	Name			"Cluster space references 2"
+	Location		[-8, 0, 1374, 744]
+	Open			off
+	ModelBrowserVisibility	off
+	ModelBrowserWidth	200
+	ScreenColor		"white"
+	PaperOrientation	"landscape"
+	PaperPositionMode	"auto"
+	PaperType		"usletter"
+	PaperUnits		"inches"
+	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
+	TiledPageScale		1
+	ShowPageBoundaries	off
+	ZoomFactor		"100"
+	Block {
+	  BlockType		  Demux
+	  Name			  "Demux"
+	  SID			  "3265"
+	  Ports			  [1, 4]
+	  Position		  [275, 131, 280, 234]
+	  ZOrder		  2261
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  "Demux1"
+	  SID			  "3266"
+	  Ports			  [1, 4]
+	  Position		  [695, 176, 700, 264]
+	  ZOrder		  2609
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  "Demux2"
+	  SID			  "3267"
+	  Ports			  [1, 4]
+	  Position		  [695, 306, 700, 394]
+	  ZOrder		  3073
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  "Demux3"
+	  SID			  "3510"
+	  Ports			  [1, 10]
+	  Position		  [695, 26, 700, 169]
+	  ZOrder		  3165
+	  ShowName		  off
+	  Outputs		  "10"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  "Demux4"
+	  SID			  "3269"
+	  Ports			  [1, 4]
+	  Position		  [195, 294, 200, 376]
+	  ZOrder		  3001
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Demux
+	  Name			  "Demux5"
+	  SID			  "3270"
+	  Ports			  [1, 4]
+	  Position		  [195, 384, 200, 466]
+	  ZOrder		  3107
+	  ShowName		  off
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  DiscreteIntegrator
+	  Name			  "Discrete-Time\nIntegrator 1"
+	  SID			  "3271"
+	  Ports			  [1, 1]
+	  Position		  [185, 167, 240, 203]
+	  ZOrder		  2256
+	  ShowName		  off
+	  IntegratorMethod	  "Integration: Trapezoidal"
+	  InitialCondition	  "[xc_0 yc_0 thc_0 d_0]'"
+	  SampleTime		  "Ts"
+	  ICPrevOutput		  "DiscIntNeverNeededParam"
+	  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+	}
+	Block {
+	  BlockType		  DiscreteIntegrator
+	  Name			  "Discrete-Time\nIntegrator 2"
+	  SID			  "3272"
+	  Ports			  [1, 1]
+	  Position		  [595, 202, 660, 238]
+	  ZOrder		  2789
+	  ShowName		  off
+	  IntegratorMethod	  "Integration: Trapezoidal"
+	  InitialCondition	  "[x1_0 y1_0 x2_0 y2_0]'"
+	  SampleTime		  "Ts"
+	  ICPrevOutput		  "DiscIntNeverNeededParam"
+	  ICPrevScaledInput	  "DiscIntNeverNeededParam"
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Display 1"
+	  SID			  "3273"
+	  Ports			  [1]
+	  Position		  [595, 247, 660, 323]
+	  ZOrder		  2607
+	  ShowName		  off
+	  Decimation		  "1"
+	}
+	Block {
+	  BlockType		  Display
+	  Name			  "Display 2"
+	  SID			  "3274"
+	  Ports			  [1]
+	  Position		  [490, 247, 555, 323]
+	  ZOrder		  3040
+	  ShowName		  off
+	  Decimation		  "1"
+	}
+	Block {
+	  BlockType		  FromWorkspace
+	  Name			  "From\nWorkspace 1"
+	  SID			  "3275"
+	  Position		  [10, 173, 90, 197]
+	  ZOrder		  2255
+	  ShowName		  off
+	  VariableName		  "desired_path"
+	  SampleTime		  "Ts"
+	  ZeroCross		  on
+	  OutputAfterFinalValue	  "Holding final value"
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain 1"
+	  SID			  "3276"
+	  Position		  [285, 100, 315, 130]
+	  ZOrder		  2994
+	  ShowName		  off
+	  Gain			  "[1 0 0 0;0 1 0 0]"
+	  Multiplication	  "Matrix(K*u)"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain 2"
+	  SID			  "3277"
+	  Position		  [120, 170, 150, 200]
+	  ZOrder		  3106
+	  ShowName		  off
+	  Gain			  "[1 0 0 0 0 0 0 0 0 0;0 1 0 0 0 0 0 0 0 0;0 0 1 0 0 0 0 0 0 0;0 0 0 1 0 0 0 0 0 0]"
+	  Multiplication	  "Matrix(K*u)"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Gain
+	  Name			  "Gain 3"
+	  SID			  "3278"
+	  Position		  [135, 410, 165, 440]
+	  ZOrder		  3108
+	  ShowName		  off
+	  Gain			  "[0 0 0 0 1 0 0 0 0 0;0 0 0 0 0 1 0 0 0 0;0 0 0 0 0 0 1 0 0 0;0 0 0 0 0 0 0 1 0 0]"
+	  Multiplication	  "Matrix(K*u)"
+	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto1"
+	  SID			  "3279"
+	  Position		  [225, 248, 260, 262]
+	  ZOrder		  3050
+	  BlockMirror		  on
+	  ShowName		  off
+	  GotoTag		  "Thcr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto10"
+	  SID			  "3280"
+	  Position		  [725, 313, 765, 327]
+	  ZOrder		  3074
+	  ShowName		  off
+	  GotoTag		  "dX1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto11"
+	  SID			  "3281"
+	  Position		  [895, 483, 950, 497]
+	  ZOrder		  3155
+	  ShowName		  off
+	  GotoTag		  "ddPh2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto12"
+	  SID			  "3282"
+	  Position		  [895, 408, 950, 422]
+	  ZOrder		  3143
+	  ShowName		  off
+	  GotoTag		  "ddPh1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto13"
+	  SID			  "3283"
+	  Position		  [220, 388, 270, 402]
+	  ZOrder		  3109
+	  ShowName		  off
+	  GotoTag		  "ddXcr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto14"
+	  SID			  "3284"
+	  Position		  [220, 408, 270, 422]
+	  ZOrder		  3110
+	  ShowName		  off
+	  GotoTag		  "ddYcr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto15"
+	  SID			  "3285"
+	  Position		  [220, 428, 270, 442]
+	  ZOrder		  3111
+	  ShowName		  off
+	  GotoTag		  "ddThcr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto16"
+	  SID			  "3286"
+	  Position		  [302, 245, 328, 260]
+	  ZOrder		  3041
+	  BlockRotation		  270
+	  BlockMirror		  on
+	  NamePlacement		  "alternate"
+	  ShowName		  off
+	  GotoTag		  "Dr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto17"
+	  SID			  "3511"
+	  Position		  [720, 83, 770, 97]
+	  ZOrder		  3169
+	  ShowName		  off
+	  GotoTag		  "dO2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto18"
+	  SID			  "3512"
+	  Position		  [720, 38, 770, 52]
+	  ZOrder		  3167
+	  ShowName		  off
+	  GotoTag		  "dO1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto19"
+	  SID			  "3289"
+	  Position		  [725, 243, 760, 257]
+	  ZOrder		  2614
+	  ShowName		  off
+	  GotoTag		  "Y2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto2"
+	  SID			  "3290"
+	  Position		  [725, 203, 760, 217]
+	  ZOrder		  2611
+	  ShowName		  off
+	  GotoTag		  "Y1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto20"
+	  SID			  "3291"
+	  Position		  [725, 223, 760, 237]
+	  ZOrder		  2613
+	  ShowName		  off
+	  GotoTag		  "X2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto21"
+	  SID			  "3513"
+	  Position		  [720, 68, 770, 82]
+	  ZOrder		  3168
+	  ShowName		  off
+	  GotoTag		  "O2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto22"
+	  SID			  "3293"
+	  Position		  [310, 138, 345, 152]
+	  ZOrder		  2997
+	  ShowName		  off
+	  GotoTag		  "Xcr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto23"
+	  SID			  "3294"
+	  Position		  [310, 163, 345, 177]
+	  ZOrder		  2998
+	  ShowName		  off
+	  GotoTag		  "Ycr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto24"
+	  SID			  "3295"
+	  Position		  [220, 448, 270, 462]
+	  ZOrder		  3112
+	  ShowName		  off
+	  GotoTag		  "ddDr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto25"
+	  SID			  "3514"
+	  Position		  [720, 113, 770, 127]
+	  ZOrder		  3172
+	  ShowName		  off
+	  GotoTag		  "ddX1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto26"
+	  SID			  "3515"
+	  Position		  [720, 128, 770, 142]
+	  ZOrder		  3173
+	  ShowName		  off
+	  GotoTag		  "ddY1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto27"
+	  SID			  "3516"
+	  Position		  [720, 143, 770, 157]
+	  ZOrder		  3174
+	  ShowName		  off
+	  GotoTag		  "ddX2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto28"
+	  SID			  "3517"
+	  Position		  [720, 158, 770, 172]
+	  ZOrder		  3175
+	  ShowName		  off
+	  GotoTag		  "ddY2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto29"
+	  SID			  "3518"
+	  Position		  [720, 23, 770, 37]
+	  ZOrder		  3166
+	  ShowName		  off
+	  GotoTag		  "O1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto3"
+	  SID			  "3297"
+	  Position		  [530, 483, 570, 497]
+	  ZOrder		  3056
+	  ShowName		  off
+	  GotoTag		  "Ph2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto30"
+	  SID			  "3298"
+	  Position		  [220, 298, 260, 312]
+	  ZOrder		  3002
+	  ShowName		  off
+	  GotoTag		  "dXcr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto31"
+	  SID			  "3299"
+	  Position		  [220, 318, 260, 332]
+	  ZOrder		  3003
+	  ShowName		  off
+	  GotoTag		  "dYcr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto33"
+	  SID			  "3300"
+	  Position		  [220, 338, 260, 352]
+	  ZOrder		  3004
+	  ShowName		  off
+	  GotoTag		  "dThcr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto34"
+	  SID			  "3301"
+	  Position		  [220, 358, 260, 372]
+	  ZOrder		  3005
+	  ShowName		  off
+	  GotoTag		  "dDr"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto35"
+	  SID			  "3302"
+	  Position		  [530, 408, 570, 422]
+	  ZOrder		  3009
+	  ShowName		  off
+	  GotoTag		  "Ph1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto4"
+	  SID			  "3303"
+	  Position		  [710, 483, 750, 497]
+	  ZOrder		  3062
+	  ShowName		  off
+	  GotoTag		  "dPh2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto42"
+	  SID			  "3304"
+	  Position		  [725, 183, 760, 197]
+	  ZOrder		  2610
+	  ShowName		  off
+	  GotoTag		  "X1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto45"
+	  SID			  "3305"
+	  Position		  [710, 408, 750, 422]
+	  ZOrder		  3017
+	  ShowName		  off
+	  GotoTag		  "dPh1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto5"
+	  SID			  "3519"
+	  Position		  [720, 53, 770, 67]
+	  ZOrder		  3170
+	  ShowName		  off
+	  GotoTag		  "ddO1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto6"
+	  SID			  "3520"
+	  Position		  [720, 98, 770, 112]
+	  ZOrder		  3171
+	  ShowName		  off
+	  GotoTag		  "ddO2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto7"
+	  SID			  "3308"
+	  Position		  [725, 333, 765, 347]
+	  ZOrder		  3078
+	  ShowName		  off
+	  GotoTag		  "dY1r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto8"
+	  SID			  "3309"
+	  Position		  [725, 353, 765, 367]
+	  ZOrder		  3079
+	  ShowName		  off
+	  GotoTag		  "dX2r"
+	}
+	Block {
+	  BlockType		  Goto
+	  Name			  "Goto9"
+	  SID			  "3310"
+	  Position		  [725, 373, 765, 387]
+	  ZOrder		  3080
+	  ShowName		  off
+	  GotoTag		  "dY2r"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "J^{-1}"
+	  SID			  "3311"
+	  Ports			  [2, 1]
+	  Position		  [335, 180, 435, 235]
+	  ZOrder		  2604
+	  BackgroundColor	  "blue"
+	  RequestExecContextInheritance	off
+	  System {
+	    Name		    "J^{-1}"
+	    Location		    [-8, 0, 1374, 744]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "th_c"
+	      SID		      "3312"
+	      Position		      [35, 38, 65, 52]
+	      ZOrder		      2606
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Inport
+	      Name		      "d"
+	      SID		      "3313"
+	      Position		      [35, 68, 65, 82]
+	      ZOrder		      2607
+	      Port		      "2"
+	      IconDisplay	      "Port number"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 1"
+	      SID		      "3314"
+	      Position		      [110, 275, 130, 295]
+	      ZOrder		      2698
+	      ShowName		      off
+	      Value		      "0"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 2"
+	      SID		      "3315"
+	      Position		      [110, 300, 130, 320]
+	      ZOrder		      2699
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 4"
+	      SID		      "3316"
+	      Position		      [110, 325, 130, 345]
+	      ZOrder		      2702
+	      ShowName		      off
+	      Value		      "0"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 58"
+	      SID		      "3317"
+	      Position		      [40, 275, 60, 295]
+	      ZOrder		      2667
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 59"
+	      SID		      "3318"
+	      Position		      [40, 300, 60, 320]
+	      ZOrder		      2668
+	      ShowName		      off
+	      Value		      "0"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 6"
+	      SID		      "3319"
+	      Position		      [110, 350, 130, 370]
+	      ZOrder		      2704
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 61"
+	      SID		      "3320"
+	      Position		      [40, 325, 60, 345]
+	      ZOrder		      2671
+	      ShowName		      off
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 63"
+	      SID		      "3321"
+	      Position		      [40, 350, 60, 370]
+	      ZOrder		      2673
+	      ShowName		      off
+	      Value		      "0"
+	    }
+	    Block {
+	      BlockType		      Display
+	      Name		      "Display"
+	      SID		      "3322"
+	      Ports		      [1]
+	      Position		      [630, 237, 990, 313]
+	      ZOrder		      2640
+	      Decimation	      "1"
+	    }
+	    Block {
+	      BlockType		      Fcn
+	      Name		      "Fcn 1"
+	      SID		      "3323"
+	      Position		      [420, 122, 455, 138]
+	      ZOrder		      3064
+	      ShowName		      off
+	      Expr		      "-sin(u)"
+	    }
+	    Block {
+	      BlockType		      Fcn
+	      Name		      "Fcn 10"
+	      SID		      "3324"
+	      Position		      [420, 167, 455, 183]
+	      ZOrder		      3067
+	      ShowName		      off
+	      Expr		      "-cos(u)"
+	    }
+	    Block {
+	      BlockType		      Fcn
+	      Name		      "Fcn 4"
+	      SID		      "3325"
+	      Position		      [255, 77, 290, 93]
+	      ZOrder		      3046
+	      ShowName		      off
+	      Expr		      "-u(1)*sin(u(2))"
+	    }
+	    Block {
+	      BlockType		      Fcn
+	      Name		      "Fcn 5"
+	      SID		      "3326"
+	      Position		      [255, 32, 290, 48]
+	      ZOrder		      2997
+	      ShowName		      off
+	      Expr		      "u(1)*cos(u(2))"
+	    }
+	    Block {
+	      BlockType		      Fcn
+	      Name		      "Fcn 6"
+	      SID		      "3327"
+	      Position		      [420, 32, 455, 48]
+	      ZOrder		      2999
+	      ShowName		      off
+	      Expr		      "sin(u)"
+	    }
+	    Block {
+	      BlockType		      Fcn
+	      Name		      "Fcn 7"
+	      SID		      "3328"
+	      Position		      [255, 122, 290, 138]
+	      ZOrder		      3052
+	      ShowName		      off
+	      Expr		      "-u(1)*cos(u(2))"
+	    }
+	    Block {
+	      BlockType		      Fcn
+	      Name		      "Fcn 8"
+	      SID		      "3329"
+	      Position		      [255, 167, 290, 183]
+	      ZOrder		      3058
+	      ShowName		      off
+	      Expr		      "u(1)*sin(u(2))"
+	    }
+	    Block {
+	      BlockType		      Fcn
+	      Name		      "Fcn 9"
+	      SID		      "3330"
+	      Position		      [420, 77, 455, 93]
+	      ZOrder		      3061
+	      ShowName		      off
+	      Expr		      "cos(u)"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto1"
+	      SID		      "3331"
+	      Position		      [480, 123, 510, 137]
+	      ZOrder		      3065
+	      ShowName		      off
+	      GotoTag		      "f34"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto10"
+	      SID		      "3332"
+	      Position		      [480, 168, 510, 182]
+	      ZOrder		      3068
+	      ShowName		      off
+	      GotoTag		      "f44"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto17"
+	      SID		      "3333"
+	      Position		      [90, 38, 120, 52]
+	      ZOrder		      2264
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto18"
+	      SID		      "3334"
+	      Position		      [90, 68, 120, 82]
+	      ZOrder		      2265
+	      ShowName		      off
+	      GotoTag		      "d"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto2"
+	      SID		      "3335"
+	      Position		      [315, 78, 345, 92]
+	      ZOrder		      3045
+	      ShowName		      off
+	      GotoTag		      "f23"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto5"
+	      SID		      "3336"
+	      Position		      [315, 123, 345, 137]
+	      ZOrder		      3051
+	      ShowName		      off
+	      GotoTag		      "f33"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto6"
+	      SID		      "3337"
+	      Position		      [315, 33, 345, 47]
+	      ZOrder		      2996
+	      ShowName		      off
+	      GotoTag		      "f13"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto7"
+	      SID		      "3338"
+	      Position		      [480, 33, 510, 47]
+	      ZOrder		      3000
+	      ShowName		      off
+	      GotoTag		      "f14"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto8"
+	      SID		      "3339"
+	      Position		      [315, 168, 345, 182]
+	      ZOrder		      3057
+	      ShowName		      off
+	      GotoTag		      "f43"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto9"
+	      SID		      "3340"
+	      Position		      [480, 78, 510, 92]
+	      ZOrder		      3062
+	      ShowName		      off
+	      GotoTag		      "f24"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque1"
+	      SID		      "3341"
+	      Position		      [180, 278, 210, 292]
+	      ZOrder		      3041
+	      ShowName		      off
+	      GotoTag		      "f13"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque14"
+	      SID		      "3342"
+	      Position		      [170, 43, 200, 57]
+	      ZOrder		      2995
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque15"
+	      SID		      "3343"
+	      Position		      [180, 303, 210, 317]
+	      ZOrder		      3047
+	      ShowName		      off
+	      GotoTag		      "f23"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque16"
+	      SID		      "3344"
+	      Position		      [170, 23, 200, 37]
+	      ZOrder		      2994
+	      ShowName		      off
+	      GotoTag		      "d"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque17"
+	      SID		      "3345"
+	      Position		      [365, 33, 395, 47]
+	      ZOrder		      2998
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque18"
+	      SID		      "3346"
+	      Position		      [170, 133, 200, 147]
+	      ZOrder		      3050
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque19"
+	      SID		      "3347"
+	      Position		      [170, 113, 200, 127]
+	      ZOrder		      3049
+	      ShowName		      off
+	      GotoTag		      "d"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque2"
+	      SID		      "3348"
+	      Position		      [170, 88, 200, 102]
+	      ZOrder		      3044
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque21"
+	      SID		      "3349"
+	      Position		      [180, 328, 210, 342]
+	      ZOrder		      3053
+	      ShowName		      off
+	      GotoTag		      "f33"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque22"
+	      SID		      "3350"
+	      Position		      [170, 178, 200, 192]
+	      ZOrder		      3056
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque23"
+	      SID		      "3351"
+	      Position		      [170, 158, 200, 172]
+	      ZOrder		      3055
+	      ShowName		      off
+	      GotoTag		      "d"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque24"
+	      SID		      "3352"
+	      Position		      [180, 353, 210, 367]
+	      ZOrder		      3059
+	      ShowName		      off
+	      GotoTag		      "f43"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque25"
+	      SID		      "3353"
+	      Position		      [260, 328, 290, 342]
+	      ZOrder		      3071
+	      ShowName		      off
+	      GotoTag		      "f34"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque26"
+	      SID		      "3354"
+	      Position		      [260, 353, 290, 367]
+	      ZOrder		      3072
+	      ShowName		      off
+	      GotoTag		      "f44"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque3"
+	      SID		      "3355"
+	      Position		      [365, 78, 395, 92]
+	      ZOrder		      3060
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque4"
+	      SID		      "3356"
+	      Position		      [365, 123, 395, 137]
+	      ZOrder		      3063
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque5"
+	      SID		      "3357"
+	      Position		      [365, 168, 395, 182]
+	      ZOrder		      3066
+	      ShowName		      off
+	      GotoTag		      "thc"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque6"
+	      SID		      "3358"
+	      Position		      [260, 278, 290, 292]
+	      ZOrder		      3069
+	      ShowName		      off
+	      GotoTag		      "f14"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque8"
+	      SID		      "3359"
+	      Position		      [260, 303, 290, 317]
+	      ZOrder		      3070
+	      ShowName		      off
+	      GotoTag		      "f24"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque9"
+	      SID		      "3360"
+	      Position		      [170, 68, 200, 82]
+	      ZOrder		      3043
+	      ShowName		      off
+	      GotoTag		      "d"
+	    }
+	    Block {
+	      BlockType		      Concatenate
+	      Name		      "Matrix\nConcatenate 1"
+	      SID		      "3361"
+	      Ports		      [4, 1]
+	      Position		      [470, 204, 540, 276]
+	      ZOrder		      2276
+	      ShowName		      off
+	      NumInputs		      "4"
+	      Mode		      "Multidimensional array"
+	      ConcatenateDimension    "2"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux2"
+	      SID		      "3362"
+	      Ports		      [2, 1]
+	      Position		      [225, 21, 230, 59]
+	      ZOrder		      2993
+	      ShowName		      off
+	      Inputs		      "2"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux3"
+	      SID		      "3363"
+	      Ports		      [2, 1]
+	      Position		      [225, 66, 230, 104]
+	      ZOrder		      3042
+	      ShowName		      off
+	      Inputs		      "2"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux7"
+	      SID		      "3364"
+	      Ports		      [2, 1]
+	      Position		      [225, 111, 230, 149]
+	      ZOrder		      3048
+	      ShowName		      off
+	      Inputs		      "2"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux8"
+	      SID		      "3365"
+	      Ports		      [2, 1]
+	      Position		      [225, 156, 230, 194]
+	      ZOrder		      3054
+	      ShowName		      off
+	      Inputs		      "2"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Concatenate
+	      Name		      "Vector\nConcatenate 1"
+	      SID		      "3366"
+	      Ports		      [4, 1]
+	      Position		      [150, 273, 155, 372]
+	      ZOrder		      2812
+	      ShowName		      off
+	      NumInputs		      "4"
+	    }
+	    Block {
+	      BlockType		      Concatenate
+	      Name		      "Vector\nConcatenate 10"
+	      SID		      "3367"
+	      Ports		      [4, 1]
+	      Position		      [80, 273, 85, 372]
+	      ZOrder		      2669
+	      ShowName		      off
+	      NumInputs		      "4"
+	    }
+	    Block {
+	      BlockType		      Concatenate
+	      Name		      "Vector\nConcatenate 2"
+	      SID		      "3368"
+	      Ports		      [4, 1]
+	      Position		      [230, 275, 235, 370]
+	      ZOrder		      2813
+	      ShowName		      off
+	      NumInputs		      "4"
+	    }
+	    Block {
+	      BlockType		      Concatenate
+	      Name		      "Vector\nConcatenate 3"
+	      SID		      "3369"
+	      Ports		      [4, 1]
+	      Position		      [310, 275, 315, 370]
+	      ZOrder		      2984
+	      ShowName		      off
+	      NumInputs		      "4"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "J^{-1}"
+	      SID		      "3370"
+	      Position		      [575, 233, 605, 247]
+	      ZOrder		      2613
+	      IconDisplay	      "Port number"
+	    }
+	    Line {
+	      ZOrder		      1
+	      SrcBlock		      "d"
+	      SrcPort		      1
+	      DstBlock		      "Goto18"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      2
+	      SrcBlock		      "th_c"
+	      SrcPort		      1
+	      DstBlock		      "Goto17"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      3
+	      SrcBlock		      "Matrix\nConcatenate 1"
+	      SrcPort		      1
+	      Points		      [7, 0]
+	      Branch {
+		ZOrder			4
+		DstBlock		"J^{-1}"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			5
+		Points			[0, 35]
+		DstBlock		"Display"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      6
+	      SrcBlock		      "Vector\nConcatenate 10"
+	      SrcPort		      1
+	      Points		      [7, 0; 0, -115]
+	      DstBlock		      "Matrix\nConcatenate 1"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      7
+	      SrcBlock		      "Vector\nConcatenate 1"
+	      SrcPort		      1
+	      Points		      [9, 0; 0, -95]
+	      DstBlock		      "Matrix\nConcatenate 1"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      8
+	      SrcBlock		      "Vector\nConcatenate 2"
+	      SrcPort		      1
+	      Points		      [8, 0; 0, -75]
+	      DstBlock		      "Matrix\nConcatenate 1"
+	      DstPort		      3
+	    }
+	    Line {
+	      ZOrder		      9
+	      SrcBlock		      "Constant 58"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 10"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      10
+	      SrcBlock		      "Constant 59"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 10"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      11
+	      SrcBlock		      "Constant 61"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 10"
+	      DstPort		      3
+	    }
+	    Line {
+	      ZOrder		      12
+	      SrcBlock		      "Constant 63"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 10"
+	      DstPort		      4
+	    }
+	    Line {
+	      ZOrder		      13
+	      SrcBlock		      "Constant 1"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 1"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      14
+	      SrcBlock		      "Constant 2"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 1"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      15
+	      SrcBlock		      "Constant 4"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 1"
+	      DstPort		      3
+	    }
+	    Line {
+	      ZOrder		      16
+	      SrcBlock		      "Constant 6"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 1"
+	      DstPort		      4
+	    }
+	    Line {
+	      ZOrder		      17
+	      SrcBlock		      "Vector\nConcatenate 3"
+	      SrcPort		      1
+	      Points		      [7, 0; 0, -55]
+	      DstBlock		      "Matrix\nConcatenate 1"
+	      DstPort		      4
+	    }
+	    Line {
+	      ZOrder		      18
+	      SrcBlock		      "Left Torque16"
+	      SrcPort		      1
+	      DstBlock		      "Mux2"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      19
+	      SrcBlock		      "Left Torque14"
+	      SrcPort		      1
+	      DstBlock		      "Mux2"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      20
+	      SrcBlock		      "Mux2"
+	      SrcPort		      1
+	      DstBlock		      "Fcn 5"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      21
+	      SrcBlock		      "Fcn 5"
+	      SrcPort		      1
+	      DstBlock		      "Goto6"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      22
+	      SrcBlock		      "Fcn 6"
+	      SrcPort		      1
+	      DstBlock		      "Goto7"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      23
+	      SrcBlock		      "Left Torque17"
+	      SrcPort		      1
+	      DstBlock		      "Fcn 6"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      24
+	      SrcBlock		      "Left Torque1"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 2"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      25
+	      SrcBlock		      "Left Torque9"
+	      SrcPort		      1
+	      DstBlock		      "Mux3"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      26
+	      SrcBlock		      "Left Torque2"
+	      SrcPort		      1
+	      DstBlock		      "Mux3"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      27
+	      SrcBlock		      "Mux3"
+	      SrcPort		      1
+	      DstBlock		      "Fcn 4"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      28
+	      SrcBlock		      "Fcn 4"
+	      SrcPort		      1
+	      DstBlock		      "Goto2"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      29
+	      SrcBlock		      "Left Torque15"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 2"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      30
+	      SrcBlock		      "Left Torque19"
+	      SrcPort		      1
+	      DstBlock		      "Mux7"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      31
+	      SrcBlock		      "Left Torque18"
+	      SrcPort		      1
+	      DstBlock		      "Mux7"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      32
+	      SrcBlock		      "Mux7"
+	      SrcPort		      1
+	      DstBlock		      "Fcn 7"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      33
+	      SrcBlock		      "Fcn 7"
+	      SrcPort		      1
+	      DstBlock		      "Goto5"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      34
+	      SrcBlock		      "Left Torque21"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 2"
+	      DstPort		      3
+	    }
+	    Line {
+	      ZOrder		      35
+	      SrcBlock		      "Left Torque23"
+	      SrcPort		      1
+	      DstBlock		      "Mux8"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      36
+	      SrcBlock		      "Left Torque22"
+	      SrcPort		      1
+	      DstBlock		      "Mux8"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      37
+	      SrcBlock		      "Mux8"
+	      SrcPort		      1
+	      DstBlock		      "Fcn 8"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      38
+	      SrcBlock		      "Fcn 8"
+	      SrcPort		      1
+	      DstBlock		      "Goto8"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      39
+	      SrcBlock		      "Left Torque24"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 2"
+	      DstPort		      4
+	    }
+	    Line {
+	      ZOrder		      40
+	      SrcBlock		      "Fcn 9"
+	      SrcPort		      1
+	      DstBlock		      "Goto9"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      41
+	      SrcBlock		      "Left Torque3"
+	      SrcPort		      1
+	      DstBlock		      "Fcn 9"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      42
+	      SrcBlock		      "Fcn 1"
+	      SrcPort		      1
+	      DstBlock		      "Goto1"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      43
+	      SrcBlock		      "Left Torque4"
+	      SrcPort		      1
+	      DstBlock		      "Fcn 1"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      44
+	      SrcBlock		      "Fcn 10"
+	      SrcPort		      1
+	      DstBlock		      "Goto10"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      45
+	      SrcBlock		      "Left Torque5"
+	      SrcPort		      1
+	      DstBlock		      "Fcn 10"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      46
+	      SrcBlock		      "Left Torque6"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 3"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      47
+	      SrcBlock		      "Left Torque8"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 3"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      48
+	      SrcBlock		      "Left Torque25"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 3"
+	      DstPort		      3
+	    }
+	    Line {
+	      ZOrder		      49
+	      SrcBlock		      "Left Torque26"
+	      SrcPort		      1
+	      DstBlock		      "Vector\nConcatenate 3"
+	      DstPort		      4
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque1"
+	  SID			  "3371"
+	  Position		  [290, 313, 325, 327]
+	  ZOrder		  2622
+	  ShowName		  off
+	  GotoTag		  "Y1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque10"
+	  SID			  "3372"
+	  Position		  [430, 513, 465, 527]
+	  ZOrder		  3054
+	  ShowName		  off
+	  GotoTag		  "Thcr"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque11"
+	  SID			  "3373"
+	  Position		  [1075, 148, 1125, 162]
+	  ZOrder		  3025
+	  ShowName		  off
+	  GotoTag		  "X2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque12"
+	  SID			  "3374"
+	  Position		  [1075, 173, 1125, 187]
+	  ZOrder		  3026
+	  ShowName		  off
+	  GotoTag		  "Y2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque13"
+	  SID			  "3375"
+	  Position		  [605, 483, 645, 497]
+	  ZOrder		  3059
+	  ShowName		  off
+	  GotoTag		  "dO2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque133"
+	  SID			  "3376"
+	  Position		  [290, 298, 325, 312]
+	  ZOrder		  2620
+	  ShowName		  off
+	  GotoTag		  "X1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque14"
+	  SID			  "3377"
+	  Position		  [605, 408, 645, 422]
+	  ZOrder		  3014
+	  ShowName		  off
+	  GotoTag		  "dO1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque15"
+	  SID			  "3378"
+	  Position		  [1075, 198, 1125, 212]
+	  ZOrder		  3027
+	  ShowName		  off
+	  GotoTag		  "O2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque16"
+	  SID			  "3379"
+	  Position		  [1075, 303, 1125, 317]
+	  ZOrder		  3031
+	  ShowName		  off
+	  GotoTag		  "dX2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque17"
+	  SID			  "3380"
+	  Position		  [1075, 328, 1125, 342]
+	  ZOrder		  3032
+	  ShowName		  off
+	  GotoTag		  "dY2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque18"
+	  SID			  "3381"
+	  Position		  [1075, 353, 1125, 367]
+	  ZOrder		  3033
+	  ShowName		  off
+	  GotoTag		  "dO2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque19"
+	  SID			  "3382"
+	  Position		  [1075, 228, 1125, 242]
+	  ZOrder		  3028
+	  ShowName		  off
+	  GotoTag		  "dX1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque2"
+	  SID			  "3383"
+	  Position		  [290, 368, 325, 382]
+	  ZOrder		  2625
+	  ShowName		  off
+	  GotoTag		  "Y2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque20"
+	  SID			  "3384"
+	  Position		  [1075, 253, 1125, 267]
+	  ZOrder		  3029
+	  ShowName		  off
+	  GotoTag		  "dY1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque21"
+	  SID			  "3385"
+	  Position		  [1075, 278, 1125, 292]
+	  ZOrder		  3030
+	  ShowName		  off
+	  GotoTag		  "dO1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque22"
+	  SID			  "3386"
+	  Position		  [290, 423, 325, 437]
+	  ZOrder		  3045
+	  ShowName		  off
+	  GotoTag		  "Ycr"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque23"
+	  SID			  "3387"
+	  Position		  [290, 408, 325, 422]
+	  ZOrder		  3043
+	  ShowName		  off
+	  GotoTag		  "Xcr"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque24"
+	  SID			  "3388"
+	  Position		  [605, 513, 645, 527]
+	  ZOrder		  3060
+	  ShowName		  off
+	  GotoTag		  "dThcr"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque25"
+	  SID			  "3389"
+	  Position		  [605, 438, 645, 452]
+	  ZOrder		  3015
+	  ShowName		  off
+	  GotoTag		  "dThcr"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque26"
+	  SID			  "3390"
+	  Position		  [775, 483, 830, 497]
+	  ZOrder		  3153
+	  ShowName		  off
+	  GotoTag		  "ddO2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque27"
+	  SID			  "3391"
+	  Position		  [775, 408, 830, 422]
+	  ZOrder		  3140
+	  ShowName		  off
+	  GotoTag		  "ddO1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque28"
+	  SID			  "3392"
+	  Position		  [775, 513, 830, 527]
+	  ZOrder		  3158
+	  ShowName		  off
+	  GotoTag		  "ddThcr"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque29"
+	  SID			  "3393"
+	  Position		  [775, 438, 830, 452]
+	  ZOrder		  3152
+	  ShowName		  off
+	  GotoTag		  "ddThcr"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque3"
+	  SID			  "3394"
+	  Position		  [290, 353, 325, 367]
+	  ZOrder		  2623
+	  ShowName		  off
+	  GotoTag		  "X2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque34"
+	  SID			  "3395"
+	  Position		  [1070, 458, 1120, 472]
+	  ZOrder		  3116
+	  ShowName		  off
+	  GotoTag		  "ddX2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque35"
+	  SID			  "3396"
+	  Position		  [1070, 383, 1120, 397]
+	  ZOrder		  3113
+	  ShowName		  off
+	  GotoTag		  "ddX1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque36"
+	  SID			  "3397"
+	  Position		  [1070, 408, 1120, 422]
+	  ZOrder		  3114
+	  ShowName		  off
+	  GotoTag		  "ddY1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque37"
+	  SID			  "3398"
+	  Position		  [1070, 433, 1120, 447]
+	  ZOrder		  3115
+	  ShowName		  off
+	  GotoTag		  "ddO1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque4"
+	  SID			  "3399"
+	  Position		  [430, 408, 465, 422]
+	  ZOrder		  3006
+	  ShowName		  off
+	  GotoTag		  "O1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque44"
+	  SID			  "3400"
+	  Position		  [1070, 483, 1120, 497]
+	  ZOrder		  3136
+	  ShowName		  off
+	  GotoTag		  "ddY2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque45"
+	  SID			  "3401"
+	  Position		  [1070, 508, 1120, 522]
+	  ZOrder		  3137
+	  ShowName		  off
+	  GotoTag		  "ddO2r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque5"
+	  SID			  "3402"
+	  Position		  [430, 438, 465, 452]
+	  ZOrder		  3007
+	  ShowName		  off
+	  GotoTag		  "Thcr"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque6"
+	  SID			  "3403"
+	  Position		  [1075, 73, 1125, 87]
+	  ZOrder		  3022
+	  ShowName		  off
+	  GotoTag		  "X1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque7"
+	  SID			  "3404"
+	  Position		  [1075, 98, 1125, 112]
+	  ZOrder		  3023
+	  ShowName		  off
+	  GotoTag		  "Y1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque8"
+	  SID			  "3405"
+	  Position		  [1075, 123, 1125, 137]
+	  ZOrder		  3024
+	  ShowName		  off
+	  GotoTag		  "O1r"
+	}
+	Block {
+	  BlockType		  From
+	  Name			  "Left Torque9"
+	  SID			  "3406"
+	  Position		  [430, 483, 465, 497]
+	  ZOrder		  3053
+	  ShowName		  off
+	  GotoTag		  "O2r"
+	}
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux"
+	  SID			  "3407"
+	  Ports			  [6, 1]
+	  Position		  [1150, 70, 1155, 215]
+	  ZOrder		  3034
+	  ShowName		  off
+	  Inputs		  "6"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux1"
+	  SID			  "3408"
+	  Ports			  [6, 1]
+	  Position		  [1150, 225, 1155, 370]
+	  ZOrder		  3035
+	  ShowName		  off
+	  Inputs		  "6"
+	  DisplayOption		  "bar"
+	}
+	Block {
+	  BlockType		  Mux
+	  Name			  "Mux2"
+	  SID			  "3409"
+	  Ports			  [6, 1]
+	  Position		  [1150, 380, 1155, 525]
+	  ZOrder		  3095
+	  ShowName		  off
+	  Inputs		  "6"
+	  DisplayOption		  "bar"
+	  Port {
+	    PortNumber		    1
+	    Name		    "ddQ*"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
+	  BlockType		  Product
+	  Name			  "Product 1"
+	  SID			  "3410"
+	  Ports			  [2, 1]
+	  Position		  [500, 202, 545, 238]
+	  ZOrder		  2606
+	  ShowName		  off
+	  Multiplication	  "Matrix(*)"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  RndMeth		  "Floor"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Reference Cluster"
+	  SID			  "3411"
+	  Ports			  [2]
+	  Position		  [345, 405, 375, 440]
+	  ZOrder		  3044
+	  LibraryVersion	  "1.287"
+	  SourceBlock		  "simulink/Sinks/XY Graph"
+	  SourceType		  "XY scope."
+	  ContentPreviewEnabled	  off
+	  xmin			  "0"
+	  xmax			  "20000"
+	  ymin			  "0"
+	  ymax			  "20000"
+	  st			  "-1"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Reference Robot 1"
+	  SID			  "3412"
+	  Ports			  [2]
+	  Position		  [345, 295, 375, 330]
+	  ZOrder		  2621
+	  LibraryVersion	  "1.287"
+	  SourceBlock		  "simulink/Sinks/XY Graph"
+	  SourceType		  "XY scope."
+	  ContentPreviewEnabled	  off
+	  xmin			  "0"
+	  xmax			  "20000"
+	  ymin			  "0"
+	  ymax			  "20000"
+	  st			  "-1"
+	}
+	Block {
+	  BlockType		  Reference
+	  Name			  "Reference Robot 2"
+	  SID			  "3413"
+	  Ports			  [2]
+	  Position		  [345, 350, 375, 385]
+	  ZOrder		  2624
+	  LibraryVersion	  "1.287"
+	  SourceBlock		  "simulink/Sinks/XY Graph"
+	  SourceType		  "XY scope."
+	  ContentPreviewEnabled	  off
+	  xmin			  "0"
+	  xmax			  "20000"
+	  ymin			  "0"
+	  ymax			  "20000"
+	  st			  "-1"
+	}
+	Block {
+	  BlockType		  SubSystem
+	  Name			  "Reference Variables"
+	  SID			  "3414"
+	  Ports			  [1, 1]
+	  Position		  [595, 74, 670, 126]
+	  ZOrder		  2788
+	  BackgroundColor	  "[1.000000, 0.666667, 0.498039]"
+	  RequestExecContextInheritance	off
+	  System {
+	    Name		    "Reference Variables"
+	    Location		    [-8, 0, 1374, 744]
+	    Open		    off
+	    ModelBrowserVisibility  off
+	    ModelBrowserWidth	    200
+	    ScreenColor		    "white"
+	    PaperOrientation	    "landscape"
+	    PaperPositionMode	    "auto"
+	    PaperType		    "usletter"
+	    PaperUnits		    "inches"
+	    TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
+	    TiledPageScale	    1
+	    ShowPageBoundaries	    off
+	    ZoomFactor		    "100"
+	    Block {
+	      BlockType		      Inport
+	      Name		      "In"
+	      SID		      "3468"
+	      Position		      [45, 138, 75, 152]
+	      ZOrder		      2943
+	      IconDisplay	      "Port number"
+	      PortDimensions	      "4"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 1"
+	      SID		      "3415"
+	      Position		      [475, 205, 495, 225]
+	      ZOrder		      2941
+	      ShowName		      off
+	      Value		      "0"
+	    }
+	    Block {
+	      BlockType		      Constant
+	      Name		      "Constant 2"
+	      SID		      "3416"
+	      Position		      [305, 150, 325, 170]
+	      ZOrder		      2933
+	      ShowName		      off
+	      Value		      "0"
+	    }
+	    Block {
+	      BlockType		      Demux
+	      Name		      "Demux2"
+	      SID		      "3469"
+	      Ports		      [1, 4]
+	      Position		      [100, 103, 105, 187]
+	      ZOrder		      2944
+	      ShowName		      off
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      DiscreteIntegrator
+	      Name		      "Discrete-Time\nIntegrator 1"
+	      SID		      "3417"
+	      Ports		      [1, 1]
+	      Position		      [385, 102, 440, 138]
+	      ZOrder		      2929
+	      ShowName		      off
+	      IntegratorMethod	      "Integration: Trapezoidal"
+	      InitialCondition	      "do1r_0"
+	      SampleTime	      "Ts"
+	      ICPrevOutput	      "DiscIntNeverNeededParam"
+	      ICPrevScaledInput	      "DiscIntNeverNeededParam"
+	    }
+	    Block {
+	      BlockType		      DiscreteIntegrator
+	      Name		      "Discrete-Time\nIntegrator 2"
+	      SID		      "3418"
+	      Ports		      [1, 1]
+	      Position		      [485, 52, 540, 88]
+	      ZOrder		      2930
+	      ShowName		      off
+	      IntegratorMethod	      "Integration: Trapezoidal"
+	      InitialCondition	      "o1r_0"
+	      SampleTime	      "Ts"
+	      ICPrevOutput	      "DiscIntNeverNeededParam"
+	      ICPrevScaledInput	      "DiscIntNeverNeededParam"
+	    }
+	    Block {
+	      BlockType		      DiscreteIntegrator
+	      Name		      "Discrete-Time\nIntegrator 3"
+	      SID		      "3419"
+	      Ports		      [1, 1]
+	      Position		      [555, 157, 610, 193]
+	      ZOrder		      2939
+	      ShowName		      off
+	      IntegratorMethod	      "Integration: Trapezoidal"
+	      InitialCondition	      "do2r_0"
+	      SampleTime	      "Ts"
+	      ICPrevOutput	      "DiscIntNeverNeededParam"
+	      ICPrevScaledInput	      "DiscIntNeverNeededParam"
+	    }
+	    Block {
+	      BlockType		      DiscreteIntegrator
+	      Name		      "Discrete-Time\nIntegrator 4"
+	      SID		      "3420"
+	      Ports		      [1, 1]
+	      Position		      [655, 107, 710, 143]
+	      ZOrder		      2940
+	      ShowName		      off
+	      IntegratorMethod	      "Integration: Trapezoidal"
+	      InitialCondition	      "o2r_0"
+	      SampleTime	      "Ts"
+	      ICPrevOutput	      "DiscIntNeverNeededParam"
+	      ICPrevScaledInput	      "DiscIntNeverNeededParam"
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain 10"
+	      SID		      "3486"
+	      Position		      [645, 340, 675, 370]
+	      ZOrder		      2970
+	      ShowName		      off
+	      Gain		      "1/Ts"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain 7"
+	      SID		      "3474"
+	      Position		      [275, 270, 305, 300]
+	      ZOrder		      2952
+	      ShowName		      off
+	      Gain		      "1/Ts"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain 8"
+	      SID		      "3475"
+	      Position		      [275, 340, 305, 370]
+	      ZOrder		      2958
+	      ShowName		      off
+	      Gain		      "1/Ts"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Gain
+	      Name		      "Gain 9"
+	      SID		      "3487"
+	      Position		      [645, 270, 675, 300]
+	      ZOrder		      2964
+	      ShowName		      off
+	      Gain		      "1/Ts"
+	      ParamDataTypeStr	      "Inherit: Inherit via internal rule"
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto1"
+	      SID		      "3421"
+	      Position		      [475, 113, 515, 127]
+	      ZOrder		      2792
+	      ShowName		      off
+	      GotoTag		      "dO1r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto12"
+	      SID		      "3422"
+	      Position		      [575, 63, 615, 77]
+	      ZOrder		      2813
+	      ShowName		      off
+	      GotoTag		      "O1r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto2"
+	      SID		      "3423"
+	      Position		      [390, 153, 440, 167]
+	      ZOrder		      2890
+	      ShowName		      off
+	      GotoTag		      "ddO1r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto26"
+	      SID		      "3470"
+	      Position		      [130, 168, 170, 182]
+	      ZOrder		      2948
+	      ShowName		      off
+	      GotoTag		      "dY2r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto27"
+	      SID		      "3471"
+	      Position		      [130, 128, 170, 142]
+	      ZOrder		      2946
+	      ShowName		      off
+	      GotoTag		      "dY1r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto28"
+	      SID		      "3472"
+	      Position		      [130, 148, 170, 162]
+	      ZOrder		      2947
+	      ShowName		      off
+	      GotoTag		      "dX2r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto3"
+	      SID		      "3424"
+	      Position		      [645, 168, 685, 182]
+	      ZOrder		      2935
+	      ShowName		      off
+	      GotoTag		      "dO2r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto32"
+	      SID		      "3473"
+	      Position		      [130, 108, 170, 122]
+	      ZOrder		      2945
+	      ShowName		      off
+	      GotoTag		      "dX1r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto4"
+	      SID		      "3425"
+	      Position		      [745, 118, 785, 132]
+	      ZOrder		      2936
+	      ShowName		      off
+	      GotoTag		      "O2r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto5"
+	      SID		      "3426"
+	      Position		      [560, 208, 610, 222]
+	      ZOrder		      2937
+	      ShowName		      off
+	      GotoTag		      "ddO2r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto6"
+	      SID		      "3476"
+	      Position		      [335, 278, 385, 292]
+	      ZOrder		      2953
+	      ShowName		      off
+	      GotoTag		      "ddX1r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto7"
+	      SID		      "3477"
+	      Position		      [335, 348, 385, 362]
+	      ZOrder		      2959
+	      ShowName		      off
+	      GotoTag		      "ddX2r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto8"
+	      SID		      "3488"
+	      Position		      [705, 278, 755, 292]
+	      ZOrder		      2965
+	      ShowName		      off
+	      GotoTag		      "ddY1r"
+	    }
+	    Block {
+	      BlockType		      Goto
+	      Name		      "Goto9"
+	      SID		      "3489"
+	      Position		      [705, 348, 755, 362]
+	      ZOrder		      2971
+	      ShowName		      off
+	      GotoTag		      "ddY2r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque1"
+	      SID		      "3498"
+	      Position		      [890, 68, 940, 82]
+	      ZOrder		      2974
+	      ShowName		      off
+	      GotoTag		      "O1r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque10"
+	      SID		      "3478"
+	      Position		      [90, 373, 135, 387]
+	      ZOrder		      2955
+	      ShowName		      off
+	      GotoTag		      "dX2r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque13"
+	      SID		      "3490"
+	      Position		      [460, 373, 505, 387]
+	      ZOrder		      2967
+	      ShowName		      off
+	      GotoTag		      "dY2r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque14"
+	      SID		      "3491"
+	      Position		      [460, 303, 505, 317]
+	      ZOrder		      2961
+	      ShowName		      off
+	      GotoTag		      "dY1r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque15"
+	      SID		      "3500"
+	      Position		      [890, 158, 940, 172]
+	      ZOrder		      2981
+	      ShowName		      off
+	      GotoTag		      "ddX1r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque18"
+	      SID		      "3503"
+	      Position		      [890, 188, 940, 202]
+	      ZOrder		      2983
+	      ShowName		      off
+	      GotoTag		      "ddX2r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque19"
+	      SID		      "3504"
+	      Position		      [890, 173, 940, 187]
+	      ZOrder		      2982
+	      ShowName		      off
+	      GotoTag		      "ddY1r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque2"
+	      SID		      "3499"
+	      Position		      [890, 113, 940, 127]
+	      ZOrder		      2975
+	      ShowName		      off
+	      GotoTag		      "O2r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque20"
+	      SID		      "3505"
+	      Position		      [890, 203, 940, 217]
+	      ZOrder		      2984
+	      ShowName		      off
+	      GotoTag		      "ddY2r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque3"
+	      SID		      "3501"
+	      Position		      [890, 83, 940, 97]
+	      ZOrder		      2976
+	      ShowName		      off
+	      GotoTag		      "dO1r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque4"
+	      SID		      "3502"
+	      Position		      [890, 128, 940, 142]
+	      ZOrder		      2977
+	      ShowName		      off
+	      GotoTag		      "dO2r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque5"
+	      SID		      "3506"
+	      Position		      [890, 98, 940, 112]
+	      ZOrder		      2979
+	      ShowName		      off
+	      GotoTag		      "ddO1r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque8"
+	      SID		      "3479"
+	      Position		      [90, 303, 135, 317]
+	      ZOrder		      2949
+	      ShowName		      off
+	      GotoTag		      "dX1r"
+	    }
+	    Block {
+	      BlockType		      From
+	      Name		      "Left Torque9"
+	      SID		      "3507"
+	      Position		      [890, 143, 940, 157]
+	      ZOrder		      2980
+	      ShowName		      off
+	      GotoTag		      "ddO2r"
+	    }
+	    Block {
+	      BlockType		      Mux
+	      Name		      "Mux1"
+	      SID		      "3508"
+	      Ports		      [10, 1]
+	      Position		      [965, 69, 970, 216]
+	      ZOrder		      2978
+	      ShowName		      off
+	      Inputs		      "10"
+	      DisplayOption	      "bar"
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope 1"
+	      SID		      "3434"
+	      Ports		      [1]
+	      Position		      [505, 24, 520, 46]
+	      ZOrder		      2934
+	      BlockMirror	      on
+	      ShowName		      off
+	      Floating		      off
+	      Location		      [5, 48, 1367, 727]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "xonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-0.45"
+	      YMax		      "0.47"
+	      SaveName		      "ScopeData18"
+	      LimitDataPoints	      off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope 2"
+	      SID		      "3435"
+	      Ports		      [1]
+	      Position		      [675, 79, 690, 101]
+	      ZOrder		      2942
+	      BlockMirror	      on
+	      ShowName		      off
+	      Floating		      off
+	      Location		      [5, 48, 1367, 727]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "xonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-10"
+	      YMax		      "10"
+	      SaveName		      "ScopeData19"
+	      LimitDataPoints	      off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope 3"
+	      SID		      "3436"
+	      Ports		      [1]
+	      Position		      [405, 74, 420, 96]
+	      ZOrder		      2897
+	      BlockMirror	      on
+	      ShowName		      off
+	      Floating		      off
+	      Location		      [5, 48, 1367, 727]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "xonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-0.45"
+	      YMax		      "0.47"
+	      SaveName		      "ScopeData27"
+	      LimitDataPoints	      off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope 4"
+	      SID		      "3437"
+	      Ports		      [1]
+	      Position		      [575, 129, 590, 151]
+	      ZOrder		      2938
+	      BlockMirror	      on
+	      ShowName		      off
+	      Floating		      off
+	      Location		      [5, 48, 1367, 727]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "xonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-0.45"
+	      YMax		      "0.47"
+	      SaveName		      "ScopeData20"
+	      LimitDataPoints	      off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope 5"
+	      SID		      "3480"
+	      Ports		      [1]
+	      Position		      [275, 304, 290, 326]
+	      ZOrder		      2954
+	      BlockMirror	      on
+	      ShowName		      off
+	      Floating		      off
+	      Location		      [5, 48, 1371, 727]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "xonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-0.02"
+	      YMax		      "0.02"
+	      SaveName		      "ScopeData21"
+	      LimitDataPoints	      off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope 6"
+	      SID		      "3481"
+	      Ports		      [1]
+	      Position		      [275, 374, 290, 396]
+	      ZOrder		      2960
+	      BlockMirror	      on
+	      ShowName		      off
+	      Floating		      off
+	      Location		      [5, 48, 1367, 727]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "xonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-0.45"
+	      YMax		      "0.47"
+	      SaveName		      "ScopeData22"
+	      LimitDataPoints	      off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope 7"
+	      SID		      "3492"
+	      Ports		      [1]
+	      Position		      [645, 304, 660, 326]
+	      ZOrder		      2966
+	      BlockMirror	      on
+	      ShowName		      off
+	      Floating		      off
+	      Location		      [5, 48, 1371, 727]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "xonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-0.02"
+	      YMax		      "0.02"
+	      SaveName		      "ScopeData23"
+	      LimitDataPoints	      off
+	    }
+	    Block {
+	      BlockType		      Scope
+	      Name		      "Scope 8"
+	      SID		      "3493"
+	      Ports		      [1]
+	      Position		      [645, 374, 660, 396]
+	      ZOrder		      2972
+	      BlockMirror	      on
+	      ShowName		      off
+	      Floating		      off
+	      Location		      [5, 48, 1367, 727]
+	      Open		      off
+	      NumInputPorts	      "1"
+	      ZoomMode		      "xonly"
+	      List {
+		ListType		AxesTitles
+		axes1			"%<SignalLabel>"
+	      }
+	      List {
+		ListType		ScopeGraphics
+		FigureColor		"[0.5 0.5 0.5]"
+		AxesColor		"[0 0 0]"
+		AxesTickColor		"[1 1 1]"
+		LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+		LineStyles		"-|-|-|-|-|-"
+		LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+		MarkerStyles		"none|none|none|none|none|none"
+	      }
+	      ShowLegends	      off
+	      YMin		      "-0.45"
+	      YMax		      "0.47"
+	      SaveName		      "ScopeData24"
+	      LimitDataPoints	      off
+	    }
+	    Block {
+	      BlockType		      Sum
+	      Name		      "Sum4"
+	      SID		      "3482"
+	      Ports		      [2, 1]
+	      Position		      [235, 275, 255, 295]
+	      ZOrder		      2951
+	      ShowName		      off
+	      IconShape		      "round"
+	      Inputs		      "|+-"
+	      InputSameDT	      off
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Sum
+	      Name		      "Sum5"
+	      SID		      "3483"
+	      Ports		      [2, 1]
+	      Position		      [235, 345, 255, 365]
+	      ZOrder		      2957
+	      ShowName		      off
+	      IconShape		      "round"
+	      Inputs		      "|+-"
+	      InputSameDT	      off
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Sum
+	      Name		      "Sum6"
+	      SID		      "3494"
+	      Ports		      [2, 1]
+	      Position		      [605, 275, 625, 295]
+	      ZOrder		      2963
+	      ShowName		      off
+	      IconShape		      "round"
+	      Inputs		      "|+-"
+	      InputSameDT	      off
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      Sum
+	      Name		      "Sum7"
+	      SID		      "3495"
+	      Ports		      [2, 1]
+	      Position		      [605, 345, 625, 365]
+	      ZOrder		      2969
+	      ShowName		      off
+	      IconShape		      "round"
+	      Inputs		      "|+-"
+	      InputSameDT	      off
+	      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+	      SaturateOnIntegerOverflow	off
+	    }
+	    Block {
+	      BlockType		      UnitDelay
+	      Name		      "Unit Delay 5"
+	      SID		      "3484"
+	      Position		      [190, 303, 210, 317]
+	      ZOrder		      2950
+	      ShowName		      off
+	      InitialCondition	      "dx1r_0"
+	      InputProcessing	      "Elements as channels (sample based)"
+	      SampleTime	      "-1"
+	    }
+	    Block {
+	      BlockType		      UnitDelay
+	      Name		      "Unit Delay 6"
+	      SID		      "3485"
+	      Position		      [190, 373, 210, 387]
+	      ZOrder		      2956
+	      ShowName		      off
+	      InitialCondition	      "dx2r_0"
+	      InputProcessing	      "Elements as channels (sample based)"
+	      SampleTime	      "-1"
+	    }
+	    Block {
+	      BlockType		      UnitDelay
+	      Name		      "Unit Delay 7"
+	      SID		      "3496"
+	      Position		      [560, 303, 580, 317]
+	      ZOrder		      2962
+	      ShowName		      off
+	      InitialCondition	      "dy1r_0"
+	      InputProcessing	      "Elements as channels (sample based)"
+	      SampleTime	      "-1"
+	    }
+	    Block {
+	      BlockType		      UnitDelay
+	      Name		      "Unit Delay 8"
+	      SID		      "3497"
+	      Position		      [560, 373, 580, 387]
+	      ZOrder		      2968
+	      ShowName		      off
+	      InitialCondition	      "dy2r_0"
+	      InputProcessing	      "Elements as channels (sample based)"
+	      SampleTime	      "-1"
+	    }
+	    Block {
+	      BlockType		      Outport
+	      Name		      "Out"
+	      SID		      "3509"
+	      Position		      [1000, 138, 1030, 152]
+	      ZOrder		      2973
+	      IconDisplay	      "Port number"
+	      PortDimensions	      "10"
+	    }
+	    Line {
+	      ZOrder		      8
+	      SrcBlock		      "Constant 2"
+	      SrcPort		      1
+	      Points		      [17, 0]
+	      Branch {
+		ZOrder			9
+		Points			[0, -40]
+		DstBlock		"Discrete-Time\nIntegrator 1"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			10
+		DstBlock		"Goto2"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      11
+	      SrcBlock		      "Discrete-Time\nIntegrator 1"
+	      SrcPort		      1
+	      Points		      [10, 0]
+	      Branch {
+		ZOrder			12
+		Points			[0, -35]
+		Branch {
+		  ZOrder		  13
+		  Points		  [0, -15]
+		  DstBlock		  "Discrete-Time\nIntegrator 2"
+		  DstPort		  1
+		}
+		Branch {
+		  ZOrder		  14
+		  DstBlock		  "Scope 3"
+		  DstPort		  1
+		}
+	      }
+	      Branch {
+		ZOrder			15
+		DstBlock		"Goto1"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      16
+	      SrcBlock		      "Discrete-Time\nIntegrator 2"
+	      SrcPort		      1
+	      Points		      [11, 0]
+	      Branch {
+		ZOrder			17
+		Points			[0, -35]
+		DstBlock		"Scope 1"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			18
+		DstBlock		"Goto12"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      19
+	      SrcBlock		      "Constant 1"
+	      SrcPort		      1
+	      Points		      [17, 0]
+	      Branch {
+		ZOrder			20
+		DstBlock		"Goto5"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			21
+		Points			[0, -40]
+		DstBlock		"Discrete-Time\nIntegrator 3"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      22
+	      SrcBlock		      "Discrete-Time\nIntegrator 3"
+	      SrcPort		      1
+	      Points		      [10, 0]
+	      Branch {
+		ZOrder			23
+		DstBlock		"Goto3"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			24
+		Points			[0, -35]
+		Branch {
+		  ZOrder		  25
+		  DstBlock		  "Scope 4"
+		  DstPort		  1
+		}
+		Branch {
+		  ZOrder		  26
+		  Points		  [0, -15]
+		  DstBlock		  "Discrete-Time\nIntegrator 4"
+		  DstPort		  1
+		}
+	      }
+	    }
+	    Line {
+	      ZOrder		      27
+	      SrcBlock		      "Discrete-Time\nIntegrator 4"
+	      SrcPort		      1
+	      Points		      [11, 0]
+	      Branch {
+		ZOrder			28
+		DstBlock		"Goto4"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			29
+		Points			[0, -35]
+		DstBlock		"Scope 2"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      30
+	      SrcBlock		      "In"
+	      SrcPort		      1
+	      DstBlock		      "Demux2"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      31
+	      SrcBlock		      "Demux2"
+	      SrcPort		      1
+	      DstBlock		      "Goto32"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      32
+	      SrcBlock		      "Demux2"
+	      SrcPort		      2
+	      DstBlock		      "Goto27"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      33
+	      SrcBlock		      "Demux2"
+	      SrcPort		      3
+	      DstBlock		      "Goto28"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      34
+	      SrcBlock		      "Demux2"
+	      SrcPort		      4
+	      DstBlock		      "Goto26"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      35
+	      SrcBlock		      "Unit Delay 5"
+	      SrcPort		      1
+	      DstBlock		      "Sum4"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      36
+	      SrcBlock		      "Sum4"
+	      SrcPort		      1
+	      DstBlock		      "Gain 7"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      39
+	      SrcBlock		      "Gain 7"
+	      SrcPort		      1
+	      Points		      [6, 0]
+	      Branch {
+		ZOrder			38
+		DstBlock		"Goto6"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			37
+		Points			[0, 30]
+		DstBlock		"Scope 5"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      40
+	      SrcBlock		      "Unit Delay 6"
+	      SrcPort		      1
+	      DstBlock		      "Sum5"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      41
+	      SrcBlock		      "Sum5"
+	      SrcPort		      1
+	      DstBlock		      "Gain 8"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      44
+	      SrcBlock		      "Gain 8"
+	      SrcPort		      1
+	      Points		      [6, 0]
+	      Branch {
+		ZOrder			43
+		Points			[0, 30]
+		DstBlock		"Scope 6"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			42
+		DstBlock		"Goto7"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      47
+	      SrcBlock		      "Left Torque8"
+	      SrcPort		      1
+	      Points		      [19, 0]
+	      Branch {
+		ZOrder			46
+		DstBlock		"Unit Delay 5"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			45
+		Points			[0, -25]
+		DstBlock		"Sum4"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      50
+	      SrcBlock		      "Left Torque10"
+	      SrcPort		      1
+	      Points		      [19, 0]
+	      Branch {
+		ZOrder			49
+		Points			[0, -25]
+		DstBlock		"Sum5"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			48
+		DstBlock		"Unit Delay 6"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      51
+	      SrcBlock		      "Unit Delay 7"
+	      SrcPort		      1
+	      DstBlock		      "Sum6"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      52
+	      SrcBlock		      "Sum6"
+	      SrcPort		      1
+	      DstBlock		      "Gain 9"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      55
+	      SrcBlock		      "Gain 9"
+	      SrcPort		      1
+	      Points		      [6, 0]
+	      Branch {
+		ZOrder			54
+		Points			[0, 30]
+		DstBlock		"Scope 7"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			53
+		DstBlock		"Goto8"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      56
+	      SrcBlock		      "Unit Delay 8"
+	      SrcPort		      1
+	      DstBlock		      "Sum7"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      57
+	      SrcBlock		      "Sum7"
+	      SrcPort		      1
+	      DstBlock		      "Gain 10"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      60
+	      SrcBlock		      "Gain 10"
+	      SrcPort		      1
+	      Points		      [6, 0]
+	      Branch {
+		ZOrder			59
+		DstBlock		"Goto9"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			58
+		Points			[0, 30]
+		DstBlock		"Scope 8"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      63
+	      SrcBlock		      "Left Torque14"
+	      SrcPort		      1
+	      Points		      [19, 0]
+	      Branch {
+		ZOrder			62
+		Points			[0, -25]
+		DstBlock		"Sum6"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			61
+		DstBlock		"Unit Delay 7"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      66
+	      SrcBlock		      "Left Torque13"
+	      SrcPort		      1
+	      Points		      [19, 0]
+	      Branch {
+		ZOrder			65
+		DstBlock		"Unit Delay 8"
+		DstPort			1
+	      }
+	      Branch {
+		ZOrder			64
+		Points			[0, -25]
+		DstBlock		"Sum7"
+		DstPort			1
+	      }
+	    }
+	    Line {
+	      ZOrder		      67
+	      SrcBlock		      "Mux1"
+	      SrcPort		      1
+	      DstBlock		      "Out"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      68
+	      SrcBlock		      "Left Torque1"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      1
+	    }
+	    Line {
+	      ZOrder		      69
+	      SrcBlock		      "Left Torque3"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      2
+	    }
+	    Line {
+	      ZOrder		      70
+	      SrcBlock		      "Left Torque4"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      5
+	    }
+	    Line {
+	      ZOrder		      71
+	      SrcBlock		      "Left Torque2"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      4
+	    }
+	    Line {
+	      ZOrder		      72
+	      SrcBlock		      "Left Torque5"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      3
+	    }
+	    Line {
+	      ZOrder		      73
+	      SrcBlock		      "Left Torque9"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      6
+	    }
+	    Line {
+	      ZOrder		      74
+	      SrcBlock		      "Left Torque15"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      7
+	    }
+	    Line {
+	      ZOrder		      75
+	      SrcBlock		      "Left Torque20"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      10
+	    }
+	    Line {
+	      ZOrder		      76
+	      SrcBlock		      "Left Torque19"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      8
+	    }
+	    Line {
+	      ZOrder		      77
+	      SrcBlock		      "Left Torque18"
+	      SrcPort		      1
+	      DstBlock		      "Mux1"
+	      DstPort		      9
+	    }
+	  }
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 1"
+	  SID			  "3439"
+	  Ports			  [1]
+	  Position		  [550, 424, 570, 446]
+	  ZOrder		  3038
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [692, 56, 1359, 719]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData52"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 10"
+	  SID			  "3440"
+	  Ports			  [1]
+	  Position		  [930, 449, 950, 471]
+	  ZOrder		  3145
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData28"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 11"
+	  SID			  "3441"
+	  Ports			  [1]
+	  Position		  [930, 424, 950, 446]
+	  ZOrder		  3144
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "xonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData42"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 12"
+	  SID			  "3442"
+	  Ports			  [1]
+	  Position		  [930, 524, 950, 546]
+	  ZOrder		  3157
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData60"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 13"
+	  SID			  "3443"
+	  Ports			  [1]
+	  Position		  [930, 499, 950, 521]
+	  ZOrder		  3156
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "xonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData66"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 14"
+	  SID			  "3444"
+	  Ports			  [1]
+	  Position		  [1200, 109, 1220, 131]
+	  ZOrder		  3163
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  on
+	  TimeRange		  "500"
+	  YMin			  "-6"
+	  YMax			  "0"
+	  SaveName		  "ScopeData59"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 15"
+	  SID			  "3445"
+	  Ports			  [1]
+	  Position		  [1200, 264, 1220, 286]
+	  ZOrder		  3164
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  on
+	  TimeRange		  "500"
+	  YMin			  "-1"
+	  YMax			  "1"
+	  SaveName		  "ScopeData69"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 2"
+	  SID			  "3446"
+	  Ports			  [1]
+	  Position		  [730, 449, 750, 471]
+	  ZOrder		  3052
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData53"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 3"
+	  SID			  "3447"
+	  Ports			  [1]
+	  Position		  [730, 424, 750, 446]
+	  ZOrder		  3046
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "xonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData79"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 4"
+	  SID			  "3448"
+	  Ports			  [1]
+	  Position		  [550, 499, 570, 521]
+	  ZOrder		  3057
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [692, 56, 1359, 719]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData62"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 5"
+	  SID			  "3449"
+	  Ports			  [1]
+	  Position		  [550, 449, 570, 471]
+	  ZOrder		  3048
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [9, 56, 676, 719]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData81"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 6"
+	  SID			  "3450"
+	  Ports			  [1]
+	  Position		  [550, 524, 570, 546]
+	  ZOrder		  3058
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [9, 56, 676, 719]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData63"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 7"
+	  SID			  "3451"
+	  Ports			  [1]
+	  Position		  [730, 524, 750, 546]
+	  ZOrder		  3064
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData64"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 8"
+	  SID			  "3452"
+	  Ports			  [1]
+	  Position		  [730, 499, 750, 521]
+	  ZOrder		  3063
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  TimeRange		  "500"
+	  YMin			  "-15"
+	  YMax			  "15"
+	  SaveName		  "ScopeData65"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 9"
+	  SID			  "3453"
+	  Ports			  [1]
+	  Position		  [1200, 419, 1220, 441]
+	  ZOrder		  3098
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [5, 48, 1371, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "xonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  on
+	  TimeRange		  "500"
+	  YMin			  "-0.15"
+	  YMax			  "0.15"
+	  SaveName		  "ScopeData80"
+	  DataFormat		  "StructureWithTime"
+	  LimitDataPoints	  off
+	  SampleTime		  "0"
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Sum1"
+	  SID			  "3454"
+	  Ports			  [2, 1]
+	  Position		  [485, 480, 505, 500]
+	  ZOrder		  3055
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "|+-"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Sum2"
+	  SID			  "3455"
+	  Ports			  [2, 1]
+	  Position		  [665, 480, 685, 500]
+	  ZOrder		  3061
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "|+-"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Sum3"
+	  SID			  "3456"
+	  Ports			  [2, 1]
+	  Position		  [850, 480, 870, 500]
+	  ZOrder		  3154
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "|+-"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Sum4"
+	  SID			  "3457"
+	  Ports			  [2, 1]
+	  Position		  [485, 405, 505, 425]
+	  ZOrder		  3008
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "|+-"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Sum5"
+	  SID			  "3458"
+	  Ports			  [2, 1]
+	  Position		  [850, 405, 870, 425]
+	  ZOrder		  3142
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "|+-"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  Sum
+	  Name			  "Sum6"
+	  SID			  "3459"
+	  Ports			  [2, 1]
+	  Position		  [665, 405, 685, 425]
+	  ZOrder		  3016
+	  ShowName		  off
+	  IconShape		  "round"
+	  Inputs		  "|+-"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	}
+	Block {
+	  BlockType		  ToWorkspace
+	  Name			  "To Workspace 1"
+	  SID			  "3460"
+	  Ports			  [1]
+	  Position		  [695, 275, 785, 295]
+	  ZOrder		  2995
+	  ShowName		  off
+	  VariableName		  "reference_pose"
+	  MaxDataPoints		  "inf"
+	  SaveFormat		  "Structure With Time"
+	  Save2DSignal		  "3-D array (concatenate along third dimension)"
+	  FixptAsFi		  on
+	  SampleTime		  "-1"
+	}
+	Block {
+	  BlockType		  ToWorkspace
+	  Name			  "To Workspace 3"
+	  SID			  "3461"
+	  Ports			  [1]
+	  Position		  [340, 105, 430, 125]
+	  ZOrder		  2802
+	  ShowName		  off
+	  VariableName		  "reference_cluster"
+	  MaxDataPoints		  "inf"
+	  SaveFormat		  "Structure With Time"
+	  Save2DSignal		  "3-D array (concatenate along third dimension)"
+	  FixptAsFi		  on
+	  SampleTime		  "-1"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "Q*"
+	  SID			  "3462"
+	  Position		  [1195, 138, 1225, 152]
+	  ZOrder		  3036
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "dQ*"
+	  SID			  "3463"
+	  Position		  [1195, 293, 1225, 307]
+	  ZOrder		  3037
+	  Port			  "2"
+	  IconDisplay		  "Port number"
+	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "ddQ*"
+	  SID			  "3464"
+	  Position		  [1195, 448, 1225, 462]
+	  ZOrder		  3096
+	  Port			  "3"
+	  IconDisplay		  "Port number"
+	}
+	Line {
+	  ZOrder		  1
+	  SrcBlock		  "Demux4"
+	  SrcPort		  1
+	  DstBlock		  "Goto30"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  2
+	  SrcBlock		  "Demux4"
+	  SrcPort		  2
+	  DstBlock		  "Goto31"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  3
+	  SrcBlock		  "Demux4"
+	  SrcPort		  4
+	  DstBlock		  "Goto34"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  4
+	  SrcBlock		  "Left Torque5"
+	  SrcPort		  1
+	  Points		  [25, 0]
+	  Branch {
+	    ZOrder		    5
+	    Points		    [0, 15]
+	    DstBlock		    "Scope 5"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    6
+	    DstBlock		    "Sum4"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  ZOrder		  7
+	  SrcBlock		  "Demux4"
+	  SrcPort		  3
+	  DstBlock		  "Goto33"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  8
+	  SrcBlock		  "Sum6"
+	  SrcPort		  1
+	  Points		  [3, 0]
+	  Branch {
+	    ZOrder		    9
+	    Points		    [0, 20]
+	    DstBlock		    "Scope 3"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    10
+	    DstBlock		    "Goto45"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  11
+	  SrcBlock		  "Sum4"
+	  SrcPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    ZOrder		    12
+	    Points		    [0, 20]
+	    DstBlock		    "Scope 1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    13
+	    DstBlock		    "Goto35"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  14
+	  SrcBlock		  "Left Torque4"
+	  SrcPort		  1
+	  DstBlock		  "Sum4"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  15
+	  SrcBlock		  "Left Torque14"
+	  SrcPort		  1
+	  DstBlock		  "Sum6"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  16
+	  SrcBlock		  "Left Torque25"
+	  SrcPort		  1
+	  Points		  [25, 0]
+	  Branch {
+	    ZOrder		    17
+	    Points		    [0, 15]
+	    DstBlock		    "Scope 2"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    18
+	    DstBlock		    "Sum6"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  ZOrder		  19
+	  SrcBlock		  "J^{-1}"
+	  SrcPort		  1
+	  DstBlock		  "Product 1"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  20
+	  SrcBlock		  "Product 1"
+	  SrcPort		  1
+	  Points		  [16, 0]
+	  Branch {
+	    ZOrder		    131
+	    Points		    [0, -120]
+	    DstBlock		    "Reference Variables"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    21
+	    Points		    [0, 65]
+	    Branch {
+	      ZOrder		      22
+	      Points		      [0, 65]
+	      DstBlock		      "Demux2"
+	      DstPort		      1
+	    }
+	    Branch {
+	      ZOrder		      23
+	      DstBlock		      "Display 1"
+	      DstPort		      1
+	    }
+	  }
+	  Branch {
+	    ZOrder		    24
+	    DstBlock		    "Discrete-Time\nIntegrator 2"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  25
+	  SrcBlock		  "Left Torque133"
+	  SrcPort		  1
+	  DstBlock		  "Reference Robot 1"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  26
+	  SrcBlock		  "Left Torque1"
+	  SrcPort		  1
+	  DstBlock		  "Reference Robot 1"
+	  DstPort		  2
+	}
+	Line {
+	  ZOrder		  27
+	  SrcBlock		  "Left Torque3"
+	  SrcPort		  1
+	  DstBlock		  "Reference Robot 2"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  28
+	  SrcBlock		  "Left Torque2"
+	  SrcPort		  1
+	  DstBlock		  "Reference Robot 2"
+	  DstPort		  2
+	}
+	Line {
+	  ZOrder		  29
+	  SrcBlock		  "From\nWorkspace 1"
+	  SrcPort		  1
+	  Points		  [8, 0]
+	  Branch {
+	    ZOrder		    30
+	    Points		    [0, 240]
+	    DstBlock		    "Gain 3"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    31
+	    DstBlock		    "Gain 2"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  32
+	  SrcBlock		  "Discrete-Time\nIntegrator 2"
+	  SrcPort		  1
+	  Points		  [10, 0]
+	  Branch {
+	    ZOrder		    33
+	    Points		    [0, 65]
+	    DstBlock		    "To Workspace 1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    34
+	    DstBlock		    "Demux1"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  35
+	  SrcBlock		  "Demux1"
+	  SrcPort		  1
+	  DstBlock		  "Goto42"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  36
+	  SrcBlock		  "Demux1"
+	  SrcPort		  2
+	  DstBlock		  "Goto2"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  37
+	  SrcBlock		  "Demux1"
+	  SrcPort		  3
+	  DstBlock		  "Goto20"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  38
+	  SrcBlock		  "Demux1"
+	  SrcPort		  4
+	  DstBlock		  "Goto19"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  42
+	  SrcBlock		  "Discrete-Time\nIntegrator 1"
+	  SrcPort		  1
+	  Points		  [10, 0]
+	  Branch {
+	    ZOrder		    43
+	    Points		    [0, -70]
+	    DstBlock		    "Gain 1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    44
+	    DstBlock		    "Demux"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  45
+	  SrcBlock		  "Demux"
+	  SrcPort		  1
+	  DstBlock		  "Goto22"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  46
+	  SrcBlock		  "Demux"
+	  SrcPort		  2
+	  DstBlock		  "Goto23"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  47
+	  SrcBlock		  "Demux"
+	  SrcPort		  3
+	  Points		  [8, 0]
+	  Branch {
+	    ZOrder		    48
+	    Points		    [0, 60]
+	    DstBlock		    "Goto1"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    49
+	    DstBlock		    "J^{-1}"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  50
+	  SrcBlock		  "Demux"
+	  SrcPort		  4
+	  Points		  [30, 0]
+	  Branch {
+	    ZOrder		    51
+	    DstBlock		    "Goto16"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    52
+	    DstBlock		    "J^{-1}"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  ZOrder		  53
+	  SrcBlock		  "Gain 1"
+	  SrcPort		  1
+	  DstBlock		  "To Workspace 3"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  54
+	  SrcBlock		  "Left Torque11"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  4
+	}
+	Line {
+	  ZOrder		  55
+	  SrcBlock		  "Left Torque8"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  3
+	}
+	Line {
+	  ZOrder		  56
+	  SrcBlock		  "Left Torque7"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  2
+	}
+	Line {
+	  ZOrder		  57
+	  SrcBlock		  "Left Torque12"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  5
+	}
+	Line {
+	  ZOrder		  58
+	  SrcBlock		  "Left Torque6"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  59
+	  SrcBlock		  "Left Torque15"
+	  SrcPort		  1
+	  DstBlock		  "Mux"
+	  DstPort		  6
+	}
+	Line {
+	  ZOrder		  60
+	  SrcBlock		  "Left Torque16"
+	  SrcPort		  1
+	  DstBlock		  "Mux1"
+	  DstPort		  4
+	}
+	Line {
+	  ZOrder		  61
+	  SrcBlock		  "Left Torque19"
+	  SrcPort		  1
+	  DstBlock		  "Mux1"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  62
+	  SrcBlock		  "Left Torque21"
+	  SrcPort		  1
+	  DstBlock		  "Mux1"
+	  DstPort		  3
+	}
+	Line {
+	  ZOrder		  63
+	  SrcBlock		  "Left Torque18"
+	  SrcPort		  1
+	  DstBlock		  "Mux1"
+	  DstPort		  6
+	}
+	Line {
+	  ZOrder		  64
+	  SrcBlock		  "Left Torque17"
+	  SrcPort		  1
+	  DstBlock		  "Mux1"
+	  DstPort		  5
+	}
+	Line {
+	  ZOrder		  65
+	  SrcBlock		  "Left Torque20"
+	  SrcPort		  1
+	  DstBlock		  "Mux1"
+	  DstPort		  2
+	}
+	Line {
+	  ZOrder		  66
+	  SrcBlock		  "Mux"
+	  SrcPort		  1
+	  Points		  [11, 0]
+	  Branch {
+	    ZOrder		    67
+	    Points		    [0, -25]
+	    DstBlock		    "Scope 14"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    68
+	    DstBlock		    "Q*"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  69
+	  SrcBlock		  "Mux1"
+	  SrcPort		  1
+	  Points		  [12, 0]
+	  Branch {
+	    ZOrder		    70
+	    Points		    [0, -25]
+	    DstBlock		    "Scope 15"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    71
+	    DstBlock		    "dQ*"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  72
+	  SrcBlock		  "Left Torque23"
+	  SrcPort		  1
+	  DstBlock		  "Reference Cluster"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  73
+	  SrcBlock		  "Left Torque22"
+	  SrcPort		  1
+	  DstBlock		  "Reference Cluster"
+	  DstPort		  2
+	}
+	Line {
+	  ZOrder		  74
+	  SrcBlock		  "Left Torque10"
+	  SrcPort		  1
+	  Points		  [25, 0]
+	  Branch {
+	    ZOrder		    75
+	    DstBlock		    "Sum1"
+	    DstPort		    2
+	  }
+	  Branch {
+	    ZOrder		    76
+	    Points		    [0, 15]
+	    DstBlock		    "Scope 6"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  77
+	  SrcBlock		  "Sum1"
+	  SrcPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    ZOrder		    78
+	    DstBlock		    "Goto3"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    79
+	    Points		    [0, 20]
+	    DstBlock		    "Scope 4"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  80
+	  SrcBlock		  "Left Torque9"
+	  SrcPort		  1
+	  DstBlock		  "Sum1"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  81
+	  SrcBlock		  "Sum2"
+	  SrcPort		  1
+	  Points		  [3, 0]
+	  Branch {
+	    ZOrder		    82
+	    DstBlock		    "Goto4"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    83
+	    Points		    [0, 20]
+	    DstBlock		    "Scope 8"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  84
+	  SrcBlock		  "Left Torque13"
+	  SrcPort		  1
+	  DstBlock		  "Sum2"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  85
+	  SrcBlock		  "Left Torque24"
+	  SrcPort		  1
+	  Points		  [25, 0]
+	  Branch {
+	    ZOrder		    86
+	    DstBlock		    "Sum2"
+	    DstPort		    2
+	  }
+	  Branch {
+	    ZOrder		    87
+	    Points		    [0, 15]
+	    DstBlock		    "Scope 7"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  88
+	  SrcBlock		  "Demux2"
+	  SrcPort		  1
+	  DstBlock		  "Goto10"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  89
+	  SrcBlock		  "Demux2"
+	  SrcPort		  2
+	  DstBlock		  "Goto7"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  90
+	  SrcBlock		  "Demux2"
+	  SrcPort		  3
+	  DstBlock		  "Goto8"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  91
+	  SrcBlock		  "Demux2"
+	  SrcPort		  4
+	  DstBlock		  "Goto9"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "ddQ*"
+	  ZOrder		  92
+	  SrcBlock		  "Mux2"
+	  SrcPort		  1
+	  Points		  [10, 0]
+	  Branch {
+	    ZOrder		    93
+	    DstBlock		    "ddQ*"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    94
+	    Labels		    [2, 0]
+	    Points		    [0, -25]
+	    DstBlock		    "Scope 9"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  95
+	  SrcBlock		  "Left Torque35"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  96
+	  SrcBlock		  "Left Torque36"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  2
+	}
+	Line {
+	  ZOrder		  97
+	  SrcBlock		  "Left Torque37"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  3
+	}
+	Line {
+	  ZOrder		  98
+	  SrcBlock		  "Left Torque34"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  4
+	}
+	Line {
+	  ZOrder		  99
+	  SrcBlock		  "Left Torque44"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  5
+	}
+	Line {
+	  ZOrder		  100
+	  SrcBlock		  "Left Torque45"
+	  SrcPort		  1
+	  DstBlock		  "Mux2"
+	  DstPort		  6
+	}
+	Line {
+	  ZOrder		  101
+	  SrcBlock		  "Gain 2"
+	  SrcPort		  1
+	  Points		  [9, 0]
+	  Branch {
+	    ZOrder		    102
+	    Points		    [0, 100]
+	    Branch {
+	      ZOrder		      103
+	      Points		      [0, 50]
+	      DstBlock		      "Demux4"
+	      DstPort		      1
+	    }
+	    Branch {
+	      ZOrder		      104
+	      Points		      [298, 0]
+	      Branch {
+		ZOrder			105
+		Points			[0, -55]
+		DstBlock		"Product 1"
+		DstPort			2
+	      }
+	      Branch {
+		ZOrder			106
+		DstBlock		"Display 2"
+		DstPort			1
+	      }
+	    }
+	  }
+	  Branch {
+	    ZOrder		    107
+	    DstBlock		    "Discrete-Time\nIntegrator 1"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  108
+	  SrcBlock		  "Gain 3"
+	  SrcPort		  1
+	  DstBlock		  "Demux5"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  109
+	  SrcBlock		  "Demux5"
+	  SrcPort		  1
+	  DstBlock		  "Goto13"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  110
+	  SrcBlock		  "Demux5"
+	  SrcPort		  2
+	  DstBlock		  "Goto14"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  111
+	  SrcBlock		  "Demux5"
+	  SrcPort		  3
+	  DstBlock		  "Goto15"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  112
+	  SrcBlock		  "Demux5"
+	  SrcPort		  4
+	  DstBlock		  "Goto24"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  117
+	  SrcBlock		  "Sum5"
+	  SrcPort		  1
+	  Points		  [3, 0]
+	  Branch {
+	    ZOrder		    118
+	    DstBlock		    "Goto12"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    119
+	    Points		    [0, 20]
+	    DstBlock		    "Scope 11"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  120
+	  SrcBlock		  "Left Torque27"
+	  SrcPort		  1
+	  DstBlock		  "Sum5"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  121
+	  SrcBlock		  "Left Torque29"
+	  SrcPort		  1
+	  Points		  [25, 0]
+	  Branch {
+	    ZOrder		    122
+	    DstBlock		    "Sum5"
+	    DstPort		    2
+	  }
+	  Branch {
+	    ZOrder		    123
+	    Points		    [0, 15]
+	    DstBlock		    "Scope 10"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  124
+	  SrcBlock		  "Sum3"
+	  SrcPort		  1
+	  Points		  [3, 0]
+	  Branch {
+	    ZOrder		    125
+	    Points		    [0, 20]
+	    DstBlock		    "Scope 13"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    126
+	    DstBlock		    "Goto11"
+	    DstPort		    1
+	  }
+	}
+	Line {
+	  ZOrder		  127
+	  SrcBlock		  "Left Torque26"
+	  SrcPort		  1
+	  DstBlock		  "Sum3"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  128
+	  SrcBlock		  "Left Torque28"
+	  SrcPort		  1
+	  Points		  [25, 0]
+	  Branch {
+	    ZOrder		    129
+	    Points		    [0, 15]
+	    DstBlock		    "Scope 12"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    130
+	    DstBlock		    "Sum3"
+	    DstPort		    2
+	  }
+	}
+	Line {
+	  ZOrder		  143
+	  SrcBlock		  "Reference Variables"
+	  SrcPort		  1
+	  DstBlock		  "Demux3"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  133
+	  SrcBlock		  "Demux3"
+	  SrcPort		  1
+	  DstBlock		  "Goto29"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  134
+	  SrcBlock		  "Demux3"
+	  SrcPort		  2
+	  DstBlock		  "Goto18"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  135
+	  SrcBlock		  "Demux3"
+	  SrcPort		  4
+	  DstBlock		  "Goto21"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  136
+	  SrcBlock		  "Demux3"
+	  SrcPort		  5
+	  DstBlock		  "Goto17"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  137
+	  SrcBlock		  "Demux3"
+	  SrcPort		  3
+	  DstBlock		  "Goto5"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  138
+	  SrcBlock		  "Demux3"
+	  SrcPort		  6
+	  DstBlock		  "Goto6"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  139
+	  SrcBlock		  "Demux3"
+	  SrcPort		  7
+	  DstBlock		  "Goto25"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  140
+	  SrcBlock		  "Demux3"
+	  SrcPort		  8
+	  DstBlock		  "Goto26"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  141
+	  SrcBlock		  "Demux3"
+	  SrcPort		  9
+	  DstBlock		  "Goto27"
+	  DstPort		  1
+	}
+	Line {
+	  ZOrder		  142
+	  SrcBlock		  "Demux3"
+	  SrcPort		  10
+	  DstBlock		  "Goto28"
+	  DstPort		  1
+	}
+      }
+    }
+    Block {
       BlockType		      Constant
       Name		      "Constant 1"
       SID		      "2832"
@@ -6678,6 +11283,7 @@ Model {
       Position		      [175, 58, 215, 72]
       ZOrder		      4049
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "dQr"
     }
     Block {
@@ -6697,6 +11303,7 @@ Model {
       Position		      [175, 78, 215, 92]
       ZOrder		      4050
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "ddQr"
     }
     Block {
@@ -6706,6 +11313,7 @@ Model {
       Position		      [175, 38, 215, 52]
       ZOrder		      4048
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "Qr"
     }
     Block {
@@ -6810,6 +11418,33 @@ Model {
       BlockRotation	      270
       ShowName		      off
       GotoTag		      "W13"
+    }
+    Block {
+      BlockType		      Goto
+      Name		      "Goto32"
+      SID		      "3465"
+      Position		      [325, 58, 365, 72]
+      ZOrder		      4435
+      ShowName		      off
+      GotoTag		      "dQr"
+    }
+    Block {
+      BlockType		      Goto
+      Name		      "Goto33"
+      SID		      "3466"
+      Position		      [325, 78, 365, 92]
+      ZOrder		      4436
+      ShowName		      off
+      GotoTag		      "ddQr"
+    }
+    Block {
+      BlockType		      Goto
+      Name		      "Goto34"
+      SID		      "3467"
+      Position		      [325, 38, 365, 52]
+      ZOrder		      4434
+      ShowName		      off
+      GotoTag		      "Qr"
     }
     Block {
       BlockType		      Goto
@@ -9142,7 +13777,6 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
-		Visible			"off"
 	      }
 	      Object {
 		$ObjectID		37
@@ -13897,8 +18531,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-10000"
-	  YMax			  "1000"
+	  YMin			  "-1000"
+	  YMax			  "10000"
 	  SaveName		  "ScopeData83"
 	  LimitDataPoints	  off
 	}
@@ -17227,6 +21861,27 @@ Model {
       SrcPort		      1
       DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      7
+    }
+    Line {
+      ZOrder		      1169
+      SrcBlock		      "Cluster space references 2"
+      SrcPort		      1
+      DstBlock		      "Goto34"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      1170
+      SrcBlock		      "Cluster space references 2"
+      SrcPort		      2
+      DstBlock		      "Goto32"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      1171
+      SrcBlock		      "Cluster space references 2"
+      SrcPort		      3
+      DstBlock		      "Goto33"
+      DstPort		      1
     }
   }
 }
