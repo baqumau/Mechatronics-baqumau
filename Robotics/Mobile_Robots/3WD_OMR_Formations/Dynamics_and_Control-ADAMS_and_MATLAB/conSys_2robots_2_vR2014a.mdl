@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.481"
+    ComputedModelVersion    "1.482"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1382.0, 744.0]
+      Location		      [-8.0, 0.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Oct 28 01:43:00 2024"
-  RTWModifiedTimeStamp	  651967647
-  ModelVersionFormat	  "1.%<AutoIncrement:481>"
+  LastModifiedDate	  "Mon Oct 28 09:55:49 2024"
+  RTWModifiedTimeStamp	  652010145
+  ModelVersionFormat	  "1.%<AutoIncrement:482>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1134,7 +1134,7 @@ Model {
   }
   System {
     Name		    "conSys_2robots_2_vR2014a"
-    Location		    [-8, -8, 1374, 736]
+    Location		    [-8, 0, 1374, 744]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1352,7 +1352,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Cluster Space Controller"
-	Location		[-8, -8, 1374, 736]
+	Location		[-8, 0, 1374, 744]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -7696,6 +7696,7 @@ Model {
       Position		      [110, 35, 150, 95]
       ZOrder		      4047
       BackgroundColor	      "lightBlue"
+      Commented		      "on"
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references 1"
@@ -11529,7 +11530,6 @@ Model {
       Position		      [270, 35, 310, 95]
       ZOrder		      4411
       BackgroundColor	      "lightBlue"
-      Commented		      "on"
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references 2"
@@ -16727,6 +16727,7 @@ Model {
       Position		      [175, 58, 215, 72]
       ZOrder		      4049
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "dCr"
     }
     Block {
@@ -16746,6 +16747,7 @@ Model {
       Position		      [175, 78, 215, 92]
       ZOrder		      4050
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "ddCr"
     }
     Block {
@@ -16755,6 +16757,7 @@ Model {
       Position		      [175, 38, 215, 52]
       ZOrder		      4048
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "Cr"
     }
     Block {
@@ -16867,7 +16870,6 @@ Model {
       Position		      [335, 58, 375, 72]
       ZOrder		      4413
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "dCr"
     }
     Block {
@@ -16877,7 +16879,6 @@ Model {
       Position		      [335, 78, 375, 92]
       ZOrder		      4414
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "ddCr"
     }
     Block {
@@ -16887,7 +16888,6 @@ Model {
       Position		      [335, 38, 375, 52]
       ZOrder		      4412
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "Cr"
     }
     Block {
@@ -19228,7 +19228,6 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
-		Visible			"off"
 	      }
 	      Object {
 		$ObjectID		37
