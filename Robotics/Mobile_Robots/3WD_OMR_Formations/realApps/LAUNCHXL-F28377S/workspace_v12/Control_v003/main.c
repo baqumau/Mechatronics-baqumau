@@ -139,6 +139,15 @@ float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {    0.0f,     0.0f,     0.0f,     0.0f, 68.4636f,     0.0f},
   {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 11.3906f}                      // Setting alpha_3.
 };
+// Float parameters to define the GPI controller gains of RS ADRC:
+float gpi_Gains[3*Robots_Qty][3] = {
+  {41.4770f, 53.9201f, 15.5769f},
+  {41.4770f, 53.9201f, 15.5769f},
+  {68.4636f, 75.3099f, 18.4091f},
+  {41.4770f, 53.9201f, 15.5769f},
+  {41.4770f, 53.9201f, 15.5769f},
+  {68.4636f, 75.3099f, 18.4091f}                                                    // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
+};
 //-----------------------------------------------
 // Setting parameters for the SMC_CS strategy:
 // Float parameters to define the observer gains of CSO, for CS SMC:
@@ -328,6 +337,18 @@ void main(void){
     init_charBuffer(&SCIB);                                                         // Initialize dedicated char-type data buffer of SCIB.
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
+    // Creating data structure for a high-gain observer in the cluster space:
+    CSO = createCS_Observer01(sampleTime,cso_Gains,epsilon,diff_fc);
+    // Creating data structure for a GPI controller in the robot space:
+    GPI = createGPI_Controller(sampleTime,gpi_Gains);
+    // Creating data structure for the sliding surfaces in the cluster space:
+    SLS = createSlidingSurfaces(sampleTime,sls_Gains,sls_satVals);
+    // Creating data structure for an ADRC controller in the robot space:
+    ADRC = createADRC_Controller();
+    // Creating data structure for a SMC technique in the cluster space:
+    SMC = createSMC_Controller(sms_Gains,unc_Values,dis_Values,sls_Gains,epsilon);
+    // Creating data structure for the reference builder system:
+    REF = createReference(sampleTime,reftype);                                      // Create reference structure.
     // Creating a robot formation structure for arranging their relevant variables:
     FMR = createFormation(Robots_Qty);                                              // Create the OMRs formation structure.
     while(!FMR.flag[0]) FMR = createFormation(Robots_Qty);                          // Create the OMRs formation structure.
