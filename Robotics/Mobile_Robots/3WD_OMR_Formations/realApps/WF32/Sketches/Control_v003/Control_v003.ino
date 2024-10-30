@@ -59,7 +59,7 @@ char measurements[bufferSize];                                          // Varia
 enum Control_System consys = ADRC_RS;                                   // Declare the control system type.
 enum Reference_Type reftype = STATIC_01;                                // Declare the reference shape type.
 //---------------------------------------------------------------------------------------------------------------
-// Configuring the ADRC RS strategy:
+// Configuring the ADRC_RS strategy:
 const float sampleTime = 1.0f/freq_hz_4;                                // Float parameter to define sample time of observer RSO.
 const float epsilon = .42f;                                             // Small constant used in the RSO observer.
 float errors_k[3*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};    // Declaration of this float vector for arranging error variables.
@@ -95,7 +95,7 @@ float gpi_Gains[3*Robots_Qty][3] = {
 };
 float t_cl = 0.0f;                                                      // Clutch interval time.
 //---------------------------------------------------------------------------------------------------------------
-// Configuring the SMC CS strategy:
+// Configuring the SMC_CS strategy:
 // Float parameters to define the observer gains of CSO, for CS SMC:
 float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                           // Setting alpha_1.
@@ -124,13 +124,13 @@ Data_Struct UART4 = createDataStruct(bufferSize,2,3,16);
 RS_Observer RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
 // Creating data structure for a high-gain observer in the cluster space:
 CS_Observer CSO = createCS_Observer01(sampleTime,cso_Gains,epsilon,diff_fc);
-// Creating data straucture for a GPI controller in the robot space:
+// Creating data structure for a GPI controller in the robot space:
 GPI_Controller GPI = createGPI_Controller(sampleTime,gpi_Gains);
 // Creating data structure for the sliding surfaces in the cluster space:
 Sl_Surfaces SLS = createSlidingSurfaces(sampleTime,sls_Gains,sls_satVals);
 // Creating data structure for an ADRC controller in the robot space:
 ADRC_Controller ADRC = createADRC_Controller();
-// Creating data structure for an SMC technique in the cluster space:
+// Creating data structure for a SMC technique in the cluster space:
 SMC_Controller SMC = createSMC_Controller(sms_Gains,unc_Values,dis_Values,sls_Gains,epsilon);
 // Creating data structure for the reference builder system:
 Reference REF = createReference(sampleTime,reftype);                    // Create reference structure.

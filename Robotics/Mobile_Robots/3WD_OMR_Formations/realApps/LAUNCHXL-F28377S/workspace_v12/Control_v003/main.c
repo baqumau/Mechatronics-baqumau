@@ -43,6 +43,7 @@
 #include <3WD_OMRs_References.h>                                                    // Reference library.
 #include <baqumau.h>                                                                // My library.
 #include "F28x_Project.h"                                                           // Device Header file and Examples Include File.
+#include "dsp.h"                                                                    // Defines new data types and macros.
 //-----------------------------------------------------------------------------------------------------------------------
 // Putting function declarations here:
 //-----------------------------------------------------------------------------------------------------------------------
@@ -85,16 +86,23 @@ void scic_fifo_init(void);
 void scic_xmit(char a);
 // Function to transmit message via SCIC:
 void scic_msg(char *msg);
+//-----------------------------------------------
+// Optimized Memory Set:
+void memset_fast(void* dst, int16 value, Uint16 N);
 //-----------------------------------------------------------------------------------------------------------------------
 // Global dynamic variables and constants are declared here:
 const Uint16 bufferSize = 256;                                                      // buffer length.
 const Uint32 final_iteration = 60*(Uint32)(exe_minutes)*(Uint32)(freq_hz_1);        // Final iteration of program execution (4 minutes at "freq_hz_0" in Hz).
+const float sampleTime = 1.0f/freq_hz_1;                                            // Float parameter to define the global control system sample time.
+//-----------------------------------------------
 volatile bool flagcommand_0;                                                        // Declare flag command 0 (This flag indicates that initial conditions must be configured).
 volatile bool flagcommand_1;                                                        // Declare flag command 1 (Used for ON\OFF LED 01).
 volatile bool flagcommand_2;                                                        // Declare flag command 2 (Used for ON\OFF LED 02).
 volatile bool flagcommand_3;                                                        // Declare flag command 3 (Used for happy ending).
+//-----------------------------------------------
 volatile char receivedChar_a;                                                       // Variable to save received character from SCIA.
 volatile char receivedChar_b;                                                       // Variable to save received character from SCIB.
+//-----------------------------------------------
 char *msg_1;                                                                        // Variable 1 to save a char data chain.
 char *msg_2;                                                                        // Variable 2 to save a char data chain.
 char *msg_3;                                                                        // Variable 3 to save a char data chain.
@@ -103,10 +111,74 @@ char *measurements;                                                             
 char *controlSignals;                                                               // Variable to save a char data chain that contains the computed control signals.
 char *angularVelocities;                                                            // Variable to save a char data chain that contains the angular velocities of robots' wheels.
 //-----------------------------------------------
+enum Control_System consys = ADRC_RS;                                               // Declare the control system type (ADRC_RS or SMC_CS at the moment).
+enum Reference_Type reftype = STATIC_01;                                            // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
+float t_cl = 0.0f;                                                                  // Defines a clutch interval time implemented in the control strategies.
+//-----------------------------------------------
+// Setting parameters for the ADRC_RS strategy:
+const float epsilon = .42f;                                                         // Small constant used in the RSO observer.
+float errors_k[3*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};                // Declaration of this float vector for arranging error variables.
+// Float parameters to define the observer gains of RSO, for RS ADRC:
+float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
+  {18.4091f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 18.4091f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,  10.125f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 18.4091f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 18.4091f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f,  10.125f},                     // Setting alpha_1.
+  {75.3099f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 75.3099f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 22.7812f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 75.3099f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 75.3099f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 22.7812f},                     // Setting alpha_2.
+  {68.4636f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 68.4636f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 11.3906f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 68.4636f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 68.4636f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 11.3906f}                      // Setting alpha_3.
+};
+//-----------------------------------------------
+// Setting parameters for the SMC_CS strategy:
+// Float parameters to define the observer gains of CSO, for CS SMC:
+float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
+  {18.4091f},                                                                       // Setting alpha_1.
+  {75.3099f},                                                                       // Setting alpha_2.
+  {68.4636f}                                                                        // Setting alpha_3.
+};
+// Float parameters to define the sliding gains of SLS, for CS SMC:
+// -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
+float sls_Gains[3*Robots_Qty+1] = {1.54f, 1.54f, 1.68f, 1.57f, 1.68f, 1.68f, 22.0f};
+// Defining the SMC gains that cover the unmodelled disturbances via SMC strategy:
+float sms_Gains[3*Robots_Qty] = {1.44f, 1.44f, 1.44f, 1.44f, 1.44f, 1.44f};
+// Defining the constants for bounding the input torque disturbances according to the SMC strategy:
+#define rho_1 (3.0f/4.0f)*mt_1*l_1*l_1/(r_1*r_1)                                    // Constant for bounding the input torque disturbances in robot 1.
+#define rho_2 (3.0f/4.0f)*mt_2*l_2*l_2/(r_2*r_2)                                    // Constant for bounding the input torque disturbances in robot 2.
+float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
+float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                 // Define the constants for bounding the uncertainties in the model.
+// Defining the saturation values of sliding surfaces at the output:
+float sls_satVals[3*Robots_Qty] = {280.0f, 280.0f, 9.5f, 150.0f, 9.5f, 9.5f};
+float diff_fc = 45.0f;                                                              // Assigning an arbitrary value to the filter coefficient of CSO internal differentiator.
+//-----------------------------------------------
 // Declaration of data structure for SCIA peripheral:
 Data_Struct SCIA;                                                                   // Data structure to arrange data from SCIA.
 // Declaration of data structure for SCIB peripheral:
 Data_Struct SCIB;                                                                   // Data structure to arrange data from SCIB.
+// Declaration of data structure for a high-gain observer in the robot space:
+RS_Observer RSO;
+// Declaration of data structure for a high-gain observer in the cluster space:
+CS_Observer CSO;
+// Declaration of data structure for a GPI controller in the robot space:
+GPI_Controller GPI;
+// Declaration of data structure for the sliding surfaces in the cluster space:
+Sl_Surfaces SLS;
+// Declaration of data structure for an ADRC controller in the robot space:
+ADRC_Controller ADRC;
+// Declaration of data structure for a SMC technique in the cluster space:
+SMC_Controller SMC;
+// Declaration of data structure for the reference builder system:
+Reference REF;
 // Declaration of a robot formation structure for arranging their relevant variables:
 Formation FMR;                                                                      // Declaration of OMRs formation structure.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -254,6 +326,8 @@ void main(void){
     // Definition of data structure for SCIB peripheral (required for getting and arranging data from XBee):
     SCIB = createDataStruct(bufferSize,2,3,16);
     init_charBuffer(&SCIB);                                                         // Initialize dedicated char-type data buffer of SCIB.
+    // Creating data structure for a high-gain observer in the robot space:
+    RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
     // Creating a robot formation structure for arranging their relevant variables:
     FMR = createFormation(Robots_Qty);                                              // Create the OMRs formation structure.
     while(!FMR.flag[0]) FMR = createFormation(Robots_Qty);                          // Create the OMRs formation structure.
@@ -294,9 +368,7 @@ __interrupt void cpu_timer0_isr(void){
     //-----------------------------------------------
     // Sending command to MATLAB:
     if(CpuTimer1.InterruptCount <= final_iteration) scia_msg(msg_1);                // Write message 1 through SCIA peripheral.
-    else{
-        scia_msg(msg_2);                                                            // Write message 1 through SCIA peripheral.
-    }
+    else scia_msg(msg_2);                                                           // Otherwise write message 2 through SCIA peripheral.
     //-----------------------------------------------
     // Clearing the interrupt flag:
     CpuTimer0Regs.TCR.bit.TIF = 1;                                                  // Clear the Timer 0 interrupt flag.
@@ -330,7 +402,7 @@ __interrupt void cpu_timer1_isr(void){
         computeCSVariables(FMR);                                                    // Compute the cluster space variables of FMR formation.
         // Saving OMRs formation data in a string-format version:
         for(i = 0; i < 3*Robots_Qty; i++){
-            initString(FMR.qs_k.data[i],FMR.qs_k.bufferSize);                       // Initialize or clear string-format data chain.
+            memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                    // Clear char-type string vector where OMRs' pose will be saved.
             ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);              // Saving same pose of OMRs formation, but in string-format.
         }
     }
@@ -398,6 +470,7 @@ __interrupt void scia_rx_isr(void){
             // Saving initial state variables:
             for(i = 0; i < 3*Robots_Qty; i++){
                 FMR.q_k[i] = atof(SCIA.MAT3.data[0][i]);                            // Saving pose of OMRs formation along global reference frame.
+                memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                // Clear char-type string vector where OMRs' pose will be saved.
                 ftoa(FMR.q_k[i],FMR.qs_k.data[i],5);                                // Saving same pose of OMRs formation, but in string-format.
             }
             float angles_k[Robots_Qty] = {FMR.q_k[2], FMR.q_k[5]};                  // Initial orientation vector in the robot space.
@@ -439,13 +512,13 @@ __interrupt void scib_rx_isr(void){
             // Saving the angular velocities of omni-wheels attached on OMRs formation.
             FMR.w_k[i+3*SCIB.identifier] = atof(SCIB.MAT3.data[SCIB.identifier][i]);
             // Saving the angular velocities of moni-wheels attached on OMRs formation, but in a string-format version:
-            initString(FMR.ws_k.data[i+3*SCIB.identifier],FMR.ws_k.bufferSize);     // Initialize or clear string-format data chain.
+            memset_fast(FMR.ws_k.data[i+3*SCIB.identifier],0,FMR.ws_k.bufferSize);  // Initialize or clear char-type string vector where OMRs' angular velocities of wheels will be saved.
             // Saving same angular velocities of OMRs formation, but in string-format:
             ftoa(roundToThreeDecimals(FMR.w_k[i+3*SCIB.identifier]),FMR.ws_k.data[i+3*SCIB.identifier],3);
         }
         init_charBuffer(&SCIB);                                                     // Initialize dedicated char-type data buffer of SCIB.
         // Packing and streaming the measurement variables of OMRs formation:
-        initString(angularVelocities,bufferSize);                                   // Initialize measurements data chain.
+        memset_fast(angularVelocities,0,bufferSize);                                // Initialize measurements data chain.
         snprintf(angularVelocities,bufferSize,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
     }
     // Initializing char-type data buffer associated to SCIB when control system is not running:
