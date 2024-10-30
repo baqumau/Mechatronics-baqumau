@@ -95,11 +95,13 @@ const Uint16 bufferSize = 256;                                                  
 const float sampleTime = 1.0f/freq_hz_1;                                            // Float parameter to define the global control system sample time.
 //-----------------------------------------------
 Uint32 final_iteration;                                                             // Declare variable to save final iteration value of program execution.
+Uint32 timeoutCount;                                                                // Declare timeout counting variable.
 //-----------------------------------------------
 volatile bool flagcommand_0;                                                        // Declare flag command 0 (This flag indicates that initial conditions must be configured).
 volatile bool flagcommand_1;                                                        // Declare flag command 1 (Used for ON\OFF LED 01).
 volatile bool flagcommand_2;                                                        // Declare flag command 2 (Used for ON\OFF LED 02).
 volatile bool flagcommand_3;                                                        // Declare flag command 3 (Used for happy ending).
+volatile bool flagcommand_4;                                                        // Declare flag command 4 (used for ending due to timeout).
 //-----------------------------------------------
 volatile char receivedChar_a;                                                       // Variable to save received character from SCIA.
 volatile char receivedChar_b;                                                       // Variable to save received character from SCIB.
@@ -169,7 +171,7 @@ float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                 // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
 float sls_satVals[3*Robots_Qty] = {280.0f, 280.0f, 9.5f, 150.0f, 9.5f, 9.5f};
-float diff_fc = 45.0f;                                                              // Assigning an arbitrary value to the filter coefficient of CSO internal differentiator.
+float diff_fc = 45.0f;                                                              // Assign an arbitrary value to the filter coefficient of CSO internal differentiator.
 //-----------------------------------------------
 // Declaration of data structure for SCIA peripheral:
 Data_Struct SCIA;                                                                   // Data structure to arrange data from SCIA.
@@ -260,6 +262,10 @@ void main(void){
     flagcommand_1 = false;                                                          // Set flag command 1 to FALSE.
     flagcommand_2 = false;                                                          // Set flag command 2 to FALSE.
     flagcommand_3 = false;                                                          // Set flag command 3 to FALSE.
+    flagcommand_4 = false;                                                          // Set flag command 4 to FALSE.
+
+    // Reseting timeout counter:
+    timeoutCount = 0;                                                               // Initialize timeout counter.
 
     // Some messages to control SCIA, SCIB and SCIC peripherals:
     msg_1 = ":9\r\n\0";                                                             // Message to ask to MATLAB for data.
