@@ -90,10 +90,11 @@ void scic_msg(char *msg);
 // Optimized Memory Set:
 void memset_fast(void* dst, int16 value, Uint16 N);
 //-----------------------------------------------------------------------------------------------------------------------
-// Global dynamic variables and constants are declared here:
+// Global dynamic variables will be declared here, together with some required-definition configuration constants:
 const Uint16 bufferSize = 256;                                                      // buffer length.
-const Uint32 final_iteration = 60*(Uint32)(exe_minutes)*(Uint32)(freq_hz_1);        // Final iteration of program execution (4 minutes at "freq_hz_0" in Hz).
 const float sampleTime = 1.0f/freq_hz_1;                                            // Float parameter to define the global control system sample time.
+//-----------------------------------------------
+Uint32 final_iteration;                                                             // Declare variable to save final iteration value of program execution.
 //-----------------------------------------------
 volatile bool flagcommand_0;                                                        // Declare flag command 0 (This flag indicates that initial conditions must be configured).
 volatile bool flagcommand_1;                                                        // Declare flag command 1 (Used for ON\OFF LED 01).
@@ -250,6 +251,9 @@ void main(void){
     // The shell ISR routines are found in F2837xS_DefaultIsr.c.
     // This function is found in F2837xS_PieVect.c.
     InitPieVectTable();
+
+    // Setting value of final iteration of program execution:
+    final_iteration = 60*(Uint32)(exe_minutes)*(Uint32)(freq_hz_1);                 // Final iteration by default: 4 minutes at "freq_hz_0" in Hz.
 
     // Reseting flags:
     flagcommand_0 = false;                                                          // Set flag command 0 to FALSE.
