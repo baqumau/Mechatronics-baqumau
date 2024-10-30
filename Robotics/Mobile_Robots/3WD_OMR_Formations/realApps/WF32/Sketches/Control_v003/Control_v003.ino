@@ -43,8 +43,7 @@ const unsigned int RST = 38;                                            // RST p
 //---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
 const unsigned int bufferSize = 128;                                    // buffer length.
-const unsigned long final_iteration = 60*exe_minutes*freq_hz_4;         // Final iteration of program execution (4 minutes at "freq_hz_4" in Hz).
-uint32_t matlab_counter = 0;                                            // Variable to save the external counter by MATLAB.
+unsigned long final_iteration = 60*exe_minutes*freq_hz_4;               // Final iteration of program execution (by default: 4 minutes at "freq_hz_4" in Hz).
 volatile bool flagcommand_0 = false;                                    // Available flag command 0.
 volatile bool flagcommand_1 = false;                                    // Available flag command 1 (Auxiliary flag for time out protocole).
 volatile bool flagcommand_5 = false;                                    // Available flag command 5.
@@ -571,7 +570,7 @@ void loop(){
     Serial.println(measurements);                                       // Write measurements via UART 1.
     initString(measurements,bufferSize);                                // Clear measurements data string.
   }
-  else if((iterations > final_iteration && baqumau) || counter_1 >= 20){
+  else if(iterations > final_iteration && baqumau){
     baqumau.println("];");                                              // Writing on microSD.
     baqumau.close();                                                    // Closing the write file.
     digitalWrite(PIN_LED3,LOW);                                         // Turn led 3 off for show finish of writing on microSD.
@@ -595,8 +594,8 @@ void loop(){
     counter_1 = 0;                                                      // Reset counter 1.
     // Ending input torque control as FMR.u_k and PWM control signals as FMR.v_k:
     for(i = 0; i < 3*Robots_Qty; i++){
-      FMR.u_k[i] = 0.0f;                                                // Initial torque control in the formation.
-      FMR.v_k[i] = 0.0f;                                                // Initial voltage control in the formation.
+      FMR.u_k[i] = 0.0f;                                                // Set the initial torque control in the formation.
+      FMR.v_k[i] = 0.0f;                                                // Set the initial voltage control in the formation.
     }
     Serial1.println(":0,0.0,0.0,0.0,0.0,0.0,0.0;");                     // Write final PWM control signals through UART 4.
     delayMicroseconds(10);                                              // 10 microseconds delay.
@@ -611,12 +610,10 @@ void loop(){
     initString(measurements,bufferSize);                                // Clear measurements data string.
     //-----------------------------------------------------------------------------------------------------------
     // Time out protocol:
-    if(flagcommand_1 && counter_1 >= 10){
-      flagcommand_1 = false;                                            // Reset flag command 1.
-      counter_1++;                                                      // Increasing counter 1.
-    }
-    else if(flagcommand_0) counter_1++;                                 // Increasing counter 1.
-    else NOP;                                                           // No operation.
+    if(flagcommand_1) flagcommand_1 = false;                            // Reset flag command 1.
+    else counter_1++;                                                   // Increasing counter 1.
+    if(counter_1 >= 20) final_iteration = iterations;                   // Final iteration value is changed.
+    else NOP;
     flagcommand_5 = false;                                              // Setting flag 5 to false.
   }
   else NOP;                                                             // No operation.
