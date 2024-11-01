@@ -117,10 +117,10 @@ char *angularVelocities;                                                        
 enum Control_System consys = ADRC_RS;                                               // Declare the control system type (ADRC_RS or SMC_CS at the moment).
 enum Reference_Type reftype = STATIC_01;                                            // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
 float t_cl = 0.0f;                                                                  // Defines a clutch interval time implemented in the control strategies.
+float *errors_k;                                                                    // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------
 // Setting parameters for the ADRC_RS strategy:
 const float epsilon = .42f;                                                         // Small constant used in the RSO observer.
-float errors_k[3*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};                // Declaration of this float vector for arranging error variables.
 // Float parameters to define the observer gains of RSO, for RS ADRC:
 float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {18.4091f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
@@ -162,7 +162,7 @@ float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
 // Float parameters to define the sliding gains of SLS, for CS SMC:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
 float sls_Gains[3*Robots_Qty+1] = {1.54f, 1.54f, 1.68f, 1.57f, 1.68f, 1.68f, 22.0f};
-// Defining the SMC gains that cover the unmodelled disturbances via SMC strategy:
+// Defining the SMC gains that cover the unknown disturbances via SMC strategy:
 float sms_Gains[3*Robots_Qty] = {1.44f, 1.44f, 1.44f, 1.44f, 1.44f, 1.44f};
 // Defining the constants for bounding the input torque disturbances according to the SMC strategy:
 #define rho_1 (3.0f/4.0f)*mt_1*l_1*l_1/(r_1*r_1)                                    // Constant for bounding the input torque disturbances in robot 1.
@@ -283,8 +283,9 @@ void main(void){
 
     // Preallocating memory for used *variables:
     measurements = (char *)malloc(bufferSize * sizeof(char));                       // Preallocate memory for measurement data set.
-    controlSignals = (char *)malloc(bufferSize * sizeof(char));                     // Preallocate memory for control signals data set.
-    angularVelocities = (char *)malloc(bufferSize * sizeof(char));                  // Preallocate memory for angular velocities data set.
+    controlSignals = (char *)malloc(bufferSize/4 * sizeof(char));                   // Preallocate memory for control signals data set.
+    angularVelocities = (char *)malloc(bufferSize/4 * sizeof(char));                // Preallocate memory for angular velocities data set.
+    errors_k = (float *)malloc(3*Robots_Qty * sizeof(float));                       // Preallocate memory to save pose error variables in a floating-point values vector.
 
     // Interrupts that are used in this project are re-mapped to
     // ISR functions found within this file.
@@ -373,8 +374,26 @@ void main(void){
             IER &= ~M_INT13;                                                        // Disable CPU timer 1 interrupt.
             IER &= ~M_INT14;                                                        // Disable CPU timer 2 interrupt.
             CpuTimer1.InterruptCount = 0;                                           // Reset counter of CPU timer 1.
+            switch(consys){
+                case ADRC_RS:
+                    REF.flag[0] = false;                                            // Setting REF.flag to false.
+                    RSO.flag[0] = false;                                            // Setting RSO.flag to false.
+                    ADRC.flag[0] = false;                                           // Setting ADRC.flag to false.
+                    GPI.flag[0] = false;                                            // Setting GPI.flag to false.
+                    break;
+                case SMC_CS:
+                    REF.flag[0] = false;                                            // Setting REF.flag to false.
+                    CSO.flag[0] = false;                                            // Setting CSO.flag to false.
+                    SLS.flag[0] = false;                                            // Setting SLS.flag to false.
+                    SMC.flag[0] = false;                                            // Setting SMC.flag to false.
+                    break;
+            }
             flagcommand_3 = false;                                                  // Reset flag command 3.
         }
+        // Time out protocol:
+        // if(flagcommand_4) flagcommand_4 = false;                                    // Reset flag command 4.
+        // else if(flagcommand_0) timeoutCount++;                                      // Increasing timeout counter.
+        // if(timeoutCount >= 20) final_iteration = CpuTimer1.InterruptCount;          // Final iteration value is changed to the current one.
         else NOP;                                                                   // No Operation (burn a cycle).
     }
 }
@@ -431,10 +450,12 @@ __interrupt void cpu_timer1_isr(void){
         FMR.q_k[2] = FMR.CORq.y_k[0];                                               // Determines ph1(k).
         FMR.q_k[5] = FMR.CORq.y_k[1];                                               // Determines ph2(k).
         computeCSVariables(FMR);                                                    // Compute the cluster space variables of FMR formation.
-        // Saving OMRs formation data in a string-format version:
+        // Saving OMRs formation pose data in a string-format version:
         for(i = 0; i < 3*Robots_Qty; i++){
-            memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                    // Clear char-type string vector where OMRs' pose will be saved.
-            ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);              // Saving same pose of OMRs formation, but in string-format.
+            memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                    // Clear char-type string vector where OMRs' robot space pose will be saved.
+            memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                    // Clear char-type string vector where OMRs' cluster space pose will be saved.
+            ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);              // Saving same robot space pose of OMRs formation, but in string-format.
+            ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);              // Saving same cluster space pose of OMRs formation, but in string-format.
         }
     }
     //-----------------------------------------------
@@ -467,8 +488,8 @@ __interrupt void cpu_timer2_isr(void){
     if(CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the measurement variables of OMRs formation:
-        initString(measurements,bufferSize);                                        // Initialize measurements data chain.
-        snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],(unsigned long)(CpuTimer1.InterruptCount));
+        memset_fast(measurements,0,bufferSize);                                     // Initialize measurements data chain.
+        snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
         scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
     }
     else if(CpuTimer1.InterruptCount > final_iteration && flagcommand_0){
@@ -494,6 +515,8 @@ __interrupt void scia_rx_isr(void){
     }
     // If streaming data is completely added to the char buffer of SCIA structure:
     if(SCIA.flag[1]){
+        // flagcommand_4 = true;                                                       // Start to check the time out state for SCIA receiving data.
+        // timeoutCount = 0;                                                           // Reset timeout counter.
         classify_charBuffer(&SCIA);                                                 // Classify data from assigned buffer to UART1 structure data matrix.
         init_charBuffer(&SCIA);                                                     // Initialize char-type data buffer associated to UART 1.
         if(!flagcommand_0){
@@ -501,14 +524,151 @@ __interrupt void scia_rx_isr(void){
             // Saving initial state variables:
             for(i = 0; i < 3*Robots_Qty; i++){
                 FMR.q_k[i] = atof(SCIA.MAT3.data[0][i]);                            // Saving pose of OMRs formation along global reference frame.
-                memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                // Clear char-type string vector where OMRs' pose will be saved.
-                ftoa(FMR.q_k[i],FMR.qs_k.data[i],5);                                // Saving same pose of OMRs formation, but in string-format.
             }
             float angles_k[Robots_Qty] = {FMR.q_k[2], FMR.q_k[5]};                  // Initial orientation vector in the robot space.
-            if(FMR.CORq.flag[0] == false){
+            if(!FMR.CORq.flag[0]){
                 initAngleConverter(FMR.CORq,angles_k);                              // Initialize angle conversion to absolute domain in the robot space.
             }
             computeCSVariables(FMR);                                                // Compute the cluster space variables of FMR formation.
+            // Saving OMRs formation pose data in a string-format version:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                // Clear char-type string vector where OMRs' pose will be saved.
+                memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                // Clear char-type string vector where OMRs' cluster space pose will be saved.
+                ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);          // Saving same robot space pose of OMRs formation, but in string-format.
+                ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);          // Saving same pose of OMRs formation, but in string-format.
+            }
+            //---------------------------------------------------------------------------------------------------------
+            // Initializing the selected control system:
+            switch(consys){
+                case ADRC_RS:{
+                    //------------------------------------------ADRC_RS----------------------------------------------------
+                    // Float vector x_0 to define initial conditions for states of HGO observer in the robot space:
+                    float obs_x0[9*Robots_Qty] = {FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+                    init_RS_Observer(RSO,obs_x0);                                   // Initialize the observer RSO.
+                    //-----------------------------------------------------------------------------------------------------
+                    // Float vector x_0 to define initial conditions for states of GPI controller:
+                    float gpi_x0[6*Robots_Qty] = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+                    initGPI_Controller(GPI,gpi_x0);                                 // Initialize GPI controller.
+                    //-----------------------------------------------------------------------------------------------------
+                    // Initializing ADRC control law:
+                    initADRC_Controller(ADRC,RSO.X_0,RSO.X_0,GPI.X_0,FMR.params);   // Initialize ADRC controller.
+                    //-----------------------------------------------------------------------------------------------------
+                    // Initializing input torque control as FMR.u_k and omni-wheel angular velocities as FMR.w_k:
+                    for(i = 0; i < 3*Robots_Qty; i++){
+                        FMR.u_k[i] = 0.0f;                                          // Initial torque control in the formation.
+                        FMR.v_k[i] = 0.0f;                                          // Initial voltage control in the formation.
+                        FMR.w_k[i] = 0.0f;                                          // Initial angular velocities in the formation.
+                        memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);        // Clear char-type string vector where OMRs' control signals will be saved.
+                        ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                        // Saving same control signals of OMRs formation, but in string-format.
+                        memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);        // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                        ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                        // Saving same PWMs control signals of OMRs formation, but in string-format.
+                        memset_fast(FMR.ws_k.data[i],0,FMR.ws_k.bufferSize);        // Clear char-type string vector where angular velocities of OMRs' wheels will be saved.
+                        ftoa(FMR.w_k[i],FMR.ws_k.data[i],3);                        // Saving same above angular velocities of OMRs formation, but in string-format.
+                    }
+                    // Packing the corresponding angular velocities variables of OMRs formation:
+                    memset_fast(angularVelocities,0,sizeof(angularVelocities));     // Initialize angularVelocities data chain.
+                    snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
+                    // Packing the corresponding control signals variables of OMRs formation:
+                    memset_fast(controlSignals,0,sizeof(controlSignals));           // Initialize controlSignals data chain.
+                    snprintf(controlSignals,sizeof(controlSignals),"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
+                    break;
+                }
+                case SMC_CS:{
+                    //------------------------------------------------SMC_CS-----------------------------------------------
+                    // Float vector z_0 to define initial conditions for states of HGO observer in the cluster space:
+                    float obs_z0[9*Robots_Qty] = {FMR.c_k[0], FMR.c_k[1], FMR.c_k[2], FMR.c_k[3], FMR.c_k[4], FMR.c_k[5], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    init_CS_Observer01(CSO,obs_z0);                                 // Initialize the observer CSO.
+                    //-----------------------------------------------------------------------------------------------------
+                    // Initial conditions for previous observer is taken here:
+                    init_SlidingSurfaces(SLS,REF.Z_0,obs_z0);                       // Initialize sliding surfaces algorithm.
+                    //-----------------------------------------------------------------------------------------------------
+                    // Initializing SMC strategy:
+                    initSMC_Controller(SMC,REF.Z_0,obs_z0,SLS.E_0,FMR.params);      // Initialize SMC strategy.
+                    //-----------------------------------------------------------------------------------------------------
+                    // Initializing input torque control as FMR.u_k, PWM control signals as FMR.v_k and omni-wheel angular velocities as FMR.w_k:
+                    for(i = 0; i < 3*Robots_Qty; i++){
+                        FMR.u_k[i] = 0.0f;                                          // Initial torque control in the formation.
+                        FMR.v_k[i] = 0.0f;                                          // Initial voltage control in the formation.
+                        FMR.w_k[i] = 0.0f;                                          // Initial angular velocities in the formation.
+                        memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);        // Clear char-type string vector where OMRs' control signals will be saved.
+                        ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                        // Saving same control signals of OMRs formation, but in string-format.
+                        memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);        // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                        ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                        // Saving same PWMs control signals of OMRs formation, but in string-format.
+                        memset_fast(FMR.ws_k.data[i],0,FMR.ws_k.bufferSize);        // Clear char-type string vector where angular velocities of OMRs' wheels will be saved.
+                        ftoa(FMR.w_k[i],FMR.ws_k.data[i],3);                        // Saving same above angular velocities of OMRs formation, but in string-format.
+                    }
+                    // Packing the corresponding angular velocities variables of OMRs formation:
+                    memset_fast(angularVelocities,0,sizeof(angularVelocities));     // Initialize angularVelocities data chain.
+                    snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
+                    // Packing the corresponding control signals variables of OMRs formation:
+                    memset_fast(controlSignals,0,sizeof(controlSignals));           // Initialize controlSignals data chain.
+                    snprintf(controlSignals,sizeof(controlSignals),"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
+                    break;
+                }
+            }
+            //---------------------------------------------------------------------------------------------------------
+            // Initializing the selected reference trajectory profiles:
+            switch(reftype){
+                case CIRCUMFERENCE_01:{
+                    // Configuring initial parameters for circumference-shape trajectory (check that Rc_0 and Vc_0 are equals to Rc and Vc placed in the trajectory generation source code):
+                    float Cx_0 = 1800.0f;                                           // [mm], initial reference's centre along workspace's x axis.
+                    float Cy_0 = 1500.0f;                                           // [mm], initial reference's centre along workspace's y axis.
+                    float Rc_0 = 1200.0f;                                           // [mm], initial desired radius of planned circumference-shape trajectory.
+                    float Vc_0 = 40.0f;                                             // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
+                    float Dr_0 = 150.0f;                                            // [mm], initial desired half distance between robots.
+                    // Arraying initial conditions for circumference-shape reference trajectory profiles:
+                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cos(M_PI_4), Vc_0*cos(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cos(M_PI_4), Vc_0*sin(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    initReference(REF,consys,reftype,ref_z0);                       // Initialize reference builder.
+                    break;
+                }
+                case MINGYUE_01:{
+                    // Configuring initial parameters for first Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
+                    float Cx_0 = 1800.0f;                                           // [mm], initial reference's centre along workspace's x axis.
+                    float Cy_0 = 1500.0f;                                           // [mm], initial reference's centre along workspace's y axis.
+                    float Sc_0 = 1200.0f;                                           // [mm], initial scope of infinity-shape trajectory on workspace.
+                    float Kc_0 = 25.0f;                                             // Velocity desired gain of planned trajectory.
+                    float Vcx_0 = Sc_0/Kc_0;                                        // [mm/s], initial cluster's forward speed along x axis.
+                    float Vcy_0 = 2.0f*Sc_0/Kc_0;                                   // [mm/s], initial cluster's forward speed along y axis.
+                    float Dr_0 = 150.0f;                                            // [mm], initial desired half distance between robots.
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2(Vcx_0,Vcy_0), -2.0f*atan2(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    initReference(REF,consys,reftype,ref_z0);                       // Initialize reference builder.
+                    break;
+                }
+                case MINGYUE_02:{
+                    // Configuring initial parameters for second Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
+                    float Cx_0 = 1800.0f;                                           // [mm], initial reference's centre along workspace's x axis.
+                    float Cy_0 = 1500.0f;                                           // [mm], initial reference's centre along workspace's y axis.
+                    float Sc_0 = 1200.0f;                                           // [mm], initial scope of infinity-shape trajectory on workspace.
+                    float Kc_0 = 25.0f;                                             // Velocity desired gain of planned trajectory.
+                    float Vcx_0 = Sc_0/Kc_0;                                        // [mm/s], initial cluster's forward speed along x axis.
+                    float Vcy_0 = 2.0f*Sc_0/Kc_0;                                   // [mm/s], initial cluster's forward speed along y axis.
+                    float Dr_0 = 150.0f;                                            // [mm], initial desired half distance between robots.
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2(Vcx_0,Vcy_0)-M_PI_2, -atan2(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    initReference(REF,consys,reftype,ref_z0);                       // Initialize reference builder.
+                    break;
+                }
+                case STATIC_01:{
+                    // Configuring initial parameters for first static trivial trajectory (vehicles must turn on a fixed position in the workspace):
+                    float xc_0 = FMR.c_k[0];                                        // [mm], initial position of whole cluster along workspace's x axis.
+                    float yc_0 = FMR.c_k[1];                                        // [mm], initial position of whole cluster along workspace's y axis.
+                    float thc_0 = FMR.c_k[2];                                       // [rad], initial orientation of whole cluster in the workspace.
+                    float dc_0 = FMR.c_k[3];                                        // [mm], initial distance between both OMRs.
+                    float ph1_0 = FMR.q_k[2];                                       // [rad], initial orientation of robot 1.
+                    float ph2_0 = FMR.q_k[5];                                       // [rad], initial orientation of robot 2.
+                    float d_ph1_0 = 0.25f;                                          // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = -0.25f;                                         // [rad/s], desired initial angular velocity of robot 2.
+                    float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    initReference(REF,consys,reftype,ref_z0);                       // Initialize reference builder.
+                    break;
+                }
+            }
+            //---------------------------------------------------------------------------------------------------------
+            // Adjusting the clutch interval time (t_cl):
+            for(i = 0; i < 3*Robots_Qty; i++){
+                t_cl += abs(FMR.q_k[i] - REF.y_k[i])/(3.0f*Robots_Qty*1000.0f);     // Partial value of clutch interval time.
+            }
+            t_cl += 8.0f;                                                           // Final value of clutch interval time.
             //-----------------------------------------------------------------------------------------------------------
             CpuTimer1.InterruptCount = 0;                                           // Reset CPU timer 1 (iterations).
             flagcommand_0 = true;                                                   // Setting flag 0 to true.
@@ -545,12 +705,12 @@ __interrupt void scib_rx_isr(void){
             // Saving the angular velocities of moni-wheels attached on OMRs formation, but in a string-format version:
             memset_fast(FMR.ws_k.data[i+3*SCIB.identifier],0,FMR.ws_k.bufferSize);  // Initialize or clear char-type string vector where OMRs' angular velocities of wheels will be saved.
             // Saving same angular velocities of OMRs formation, but in string-format:
-            ftoa(roundToThreeDecimals(FMR.w_k[i+3*SCIB.identifier]),FMR.ws_k.data[i+3*SCIB.identifier],3);
+            ftoa(FMR.w_k[i+3*SCIB.identifier],FMR.ws_k.data[i+3*SCIB.identifier],3);
         }
         init_charBuffer(&SCIB);                                                     // Initialize dedicated char-type data buffer of SCIB.
-        // Packing and streaming the measurement variables of OMRs formation:
-        memset_fast(angularVelocities,0,bufferSize);                                // Initialize measurements data chain.
-        snprintf(angularVelocities,bufferSize,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
+        // Packing the angular velocities corresponding variables of OMRs formation:
+        memset_fast(angularVelocities,0,sizeof(angularVelocities));                 // Initialize measurements data chain.
+        snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
     }
     // Initializing char-type data buffer associated to SCIB when control system is not running:
     else if(SCIB.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_charBuffer(&SCIB);

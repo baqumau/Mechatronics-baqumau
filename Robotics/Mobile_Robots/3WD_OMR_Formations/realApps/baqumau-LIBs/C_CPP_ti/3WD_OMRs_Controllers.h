@@ -98,6 +98,7 @@ typedef struct{
     St_Matrix cs_k;                                                             // [mm;rad], pose of OMRs formation in the cluster space is arranged in string-format within this vector.
     St_Matrix ws_k;                                                             // [rad/s], angular velocity reached by each omni-wheel is arranged in string-format within this vector.
     St_Matrix us_k;                                                             // [N.mm], control signal applied to each omni-wheel is arranged in string-format within this vector.
+    St_Matrix vs_k;                                                             // [%], PWMs control signal applied to each omni-wheel is arranged in string-format within this vector.
     Correction_Struct CORq;                                                     // Adding angle correction structure for measured angles in the robot space.
     Correction_Struct CORc;                                                     // Adding angle correction structure for obtained angles through atan2(.) function in the cluster space.
     bool *flag;                                                                 // Configuration and execution flags.

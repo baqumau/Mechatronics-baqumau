@@ -1515,8 +1515,8 @@ Formation createFormation(int qty){
     FMR.CORq = createAngleConverter(qty);                                                   // Creating the angle correction CORq structure within FMR.
     FMR.CORc = createAngleConverter(qty-1);                                                 // Creating the angle correction CORc structure within FMR.
     //-----------------------------------------------
-    if(allocateStMatrix(&FMR.qs_k,s,16) && allocateStMatrix(&FMR.cs_k,s,16) && allocateStMatrix(&FMR.ws_k,s,16) && allocateStMatrix(&FMR.us_k,s,16)){
-        FMR.flag[0] = true;                                                                 // Set flag 0 to HIGH.
+    if(allocateStMatrix(&FMR.qs_k,s,16) && allocateStMatrix(&FMR.cs_k,s,16) && allocateStMatrix(&FMR.ws_k,s,16) && allocateStMatrix(&FMR.us_k,s,16) && allocateStMatrix(&FMR.vs_k,s,16)){
+        FMR.flag[0] = true;                                                                 // Set flag 0 to TRUE.
         // Initializing values for allocated matrix:
         for(i = 0; i < s; i++){
             for(j = 0; j < 16; j++){
@@ -1524,6 +1524,7 @@ Formation createFormation(int qty){
                 FMR.cs_k.data[i][j] = 0x00;                                                 // Assigning initial zero values to the string-format elements of cs_k matrix.
                 FMR.ws_k.data[i][j] = 0x00;                                                 // Assigning initial zero values to the string-format elements of ws_k matrix.
                 FMR.us_k.data[i][j] = 0x00;                                                 // Assigning initial zero values to the string-format elements of us_k matrix.
+                FMR.vs_k.data[i][j] = 0x00;                                                 // Assigning initial zero values to the string-format elements of vs_k matrix.
             }
         }
     }

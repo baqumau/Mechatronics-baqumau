@@ -57,11 +57,11 @@ char controlSignals[bufferSize];                                        // Varia
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
 enum Control_System consys = ADRC_RS;                                   // Declare the control system type.
 enum Reference_Type reftype = STATIC_01;                                // Declare the reference shape type.
+float errors_k[3*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};    // Declaration of this floating-point values vector for arranging error variables.
 //---------------------------------------------------------------------------------------------------------------
 // Configuring the ADRC_RS strategy:
 const float sampleTime = 1.0f/freq_hz_4;                                // Float parameter to define sample time of observer RSO.
 const float epsilon = .42f;                                             // Small constant used in the RSO observer.
-float errors_k[3*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};    // Declaration of this float vector for arranging error variables.
 // Float parameters to define the observer gains of RSO, for RS ADRC:
 float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {18.4091f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
@@ -205,9 +205,9 @@ void __attribute__((interrupt)) Timer_4_Handler(){
         //-------------------------------------------------------------------------------------------------------
         // Conditioning input torque control for OMRs formation:
         for(i = 0; i < 3; i++){
-          FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-50.0f/ke_1,50.0f/ke_1),t_cl,sampleTime,iterations);
+          FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-100.0f/ke_1,100.0f/ke_1),t_cl,sampleTime,iterations);
           FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
-          FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-50.0f/ke_2,50.0f/ke_2),t_cl,sampleTime,iterations);
+          FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,iterations);
           FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
         }
         break;
@@ -317,11 +317,11 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
       switch(consys){
         case ADRC_RS:{
           //------------------------------------------ADRC_RS----------------------------------------------------
-          // Float vector x_0 to define inital conditions for states of HGO observer in the robot space:
+          // Float vector x_0 to define initial conditions for states of HGO observer in the robot space:
           float obs_x0[9*Robots_Qty] = {FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
           init_RS_Observer(RSO,obs_x0);                                 // Initialize the observer RSO.
           //-----------------------------------------------------------------------------------------------------
-          // Float vector x_0 to define inital conditions for states of GPI controller:
+          // Float vector x_0 to define initial conditions for states of GPI controller:
           float gpi_x0[6*Robots_Qty] = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
           initGPI_Controller(GPI,gpi_x0);                               // Initialize GPI controller.
           //-----------------------------------------------------------------------------------------------------
@@ -338,11 +338,11 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
         }
         case SMC_CS:{
           //------------------------------------------------SMC_CS-----------------------------------------------
-          // Float vector z_0 to define inital conditions for states of HGO observer in the cluster space:
+          // Float vector z_0 to define initial conditions for states of HGO observer in the cluster space:
           float obs_z0[9*Robots_Qty] = {FMR.c_k[0], FMR.c_k[1], FMR.c_k[2], FMR.c_k[3], FMR.c_k[4], FMR.c_k[5], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
           init_CS_Observer01(CSO,obs_z0);                               // Initialize the observer CSO.
           //-----------------------------------------------------------------------------------------------------
-          // Initial conditions for previous observer is teken here:
+          // Initial conditions for previous observer is taken here:
           init_SlidingSurfaces(SLS,REF.Z_0,obs_z0);                     // Initialize sliding surfaces algorithm.
           //-----------------------------------------------------------------------------------------------------
           // Initializing SMC strategy:
@@ -361,7 +361,7 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
       // Initializing the selected reference trajectory profiles:
       switch(reftype){
         case CIRCUMFERENCE_01:{
-          // Configuring initial parameteres for circumference-shape trajectory (check that Rc_0 and Vc_0 are equals to Rc and Vc placed in the trajectory generation source code):
+          // Configuring initial parameters for circumference-shape trajectory (check that Rc_0 and Vc_0 are equals to Rc and Vc placed in the trajectory generation source code):
           float Cx_0 = 1800.0f;                                         // [mm], initial reference's centre along workspace's x axis.
           float Cy_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's y axis.
           float Rc_0 = 1200.0f;                                         // [mm], initial desired radius of planned circumference-shape trajectory.
@@ -374,7 +374,7 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
           break;
         }
         case MINGYUE_01:{
-          // Configuring initial parameteres for first Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
+          // Configuring initial parameters for first Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
           float Cx_0 = 1800.0f;                                         // [mm], initial reference's centre along workspace's x axis.
           float Cy_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's y axis.
           float Sc_0 = 1200.0f;                                         // [mm], initial scope of infinity-shape trajectory on workspace.
@@ -387,7 +387,7 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
           break;
         }
         case MINGYUE_02:{
-          // Configuring initial parameteres for second Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
+          // Configuring initial parameters for second Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
           float Cx_0 = 1800.0f;                                         // [mm], initial reference's centre along workspace's x axis.
           float Cy_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's y axis.
           float Sc_0 = 1200.0f;                                         // [mm], initial scope of infinity-shape trajectory on workspace.
@@ -400,13 +400,13 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
           break;
         }
         case STATIC_01:{
-          // Configuring initial parameteres for first statical trivial trajectory (vehicles must turn on a fixed position in the workspace):
-          float xc_0 = 1400.0f;                                         // [mm], initial position of whole cluster along workspace's x axis.
-          float yc_0 = 1500.0f;                                         // [mm], initial position of whole cluster along workspace's y axis.
-          float thc_0 = M_PI_2;                                         // [rad], initial orientation of whole cluster in the workspace.
-          float dc_0 = 220.0f;                                          // [mm], initial distance between both OMRs.
-          float ph1_0 = 0.0f;                                           // [rad], initial orientation of robot 1.
-          float ph2_0 = 0.0f;                                           // [rad], initial orientation of robot 2.
+          // Configuring initial parameters for first static trivial trajectory (vehicles must turn on a fixed position in the workspace):
+          float xc_0 = FMR.c_k[0];                                      // [mm], initial position of whole cluster along workspace's x axis.
+          float yc_0 = FMR.c_k[1];                                      // [mm], initial position of whole cluster along workspace's y axis.
+          float thc_0 = FMR.c_k[2];                                     // [rad], initial orientation of whole cluster in the workspace.
+          float dc_0 = FMR.c_k[3];                                      // [mm], initial distance between both OMRs.
+          float ph1_0 = FMR.q_k[2];                                     // [rad], initial orientation of robot 1.
+          float ph2_0 = FMR.q_k[5];                                     // [rad], initial orientation of robot 2.
           float d_ph1_0 = 0.25f;                                        // [rad/s], desired initial angular velocity of robot 1.
           float d_ph2_0 = -0.25f;                                       // [rad/s], desired initial angular velocity of robot 2.
           float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -439,14 +439,15 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
   if(UART4.flag[1] && iterations <= final_iteration && flagcommand_0){
     classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART4 struct data matrix.
     for(i = 0; i < 3; i++){
-      // Saving the angular velocities of omni-wheels attached on both vehicles.
+      // Saving the angular velocities of omni-wheels attached on both vehicles:
       FMR.w_k[i+3*UART4.identifier] = atof(UART4.MAT3.data[UART4.identifier][i]);
+      initString(UART4.MAT3.data[UART4.identifier][i],UART4.MAT3.zSize);
     }
     init_charBuffer(&UART4);                                            // Initialize char-type data buffer associated to UART 4.
   }
-  // Initializing char-type data buffer associated to UART 4 when control system is not running:
+  // Initializing char-type data buffer associated to SCIB when control system is not running:
   else if(UART4.flag[1] && iterations > final_iteration && !flagcommand_0) init_charBuffer(&UART4);
-  else NOP;                                                             // No operation.
+  else NOP;                                                             // No Operation.
   //-------------------------------------------------------------------------------------------------------------
   IFS2CLR = 0x00000010;                                                 // Clear the UART 4 receiver interrupt status flag.
 }

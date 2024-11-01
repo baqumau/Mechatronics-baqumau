@@ -76,8 +76,7 @@ PAGE 1 : /* Data Memory */
    RAMGS3      : origin = 0x00F000, length = 0x001000
    RAMGS4      : origin = 0x010000, length = 0x001000
    RAMGS5      : origin = 0x011000, length = 0x001000
-   RAMGS6      : origin = 0x012000, length = 0x001000
-   RAMGS7      : origin = 0x013000, length = 0x001000
+   RAMGS6      : origin = 0x012000, length = 0x002000
    RAMGS8      : origin = 0x014000, length = 0x001000
    RAMGS9      : origin = 0x015000, length = 0x001000
    RAMGS10     : origin = 0x016000, length = 0x001000
@@ -121,9 +120,9 @@ SECTIONS
 #endif
 						 
    /* Allocate uninitalized data sections: */
-   .stack              : > RAMM1        PAGE = 1
+   .stack              : > RAMD1        PAGE = 1
    .ebss               : >> RAMLS5 | RAMGS0 | RAMGS1       PAGE = 1
-   .esysmem            : > RAMLS5       PAGE = 1
+   .esysmem            : > RAMGS6       PAGE = 1
 
    /* Initalized sections go in Flash */
    .econst             : >> FLASHF | FLASHG | FLASHH      PAGE = 0, ALIGN(4)

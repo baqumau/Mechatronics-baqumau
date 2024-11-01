@@ -30,9 +30,10 @@ const unsigned int chipSelect_SD_default = 51;                          // Selec
 const unsigned int chipSelect_SD = chipSelect_SD_default;
 //---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
-const unsigned int bufferSize = 128;                                    // buffer length.
-const unsigned int varQty = 3*Robots_Qty;                               // Quantity of state varaibles that must be saved.
-char character = 0x00;                                                  // Variable where received character is saved.
+const unsigned int bufferSize = 256;                                    // buffer length.
+const unsigned int varQty = 3*Robots_Qty + 1;                           // Quantity of state varaibles that must be saved.
+char character_1;                                                       // Variable where received character from UART 1 is saved.
+char character_4;                                                       // Variable where received character from UART 4 is saved.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
 bool flagcommand_0 = false;                                             // Available flag command 0 (It is used to control UART receiving data).
 //---------------------------------------------------------------------------------------------------------------
@@ -45,7 +46,8 @@ Formation FMR = createFormation(Robots_Qty);                            // Creat
 void __attribute__((interrupt)) UART1_RX_Handler(){
   //-------------------------------------------------------------------------------------------------------------
   // Put interrupt code here:
-  char character = U1RXREG;                                             // Variable to save received character by UART 1 module.
+  character_1 = 0x00;                                                   // Clear character receiving variable.
+  character_1 = U1RXREG;                                                // Variable to save received character by UART 1 module.
   Serial.println(UART4.charBuffer);                                     // Print character through UART 1.
   //-------------------------------------------------------------------------------------------------------------
   IFS0CLR = 0x08000000;                                                 // Clear the UART 1 receiver interrupt status flag.
@@ -53,8 +55,9 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
 //---------------------------------------------------------------------------------------------------------------
 // Receiving data interrupt for UART 4 module:
 void __attribute__((interrupt)) UART4_RX_Handler(){
-  character = U4RXREG;                                                  // Variable to save received character by UART 4 module.
-  add_2_charBuffer(&UART4,character);                                   // Adding character to data buffer assigned to UART 4 module.
+  character_4 = 0x00;                                                   // Clear character receiving variable.
+  character_4 = U4RXREG;                                                // Variable to save received character by UART 4 module.
+  add_2_charBuffer(&UART4,character_4);                                 // Adding character to data buffer assigned to UART 4 module.
   //-------------------------------------------------------------------------------------------------------------
   // Taking values from UART 4 module:
   // If streaming data is completely added to char buffer of UART 4 structure:
@@ -62,7 +65,7 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
     int i;                                                              // Declaration of i as index integer variable.
     digitalWrite(PIN_LED5,HIGH);                                        // Turn led 5 on to indicate that data is completely added to the char buffer of UART 4 structure.
     for(i = 0; i < varQty; i++){
-      initString(UART4.MAT3.data[0][i],10);                             // Initialize string-type data set arranged in MAT3 within UART4 structure.
+      initString(UART4.MAT3.data[0][i],UART4.MAT3.zSize);               // Initialize string-type data set arranged in MAT3 within UART4 structure.
     }
     classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART 4 struct data matrix.
     init_charBuffer(&UART4);                                            // Initialize char-type data buffer associated to UART 4.
@@ -125,7 +128,7 @@ void setup(){
   start_uart_4_module();                                                // Enable UART 4 module.
   init_charBuffer(&UART4);                                              // Initialize char-type data buffer of UART 4.
   for(i = 0; i < 3*Robots_Qty; i++){
-    initString(UART4.MAT3.data[0][i],10);                               // Initialize string-type data set arranged in MAT3 within UART4 structure.
+    initString(UART4.MAT3.data[0][i],UART4.MAT3.zSize);                 // Initialize string-type data set arranged in MAT3 within UART4 structure.
   }
   //-------------------------------------------------------------------------------------------------------------
   // Configuring SD Card:
@@ -165,7 +168,7 @@ void loop(){
   int i;                                                                // Declaration of i as index integer variable.
   if(UART4.identifier == 0 && flagcommand_0){
     flagcommand_0 = false;                                              // Reset flag command 0 to FALSE.
-    snprintf(measurements,bufferSize,"%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5]);
+    snprintf(measurements,bufferSize,"%s,%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5],UART4.MAT3.data[0][6]);
     baqumau.println(measurements);                                      // Writes data in microSD.
     Serial.println(measurements);                                       // Print measured data through UART 1.
     initString(measurements,bufferSize);                                // Clear measurements buffer.
@@ -177,7 +180,7 @@ void loop(){
     baqumau.close();                                                    // Closing the writing file.
     Serial.println("Streaming data was completed..!");                  // Print ending message via UART 1.
     for(i = 0; i < 3*Robots_Qty; i++){
-      initString(UART4.MAT3.data[0][i],16);                             // Initialize string-type data set arranged in MAT3 within UART4 structure.
+      initString(UART4.MAT3.data[0][i],UART4.MAT3.zSize);               // Initialize string-type data set arranged in MAT3 within UART4 structure.
     }
     digitalWrite(PIN_LED3,LOW);                                         // Turn led 3 off for show finish of writing on microSD.
   }
