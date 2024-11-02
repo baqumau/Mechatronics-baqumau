@@ -491,6 +491,14 @@ __interrupt void cpu_timer2_isr(void){
     }
     if(CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
         //-----------------------------------------------
+        // Timeout protocol:
+        if(flagcommand_4){
+            flagcommand_4 = false;                                                  // Reset this flag to check if exist timeout state for SCIA receiving data.
+            timeoutCount = 1;                                                       // Increasing timeout counter.
+        }
+        else if(timeoutCount >= 20) final_iteration = CpuTimer1.InterruptCount;     // Force ending execution.
+        else timeoutCount++;
+        //-----------------------------------------------
         // Packing the corresponding angular velocities variables of OMRs formation:
         memset_fast(angularVelocities,0,sizeof(angularVelocities));                 // Initialize angularVelocities data chain.
         snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
@@ -526,8 +534,8 @@ __interrupt void scia_rx_isr(void){
     }
     // If streaming data is completely added to the char buffer of SCIA structure:
     if(SCIA.flag[1]){
-        // flagcommand_4 = true;                                                       // Start to check the time out state for SCIA receiving data.
-        // timeoutCount = 0;                                                           // Reset timeout counter.
+        flagcommand_4 = true;                                                       // Start to check the time out state for SCIA receiving data.
+        timeoutCount = 0;                                                           // Reset timeout counter.
         classify_charBuffer(&SCIA);                                                 // Classify data from assigned buffer to UART1 structure data matrix.
         init_charBuffer(&SCIA);                                                     // Initialize char-type data buffer associated to UART 1.
         if(!flagcommand_0){
