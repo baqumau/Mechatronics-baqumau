@@ -1603,7 +1603,7 @@ void computeCSVariables(Formation FMR){
             else angleConversion(FMR.CORc,angles_k);                                        // Compute angle conversion to absolute domain.
             //-----------------------------------------------
             FMR.c_k[2] = FMR.CORc.y_k[0];                                                   // Determines thc(k).
-            FMR.c_k[3] = sqrtf(subt1_k*subt1_k + subt2_k*subt2_k)/2.0f;                     // Determines dc(k):
+            FMR.c_k[3] = sqrt(subt1_k*subt1_k + subt2_k*subt2_k)/2.0f;                      // Determines dc(k):
             FMR.c_k[4] = FMR.q_k[2] - FMR.c_k[2];                                           // Determines psi1(k).
             FMR.c_k[5] = FMR.q_k[5] - FMR.c_k[2];                                           // Determines psi2(k).
             break;

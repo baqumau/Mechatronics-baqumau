@@ -486,7 +486,14 @@ __interrupt void cpu_timer2_isr(void){
         CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
     if(CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
-        //---------------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------
+        // Packing the corresponding angular velocities variables of OMRs formation:
+        memset_fast(angularVelocities,0,sizeof(angularVelocities));                 // Initialize angularVelocities data chain.
+        snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
+        // Packing the corresponding control signals variables of OMRs formation:
+        memset_fast(controlSignals,0,sizeof(controlSignals));                       // Initialize controlSignals data chain.
+        snprintf(controlSignals,sizeof(controlSignals),"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
+        //-----------------------------------------------
         // Packing and streaming the measurement variables of OMRs formation:
         memset_fast(measurements,0,bufferSize);                                     // Initialize measurements data chain.
         snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
@@ -565,12 +572,6 @@ __interrupt void scia_rx_isr(void){
                         memset_fast(FMR.ws_k.data[i],0,FMR.ws_k.bufferSize);        // Clear char-type string vector where angular velocities of OMRs' wheels will be saved.
                         ftoa(FMR.w_k[i],FMR.ws_k.data[i],3);                        // Saving same above angular velocities of OMRs formation, but in string-format.
                     }
-                    // Packing the corresponding angular velocities variables of OMRs formation:
-                    memset_fast(angularVelocities,0,sizeof(angularVelocities));     // Initialize angularVelocities data chain.
-                    snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
-                    // Packing the corresponding control signals variables of OMRs formation:
-                    memset_fast(controlSignals,0,sizeof(controlSignals));           // Initialize controlSignals data chain.
-                    snprintf(controlSignals,sizeof(controlSignals),"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
                     break;
                 }
                 case SMC_CS:{
@@ -597,12 +598,6 @@ __interrupt void scia_rx_isr(void){
                         memset_fast(FMR.ws_k.data[i],0,FMR.ws_k.bufferSize);        // Clear char-type string vector where angular velocities of OMRs' wheels will be saved.
                         ftoa(FMR.w_k[i],FMR.ws_k.data[i],3);                        // Saving same above angular velocities of OMRs formation, but in string-format.
                     }
-                    // Packing the corresponding angular velocities variables of OMRs formation:
-                    memset_fast(angularVelocities,0,sizeof(angularVelocities));     // Initialize angularVelocities data chain.
-                    snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
-                    // Packing the corresponding control signals variables of OMRs formation:
-                    memset_fast(controlSignals,0,sizeof(controlSignals));           // Initialize controlSignals data chain.
-                    snprintf(controlSignals,sizeof(controlSignals),"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
                     break;
                 }
             }
@@ -708,9 +703,6 @@ __interrupt void scib_rx_isr(void){
             ftoa(FMR.w_k[i+3*SCIB.identifier],FMR.ws_k.data[i+3*SCIB.identifier],3);
         }
         init_charBuffer(&SCIB);                                                     // Initialize dedicated char-type data buffer of SCIB.
-        // Packing the angular velocities corresponding variables of OMRs formation:
-        memset_fast(angularVelocities,0,sizeof(angularVelocities));                 // Initialize measurements data chain.
-        snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
     }
     // Initializing char-type data buffer associated to SCIB when control system is not running:
     else if(SCIB.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_charBuffer(&SCIB);
