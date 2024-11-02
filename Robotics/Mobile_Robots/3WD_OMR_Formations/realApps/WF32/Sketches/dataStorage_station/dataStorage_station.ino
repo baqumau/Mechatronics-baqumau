@@ -31,7 +31,7 @@ const unsigned int chipSelect_SD = chipSelect_SD_default;
 //---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
 const unsigned int bufferSize = 256;                                    // buffer length.
-const unsigned int varQty = 3*Robots_Qty + 1;                           // Quantity of state varaibles that must be saved.
+const unsigned int varQty = 6*Robots_Qty + 1;                           // Quantity of state varaibles that must be saved.
 char character_1;                                                       // Variable where received character from UART 1 is saved.
 char character_4;                                                       // Variable where received character from UART 4 is saved.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
@@ -127,7 +127,7 @@ void setup(){
   start_uart_1_module();                                                // Enable UART 1 module.
   start_uart_4_module();                                                // Enable UART 4 module.
   init_charBuffer(&UART4);                                              // Initialize char-type data buffer of UART 4.
-  for(i = 0; i < 3*Robots_Qty; i++){
+  for(i = 0; i < varQty; i++){
     initString(UART4.MAT3.data[0][i],UART4.MAT3.zSize);                 // Initialize string-type data set arranged in MAT3 within UART4 structure.
   }
   //-------------------------------------------------------------------------------------------------------------
@@ -168,7 +168,7 @@ void loop(){
   int i;                                                                // Declaration of i as index integer variable.
   if(UART4.identifier == 0 && flagcommand_0){
     flagcommand_0 = false;                                              // Reset flag command 0 to FALSE.
-    snprintf(measurements,bufferSize,"%s,%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5],UART4.MAT3.data[0][6]);
+    snprintf(measurements,bufferSize,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5],UART4.MAT3.data[0][6],UART4.MAT3.data[0][7],UART4.MAT3.data[0][8],UART4.MAT3.data[0][9],UART4.MAT3.data[0][10],UART4.MAT3.data[0][11],UART4.MAT3.data[0][12]);
     baqumau.println(measurements);                                      // Writes data in microSD.
     Serial.println(measurements);                                       // Print measured data through UART 1.
     initString(measurements,bufferSize);                                // Clear measurements buffer.
@@ -179,7 +179,7 @@ void loop(){
     baqumau.println("];");                                              // Writing on microSD.
     baqumau.close();                                                    // Closing the writing file.
     Serial.println("Streaming data was completed..!");                  // Print ending message via UART 1.
-    for(i = 0; i < 3*Robots_Qty; i++){
+    for(i = 0; i < varQty; i++){
       initString(UART4.MAT3.data[0][i],UART4.MAT3.zSize);               // Initialize string-type data set arranged in MAT3 within UART4 structure.
     }
     digitalWrite(PIN_LED3,LOW);                                         // Turn led 3 off for show finish of writing on microSD.

@@ -113,6 +113,10 @@ char *msg_4;                                                                    
 char *measurements;                                                                 // Variable to save a char data chain that contains the measured signals.
 char *controlSignals;                                                               // Variable to save a char data chain that contains the computed control signals.
 char *angularVelocities;                                                            // Variable to save a char data chain that contains the angular velocities of robots' wheels.
+char *disturbances;                                                                 // Variable to save a char data chain that contains the respective disturbances of OMRs.
+char *rsPose;                                                                       // Variable to save a char data chain that contains the robot space pose of OMRs.
+char *csPose;                                                                       // Variable to save a char data chain that contains the cluster space pose of OMRs.
+char *trackingErrors;                                                               // Variable to save a char data chain that contains the tracking errors for the reference trajectories.
 //-----------------------------------------------
 enum Control_System consys = ADRC_RS;                                               // Declare the control system type (ADRC_RS or SMC_CS at the moment).
 enum Reference_Type reftype = STATIC_01;                                            // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
@@ -283,8 +287,8 @@ void main(void){
 
     // Preallocating memory for used *variables:
     measurements = (char *)malloc(bufferSize * sizeof(char));                       // Preallocate memory for measurement data set.
-    controlSignals = (char *)malloc(bufferSize/4 * sizeof(char));                   // Preallocate memory for control signals data set.
-    angularVelocities = (char *)malloc(bufferSize/4 * sizeof(char));                // Preallocate memory for angular velocities data set.
+    controlSignals = (char *)malloc(bufferSize/2 * sizeof(char));                   // Preallocate memory for control signals data set.
+    angularVelocities = (char *)malloc(bufferSize/2 * sizeof(char));                // Preallocate memory for angular velocities data set.
     errors_k = (float *)malloc(3*Robots_Qty * sizeof(float));                       // Preallocate memory to save pose error variables in a floating-point values vector.
 
     // Interrupts that are used in this project are re-mapped to
@@ -492,11 +496,11 @@ __interrupt void cpu_timer2_isr(void){
         snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
         // Packing the corresponding control signals variables of OMRs formation:
         memset_fast(controlSignals,0,sizeof(controlSignals));                       // Initialize controlSignals data chain.
-        snprintf(controlSignals,sizeof(controlSignals),"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
+        snprintf(controlSignals,sizeof(controlSignals),"%s,%s,%s,%s,%s,%s",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
         //-----------------------------------------------
         // Packing and streaming the measurement variables of OMRs formation:
         memset_fast(measurements,0,bufferSize);                                     // Initialize measurements data chain.
-        snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
+        snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],FMR.cs_k.data[0],FMR.cs_k.data[1],FMR.cs_k.data[2],FMR.cs_k.data[3],FMR.cs_k.data[4],FMR.cs_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
         scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
     }
     else if(CpuTimer1.InterruptCount > final_iteration && flagcommand_0){
