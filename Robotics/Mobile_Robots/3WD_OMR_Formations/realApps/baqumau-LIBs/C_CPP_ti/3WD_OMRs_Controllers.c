@@ -1545,10 +1545,10 @@ Formation createFormation(int qty){
         FMR.params[10] = 1/FMR.params[6];                                                   // Precompute value in {4,4} position of D inverse matrix.
         FMR.params[11] = 1/FMR.params[7];                                                   // Precompute value in {6,6} position of D inverse matrix.
         // Computing another operations:
-        FMR.params[12] = r_1/(2000.0f*l_1*(sin(delta_1) + 1.0f));                           // Precompute value in {1,3} position of inverse B(k) matrix.
-        FMR.params[13] = r_2/(2000.0f*l_2*(sin(delta_2) + 1.0f));                           // Precompute value in {4,6} position of inverse B(k) matrix.
-        FMR.params[14] = r_1/(1000.0f*(sin(2.0f*delta_1) + 2.0f*cos(delta_1)));             // Precompute auxiliar value 1 of inverse B(k) matrix.
-        FMR.params[15] = r_2/(1000.0f*(sin(2.0f*delta_2) + 2.0f*cos(delta_2)));             // Precompute auxiliar value 1 of inverse B(k) matrix.
+        FMR.params[12] = r_1/(2000.0f*l_1*(sinf(delta_1) + 1.0f));                          // Precompute value in {1,3} position of inverse B(k) matrix.
+        FMR.params[13] = r_2/(2000.0f*l_2*(sinf(delta_2) + 1.0f));                          // Precompute value in {4,6} position of inverse B(k) matrix.
+        FMR.params[14] = r_1/(1000.0f*(sinf(2.0f*delta_1) + 2.0f*cosf(delta_1)));           // Precompute auxiliar value 1 of inverse B(k) matrix.
+        FMR.params[15] = r_2/(1000.0f*(sinf(2.0f*delta_2) + 2.0f*cosf(delta_2)));           // Precompute auxiliar value 1 of inverse B(k) matrix.
         FMR.params[16] = 1000.0f*l_1/r_1;                                                   // Precompute value in {3,1} position of B(k) matrix.
         FMR.params[17] = 1000.0f*l_2/r_2;                                                   // Precompute value in {3,1} position of B(k) matrix.
         FMR.params[18] = 1000.0f*FMR.params[8]/r_1;                                         // Precompute division 1.
@@ -1563,10 +1563,10 @@ Formation createFormation(int qty){
         FMR.params[27] = 2.0f*l_2*FMR.params[13];                                           // Precompute multiplication 8.
         FMR.params[28] = FMR.params[4]*FMR.params[26];                                      // Precompute multiplication 9.
         FMR.params[29] = FMR.params[6]*FMR.params[27];                                      // Precompute multiplication 10.
-        FMR.params[30] = 2.0f*FMR.params[21]*sin(delta_1);                                  // Precompute multiplication 11.
-        FMR.params[31] = 2.0f*FMR.params[23]*sin(delta_2);                                  // Precompute multiplication 12.
-        FMR.params[32] = FMR.params[5]*FMR.params[14]*cos(delta_1)/l_1;                     // Precompute multiplication 13.
-        FMR.params[33] = FMR.params[7]*FMR.params[15]*cos(delta_2)/l_2;                     // Precompute multiplication 14.
+        FMR.params[30] = 2.0f*FMR.params[21]*sinf(delta_1);                                 // Precompute multiplication 11.
+        FMR.params[31] = 2.0f*FMR.params[23]*sinf(delta_2);                                 // Precompute multiplication 12.
+        FMR.params[32] = FMR.params[5]*FMR.params[14]*cosf(delta_1)/l_1;                    // Precompute multiplication 13.
+        FMR.params[33] = FMR.params[7]*FMR.params[15]*cosf(delta_2)/l_2;                    // Precompute multiplication 14.
         FMR.params[34] = FMR.params[4]*FMR.params[6];                                       // Precompute multiplication 15.
         FMR.params[35] = 2.0f*FMR.params[4];                                                // Precompute multiplication 16.
         FMR.params[36] = 2.0f*FMR.params[6];                                                // Precompute multiplication 17.
@@ -1596,14 +1596,14 @@ void computeCSVariables(Formation FMR){
             float subt1_k = FMR.q_k[0] - FMR.q_k[3];                                        // Precompute subtraction 1.
             float subt2_k = FMR.q_k[1] - FMR.q_k[4];                                        // Precompute subtraction 2.
             //-----------------------------------------------
-            float angles_k[1] = {atan2(subt1_k,subt2_k)};                                   // Compute partial cluster's orientation.
+            float angles_k[1] = {atan2f(subt1_k,subt2_k)};                                  // Compute partial cluster's orientation.
             if(FMR.CORc.flag[0] == false){
                 initAngleConverter(FMR.CORc,angles_k);                                      // Initialize angle conversion to absolute domain.
             }
             else angleConversion(FMR.CORc,angles_k);                                        // Compute angle conversion to absolute domain.
             //-----------------------------------------------
             FMR.c_k[2] = FMR.CORc.y_k[0];                                                   // Determines thc(k).
-            FMR.c_k[3] = sqrt(subt1_k*subt1_k + subt2_k*subt2_k)/2.0f;                      // Determines dc(k):
+            FMR.c_k[3] = sqrtf(subt1_k*subt1_k + subt2_k*subt2_k)/2.0f;                     // Determines dc(k):
             FMR.c_k[4] = FMR.q_k[2] - FMR.c_k[2];                                           // Determines psi1(k).
             FMR.c_k[5] = FMR.q_k[5] - FMR.c_k[2];                                           // Determines psi2(k).
             break;

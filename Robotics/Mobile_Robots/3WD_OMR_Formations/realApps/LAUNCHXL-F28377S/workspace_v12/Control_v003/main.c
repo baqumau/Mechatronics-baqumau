@@ -275,6 +275,8 @@ void main(void){
     msg_1 = ":9\r\n\0";                                                             // Message to ask to MATLAB for data.
     msg_2 = ":10\r\n\0";                                                            // Message to stop streaming data with MATLAB.
     msg_3 = ":1,0.0;\n";                                                            // Message to stop the saving data process.
+    msg_4 = ":0,0.0,0.0,0.0,0.0,0.0,0.0;\n";                                        // Message to stop movement of the omni-wheels.
+
     // Initializing SCIA:
     scia_fifo_init();                                                               // Initialize the SCIA FIFO.
     scia_init();                                                                    // Initialize the SCIA.
@@ -373,6 +375,7 @@ void main(void){
         if(flagcommand_3){
             GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                   // Turn LED GPIO 1 to OFF.
             GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                   // Turn LED GPIO 1 to OFF.
+            scib_msg(msg_4);                                                        // Send message to stop omni-wheels in the formation.
             //-----------------------------------------------
             IER &= ~M_INT1;                                                         // Disable CPU timer 0 interrupt.
             IER &= ~M_INT13;                                                        // Disable CPU timer 1 interrupt.
@@ -394,10 +397,6 @@ void main(void){
             }
             flagcommand_3 = false;                                                  // Reset flag command 3.
         }
-        // Time out protocol:
-        // if(flagcommand_4) flagcommand_4 = false;                                    // Reset flag command 4.
-        // else if(flagcommand_0) timeoutCount++;                                      // Increasing timeout counter.
-        // if(timeoutCount >= 20) final_iteration = CpuTimer1.InterruptCount;          // Final iteration value is changed to the current one.
         else NOP;                                                                   // No Operation (burn a cycle).
     }
 }
