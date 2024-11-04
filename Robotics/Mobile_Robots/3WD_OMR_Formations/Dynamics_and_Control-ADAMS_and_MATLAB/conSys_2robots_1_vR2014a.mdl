@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.458"
+    ComputedModelVersion    "1.459"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, 0.0, 1382.0, 744.0]
+      Location		      [-8.0, -8.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Oct 27 21:45:09 2024"
+  LastModifiedDate	  "Mon Nov 04 01:36:30 2024"
   RTWModifiedTimeStamp	  651966293
-  ModelVersionFormat	  "1.%<AutoIncrement:458>"
+  ModelVersionFormat	  "1.%<AutoIncrement:459>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1134,7 +1134,7 @@ Model {
   }
   System {
     Name		    "conSys_2robots_1_vR2014a"
-    Location		    [-8, 0, 1374, 744]
+    Location		    [-8, -8, 1374, 736]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -13777,6 +13777,7 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
+		Visible			"off"
 	      }
 	      Object {
 		$ObjectID		37
@@ -18431,7 +18432,7 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-5000"
+	  YMin			  "-1000"
 	  YMax			  "1000"
 	  SaveName		  "ScopeData77"
 	  LimitDataPoints	  off
@@ -18479,7 +18480,7 @@ Model {
 	  BlockMirror		  on
 	  ShowName		  off
 	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
+	  Location		  [1, 49, 1367, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "xonly"
@@ -18498,8 +18499,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-10000"
-	  YMax			  "1000"
+	  YMin			  "-2500"
+	  YMax			  "2500"
 	  SaveName		  "ScopeData82"
 	  LimitDataPoints	  off
 	}
@@ -18974,7 +18975,7 @@ Model {
 	  BlockMirror		  on
 	  ShowName		  off
 	  Floating		  off
-	  Location		  [9, 56, 464, 301]
+	  Location		  [1, 49, 1367, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "xonly"
@@ -18993,8 +18994,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-4000"
-	  YMax			  "1000"
+	  YMin			  "-2500"
+	  YMax			  "2500"
 	  SaveName		  "ScopeData40"
 	  LimitDataPoints	  off
 	}
