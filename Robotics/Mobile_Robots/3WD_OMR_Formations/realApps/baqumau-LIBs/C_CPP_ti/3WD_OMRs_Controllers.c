@@ -392,12 +392,12 @@ void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_
                 float w23_k = delta_2 + RSO.x1_k[5];                                        // Precompute angular addition 2 in W2(k).
                 float w24_k = delta_2 - RSO.x1_k[5];                                        // Precompute angular subtraction 2 in W2(k).
                 float W2_k[3*Robots_Qty][3*Robots_Qty] = {
-                    {-sin(w21_k)*fmr_params[18], -sin(w22_k)*fmr_params[18], cos(RSO.x1_k[2])*fmr_params[18],                       0.0f,                       0.0f,                            0.0f},
-                    { cos(w21_k)*fmr_params[18], -cos(w22_k)*fmr_params[18], sin(RSO.x1_k[2])*fmr_params[18],                       0.0f,                       0.0f,                            0.0f},
-                    {            fmr_params[24],             fmr_params[24],                  fmr_params[24],                       0.0f,                       0.0f,                            0.0f},
-                    {                      0.0f,                       0.0f,                            0.0f, -sin(w23_k)*fmr_params[19], -sin(w24_k)*fmr_params[19], cos(RSO.x1_k[5])*fmr_params[19]},
-                    {                      0.0f,                       0.0f,                            0.0f,  cos(w23_k)*fmr_params[19], -cos(w24_k)*fmr_params[19], sin(RSO.x1_k[5])*fmr_params[19]},
-                    {                      0.0f,                       0.0f,                            0.0f,             fmr_params[25],             fmr_params[25],                  fmr_params[25]}
+                    {-sinf(w21_k)*fmr_params[18], -sinf(w22_k)*fmr_params[18], cosf(RSO.x1_k[2])*fmr_params[18],                        0.0f,                        0.0f,                             0.0f},
+                    { cosf(w21_k)*fmr_params[18], -cosf(w22_k)*fmr_params[18], sinf(RSO.x1_k[2])*fmr_params[18],                        0.0f,                        0.0f,                             0.0f},
+                    {             fmr_params[24],              fmr_params[24],                   fmr_params[24],                        0.0f,                        0.0f,                             0.0f},
+                    {                       0.0f,                        0.0f,                             0.0f, -sinf(w23_k)*fmr_params[19], -sinf(w24_k)*fmr_params[19], cosf(RSO.x1_k[5])*fmr_params[19]},
+                    {                       0.0f,                        0.0f,                             0.0f,  cosf(w23_k)*fmr_params[19], -cosf(w24_k)*fmr_params[19], sinf(RSO.x1_k[5])*fmr_params[19]},
+                    {                       0.0f,                        0.0f,                             0.0f,              fmr_params[25],              fmr_params[25],                   fmr_params[25]}
                 };
                 //-----------------------------------------------
                 // Updating vector fields F(k) and G(k), together with variables x1(k + 1), x2(k + 1) and x3(k + 1):
@@ -600,22 +600,22 @@ void computeADRC(ADRC_Controller ADRC, float ref_y_k[], float rso_y_k[], float g
                 float w102_k = delta_1 - rso_y_k[2];                                        // Precompute angular subtraction 1 in W1(k).
                 float w103_k = delta_2 + rso_y_k[5];                                        // Precompute angular addition 2 in W1(k).
                 float w104_k = delta_2 - rso_y_k[5];                                        // Precompute angular subtraction 2 in W1(k).
-                float w105_k = sin(rso_y_k[2]);                                             // Precompute sin(ph1_k) in W1(k).
-                float w106_k = cos(rso_y_k[2]);                                             // Precompute cos(ph1_k) in W1(k).
-                float w107_k = sin(rso_y_k[5]);                                             // Precompute sin(ph2_k) in W1(k).
-                float w108_k = cos(rso_y_k[5]);                                             // Precompute cos(ph2_k) in W1(k).
+                float w105_k = sinf(rso_y_k[2]);                                            // Precompute sin(ph1_k) in W1(k).
+                float w106_k = cosf(rso_y_k[2]);                                            // Precompute cos(ph1_k) in W1(k).
+                float w107_k = sinf(rso_y_k[5]);                                            // Precompute sin(ph2_k) in W1(k).
+                float w108_k = cosf(rso_y_k[5]);                                            // Precompute cos(ph2_k) in W1(k).
                 float w109_k = 2.0f*H12_k*l_1*fmr_params[12];                               // Precompute multiplication 1 in W1(k).
                 float w110_k = 2.0f*H45_k*l_2*fmr_params[13];                               // Precompute multiplication 2 in W1(k).
                 float w111_k = fmr_params[14]*H12_k;                                        // Precompute multiplication 3 in W1(k).
                 float w112_k = fmr_params[15]*H45_k;                                        // Precompute multiplication 4 in W1(k).
-                float w113_k = cos(w101_k) - w105_k;                                        // Precompute subtraction 1 in W1(k).
-                float w114_k = sin(w101_k) + w106_k;                                        // Precompute addition 1 in W1(k).
-                float w115_k = cos(w102_k) + w105_k;                                        // Precompute addition 2 in W1(k).
-                float w116_k = sin(w102_k) + w106_k;                                        // Precompute addition 3 in W1(k).
-                float w117_k = cos(w103_k) - w107_k;                                        // Precompute subtraction 2 in W1(k).
-                float w118_k = sin(w103_k) + w108_k;                                        // Precompute addition 4 in W1(k).
-                float w119_k = cos(w104_k) + w107_k;                                        // Precompute addition 5 in W1(k).
-                float w120_k = sin(w104_k) + w108_k;                                        // Precompute addition 6 in W1(k).
+                float w113_k = cosf(w101_k) - w105_k;                                       // Precompute subtraction 1 in W1(k).
+                float w114_k = sinf(w101_k) + w106_k;                                       // Precompute addition 1 in W1(k).
+                float w115_k = cosf(w102_k) + w105_k;                                       // Precompute addition 2 in W1(k).
+                float w116_k = sinf(w102_k) + w106_k;                                       // Precompute addition 3 in W1(k).
+                float w117_k = cosf(w103_k) - w107_k;                                       // Precompute subtraction 2 in W1(k).
+                float w118_k = sinf(w103_k) + w108_k;                                       // Precompute addition 4 in W1(k).
+                float w119_k = cosf(w104_k) + w107_k;                                       // Precompute addition 5 in W1(k).
+                float w120_k = sinf(w104_k) + w108_k;                                       // Precompute addition 6 in W1(k).
                 float W1_k[3*Robots_Qty][3*Robots_Qty] = {
                     {-w111_k*w116_k, -w111_k*w115_k, 0.0f,           0.0f,           0.0f, 0.0f},
                     { w111_k*w114_k, -w111_k*w113_k, 0.0f,           0.0f,           0.0f, 0.0f},
@@ -739,7 +739,7 @@ void init_CS_Observer01(CS_Observer CSO, float z_0[]){
 // Cluster space estimation function for CS observer 01:
 void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]){
     int i, j, m = Robots_Qty-1, n = 3*Robots_Qty;                                           // Declaration of i, j, m and n as integer variables.
-    // Getting output of integrator CSO.INT:
+    // Getting output of CSO.INT integration structure:
     for(i = 0; i < m; i++){
         CSO.z1_k[i] = CSO.INT.y_k[i];                                                       // Updating data for z1(k) within CSO struct.
         CSO.z2_k[i] = CSO.INT.y_k[i+m];                                                     // Updating data for z2(k) within CSO struct.
@@ -758,8 +758,8 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                 float w13_k = (w11_k - w12_k)/2.0f;                                         // Precompute operation 1 in W1(k).
                 // Computing W1_k as the fourth row of -J(c)*inv(D)*H(c)*inv(J(c)) + d(J(c))/dt*inv(J(c)):
                 float W1_k[1][3*Robots_Qty] = {
-                    {                                  cos(fmr_c_k[2])*w13_k,
-                                                      -sin(fmr_c_k[2])*w13_k,
+                    {                                 cosf(fmr_c_k[2])*w13_k,
+                                                     -sinf(fmr_c_k[2])*w13_k,
                      (fmr_c_k[3]*(w11_k + w12_k + 2.0f*CSO.DIF.y_k[2]))/2.0f,
                                                                         0.0f,
                                                                         0.0f,
@@ -779,12 +779,12 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                 float w28_k = w20b_k + fmr_c_k[2];                                          // Precompute angular addition 4 in W2(k).
                 // Computing W2_k as the fourth row of 1000.0*J(c)*inv(D)*B(c):
                 float W2_k[1][3*Robots_Qty] = {
-                    { (w25_k*cos(fmr_c_k[2] + w21_k)),
-                     -(w25_k*cos(fmr_c_k[2] - w22_k)),
-                                   (w25_k*sin(w27_k)),
-                     -(w26_k*cos(fmr_c_k[2] + w23_k)),
-                      (w26_k*cos(fmr_c_k[2] - w24_k)),
-                                  -(w26_k*sin(w28_k))
+                    { (w25_k*cosf(fmr_c_k[2] + w21_k)),
+                     -(w25_k*cosf(fmr_c_k[2] - w22_k)),
+                                   (w25_k*sinf(w27_k)),
+                     -(w26_k*cosf(fmr_c_k[2] + w23_k)),
+                      (w26_k*cosf(fmr_c_k[2] - w24_k)),
+                                  -(w26_k*sinf(w28_k))
                     }
                 };
                 //-----------------------------------------------
@@ -1085,10 +1085,10 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                 float w104_k = w101_k - delta_1;                                            // Precompute angular subtraction 1 in W1(k).
                 float w105_k = w102_k + delta_2;                                            // Precompute angular addition 2 in W1(k).
                 float w106_k = w102_k - delta_2;                                            // Precompute angular subtraction 2 in W1(k).
-                float w107_k = sin(w101_k);                                                 // Precompute sin(ph1_k) in W1(k).
-                float w108_k = cos(w101_k);                                                 // Precompute cos(ph1_k) in W1(k).
-                float w109_k = sin(w102_k);                                                 // Precompute sin(ph2_k) in W1(k).
-                float w110_k = cos(w102_k);                                                 // Precompute cos(ph2_k) in W1(k).
+                float w107_k = sinf(w101_k);                                                 // Precompute sin(ph1_k) in W1(k).
+                float w108_k = cosf(w101_k);                                                 // Precompute cos(ph1_k) in W1(k).
+                float w109_k = sinf(w102_k);                                                 // Precompute sin(ph2_k) in W1(k).
+                float w110_k = cosf(w102_k);                                                 // Precompute cos(ph2_k) in W1(k).
                 float w111_k = fmr_params[26]*H12_k;                                        // Precompute multiplication 2 in W1(k).
                 float w112_k = fmr_params[27]*H45_k;                                        // Precompute multiplication 4 in W1(k).
                 float w113_k = fmr_params[14]*H12_k;                                        // Precompute multiplication 5 in W1(k).
@@ -1099,18 +1099,18 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                 float w118_k = w115_k - delta_1;                                            // Precompute angular addition 6 in W1(k).
                 float w119_k = w116_k + delta_2;                                            // Precompute angular addition 7 in W1(k).
                 float w120_k = w116_k - delta_2;                                            // Precompute angular addition 8 in W1(k).
-                float w121_k = sin(w115_k);                                                 // Precompute sin(w115(k)) in W1(k).
-                float w122_k = cos(w115_k);                                                 // Precompute cos(w115(k)) in W1(k).
-                float w123_k = sin(w117_k);                                                 // Precompute sin(w117(k)) in W1(k).
-                float w124_k = cos(w117_k);                                                 // Precompute cos(w117(k)) in W1(k).
-                float w125_k = sin(w118_k);                                                 // Precompute sin(w118(k)) in W1(k).
-                float w126_k = cos(w118_k);                                                 // Precompute cos(w118(k)) in W1(k).
-                float w127_k = sin(w116_k);                                                 // Precompute sin(w116(k)) in W1(k).
-                float w128_k = cos(w116_k);                                                 // Precompute cos(w116(k)) in W1(k).
-                float w129_k = sin(w119_k);                                                 // Precompute sin(w119(k)) in W1(k).
-                float w130_k = cos(w119_k);                                                 // Precompute cos(w119(k)) in W1(k).
-                float w131_k = sin(w120_k);                                                 // Precompute sin(w120(k)) in W1(k).
-                float w132_k = cos(w120_k);                                                 // Precompute cos(w120(k)) in W1(k).
+                float w121_k = sinf(w115_k);                                                // Precompute sin(w115(k)) in W1(k).
+                float w122_k = cosf(w115_k);                                                // Precompute cos(w115(k)) in W1(k).
+                float w123_k = sinf(w117_k);                                                // Precompute sin(w117(k)) in W1(k).
+                float w124_k = cosf(w117_k);                                                // Precompute cos(w117(k)) in W1(k).
+                float w125_k = sinf(w118_k);                                                // Precompute sin(w118(k)) in W1(k).
+                float w126_k = cosf(w118_k);                                                // Precompute cos(w118(k)) in W1(k).
+                float w127_k = sinf(w116_k);                                                // Precompute sin(w116(k)) in W1(k).
+                float w128_k = cosf(w116_k);                                                // Precompute cos(w116(k)) in W1(k).
+                float w129_k = sinf(w119_k);                                                // Precompute sin(w119(k)) in W1(k).
+                float w130_k = cosf(w119_k);                                                // Precompute cos(w119(k)) in W1(k).
+                float w131_k = sinf(w120_k);                                                // Precompute sin(w120(k)) in W1(k).
+                float w132_k = cosf(w120_k);                                                // Precompute cos(w120(k)) in W1(k).
                 float w133_k = w121_k + w126_k;                                             // Precompute addition 1 in W1(k).
                 float w134_k = w121_k - w124_k;                                             // Precompute subtraction 1 in W1(k).
                 float w135_k = w122_k + w123_k;                                             // Precompute addition 2 in W1(k).
@@ -1130,14 +1130,14 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                 float w153_k = w149_k + w141_k;                                             // Precompute addition 6 in W1(k).
                 float w154_k = w143_k + w113_k;                                             // Precompute addition 7 in W1(k).
                 float w155_k = w147_k + w114_k;                                             // Precompute addition 8 in W1(k).
-                float w156_k = cos(w103_k);                                                 // Precompute cos(w103(k)) in W1(k).
-                float w157_k = sin(w103_k);                                                 // Precompute sin(w103(k)) in W1(k).
-                float w158_k = cos(w104_k);                                                 // Precompute cos(w104(k)) in W1(k).
-                float w159_k = sin(w104_k);                                                 // Precompute sin(w104(k)) in W1(k).
-                float w160_k = cos(w105_k);                                                 // Precompute cos(w105(k)) in W1(k).
-                float w161_k = sin(w105_k);                                                 // Precompute sin(w105(k)) in W1(k).
-                float w162_k = cos(w106_k);                                                 // Precompute cos(w106(k)) in W1(k).
-                float w163_k = sin(w106_k);                                                 // Precompute sin(w106(k)) in W1(k).
+                float w156_k = cosf(w103_k);                                                // Precompute cos(w103(k)) in W1(k).
+                float w157_k = sinf(w103_k);                                                // Precompute sin(w103(k)) in W1(k).
+                float w158_k = cosf(w104_k);                                                // Precompute cos(w104(k)) in W1(k).
+                float w159_k = sinf(w104_k);                                                // Precompute sin(w104(k)) in W1(k).
+                float w160_k = cosf(w105_k);                                                // Precompute cos(w105(k)) in W1(k).
+                float w161_k = sinf(w105_k);                                                // Precompute sin(w105(k)) in W1(k).
+                float w162_k = cosf(w106_k);                                                // Precompute cos(w106(k)) in W1(k).
+                float w163_k = sinf(w106_k);                                                // Precompute sin(w106(k)) in W1(k).
                 float w164_k = w156_k - w107_k;                                             // Precompute subtraction 3 in W1(k).
                 float w165_k = w157_k + w108_k;                                             // Precompute addition 9 in W1(k).
                 float w166_k = w158_k + w107_k;                                             // Precompute addition 10 in W1(k).
@@ -1178,16 +1178,16 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                 float w308_k = w307_k*fmr_params[4];                                        // Precompute multiplication 3 in W3(k).
                 float w309_k = w307_k*fmr_params[6];                                        // Precompute multiplication 4 in W3(k).
                 float w310_k = 2.0f*fmr_c_k[2];                                             // Precompute multiplication 5 in W3(k).
-                float w311_k = sin(w310_k);                                                 // Precompute sin(...) 1 in W3(k).
-                float w312_k = cos(w310_k);                                                 // Precompute cos(...) 1 in W3(k).
+                float w311_k = sinf(w310_k);                                                // Precompute sin(...) 1 in W3(k).
+                float w312_k = cosf(w310_k);                                                // Precompute cos(...) 1 in W3(k).
                 float w313_k = 2.0f*fmr_c_k[3];                                             // Precompute multiplication 6 in W3(k).
-                float w314_k = sin(fmr_c_k[2]);                                             // Precompute sin(thc(0)) in W3(k).
-                float w315_k = cos(fmr_c_k[2]);                                             // Precompute cos(thc(0)) in W3(k).
+                float w314_k = sinf(fmr_c_k[2]);                                            // Precompute sin(thc(0)) in W3(k).
+                float w315_k = cosf(fmr_c_k[2]);                                            // Precompute cos(thc(0)) in W3(k).
                 float w316_k = w314_k + w315_k;                                             // Precompute addition 5 in W3(k).
                 float w317_k = w315_k - w314_k;                                             // Precompute addition 6 in W3(k).
                 float w318_k = M_SQRT2*SMC.Delta[1];                                        // Precompute multiplication 7 in W3(k).
-                float w319_k = w318_k*sin(w303_k);                                          // Precompute multiplication 8 in W3(k).
-                float w320_k = w318_k*cos(w303_k);                                          // Precompute multiplication 9 in W3(k).
+                float w319_k = w318_k*sinf(w303_k);                                         // Precompute multiplication 8 in W3(k).
+                float w320_k = w318_k*cosf(w303_k);                                         // Precompute multiplication 9 in W3(k).
                 float w321_k = fmr_params[34]*w307_k;                                       // Precompute multiplication 10 in W3(k).
                 float w322_k = w314_k*fmr_params[40];                                       // Precompute multiplication 11 in W3(k).
                 float w323_k = w315_k*fmr_params[40];                                       // Precompute multiplication 12 in W3(k).
