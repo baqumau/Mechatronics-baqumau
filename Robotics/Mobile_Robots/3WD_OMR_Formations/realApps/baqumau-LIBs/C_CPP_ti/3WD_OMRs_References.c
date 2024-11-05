@@ -75,8 +75,8 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
     // Initial conditions X_0 of desired robot pose trajectories:
     switch(Robots_Qty){
         case 2:{
-            float SC2_0 = sin(REF.Z_0[2]);
-            float CC2_0 = cos(REF.Z_0[2]);
+            float SC2_0 = sinf(REF.Z_0[2]);
+            float CC2_0 = cosf(REF.Z_0[2]);
             float OP1_0 = REF.Z_0[3]*SC2_0;
             float OP2_0 = REF.Z_0[3]*CC2_0;
             float OP3_0 = REF.Z_0[9]*SC2_0;

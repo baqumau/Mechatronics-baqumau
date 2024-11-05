@@ -10,12 +10,12 @@
 //---------------------------------------------------------------------------------------------------------------
 // Function to round a floating-point number to three decimal places:
 float roundToThreeDecimals(float num){
-    return round(num*1000.0f)/1000.0f;                                                      // Return a fixed-point number with three decimals.
+    return roundf(num*1000.0f)/1000.0f;                                                     // Return a fixed-point number with three decimals.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Function to round a floating-point number to four decimal places:
 float roundToFourDecimals(float num){
-    return round(num*10000.0f)/10000.0f;                                                    // Return a fixed-point number with four decimals.
+    return roundf(num*10000.0f)/10000.0f;                                                   // Return a fixed-point number with four decimals.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Function to saturate a signal between predefined minimum and maximum values:
@@ -161,51 +161,51 @@ void Integration(Integrator INT, float input[]){
     // Execute integration algorithm:
     if(INT.flag[0]){
         for(i = 0; i < INT.s_in; i++){
-            INT.x1_k[i] = INT.x1_kp1[i];                                                    // Updates the delayed input signal u(k - 1) as x1(k) for integrator INT.
-            INT.x1_kp1[i] = input[i];                                                       // Get input signal u(k) as x1(k + 1), for integrator INT.
-            INT.x2_k[i] = INT.x2_kp1[i];                                                    // Updates the delayed state x2(k), corresponding to output of integrator INT.
+            INT.x1_k[i] = INT.x1_kp1[i];                                                    // Updates the delayed input signal u(k - 1) as x1(k) for INT integration structure.
+            INT.x1_kp1[i] = input[i];                                                       // Get input signal u(k) as x1(k + 1), for INT integration structure.
+            INT.x2_k[i] = INT.x2_kp1[i];                                                    // Updates the delayed state x2(k), corresponding to output of INT integration structure.
             INT.x2_kp1[i] = (INT.Ts/2.0f)*(INT.x1_kp1[i] + INT.x1_k[i]) + INT.x2_k[i];      // Integration operator as x2(k + 1).
-            // Updating integrator output y(k):
-            INT.y_k[i] = INT.gain*INT.x2_k[i];                                              // Determines the output of integrator INT.
+            // Updating integration output y(k):
+            INT.y_k[i] = INT.gain*INT.x2_k[i];                                              // Determines the output of INT integration structure.
         }
     }
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Creating a simple differentiator structure:
+// Creating a simple differentiation structure:
 simpleDifferentiator createSimpleDifferentiator(int inputSize, float sampleTime, float gain){
-    // Configuring the members of the differentiator structure:
-    simpleDifferentiator SDIF;                                                              // Creates differentiator struct.
-    SDIF.s_in = inputSize;                                                                  // Assign value of inputSize to the member s_in of the struct SDIF.
-    SDIF.s_out = inputSize;                                                                 // Assign value of outputSize to the member s_out of the struct SDIF.
-    SDIF.s_state = 2*inputSize;                                                             // Assign value of statetSize to the member s_state of the struct SDIF.
-    SDIF.Ts = sampleTime;                                                                   // Assign value of sampleTime to the member TS of the struct SDIF.
-    SDIF.gain = gain;                                                                       // Assign a gain value to the differentiator.
+    // Configuring the members of the differentiation structure:
+    simpleDifferentiator SDIF;                                                              // Creates differentiation structure.
+    SDIF.s_in = inputSize;                                                                  // Assign value of inputSize to the member s_in of the SDIF structure.
+    SDIF.s_out = inputSize;                                                                 // Assign value of outputSize to the member s_out of the SDIF structure.
+    SDIF.s_state = 2*inputSize;                                                             // Assign value of statetSize to the member s_state of the SDIF structure.
+    SDIF.Ts = sampleTime;                                                                   // Assign value of sampleTime to the member TS of the SDIF structure.
+    SDIF.gain = gain;                                                                       // Assign a gain value to this differentiation structure.
     SDIF.X_0 = (float *)malloc(2*inputSize * sizeof(float));                                // Allocate memory for the initial state vector x(0) = [x1(0) x2(0)]'.
     SDIF.x1_k = (float *)malloc(inputSize * sizeof(float));                                 // Allocate memory for the input vector u(k) = x1(k).
     SDIF.x1_kp1 = (float *)malloc(inputSize * sizeof(float));                               // Allocate memory for the input vector u(k + 1) = x1(k + 1).
     SDIF.x2_k = (float *)malloc(inputSize * sizeof(float));                                 // Allocate memory for the state vector x2(k).
     SDIF.x2_kp1 = (float *)malloc(inputSize * sizeof(float));                               // Allocate memory for the state vector x2(k + 1).
     SDIF.y_k = (float *)malloc(inputSize * sizeof(float));                                  // Allocate memory for the output vector y(k).
-    SDIF.flag = (bool *)malloc(sizeof(bool));                                               // Allocate memory for flag of the struct defined as SDIF (disable or enable differentiator).
+    SDIF.flag = (bool *)malloc(sizeof(bool));                                               // Allocate memory for flag of the structure defined as SDIF (disable or enable differentiator).
     SDIF.flag[0] = false;                                                                   // Setting SDIF flag to false.
     return SDIF;
 }
 //---------------------------------------------------------------------------------------------------------------
-// Initialization function for simple differentiator:
+// Initialization function for simple differentiation:
 void initSimpleDifferentiator(simpleDifferentiator SDIF, float x_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
     for(i = 0; i < SDIF.s_state; i++){
-        SDIF.X_0[i] = x_0[i];                                                               // Saving initial conditions data for x(0) within SDIF struct.
+        SDIF.X_0[i] = x_0[i];                                                               // Saving initial conditions data for x(0) within SDIF structure.
     }
     for(i = 0; i < SDIF.s_in; i++){
-        SDIF.x1_k[i] = x_0[i];                                                              // Saving initial conditions data for delayed input signal u(k) within SDIF struct as x1(k) = x1(0).
-        SDIF.x1_kp1[i] = SDIF.Ts*x_0[i+SDIF.s_in] + x_0[i];                                 // Saving prediction of initial input signal u(k + 1) within SDIF struct as x1(k + 1).
-        SDIF.x2_k[i] = x_0[i+SDIF.s_in];                                                    // Saving initial differentiation state within SDIF struct as x2(k) = x2(0).
-        // Computing the differentiator operator as x2(k + 1).
+        SDIF.x1_k[i] = x_0[i];                                                              // Saving initial conditions data for delayed input signal u(k) within SDIF structure as x1(k) = x1(0).
+        SDIF.x1_kp1[i] = SDIF.Ts*x_0[i+SDIF.s_in] + x_0[i];                                 // Saving prediction of initial input signal u(k + 1) within SDIF structure as x1(k + 1).
+        SDIF.x2_k[i] = x_0[i+SDIF.s_in];                                                    // Saving initial differentiation state within SDIF structure as x2(k) = x2(0).
+        // Computing the differentiation operator as x2(k + 1).
         SDIF.x2_kp1[i] = (SDIF.x1_kp1[i] - SDIF.x1_k[i])*(1.0f/SDIF.Ts);
         // Updating output y(k):
-        SDIF.y_k[i] = SDIF.gain*SDIF.x2_k[i];                                               // Saving initial conditions data for y_k within SDIF struct.
+        SDIF.y_k[i] = SDIF.gain*SDIF.x2_k[i];                                               // Saving initial conditions data for y_k within SDIF structure.
     }
     SDIF.flag[0] = true;                                                                    // Flag settled to true, which enables differentiation function defined as SDIF.
 }
@@ -219,24 +219,24 @@ void simpleDifferentiation(simpleDifferentiator SDIF, float input[]){
             SDIF.x1_k[i] = SDIF.x1_kp1[i];                                                  // Updates the delayed input signal u(k - 1) as x1(k) for differentiator SDIF.
             SDIF.x1_kp1[i] = input[i];                                                      // Get input signal u(k) as x1(k + 1), for differentiator SDIF.
             SDIF.x2_k[i] = SDIF.x2_kp1[i];                                                  // Updates the delayed state x2(k), corresponding to output of differentiator SDIF.
-            // Computing the differentiator operator as x2(k + 1).
+            // Computing the differentiation operator as x2(k + 1).
             SDIF.x2_kp1[i] = (SDIF.x1_kp1[i] - SDIF.x1_k[i])*(1.0f/SDIF.Ts);
-            // Updating differentiator output y(k):
+            // Updating differentiated output y(k):
             SDIF.y_k[i] = SDIF.gain*SDIF.x2_k[i];                                           // Determines the output y(k) = x2(k), of differentator SDIF.
         }
     }
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Initialize Differentiator structure:
+// Initialize Differentiation structure:
 Differentiator createDifferentiator(int inputSize, float sampleTime, float gain, float filter_coeff){
-    // Configuring the members of the differentiator structure:
-    Differentiator DIF;                                                                     // Creates differentiator struct.
-    DIF.s_in = inputSize;                                                                   // Assign value of inputSize to the member s_in of the struct DIF.
-    DIF.s_out = inputSize;                                                                  // Assign value of outputSize to the member s_out of the struct DIF.
-    DIF.s_state = 2*inputSize;                                                              // Assign value of statetSize to the member s_state of the struct DIF.
-    DIF.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the struct DIF.
-    DIF.gain = gain;                                                                        // Assign a gain value to the differentiator.
+    // Configuring the members of the differentiation structure:
+    Differentiator DIF;                                                                     // Creates differentiation structure.
+    DIF.s_in = inputSize;                                                                   // Assign value of inputSize to the member s_in of the DIF structure.
+    DIF.s_out = inputSize;                                                                  // Assign value of outputSize to the member s_out of the DIF structure.
+    DIF.s_state = 2*inputSize;                                                              // Assign value of statetSize to the member s_state of the DIF structure.
+    DIF.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the DIF structure.
+    DIF.gain = gain;                                                                        // Assign a gain value to this differentiation structure.
     DIF.fc = filter_coeff;                                                                  // Assign a filter coefficient for achieving a differentiation smooth function.
     //-----------------------------------------------
     DIF.X_0 = (float *)malloc(2*inputSize * sizeof(float));                                 // Allocate memory for the initial state vector x(0) = [x1(0) x2(0)]'.
@@ -245,13 +245,13 @@ Differentiator createDifferentiator(int inputSize, float sampleTime, float gain,
     DIF.x2_k = (float *)malloc(inputSize * sizeof(float));                                  // Allocate memory for the state vector x2(k).
     DIF.x2_kp1 = (float *)malloc(inputSize * sizeof(float));                                // Allocate memory for the state vector x2(k + 1).
     DIF.y_k = (float *)malloc(inputSize * sizeof(float));                                   // Allocate memory for the output vector y(k).
-    DIF.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as DIF (disable or enable differentiator).
+    DIF.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as DIF (disable or enable differentiator).
     //-----------------------------------------------
     DIF.flag[0] = false;                                                                    // Setting DIF flag to false.
     return DIF;
 }
 //---------------------------------------------------------------------------------------------------------------
-// Adding initial conditions to DIF differentiator struct:
+// Adding initial conditions to DIF differentiation structure:
 void initDifferentiator(Differentiator DIF, float x_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
     float OP1 = DIF.fc*DIF.Ts + 2.0f;                                                       // Precompute repetitive operation 1.
@@ -264,7 +264,7 @@ void initDifferentiator(Differentiator DIF, float x_0[]){
         DIF.x1_k[i] = x_0[i];                                                               // Saving initial conditions data for delayed input signal u(k) within DIF struct as x1(k) = x1(0).
         DIF.x1_kp1[i] = DIF.Ts*x_0[i+DIF.s_in] + x_0[i];                                    // Saving prediction of initial input signal u(k + 1) within DIF struct as x1(k + 1).
         DIF.x2_k[i] = x_0[i+DIF.s_in];                                                      // Saving initial differentiation state within DIF struct as x2(k) = x2(0).
-        // Computing the differentiator operator as x2(k + 1).
+        // Computing the differentiation operator as x2(k + 1).
         DIF.x2_kp1[i] = OP2*(DIF.x1_kp1[i] - DIF.x1_k[i]) - OP3*DIF.x2_k[i];
         // Updating output y(k):
         DIF.y_k[i] = DIF.gain*DIF.x2_k[i];                                                  // Saving initial conditions data for y_k within DIF struct.
@@ -284,9 +284,9 @@ void Differentiation(Differentiator DIF, float input[]){
             DIF.x1_k[i] = DIF.x1_kp1[i];                                                    // Updates the delayed input signal u(k - 1) as x1(k) for differentiator DIF.
             DIF.x1_kp1[i] = input[i];                                                       // Get input signal u(k) as x1(k + 1), for differentiator DIF.
             DIF.x2_k[i] = DIF.x2_kp1[i];                                                    // Updates the delayed state x2(k), corresponding to output of differentiator DIF.
-            // Computing the differentiator operator as x2(k + 1).
+            // Computing the differentiation operator as x2(k + 1).
             DIF.x2_kp1[i] = OP2*(DIF.x1_kp1[i] - DIF.x1_k[i]) - OP3*DIF.x2_k[i];
-            // Updating differentiator output y(k):
+            // Updating the differentiated output y(k):
             DIF.y_k[i] = DIF.gain*DIF.x2_k[i];                                              // Determines the output y(k) = x2(k), of differentator DIF.
         }
     }
@@ -534,22 +534,22 @@ void initADRC_Controller(ADRC_Controller ADRC, float ref_x_0[], float rso_x_0[],
             float w102_k = delta_1 - rso_x_0[2];                                            // Precompute angular subtraction 1 in W1(k).
             float w103_k = delta_2 + rso_x_0[5];                                            // Precompute angular addition 2 in W1(k).
             float w104_k = delta_2 - rso_x_0[5];                                            // Precompute angular subtraction 2 in W1(k).
-            float w105_k = sin(rso_x_0[2]);                                                 // Precompute sin(ph1_k) in W1(k).
-            float w106_k = cos(rso_x_0[2]);                                                 // Precompute cos(ph1_k) in W1(k).
-            float w107_k = sin(rso_x_0[5]);                                                 // Precompute sin(ph2_k) in W1(k).
-            float w108_k = cos(rso_x_0[5]);                                                 // Precompute cos(ph2_k) in W1(k).
+            float w105_k = sinf(rso_x_0[2]);                                                // Precompute sin(ph1_k) in W1(k).
+            float w106_k = cosf(rso_x_0[2]);                                                // Precompute cos(ph1_k) in W1(k).
+            float w107_k = sinf(rso_x_0[5]);                                                // Precompute sin(ph2_k) in W1(k).
+            float w108_k = cosf(rso_x_0[5]);                                                // Precompute cos(ph2_k) in W1(k).
             float w109_k = 2.0f*H12_k*l_1*fmr_params[12];                                   // Precompute multiplication 1 in W1(k).
             float w110_k = 2.0f*H45_k*l_2*fmr_params[13];                                   // Precompute multiplication 2 in W1(k).
             float w111_k = fmr_params[14]*H12_k;                                            // Precompute multiplication 3 in W1(k).
             float w112_k = fmr_params[15]*H45_k;                                            // Precompute multiplication 4 in W1(k).
-            float w113_k = cos(w101_k) - w105_k;                                            // Precompute subtraction 1 in W1(k).
-            float w114_k = sin(w101_k) + w106_k;                                            // Precompute addition 1 in W1(k).
-            float w115_k = cos(w102_k) + w105_k;                                            // Precompute addition 2 in W1(k).
-            float w116_k = sin(w102_k) + w106_k;                                            // Precompute addition 3 in W1(k).
-            float w117_k = cos(w103_k) - w107_k;                                            // Precompute subtraction 2 in W1(k).
-            float w118_k = sin(w103_k) + w108_k;                                            // Precompute addition 4 in W1(k).
-            float w119_k = cos(w104_k) + w107_k;                                            // Precompute addition 5 in W1(k).
-            float w120_k = sin(w104_k) + w108_k;                                            // Precompute addition 6 in W1(k).
+            float w113_k = cosf(w101_k) - w105_k;                                           // Precompute subtraction 1 in W1(k).
+            float w114_k = sinf(w101_k) + w106_k;                                           // Precompute addition 1 in W1(k).
+            float w115_k = cosf(w102_k) + w105_k;                                           // Precompute addition 2 in W1(k).
+            float w116_k = sinf(w102_k) + w106_k;                                           // Precompute addition 3 in W1(k).
+            float w117_k = cosf(w103_k) - w107_k;                                           // Precompute subtraction 2 in W1(k).
+            float w118_k = sinf(w103_k) + w108_k;                                           // Precompute addition 4 in W1(k).
+            float w119_k = cosf(w104_k) + w107_k;                                           // Precompute addition 5 in W1(k).
+            float w120_k = sinf(w104_k) + w108_k;                                           // Precompute addition 6 in W1(k).
             float W1_k[3*Robots_Qty][3*Robots_Qty] = {
                 {-w111_k*w116_k, -w111_k*w115_k, 0.0f,           0.0f,           0.0f, 0.0f},
                 { w111_k*w114_k, -w111_k*w113_k, 0.0f,           0.0f,           0.0f, 0.0f},
@@ -656,7 +656,7 @@ void computeADRC(ADRC_Controller ADRC, float ref_y_k[], float rso_y_k[], float g
 CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][Robots_Qty-1], float epsilon, float diff_fc){
     int i, j, s = Robots_Qty-1, m = 6*Robots_Qty;                                           // Declaration of i, j, s and m as integer variables.
     // Configuring the members of the CS observer structure:
-    CS_Observer CSO;                                                                        // Creates observer struct.
+    CS_Observer CSO;                                                                        // Creates observer structure.
     CSO.s_in = m;                                                                           // Assign value of inputSize to the member s_in of the struct CSO.
     CSO.s_out = m;                                                                          // Assign value of outputSize to the member s_out of the struct CSO.
     CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the struct CSO.
@@ -684,10 +684,10 @@ CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][
     CSO.z3_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the state vector z3(k).
     CSO.z3_kp1 = (float *)malloc(s * sizeof(float));                                        // Allocate memory for the state vector d(z3(k))/dt.
     CSO.y_k = (float *)malloc(m * sizeof(float));                                           // Allocate memory for the output vector y(k).
-    CSO.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as CSO (disable or enable observer).
+    CSO.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as CSO (disable or enable observer).
     //-----------------------------------------------
-    CSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integrator struct within observer CSO struct.
-    CSO.DIF = createDifferentiator(3*Robots_Qty,sampleTime,1.0f,diff_fc);                   // Create differentiator struct within observer CSO struct.
+    CSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integration structure within observer CSO structure.
+    CSO.DIF = createDifferentiator(3*Robots_Qty,sampleTime,1.0f,diff_fc);                   // Create differentiation structure within observer CSO structure.
     //-----------------------------------------------
     CSO.flag[0] = false;                                                                    // Setting CSO flag to false.
     return CSO;
@@ -953,10 +953,10 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
             float w104_k = w101_k - delta_1;                                                // Precompute angular subtraction 1 in W1(k).
             float w105_k = w102_k + delta_2;                                                // Precompute angular addition 2 in W1(k).
             float w106_k = w102_k - delta_2;                                                // Precompute angular subtraction 2 in W1(k).
-            float w107_k = sin(w101_k);                                                     // Precompute sin(ph1_k) in W1(k).
-            float w108_k = cos(w101_k);                                                     // Precompute cos(ph1_k) in W1(k).
-            float w109_k = sin(w102_k);                                                     // Precompute sin(ph2_k) in W1(k).
-            float w110_k = cos(w102_k);                                                     // Precompute cos(ph2_k) in W1(k).
+            float w107_k = sinf(w101_k);                                                    // Precompute sin(ph1_k) in W1(k).
+            float w108_k = cosf(w101_k);                                                    // Precompute cos(ph1_k) in W1(k).
+            float w109_k = sinf(w102_k);                                                    // Precompute sin(ph2_k) in W1(k).
+            float w110_k = cosf(w102_k);                                                    // Precompute cos(ph2_k) in W1(k).
             float w111_k = fmr_params[26]*H12_k;                                            // Precompute multiplication 1 in W1(k).
             float w112_k = fmr_params[27]*H45_k;                                            // Precompute multiplication 2 in W1(k).
             float w113_k = fmr_params[14]*H12_k;                                            // Precompute multiplication 3 in W1(k).
@@ -967,18 +967,18 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
             float w118_k = w115_k - delta_1;                                                // Precompute angular addition 6 in W1(k).
             float w119_k = w116_k + delta_2;                                                // Precompute angular addition 7 in W1(k).
             float w120_k = w116_k - delta_2;                                                // Precompute angular addition 8 in W1(k).
-            float w121_k = sin(w115_k);                                                     // Precompute sin(w115(k)) in W1(k).
-            float w122_k = cos(w115_k);                                                     // Precompute cos(w115(k)) in W1(k).
-            float w123_k = sin(w117_k);                                                     // Precompute sin(w117(k)) in W1(k).
-            float w124_k = cos(w117_k);                                                     // Precompute cos(w117(k)) in W1(k).
-            float w125_k = sin(w118_k);                                                     // Precompute sin(w118(k)) in W1(k).
-            float w126_k = cos(w118_k);                                                     // Precompute cos(w118(k)) in W1(k).
-            float w127_k = sin(w116_k);                                                     // Precompute sin(w116(k)) in W1(k).
-            float w128_k = cos(w116_k);                                                     // Precompute cos(w116(k)) in W1(k).
-            float w129_k = sin(w119_k);                                                     // Precompute sin(w119(k)) in W1(k).
-            float w130_k = cos(w119_k);                                                     // Precompute cos(w119(k)) in W1(k).
-            float w131_k = sin(w120_k);                                                     // Precompute sin(w120(k)) in W1(k).
-            float w132_k = cos(w120_k);                                                     // Precompute cos(w120(k)) in W1(k).
+            float w121_k = sinf(w115_k);                                                    // Precompute sin(w115(k)) in W1(k).
+            float w122_k = cosf(w115_k);                                                    // Precompute cos(w115(k)) in W1(k).
+            float w123_k = sinf(w117_k);                                                    // Precompute sin(w117(k)) in W1(k).
+            float w124_k = cosf(w117_k);                                                    // Precompute cos(w117(k)) in W1(k).
+            float w125_k = sinf(w118_k);                                                    // Precompute sin(w118(k)) in W1(k).
+            float w126_k = cosf(w118_k);                                                    // Precompute cos(w118(k)) in W1(k).
+            float w127_k = sinf(w116_k);                                                    // Precompute sin(w116(k)) in W1(k).
+            float w128_k = cosf(w116_k);                                                    // Precompute cos(w116(k)) in W1(k).
+            float w129_k = sinf(w119_k);                                                    // Precompute sin(w119(k)) in W1(k).
+            float w130_k = cosf(w119_k);                                                    // Precompute cos(w119(k)) in W1(k).
+            float w131_k = sinf(w120_k);                                                    // Precompute sin(w120(k)) in W1(k).
+            float w132_k = cosf(w120_k);                                                    // Precompute cos(w120(k)) in W1(k).
             float w133_k = w121_k + w126_k;                                                 // Precompute addition 1 in W1(k).
             float w134_k = w121_k - w124_k;                                                 // Precompute subtraction 1 in W1(k).
             float w135_k = w122_k + w123_k;                                                 // Precompute addition 2 in W1(k).
@@ -998,14 +998,14 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
             float w153_k = w149_k + w141_k;                                                 // Precompute addition 6 in W1(k).
             float w154_k = w143_k + w113_k;                                                 // Precompute addition 7 in W1(k).
             float w155_k = w147_k + w114_k;                                                 // Precompute addition 8 in W1(k).
-            float w156_k = cos(w103_k);                                                     // Precompute cos(w103(k)) in W1(k).
-            float w157_k = sin(w103_k);                                                     // Precompute sin(w103(k)) in W1(k).
-            float w158_k = cos(w104_k);                                                     // Precompute cos(w104(k)) in W1(k).
-            float w159_k = sin(w104_k);                                                     // Precompute sin(w104(k)) in W1(k).
-            float w160_k = cos(w105_k);                                                     // Precompute cos(w105(k)) in W1(k).
-            float w161_k = sin(w105_k);                                                     // Precompute sin(w105(k)) in W1(k).
-            float w162_k = cos(w106_k);                                                     // Precompute cos(w106(k)) in W1(k).
-            float w163_k = sin(w106_k);                                                     // Precompute sin(w106(k)) in W1(k).
+            float w156_k = cosf(w103_k);                                                    // Precompute cos(w103(k)) in W1(k).
+            float w157_k = sinf(w103_k);                                                    // Precompute sin(w103(k)) in W1(k).
+            float w158_k = cosf(w104_k);                                                    // Precompute cos(w104(k)) in W1(k).
+            float w159_k = sinf(w104_k);                                                    // Precompute sin(w104(k)) in W1(k).
+            float w160_k = cosf(w105_k);                                                    // Precompute cos(w105(k)) in W1(k).
+            float w161_k = sinf(w105_k);                                                    // Precompute sin(w105(k)) in W1(k).
+            float w162_k = cosf(w106_k);                                                    // Precompute cos(w106(k)) in W1(k).
+            float w163_k = sinf(w106_k);                                                    // Precompute sin(w106(k)) in W1(k).
             float w164_k = w156_k - w107_k;                                                 // Precompute subtraction 3 in W1(k).
             float w165_k = w157_k + w108_k;                                                 // Precompute addition 9 in W1(k).
             float w166_k = w158_k + w107_k;                                                 // Precompute addition 10 in W1(k).

@@ -13,6 +13,9 @@
 // 7. SCIC communication (UART).
 // 8. Timer 1 interrupt to 200 Hz.
 // 9. Timer 2 interrupt to 10 Hz (Lower priority).
+// 10. SCIC communication (UART).
+// 11. Sending data via SCIC to ChipKit WF32.
+// 12. Control system implementation.
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
@@ -51,12 +54,12 @@
 __interrupt void cpu_timer0_isr(void);
 __interrupt void cpu_timer1_isr(void);
 __interrupt void cpu_timer2_isr(void);
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through SCIA received data:
 __interrupt void scia_rx_isr(void);
 // Function to generate interrupt service through SCIB received data:
 __interrupt void scib_rx_isr(void);
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 // UART communication with MATLAB:
 // Function to initialize SCIA (8-bit word, baud rate 2E6, default, 1 STOP bit, no parity):
 void scia_init();
@@ -66,7 +69,7 @@ void scia_fifo_init(void);
 void scia_xmit(char a);
 // Function to transmit message via SCIA:
 void scia_msg(char *msg);
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 // UART communication with XBee:
 // Function to initialize SCIB (8-bit word, baud rate 115200, default, 1 STOP bit, no parity):
 void scib_init();
@@ -76,7 +79,7 @@ void scib_fifo_init(void);
 void scib_xmit(char a);
 // Function to transmit message via SCIB:
 void scib_msg(char *msg);
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 // UART communication with ChipKit WF32:
 // Function to initialize SCIC (8-bit word, baud rate 2E6, default, 1 STOP bit, no parity):
 void scic_init();
@@ -86,26 +89,26 @@ void scic_fifo_init(void);
 void scic_xmit(char a);
 // Function to transmit message via SCIC:
 void scic_msg(char *msg);
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 // Optimized Memory Set:
 void memset_fast(void* dst, int16 value, Uint16 N);
 //-----------------------------------------------------------------------------------------------------------------------
 // Global dynamic variables will be declared here, together with some required-definition configuration constants:
 const Uint16 bufferSize = 256;                                                      // buffer length.
 const float sampleTime = 1.0f/freq_hz_1;                                            // Float parameter to define the global control system sample time.
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 Uint32 final_iteration;                                                             // Declare variable to save final iteration value of program execution.
 Uint32 timeoutCount;                                                                // Declare timeout counting variable.
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 volatile bool flagcommand_0;                                                        // Declare flag command 0 (This flag indicates that initial conditions must be configured).
 volatile bool flagcommand_1;                                                        // Declare flag command 1 (Used for ON\OFF LED 01).
 volatile bool flagcommand_2;                                                        // Declare flag command 2 (Used for ON\OFF LED 02).
 volatile bool flagcommand_3;                                                        // Declare flag command 3 (Used for happy ending).
 volatile bool flagcommand_4;                                                        // Declare flag command 4 (used for ending due to timeout).
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 volatile char receivedChar_a;                                                       // Variable to save received character from SCIA.
 volatile char receivedChar_b;                                                       // Variable to save received character from SCIB.
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 char *msg_1;                                                                        // Variable 1 to save a char data chain.
 char *msg_2;                                                                        // Variable 2 to save a char data chain.
 char *msg_3;                                                                        // Variable 3 to save a char data chain.
@@ -117,12 +120,12 @@ char *disturbances;                                                             
 char *rsPose;                                                                       // Variable to save a char data chain that contains the robot space pose of OMRs.
 char *csPose;                                                                       // Variable to save a char data chain that contains the cluster space pose of OMRs.
 char *trackingErrors;                                                               // Variable to save a char data chain that contains the tracking errors for the reference trajectories.
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 enum Control_System consys = ADRC_RS;                                               // Declare the control system type (ADRC_RS or SMC_CS at the moment).
 enum Reference_Type reftype = STATIC_01;                                            // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
 float t_cl = 0.0f;                                                                  // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                    // Declaration of this floating-point values vector for arranging error variables.
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the ADRC_RS strategy:
 const float epsilon = .42f;                                                         // Small constant used in the RSO observer.
 // Float parameters to define the observer gains of RSO, for RS ADRC:
@@ -155,7 +158,7 @@ float gpi_Gains[3*Robots_Qty][3] = {
   {41.4770f, 53.9201f, 15.5769f},
   {68.4636f, 75.3099f, 18.4091f}                                                    // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
 };
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
 // Float parameters to define the observer gains of CSO, for CS SMC:
 float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
@@ -163,12 +166,12 @@ float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {75.3099f},                                                                       // Setting alpha_2.
   {68.4636f}                                                                        // Setting alpha_3.
 };
-// Float parameters to define the sliding gains of SLS, for CS SMC:
+// Float parameters to define the sliding gains of SLS, for CS SMC strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
 float sls_Gains[3*Robots_Qty+1] = {1.54f, 1.54f, 1.68f, 1.57f, 1.68f, 1.68f, 22.0f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
 float sms_Gains[3*Robots_Qty] = {1.44f, 1.44f, 1.44f, 1.44f, 1.44f, 1.44f};
-// Defining the constants for bounding the input torque disturbances according to the SMC strategy:
+// Defining the constants for bounding the input torque disturbances according to the CS SMC strategy:
 #define rho_1 (3.0f/4.0f)*mt_1*l_1*l_1/(r_1*r_1)                                    // Constant for bounding the input torque disturbances in robot 1.
 #define rho_2 (3.0f/4.0f)*mt_2*l_2*l_2/(r_2*r_2)                                    // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
@@ -176,7 +179,7 @@ float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                             
 // Defining the saturation values of sliding surfaces at the output:
 float sls_satVals[3*Robots_Qty] = {280.0f, 280.0f, 9.5f, 150.0f, 9.5f, 9.5f};
 float diff_fc = 45.0f;                                                              // Assign an arbitrary value to the filter coefficient of CSO internal differentiator.
-//-----------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------
 // Declaration of data structure for SCIA peripheral:
 Data_Struct SCIA;                                                                   // Data structure to arrange data from SCIA.
 // Declaration of data structure for SCIB peripheral:
@@ -208,16 +211,16 @@ void main(void){
     // This example function is found in the F2837xS_Gpio.c file and
     // illustrates how to set the GPIO to it's default state.
     InitGpio();
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Configuring LED 01 and LED 02:
     GPIO_SetupPinMux(BLINKY_LED_GPIO_01, GPIO_MUX_CPU1, 0);                         // Configure role of Pin 12 (BLINKY_LED_GPIO_01).
     GPIO_SetupPinOptions(BLINKY_LED_GPIO_01, GPIO_OUTPUT, GPIO_PUSHPULL);           // Set behavior of Pin 12.
     GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                           // Turn LED GPIO 1 to OFF.
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     GPIO_SetupPinMux(BLINKY_LED_GPIO_02, GPIO_MUX_CPU1, 0);                         // Configure role of Pin 13 (BLINKY_LED_GPIO_02).
     GPIO_SetupPinOptions(BLINKY_LED_GPIO_02, GPIO_OUTPUT, GPIO_PUSHPULL);           // Set behavior of Pin 13.
     GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                           // Turn LED GPIO 1 to OFF.
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     EALLOW;
     // Choosing the pins 84 and 85 to the SCI-A port (UART Communication - UART 0):
     GpioCtrlRegs.GPCGMUX2.bit.GPIO84 = 1;                                           // SCIA TXD.
@@ -330,7 +333,7 @@ void main(void){
     IER |= M_INT1;
     IER |= M_INT13;
     IER |= M_INT14;
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Enabling PIE interrupt group 9 globally at the CPU level (SCIA and SCIB):
     IER |= M_INT9;                                                                  // Enable CPU INT9 (for SCIA interrupts).
 
@@ -376,7 +379,7 @@ void main(void){
             GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                   // Turn LED GPIO 1 to OFF.
             GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                   // Turn LED GPIO 1 to OFF.
             scib_msg(msg_4);                                                        // Send message to stop omni-wheels in the formation.
-            //-----------------------------------------------
+            //-----------------------------------------------------------------------------------------------------------
             IER &= ~M_INT1;                                                         // Disable CPU timer 0 interrupt.
             IER &= ~M_INT13;                                                        // Disable CPU timer 1 interrupt.
             IER &= ~M_INT14;                                                        // Disable CPU timer 2 interrupt.
@@ -406,7 +409,7 @@ void main(void){
 // Function to generate interrupt service through CPU timer 0 (streaming data from MATLAB at 250 Hz):
 __interrupt void cpu_timer0_isr(void){
     CpuTimer0.InterruptCount++;
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Blinking LED GPIO 1:
     if(flagcommand_1 && CpuTimer0.InterruptCount == freq_hz_0 && CpuTimer1.InterruptCount <= final_iteration){
         GPIO_WritePin(BLINKY_LED_GPIO_01, 0);                                       // Turn LED GPIO 1 to ON.
@@ -418,14 +421,14 @@ __interrupt void cpu_timer0_isr(void){
         flagcommand_1 = true;                                                       // Set flag command 1 to TRUE.
         CpuTimer0.InterruptCount = 0;                                               // Reset Timer 0 counter.
     }
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Sending command to MATLAB:
     if(CpuTimer1.InterruptCount <= final_iteration) scia_msg(msg_1);                // Write message 1 through SCIA peripheral.
     else scia_msg(msg_2);                                                           // Otherwise write message 2 through SCIA peripheral.
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Clearing the interrupt flag:
     CpuTimer0Regs.TCR.bit.TIF = 1;                                                  // Clear the Timer 0 interrupt flag.
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Acknowledge this interrupt to receive more interrupts from group 1:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 }
@@ -439,9 +442,9 @@ __interrupt void cpu_timer1_isr(void){
     EINT;
     // Increasing counter on Timer 1:
     CpuTimer1.InterruptCount++;
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // -- (The CPU acknowledges the interrupt) --
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     if(CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
         //---------------------------------------------------------------------------------------------------------------
         // Updating the state variables to current values:
@@ -460,8 +463,87 @@ __interrupt void cpu_timer1_isr(void){
             ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);              // Saving same robot space pose of OMRs formation, but in string-format.
             ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);              // Saving same cluster space pose of OMRs formation, but in string-format.
         }
+        //---------------------------------------------------------------------------------------------------------------
+        // Computing the desired reference tracking-trajectories:
+        // computeCircumference01(REF,consys,CpuTimer1.InterruptCount);             // Compute desired reference profiles for OMRs synchronization.
+        // computeInfinity01(REF,consys,CpuTimer1.InterruptCount);                  // Compute desired reference profiles for OMRs synchronization.
+        computeStatical01(REF,consys);                                              // Compute desired reference profiles for OMRs synchronization.
+        //---------------------------------------------------------------------------------------------------------------
+        // Computing the designed control strategy:
+        switch(consys){
+            case ADRC_RS:{
+                //--------------------------------------------ADRC_RS----------------------------------------------------
+                // Estimation via High-gain Observer:
+                RS_Estimation(RSO,FMR.u_k,FMR.q_k,FMR.params);                      // Estimates the OMRs formation output q(k), first derivative and disturbances.
+                //-------------------------------------------------------------------------------------------------------
+                // GPI control law, based on tracking error states:
+                for(i = 0; i < 3*Robots_Qty; i++){
+                  errors_k[i] = RSO.y_k[i] - REF.y_k[i];                            // Computes error e(k) = q(k) - q*(k), where q*(k) are the pose tracking-trajectories.
+                }
+                computeGPIControl(GPI,errors_k);                                    // Compute GPI control action.
+                //-------------------------------------------------------------------------------------------------------
+                // Computing ADRC RS strategy:
+                computeADRC(ADRC,REF.y_k,RSO.y_k,GPI.y_k,FMR.params);               // Compute ADRC control action.
+                //-------------------------------------------------------------------------------------------------------
+                // Conditioning input torque control for OMRs formation:
+                for(i = 0; i < 3; i++){
+                  FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-100.0f/ke_1,100.0f/ke_1),t_cl,sampleTime,CpuTimer1.InterruptCount);
+                  FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
+                  FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
+                  FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
+                  //-----------------------------------------------------------------------------------------------------
+                  memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);              // Clear char-type string vector where OMRs' control signals will be saved.
+                  ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                              // Saving same control signals of OMRs formation, but in string-format.
+                  memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);              // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                  ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                              // Saving same PWMs control signals of OMRs formation, but in string-format.
+                  memset_fast(FMR.us_k.data[i+3],0,FMR.us_k.bufferSize);            // Clear char-type string vector where OMRs' control signals will be saved.
+                  ftoa(FMR.u_k[i+3],FMR.us_k.data[i+3],3);                          // Saving same control signals of OMRs formation, but in string-format.
+                  memset_fast(FMR.vs_k.data[i+3],0,FMR.vs_k.bufferSize);            // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                  ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                          // Saving same PWMs control signals of OMRs formation, but in string-format.
+                }
+                break;
+              }
+            case SMC_CS:{
+                //---------------------------------------------SMC_CS----------------------------------------------------
+                // Estimation via High-gain Observer:
+                CS_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);                    // Estimates the OMRs formation output c(k), first derivative and disturbances.
+                //-------------------------------------------------------------------------------------------------------
+                // Computing the sliding surfaces required by SMC CS:
+                compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);               // Update to current values for sliding surfaces.
+                //-------------------------------------------------------------------------------------------------------
+                // Computing SMC CS strategy:
+                computeSMC_Controller(SMC,REF.y_k,FMR.c_k,CSO.y_k,SLS.y_k,FMR.params);  // Update the current values for SMC CS strategy.
+                //-------------------------------------------------------------------------------------------------------
+                // Conditioning input torque control for OMRs formation:
+                for(i = 0; i < 3; i++){
+                  FMR.u_k[i] = clutch(saturation(SMC.y_k[i],-100.0f/ke_1,100.0f/ke_1),t_cl,sampleTime,CpuTimer1.InterruptCount);
+                  FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
+                  FMR.u_k[i+3] = clutch(saturation(SMC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
+                  FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
+                  //-----------------------------------------------------------------------------------------------------
+                  memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);              // Clear char-type string vector where OMRs' control signals will be saved.
+                  ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                              // Saving same control signals of OMRs formation, but in string-format.
+                  memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);              // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                  ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                              // Saving same PWMs control signals of OMRs formation, but in string-format.
+                  memset_fast(FMR.us_k.data[i+3],0,FMR.us_k.bufferSize);            // Clear char-type string vector where OMRs' control signals will be saved.
+                  ftoa(FMR.u_k[i+3],FMR.us_k.data[i+3],3);                          // Saving same control signals of OMRs formation, but in string-format.
+                  memset_fast(FMR.vs_k.data[i+3],0,FMR.vs_k.bufferSize);            // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                  ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                          // Saving same PWMs control signals of OMRs formation, but in string-format.
+                  //-----------------------------------------------------------------------------------------------------
+                  // Computing tracking errors states:
+                  errors_k[i] = FMR.q_k[i] - REF.x1_k[i];
+                  errors_k[i+3] = FMR.q_k[i+3] - REF.x1_k[i+3];
+                }
+                break;
+            }
+        }
+        //---------------------------------------------------------------------------------------------------------------
+        // Packing and streaming the control signals for OMRs formation:
+        memset_fast(controlSignals,0,sizeof(controlSignals));                       // Initialize controlSignals data chain.
+        snprintf(controlSignals,sizeof(controlSignals),":0,%s,%s,%s,%s,%s,%s;\n",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
+        scib_msg(controlSignals);                                                   // Write measured variables through SCIB peripheral.
     }
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
     DINT;
 }
@@ -474,9 +556,9 @@ __interrupt void cpu_timer2_isr(void){
     EINT;
     // Increasing counter on Timer 2:
     CpuTimer2.InterruptCount++;
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // -- (The CPU acknowledges the interrupt) --
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Blinking LED GPIO 2:
     if(flagcommand_2 && CpuTimer2.InterruptCount == freq_hz_2 && CpuTimer1.InterruptCount <= final_iteration){
         GPIO_WritePin(BLINKY_LED_GPIO_02, 0);                                       // Turn LED GPIO 2 to ON.
@@ -489,7 +571,7 @@ __interrupt void cpu_timer2_isr(void){
         CpuTimer2.InterruptCount = 0;                                               // Reset Timer 2 counter.
     }
     if(CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
-        //-----------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------
         // Timeout protocol:
         if(flagcommand_4){
             flagcommand_4 = false;                                                  // Reset this flag to check if exist timeout state for SCIA receiving data.
@@ -497,14 +579,7 @@ __interrupt void cpu_timer2_isr(void){
         }
         else if(timeoutCount >= 20) final_iteration = CpuTimer1.InterruptCount;     // Force ending execution.
         else timeoutCount++;
-        //-----------------------------------------------
-        // Packing the corresponding angular velocities variables of OMRs formation:
-        memset_fast(angularVelocities,0,sizeof(angularVelocities));                 // Initialize angularVelocities data chain.
-        snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
-        // Packing the corresponding control signals variables of OMRs formation:
-        memset_fast(controlSignals,0,sizeof(controlSignals));                       // Initialize controlSignals data chain.
-        snprintf(controlSignals,sizeof(controlSignals),"%s,%s,%s,%s,%s,%s",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
-        //-----------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the measurement variables of OMRs formation:
         memset_fast(measurements,0,bufferSize);                                     // Initialize measurements data chain.
         snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],FMR.cs_k.data[0],FMR.cs_k.data[1],FMR.cs_k.data[2],FMR.cs_k.data[3],FMR.cs_k.data[4],FMR.cs_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
@@ -516,7 +591,7 @@ __interrupt void cpu_timer2_isr(void){
         flagcommand_0 = false;                                                      // Reset flag command 0.
         flagcommand_3 = true;                                                       // Set flag command 3 to TRUE (disable interrupts).
     }
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
     DINT;
 }
@@ -559,18 +634,18 @@ __interrupt void scia_rx_isr(void){
             // Initializing the selected control system:
             switch(consys){
                 case ADRC_RS:{
-                    //------------------------------------------ADRC_RS----------------------------------------------------
+                    //----------------------------------------ADRC_RS--------------------------------------------------
                     // Float vector x_0 to define initial conditions for states of HGO observer in the robot space:
                     float obs_x0[9*Robots_Qty] = {FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
                     init_RS_Observer(RSO,obs_x0);                                   // Initialize the observer RSO.
-                    //-----------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
                     // Float vector x_0 to define initial conditions for states of GPI controller:
                     float gpi_x0[6*Robots_Qty] = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
                     initGPI_Controller(GPI,gpi_x0);                                 // Initialize GPI controller.
-                    //-----------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
                     // Initializing ADRC control law:
                     initADRC_Controller(ADRC,RSO.X_0,RSO.X_0,GPI.X_0,FMR.params);   // Initialize ADRC controller.
-                    //-----------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
                     // Initializing input torque control as FMR.u_k and omni-wheel angular velocities as FMR.w_k:
                     for(i = 0; i < 3*Robots_Qty; i++){
                         FMR.u_k[i] = 0.0f;                                          // Initial torque control in the formation.
@@ -586,17 +661,17 @@ __interrupt void scia_rx_isr(void){
                     break;
                 }
                 case SMC_CS:{
-                    //------------------------------------------------SMC_CS-----------------------------------------------
+                    //----------------------------------------------SMC_CS---------------------------------------------
                     // Float vector z_0 to define initial conditions for states of HGO observer in the cluster space:
                     float obs_z0[9*Robots_Qty] = {FMR.c_k[0], FMR.c_k[1], FMR.c_k[2], FMR.c_k[3], FMR.c_k[4], FMR.c_k[5], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     init_CS_Observer01(CSO,obs_z0);                                 // Initialize the observer CSO.
-                    //-----------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
                     // Initial conditions for previous observer is taken here:
                     init_SlidingSurfaces(SLS,REF.Z_0,obs_z0);                       // Initialize sliding surfaces algorithm.
-                    //-----------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
                     // Initializing SMC strategy:
                     initSMC_Controller(SMC,REF.Z_0,obs_z0,SLS.E_0,FMR.params);      // Initialize SMC strategy.
-                    //-----------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
                     // Initializing input torque control as FMR.u_k, PWM control signals as FMR.v_k and omni-wheel angular velocities as FMR.w_k:
                     for(i = 0; i < 3*Robots_Qty; i++){
                         FMR.u_k[i] = 0.0f;                                          // Initial torque control in the formation.
@@ -623,8 +698,8 @@ __interrupt void scia_rx_isr(void){
                     float Vc_0 = 40.0f;                                             // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
                     float Dr_0 = 150.0f;                                            // [mm], initial desired half distance between robots.
                     // Arraying initial conditions for circumference-shape reference trajectory profiles:
-                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cos(M_PI_4), Vc_0*cos(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
-                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cos(M_PI_4), Vc_0*sin(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cosf(M_PI_4), Vc_0*cosf(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cosf(M_PI_4), Vc_0*sinf(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                       // Initialize reference builder.
                     break;
                 }
@@ -637,7 +712,7 @@ __interrupt void scia_rx_isr(void){
                     float Vcx_0 = Sc_0/Kc_0;                                        // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Sc_0/Kc_0;                                   // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 150.0f;                                            // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2(Vcx_0,Vcy_0), -2.0f*atan2(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2f(Vcx_0,Vcy_0), -2.0f*atan2f(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                       // Initialize reference builder.
                     break;
                 }
@@ -650,7 +725,7 @@ __interrupt void scia_rx_isr(void){
                     float Vcx_0 = Sc_0/Kc_0;                                        // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Sc_0/Kc_0;                                   // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 150.0f;                                            // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2(Vcx_0,Vcy_0)-M_PI_2, -atan2(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2f(Vcx_0,Vcy_0)-M_PI_2, -atan2f(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                       // Initialize reference builder.
                     break;
                 }
@@ -680,7 +755,7 @@ __interrupt void scia_rx_isr(void){
             flagcommand_0 = true;                                                   // Setting flag 0 to true.
         }
     }
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Clearing the interrupt flag and acknowledge the interrupt:
     SciaRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                            // Clear RX FIFO interrupt flag.
     // Acknowledge this interrupt to receive more interrupts from group 9:
@@ -694,7 +769,7 @@ __interrupt void scib_rx_isr(void){
     ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                            // Clear RX FIFO interrupt flag.
     // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
     EINT;
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Checking how many bytes are in the FIFO (you can use this information):
     Uint16 fifo_level = ScibRegs.SCIFFRX.bit.RXFFST;                                // Checks how many characters are available in SCIB FIFO peripheral.
     // Loop to read all available data in the FIFO:
@@ -706,19 +781,24 @@ __interrupt void scib_rx_isr(void){
     if(SCIB.flag[1] && CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
         classify_charBuffer(&SCIB);                                                 // Classify data from assigned buffer to SCIB structure data matrix.
         for(i = 0; i < 3; i++){
-            // Saving the angular velocities of omni-wheels attached on OMRs formation.
+            // Saving the angular velocities of omni-wheels attached on OMRs formation (in rad/s).
             FMR.w_k[i+3*SCIB.identifier] = atof(SCIB.MAT3.data[SCIB.identifier][i]);
-            // Saving the angular velocities of moni-wheels attached on OMRs formation, but in a string-format version:
+            // Saving same angular velocities of moni-wheels attached on OMRs formation, but in a string-format version:
             memset_fast(FMR.ws_k.data[i+3*SCIB.identifier],0,FMR.ws_k.bufferSize);  // Initialize or clear char-type string vector where OMRs' angular velocities of wheels will be saved.
-            // Saving same angular velocities of OMRs formation, but in string-format:
+            // Saving angular velocities in string-format:
             ftoa(FMR.w_k[i+3*SCIB.identifier],FMR.ws_k.data[i+3*SCIB.identifier],3);
         }
+        //---------------------------------------------------------------------------------------------------------------
+        // Packing the corresponding angular velocities variables of OMRs formation:
+        memset_fast(angularVelocities,0,sizeof(angularVelocities));                 // Initialize angularVelocities data chain.
+        snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
+        // Clearing buffer within SCIB data structure:
         init_charBuffer(&SCIB);                                                     // Initialize dedicated char-type data buffer of SCIB.
     }
     // Initializing char-type data buffer associated to SCIB when control system is not running:
     else if(SCIB.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_charBuffer(&SCIB);
     else NOP;                                                                       // No Operation (burn a cycle).
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
     DINT;
     // Acknowledge this interrupt to receive more interrupts from group 9:
@@ -740,13 +820,13 @@ void scia_init(){
     // SciaRegs.SCICTL2.bit.TXINTENA = 1;                                              // Transmit interrupt enabled (standard SCIA).
     // SciaRegs.SCICTL1.bit.RXERRINTENA = 1;                                           // Receive Error interrupt enabled (standard SCIA).
     // SciaRegs.SCICTL2.bit.RXBKINTENA = 1;                                            // Receiver-buffer break interrupt enabled (standard SCIA).
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
     SciaRegs.SCIHBAUD.all = 0x0000;                                                 // Desired baud_rate = 2E6, @LSPCLK = 50MHz (200 MHz SYSCLK).
     SciaRegs.SCILBAUD.all = 0x0002;
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     SciaRegs.SCICTL1.all = 0x0023;                                                  // Relinquish SCI from Reset.
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
@@ -790,13 +870,13 @@ void scib_init(){
     // ScibRegs.SCICTL2.bit.TXINTENA = 1;                                              // Transmit interrupt enabled (standard SCIB).
     // ScibRegs.SCICTL1.bit.RXERRINTENA = 1;                                           // Receive Error interrupt enabled (standard SCIB).
     // ScibRegs.SCICTL2.bit.RXBKINTENA = 1;                                            // Receiver-buffer break interrupt enabled (standard SCIB).
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
     ScibRegs.SCIHBAUD.all = 0x0000;                                                 // Desired baud_rate = 115200, @LSPCLK = 50MHz (200 MHz SYSCLK).
     ScibRegs.SCILBAUD.all = 0x0035;
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     ScibRegs.SCICTL1.all = 0x0023;                                                  // Relinquish SCI from Reset.
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
@@ -840,13 +920,13 @@ void scic_init(){
     // ScicRegs.SCICTL2.bit.TXINTENA = 1;                                              // Transmit interrupt enabled (standard SCIC).
     // ScicRegs.SCICTL1.bit.RXERRINTENA = 1;                                           // Receive Error interrupt enabled (standard SCIC).
     // ScicRegs.SCICTL2.bit.RXBKINTENA = 1;                                            // Receiver-buffer break interrupt enabled (standard SCIC).
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
     ScicRegs.SCIHBAUD.all = 0x0000;                                                 // Desired baud_rate = 1250000, @LSPCLK = 50MHz (200 MHz SYSCLK).
     ScicRegs.SCILBAUD.all = 0x0004;
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     ScicRegs.SCICTL1.all = 0x0023;                                                  // Relinquish SCI from Reset.
-    //-----------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------------
     return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
