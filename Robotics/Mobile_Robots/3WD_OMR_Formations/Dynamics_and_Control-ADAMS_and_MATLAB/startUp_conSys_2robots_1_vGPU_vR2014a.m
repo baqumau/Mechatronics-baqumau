@@ -204,11 +204,11 @@ par.alpha_3 = single(diag([K1(1,4) K1(1,4) K2(1,4) K1(1,4) K1(1,4) K2(1,4)]));
 par.err = single(.42);
 %% Extended Kalman Filters
 % EKF_1:
-par.b_1 = single(87.5);                                                     % [mm] Offset for EKF.
+par.b_1 = single(87.5*0);                                                   % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).
 par.dnu_1 = single([.2 .4 .2 .4 .3]');                                      % Input noise bounds.
 par.dny_1 = single(22);                                                     % Output noise bound.
 % EKF_2:
-par.b_2 = single(87.5);                                                     % [mm] Offset for EKF.
+par.b_2 = single(87.5*0);                                                   % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).
 par.dnu_2 = single([.2 .4 .2 .4 .3]');                                      % Input noise bounds.
 par.dny_2 = single(22);
 %% Clutch:

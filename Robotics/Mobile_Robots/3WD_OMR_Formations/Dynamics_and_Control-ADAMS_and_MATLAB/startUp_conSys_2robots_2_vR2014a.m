@@ -162,11 +162,11 @@ par.Rho_2 = (3/4)*ones(3,1)*(par.m_2)*(par.l_2/par.r_2)^2;                  % Co
 par.Lambda = diag([1.54 1.54 1.68 1.57 1.68 1.68]);                         % Coefficients for sliding surface.
 %% Extended Kalman Filters
 % EKF_1:
-par.b_1 = 87.5;                                                             % [mm] Offset for EKF.
+par.b_1 = 87.5*0;                                                           % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).
 par.dnu_1 = [.2 .4 .2 .4 .3]';                                              % Input noise bounds.
 par.dny_1 = 22;                                                             % Output noise bound.
 % EKF_2:
-par.b_2 = 87.5;                                                             % [mm] Offset for EKF.
+par.b_2 = 87.5*0;                                                           % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).
 par.dnu_2 = [.2 .4 .2 .4 .3]';                                              % Input noise bounds.
 par.dny_2 = 22;
 %% Clutch:
