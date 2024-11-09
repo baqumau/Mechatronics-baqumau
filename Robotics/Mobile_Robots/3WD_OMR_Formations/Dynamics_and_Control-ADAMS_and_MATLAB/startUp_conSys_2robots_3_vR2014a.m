@@ -143,6 +143,9 @@ Btd=[0 Ts 1]';
 Ctd=eye(3);
 Dtd=[0 0 0]';
 TD=ss(Atd,Btd,Ctd,Dtd,Ts);
+%% Parameters for nth-order homogeneous discrete-time differentiator (HDD):
+par.L = [30 30 .15 60 .15 .15];
+par.lambda = [5.3 14.1 9.8];
 %% Characteristic polynomials for High-Gain Observers:
 [K1,P1] = charatioass(3,1.1,20,4.5);                                        % Gains and Poles for x_c, y_c and d;
 [K2,P2] = charatioass(3,2.0,20,4.5);                                        % Gains and Poles for th_c, th_1 and th_2;

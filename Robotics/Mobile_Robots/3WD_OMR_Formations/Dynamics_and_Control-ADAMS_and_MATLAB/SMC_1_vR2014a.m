@@ -166,7 +166,7 @@ function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(par)
 sizes = simsizes;
 
 sizes.NumContStates  = 0;
-sizes.NumDiscStates  = 36;
+sizes.NumDiscStates  = 42;
 sizes.NumOutputs     = 12;
 sizes.NumInputs      = 30;
 sizes.DirFeedthrough = 0;
@@ -178,7 +178,7 @@ sys = simsizes(sizes);
 % initialize the initial conditions
 %
 
-x0 = [par.x0_c' (par.x0_c(1:6,1)'-par.x0_c_ref(1:6,1)') zeros(1,6) zeros(1,6) zeros(1,6)]';
+x0 = [par.x0_c' zeros(1,6) (par.x0_c(1:6,1)'-par.x0_c_ref(1:6,1)') zeros(1,6) zeros(1,6) zeros(1,6)]';
 
 %
 % str is always an empty matrix
@@ -220,10 +220,11 @@ sys = [];
 %
 function sys=mdlUpdate(t,x,u,par)
 
-sys(1:6,1) = u(1:6,1);                                                                                                        % x(1:6) = z^{-1}*c.
-sys(7:12,1) = (2*par.N.*(sys(1:6,1) - x(1:6,1)) + (2*ones(6,1) - par.NTs).*x(7:12,1))./(par.NTs + 2*ones(6,1));               % x(7:12) = dc/dt.
-sys(13:18,1) = u(1:6,1) - u(7:12,1) + x(25:30,1);                                                                             % x(13:18) = z^{-1}*(e_1 + x(25:30)).
-sys(19:24,1) = (par.Ts_2)*(sys(13:18,1) + x(13:18,1)) + x(19:24,1);                                                           % x(19:24) = int{e_1 + x(25:30)}.
+sys(1:6,1) = x(1:6,1) - par.Ts*(par.lambda(1,3)*par.L'.^(1/3).*abs(x(1:6,1) - u(1:6,1)).^(2/3).*sign(x(1:6,1) - u(1:6,1))) + par.Ts*x(7:12,1) + (par.Ts^2/2)*x(13:18,1);              % x(1:6) = z^{-1}*c.
+sys(7:12,1) = x(7:12,1) - par.Ts*(par.lambda(1,2)*par.L'.^(2/3).*abs(x(1:6,1) - u(1:6,1)).^(1/3).*sign(x(1:6,1) - u(1:6,1))) + par.Ts*x(13:18,1);                                     % x(7:12) = dc/dt.
+sys(13:18,1) = x(13:18,1) - par.Ts*(par.lambda(1,1)*par.L'.*sign(x(1:6,1) - u(1:6,1)));                                                                                               % x(13:18) = d^2c/dt^2.
+sys(19:24,1) = u(1:6,1) - u(7:12,1) + x(31:36,1);                                                                                                                                     % x(19:24) = z^{-1}*(e_1 + x(31:36)).
+sys(25:30,1) = (par.Ts_2)*(sys(19:24,1) + x(19:24,1)) + x(25:30,1);                                                                                                                   % x(25:30) = int{e_1 + x(31:36)}.
 %--------------------------------Robot space-------------------------------
 De_1 = diag([par.HGOcons01, par.HGOcons01, par.HGOcons02]);
 De_2 = diag([par.HGOcons06, par.HGOcons06, par.HGOcons07]);
@@ -291,7 +292,7 @@ Beta = abs((Lambda_e_c\(Jin_c'*Be))/(Lambda_c\(Jin_c'*B)));
 F = abs(Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)) - Lambda_c\(Jin_c'*H*Jin_c*x(7:12,1)));
 %--------------------------------------------------------------------------
 % Sliding surface:
-sigma = x(7:12,1) - u(13:18,1) + 2*par.Lambda*(u(1:6,1) - u(7:12,1)) + par.Lambda^2*x(19:24,1) + par.x0_c_ref(7:12,1) - 2*par.Lambda*(par.x0_c(1:6,1) - par.x0_c_ref(1:6,1));
+sigma = x(7:12,1) - u(13:18,1) + 2*par.Lambda*(u(1:6,1) - u(7:12,1)) + par.Lambda^2*x(25:30,1) + par.x0_c_ref(7:12,1) - 2*par.Lambda*(par.x0_c(1:6,1) - par.x0_c_ref(1:6,1));
 sigma_ = zeros(6,1);
 for i = 1:6
     if abs(sigma(i,1)) >= par.S_b(i,1)
@@ -300,12 +301,12 @@ for i = 1:6
         sigma_(i,1) = sigma(i,1);
     end
 end
-sys(25:30,1) = 22*(sigma_ - sigma);
+sys(31:36,1) = 22*(sigma_ - sigma);
 % Controller gains:
 K = Beta*F + abs(Beta - eye(6))*abs(-u(19:24,1) + 2*par.Lambda*(x(7:12,1) - u(13:18,1)) + par.Lambda^2*(u(1:6,1) - u(7:12,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)) + dJ_dc_c*Jin_c*x(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2] + Beta*par.Eta;
 % K = Beta*F + (eye(6) - inv(Beta))*abs(-u(19:24,1) + 2*par.Lambda*(x(7:12,1) - u(13:18,1)) + par.Lambda^2*(u(1:6,1) - u(7:12,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)) + dJ_dc_c*Jin_c*x(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2] + Beta*par.Eta;
 % Control law:
-sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)) + dJ_dc_c*Jin_c*x(7:12,1) - u(19:24,1) + 2*par.Lambda*(x(7:12,1) - u(13:18,1)) + par.Lambda^2*(u(1:6,1) - u(7:12,1)) + K.*tanh(par.err*sigma_) + diag([0 0 0 1 0 0])*u(25:30,1));
+sys(37:42,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)) + dJ_dc_c*Jin_c*x(7:12,1) - u(19:24,1) + 2*par.Lambda*(x(7:12,1) - u(13:18,1)) + par.Lambda^2*(u(1:6,1) - u(7:12,1)) + K.*tanh(par.err*sigma_) + diag([0 0 0 1 0 0])*u(25:30,1));
 
 % end mdlUpdate
 
@@ -317,7 +318,7 @@ sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)
 %
 function sys=mdlOutputs(t,x,u,par)
 
-sys(1:6,1) = x(31:36,1);
+sys(1:6,1) = x(37:42,1);
 sys(7:12,1) = x(7:12,1);
 
 % end mdlOutputs

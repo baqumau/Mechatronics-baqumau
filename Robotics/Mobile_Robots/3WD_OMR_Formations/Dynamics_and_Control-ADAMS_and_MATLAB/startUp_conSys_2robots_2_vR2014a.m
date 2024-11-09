@@ -160,6 +160,9 @@ par.Delta = [1/5 1/20 1/25]';                                               % Co
 par.Rho_1 = (3/4)*ones(3,1)*(par.m_1)*(par.l_1/par.r_1)^2;                  % Constant for bounding the input torque disturbnces in robot 1.
 par.Rho_2 = (3/4)*ones(3,1)*(par.m_2)*(par.l_2/par.r_2)^2;                  % Constant for bounding the input torque disturbnces in robot 2.
 par.Lambda = diag([1.54 1.54 1.68 1.57 1.68 1.68]);                         % Coefficients for sliding surface.
+%% Parameters for nth-order homogeneous discrete-time differentiator (HDD):
+par.L = [30 30 .15 60 .15 .15];
+par.lambda = [5.3 14.1 9.8];
 %% Extended Kalman Filters
 % EKF_1:
 par.b_1 = 87.5*0;                                                           % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).
