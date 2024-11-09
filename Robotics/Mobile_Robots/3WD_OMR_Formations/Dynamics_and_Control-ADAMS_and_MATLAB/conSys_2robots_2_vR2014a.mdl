@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.489"
+    ComputedModelVersion    "1.490"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -67,7 +67,7 @@ Model {
 	LoadSaveID		"625"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[-14.0, 39.0]
+	Offset			[-14.0, 216.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Nov 04 13:21:18 2024"
+  LastModifiedDate	  "Fri Nov 08 23:50:45 2024"
   RTWModifiedTimeStamp	  652627275
-  ModelVersionFormat	  "1.%<AutoIncrement:489>"
+  ModelVersionFormat	  "1.%<AutoIncrement:490>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -5892,7 +5892,7 @@ Model {
 	  ShowName		  off
 	  Floating		  off
 	  Location		  [5, 48, 1371, 727]
-	  Open			  on
+	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "yonly"
 	  List {
@@ -6635,7 +6635,7 @@ Model {
 	  }
 	  ShowLegends		  off
 	  YMin			  "-100"
-	  YMax			  "100"
+	  YMax			  "1000"
 	  SaveName		  "ScopeData30"
 	  LimitDataPoints	  off
 	}
@@ -6667,8 +6667,6 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-100"
-	  YMax			  "100"
 	  SaveName		  "ScopeData31"
 	  LimitDataPoints	  off
 	}
@@ -6700,8 +6698,6 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-100"
-	  YMax			  "100"
 	  SaveName		  "ScopeData37"
 	  LimitDataPoints	  off
 	}

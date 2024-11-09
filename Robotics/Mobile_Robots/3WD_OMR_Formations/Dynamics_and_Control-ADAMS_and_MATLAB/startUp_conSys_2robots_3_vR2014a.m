@@ -125,7 +125,7 @@ xc_0 = 10000; yc_0 = 10000; thc_0 = pi/2; d_0 = 2000;
 x1_0 = 12000; y1_0 = 10000; th1_0 = 0;
 x2_0 = 8000; y2_0 = 10000; th2_0 = 0;
 % With Cluster space references 1:
-dxc_0 = 0; dyc_0 = 0; dthc_0 = 0; dd_0 = 0; dph1_0 = .2*0; dph2_0 = -.2*0;
+dxc_0 = 0; dyc_0 = 0; dthc_0 = 0; dd_0 = 0; dph1_0 = .2; dph2_0 = -.2;
 o1r_0 = pi/2 - thc_0; o2r_0 = pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
 %-----------------------------------
 dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;

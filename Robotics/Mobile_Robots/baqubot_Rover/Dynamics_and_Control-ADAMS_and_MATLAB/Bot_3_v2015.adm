@@ -1,0 +1,444 @@
+ADAMS/View model name: baqubot_3
+!
+!-------------------------------- SYSTEM UNITS ---------------------------------
+!
+UNITS/
+, FORCE = NEWTON
+, MASS = KILOGRAM
+, LENGTH = MILLIMETER
+, TIME = SECOND
+!
+!----------------------------------- PARTS -------------------------------------
+!
+!----------------------------------- Ground ------------------------------------
+!
+!                            adams_view_name='ground'
+PART/1
+, GROUND
+!
+!                           adams_view_name='MARKER_1'
+MARKER/1
+, PART = 1
+, QP = -2500, -200, -55
+!
+!                            adams_view_name='SOLID0'
+GRAPHICS/7
+, BOX
+, CORNER = 1
+, X = 5000
+, Y = 5000
+, Z = 5
+!
+!------------------------------------ Part -------------------------------------
+!
+!                          adams_view_name='Left_Wheel'
+PART/2
+, MASS = 0.0449103183
+, CM = 19
+, IP = 52.91243652, 30.30637988, 30.30209185
+!
+!                           adams_view_name='MARKER_5'
+MARKER/5
+, PART = 2
+, QP = -78, 0, 0
+, REULER = 270D, 90D, 180D
+!
+!                          adams_view_name='MARKER_13'
+MARKER/13
+, PART = 2
+, QP = -78, 0, 0
+, REULER = 270D, 90D, 180D
+!
+!                          adams_view_name='MARKER_14'
+MARKER/14
+, PART = 2
+, QP = -78, 0, 0
+, REULER = 270D, 90D, 180D
+!
+!                            adams_view_name='PSMAR'
+MARKER/18
+, PART = 2
+!
+!                              adams_view_name='cm'
+MARKER/19
+, PART = 2
+, QP = -78.00013395, 5.278882948E-004, 2.506016703E-004
+, REULER = 359.5113004D, 1.209939014D, 0.4887749251D
+!
+!                          adams_view_name='MARKER_29'
+MARKER/29
+, PART = 2
+!
+!                            adams_view_name='SOLID1'
+GRAPHICS/1
+, EXTERNAL
+, RM = 29
+, FILE = Bot_3_v2015.xmt_txt
+, ELEMENT = SOLID1
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                         adams_view_name='Right_Wheel'
+PART/3
+, MASS = 0.0449103183
+, CM = 21
+, IP = 52.91243652, 30.30637988, 30.30209185
+!
+!                           adams_view_name='MARKER_3'
+MARKER/3
+, PART = 3
+, QP = 78, 0, 0
+, REULER = 270D, 90D, 180D
+!
+!                          adams_view_name='MARKER_11'
+MARKER/11
+, PART = 3
+, QP = 78, 0, 0
+, REULER = 270D, 90D, 180D
+!
+!                          adams_view_name='MARKER_12'
+MARKER/12
+, PART = 3
+, QP = 78, 0, 0
+, REULER = 270D, 90D, 180D
+!
+!                            adams_view_name='PSMAR'
+MARKER/20
+, PART = 3
+!
+!                              adams_view_name='cm'
+MARKER/21
+, PART = 3
+, QP = 78.00013395, -4.221129617E-004, 4.04088971E-004
+, REULER = 179.9691855D, 19.56530892D, 180.0292196D
+!
+!                          adams_view_name='MARKER_28'
+MARKER/28
+, PART = 3
+!
+!                            adams_view_name='SOLID2'
+GRAPHICS/2
+, EXTERNAL
+, RM = 28
+, FILE = Bot_3_v2015.xmt_txt
+, ELEMENT = SOLID2
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                          adams_view_name='Rear_Fork'
+PART/4
+, MASS = 0.0400088163
+, CM = 23
+, IP = 10.48073612, 8.425448492, 6.549571111
+!
+!                           adams_view_name='MARKER_7'
+MARKER/7
+, PART = 4
+, QP = 0, -90, -12
+!
+!                           adams_view_name='MARKER_8'
+MARKER/8
+, PART = 4
+, QP = 0, -115, -32.50282785
+, REULER = 270D, 90D, 180D
+!
+!                            adams_view_name='PSMAR'
+MARKER/22
+, PART = 4
+!
+!                              adams_view_name='cm'
+MARKER/23
+, PART = 4
+, QP = -4.280450976E-014, -112.1901663, -22.19648347
+, REULER = 90D, 90D, 317.9768685D
+!
+!------------------------------------ Part -------------------------------------
+!
+!                          adams_view_name='Free_Wheel'
+PART/5
+, MASS = 0.0044759486
+, CM = 25
+, IP = 0.6763418715, 0.6014042633, 0.6011553121
+!
+!                           adams_view_name='MARKER_9'
+MARKER/9
+, PART = 5
+, QP = 0, -115, -32.50282785
+, REULER = 270D, 90D, 180D
+!
+!                            adams_view_name='PSMAR'
+MARKER/24
+, PART = 5
+!
+!                              adams_view_name='cm'
+MARKER/25
+, PART = 5
+, QP = -5.526843262E-004, -115.0002345, -32.50204043
+, REULER = 180.1127319D, 15.76220338D, 179.9066918D
+!
+!                          adams_view_name='MARKER_30'
+MARKER/30
+, PART = 5
+!
+!                            adams_view_name='SOLID4'
+GRAPHICS/4
+, EXTERNAL
+, RM = 30
+, FILE = Bot_3_v2015.xmt_txt
+, ELEMENT = SOLID4
+, FACETING_TOLERANCE = 300.0028
+!
+!------------------------------------ Part -------------------------------------
+!
+!                           adams_view_name='Chassis'
+PART/6
+, MASS = 1.109272025
+, CM = 27
+, IP = 3794.610385, 2874.790189, 2347.459062
+!
+!                           adams_view_name='MARKER_2'
+MARKER/2
+, PART = 6
+, QP = 78, 0, 0
+, REULER = 270D, 90D, 180D
+!
+!                           adams_view_name='MARKER_4'
+MARKER/4
+, PART = 6
+, QP = -78, 0, 0
+, REULER = 270D, 90D, 180D
+!
+!                           adams_view_name='MARKER_6'
+MARKER/6
+, PART = 6
+, QP = 0, -90, -12
+!
+!                          adams_view_name='MARKER_10'
+MARKER/10
+, PART = 6
+, QP = 0, 0, -43
+!
+!                            adams_view_name='PSMAR'
+MARKER/26
+, PART = 6
+!
+!                              adams_view_name='cm'
+MARKER/27
+, PART = 6
+, QP = 2.203939767E-008, -10.63682177, -13.42446998
+, REULER = 179.9999998D, 98.34155041D, 89.99999996D
+!
+!---------------------------------- CONTACTS -----------------------------------
+!
+!                          adams_view_name='Contact_1'
+CONTACT/1
+, IGEOM = 7
+, JGEOM = 2
+, IMPACT
+, STIFFNESS = 10
+, DAMPING = 0.2
+, DMAX = 0.001
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.073
+, MU_DYNAMIC = 0.055
+, STICTION_TRANSITION_VELOCITY = 2
+, FRICTION_TRANSITION_VELOCITY = 3
+!
+!                          adams_view_name='Contact_2'
+CONTACT/2
+, IGEOM = 7
+, JGEOM = 1
+, IMPACT
+, STIFFNESS = 10
+, DAMPING = 0.2
+, DMAX = 0.001
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.073
+, MU_DYNAMIC = 0.055
+, STICTION_TRANSITION_VELOCITY = 2
+, FRICTION_TRANSITION_VELOCITY = 3
+!
+!                          adams_view_name='Contact_3'
+CONTACT/3
+, IGEOM = 7
+, JGEOM = 4
+, IMPACT
+, STIFFNESS = 10
+, DAMPING = 0.1
+, DMAX = 0.001
+, EXPONENT = 2.2
+, COULOMB_FRICTION = ON
+, MU_STATIC = 0.073
+, MU_DYNAMIC = 0.055
+, STICTION_TRANSITION_VELOCITY = 2
+, FRICTION_TRANSITION_VELOCITY = 3
+!
+!------------------------------ DYNAMIC GRAPHICS -------------------------------
+!
+!                   adams_view_name='SFORCE_1_force_graphic_1'
+GRAPHICS/18
+, FORCE
+, ETYPE = SFORCE
+, EID = 1
+, EMARKER = 11
+!
+!                   adams_view_name='SFORCE_2_force_graphic_1'
+GRAPHICS/19
+, FORCE
+, ETYPE = SFORCE
+, EID = 2
+, EMARKER = 13
+!
+!-------------------------------- CONSTRAINTS ----------------------------------
+!
+!                           adams_view_name='Joint_1'
+JOINT/1
+, REVOLUTE
+, I = 2
+, J = 3
+!
+!                           adams_view_name='Joint_2'
+JOINT/2
+, REVOLUTE
+, I = 4
+, J = 5
+!
+!                           adams_view_name='Joint_3'
+JOINT/3
+, REVOLUTE
+, I = 6
+, J = 7
+!
+!                           adams_view_name='Joint_4'
+JOINT/4
+, REVOLUTE
+, I = 8
+, J = 9
+!
+!----------------------------------- FORCES ------------------------------------
+!
+!                          adams_view_name='RW_Torque'
+SFORCE/1
+, ROTATIONAL
+, I = 11
+, J = 12
+, ACTIONONLY
+, FUNCTION = VARVAL(1)
+!
+!                          adams_view_name='LW_Torque'
+SFORCE/2
+, ROTATIONAL
+, I = 13
+, J = 14
+, ACTIONONLY
+, FUNCTION = VARVAL(2)
+!
+!                          adams_view_name='Friction_1'
+FRICTION/1
+, JOINT = 1
+, MU_STATIC = 0.15
+, MU_DYNAMIC = 0.1
+, FRICTION_ARM = 12
+, BENDING_REACTION_ARM = 36
+, PIN_RADIUS = 8
+, STICTION_TRANSITION_VELOCITY = 1
+, INPUTS = REACTION_FORCE:BENDING_MOMENT
+!
+!                          adams_view_name='Friction_2'
+FRICTION/2
+, JOINT = 2
+, MU_STATIC = 0.15
+, MU_DYNAMIC = 0.1
+, FRICTION_ARM = 12
+, BENDING_REACTION_ARM = 36
+, PIN_RADIUS = 8
+, STICTION_TRANSITION_VELOCITY = 1
+, INPUTS = REACTION_FORCE:BENDING_MOMENT
+!
+!                          adams_view_name='Friction_3'
+FRICTION/3
+, JOINT = 3
+, MU_STATIC = 0.05
+, MU_DYNAMIC = 0.033
+, FRICTION_ARM = 2.5
+, BENDING_REACTION_ARM = 3
+, PIN_RADIUS = 2.5
+, STICTION_TRANSITION_VELOCITY = 1
+, INPUTS = REACTION_FORCE:BENDING_MOMENT
+!
+!                          adams_view_name='Friction_4'
+FRICTION/4
+, JOINT = 4
+, MU_STATIC = 0.15
+, MU_DYNAMIC = 0.1
+, FRICTION_ARM = 6.2
+, BENDING_REACTION_ARM = 30
+, PIN_RADIUS = 3.025
+, STICTION_TRANSITION_VELOCITY = 1
+, INPUTS = REACTION_FORCE:BENDING_MOMENT
+!
+!------------------------------ DATA STRUCTURES --------------------------------
+!
+!                             adams_view_name='Trw'
+VARIABLE/1
+, FUNCTION = 10
+!
+!                             adams_view_name='Tlw'
+VARIABLE/2
+, FUNCTION = 10
+!
+!                             adams_view_name='Wrw'
+VARIABLE/3
+, FUNCTION = WZ(3,2,3)
+!
+!                             adams_view_name='Wlw'
+VARIABLE/4
+, FUNCTION = WZ(5,4,5)
+!
+!                            adams_view_name='Alpha'
+VARIABLE/5
+, FUNCTION = YAW(10,1)
+!
+!                            adams_view_name='X_Dist'
+VARIABLE/6
+, FUNCTION = DX(10,1)
+!
+!                            adams_view_name='Y_Dist'
+VARIABLE/7
+, FUNCTION = DY(10,1)
+!
+!                            adams_view_name='Inputs'
+PINPUT/1
+, VARIABLES = 1, 2
+!
+!                   adams_view_name='Bot_3_v2015.ctrl_pinput'
+PINPUT/2
+, VARIABLES = 1, 2
+!
+!                           adams_view_name='Outputs'
+POUTPUT/1
+, VARIABLES = 3, 4, 5, 6, 7
+!
+!                   adams_view_name='Bot_3_v2015.ctrl_poutput'
+POUTPUT/2
+, VARIABLES = 3, 4, 5, 6, 7
+!
+!------------------------- GRAVITATIONAL ACCELERATION --------------------------
+!
+ACCGRAV/
+, KGRAV = -9806.65
+!
+!----------------------------- ANALYSIS SETTINGS -------------------------------
+!
+OUTPUT/
+, REQSAVE
+, GRSAVE
+!
+RESULTS/
+, XRF
+!
+END
