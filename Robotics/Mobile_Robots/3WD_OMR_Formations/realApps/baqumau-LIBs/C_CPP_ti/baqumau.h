@@ -33,7 +33,7 @@ typedef struct{
 //---------------------------------------------------------------------------------------------------------------
 // Creating 3d matrix structure:
 extern bool allocateMatrix3(Matrix3 *MAT3, int xSize, int ySize, int zSize);
-// Function to free memory for the 3d matrix in the struct:
+// Function to free memory for the 3d matrix in the structure:
 extern void freeMatrix3(Matrix3 *MAT3);
 // Creating data structure that will be used to arrange streaming data set:
 extern Data_Struct createDataStruct(int bufferSize, int xSize, int ySize, int zSize);

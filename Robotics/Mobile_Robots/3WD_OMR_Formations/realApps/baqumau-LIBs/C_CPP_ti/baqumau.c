@@ -57,11 +57,11 @@ void freeMatrix3(Matrix3 *MAT3){
     int i, j;                                                                               // Declaration of i and j as integer variables.
     for(i = 0; i < MAT3->xSize; i++){
         for(j = 0; j < MAT3->xSize; j++){
-            free(MAT3->data[i][j]);                                                         // Liberate space for MAT{i,j} data struct.
+            free(MAT3->data[i][j]);                                                         // Liberate space for MAT{i,j} data structure.
         }
-        free(MAT3->data[i]);                                                                // Liberate space for MAT{i} data struct.
+        free(MAT3->data[i]);                                                                // Liberate space for MAT{i} data structure.
     }
-    free(MAT3->data);                                                                       // Liberate space for whole MAT data struct.
+    free(MAT3->data);                                                                       // Liberate space for whole MAT data structure.
     MAT3->xSize = 0;                                                                        // Set x size of MAT to zero.
     MAT3->ySize = 0;                                                                        // Set y size of MAT to zero.
     MAT3->zSize = 0;                                                                        // Set z size of MAT to zero.
@@ -128,7 +128,7 @@ void classify_charBuffer(Data_Struct *DAT){
                 charValue[k++] = DAT->charBuffer[i];                                        // Using charValue.
             }
             else if(DAT->charBuffer[i] != ',' && DAT->charBuffer[i] != ';' && j > 0){
-                DAT->MAT3.data[DAT->identifier][j-1][k++] = DAT->charBuffer[i];             // Using 3d matrix of DAT struct.
+                DAT->MAT3.data[DAT->identifier][j-1][k++] = DAT->charBuffer[i];             // Using 3d matrix of DAT structure.
             }
         }
     }

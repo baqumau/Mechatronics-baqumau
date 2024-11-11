@@ -38,11 +38,11 @@ typedef struct{
     float *z3_kp1;                                                              // State variables to arrange the current desired acceleration of robots' cluster.
     float *y_k;                                                                 // Output variables.
     bool *flag;                                                                 // Execution flag.
-    Integrator INT_1;                                                           // Creates first integrator needed for this reference struct.
-    Integrator INT_2;                                                           // Creates second integrator needed for this reference struct.
+    Integrator INT_1;                                                           // Creates first integrator needed for this reference structure.
+    Integrator INT_2;                                                           // Creates second integrator needed for this reference structure.
     Correction_Struct COR;                                                      // Creates an angle conversion structure.
-    Differentiator DIF_1;                                                       // Creates first differentiator needed for this reference struct.
-    Differentiator DIF_2;                                                       // Creates second differentiator needed for this reference struct.
+    Differentiator DIF_1;                                                       // Creates first differentiator needed for this reference structure.
+    Differentiator DIF_2;                                                       // Creates second differentiator needed for this reference structure.
 } Reference;
 //---------------------------------------------------------------------------------------------------------------
 // Defining an enumeration to choose the different control strategy:
