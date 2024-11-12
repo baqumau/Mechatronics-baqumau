@@ -16,6 +16,7 @@
 // 10. SCIC communication (UART).
 // 11. Sending data via SCIC to ChipKit WF32.
 // 12. Control system implementation.
+// 13. Communication with Xbee module (PWM signals to the robots at a baud-rate of 115200 bits/secs).
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
@@ -120,6 +121,19 @@ char *disturbances;                                                             
 char *rsPose;                                                                       // Variable to save a char data chain that contains the robot space pose of OMRs.
 char *csPose;                                                                       // Variable to save a char data chain that contains the cluster space pose of OMRs.
 char *trackingErrors;                                                               // Variable to save a char data chain that contains the tracking errors for the reference trajectories.
+char *var00;                                                                        // Multi-purpose char variable 0.
+char *var01;                                                                        // Multi-purpose char variable 1.
+char *var02;                                                                        // Multi-purpose char variable 2.
+char *var03;                                                                        // Multi-purpose char variable 3.
+char *var04;                                                                        // Multi-purpose char variable 4.
+char *var05;                                                                        // Multi-purpose char variable 5.
+char *var06;                                                                        // Multi-purpose char variable 6.
+char *var07;                                                                        // Multi-purpose char variable 7.
+char *var08;                                                                        // Multi-purpose char variable 8.
+char *var09;                                                                        // Multi-purpose char variable 9.
+char *var10;                                                                        // Multi-purpose char variable 10.
+char *var11;                                                                        // Multi-purpose char variable 11.
+char *var12;                                                                        // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
 enum Control_System consys = ADRC_RS;                                               // Declare the control system type (ADRC_RS or SMC_CS at the moment).
 enum Reference_Type reftype = STATIC_01;                                            // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
@@ -178,7 +192,9 @@ float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                 // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
 float sls_satVals[3*Robots_Qty] = {280.0f, 280.0f, 9.5f, 150.0f, 9.5f, 9.5f};
-float diff_fc = 45.0f;                                                              // Assign an arbitrary value to the filter coefficient of CSO internal differentiator.
+float diff_fc = 45.0f;                                                              // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
+float diff_pg[3] = {5.3f, 14.1f, 9.8f};                                             // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
+float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                      // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
 //-----------------------------------------------------------------------------------------------------------------------
 // Declaration of data structure for SCIA peripheral:
 Data_Struct SCIA;                                                                   // Data structure to arrange data from SCIA.
@@ -186,8 +202,8 @@ Data_Struct SCIA;                                                               
 Data_Struct SCIB;                                                                   // Data structure to arrange data from SCIB.
 // Declaration of data structure for a high-gain observer in the robot space:
 RS_Observer RSO;
-// Declaration of data structure for a high-gain observer in the cluster space:
-CS_Observer CSO;
+// Declaration of data structure for a high-gain observer in the cluster space (variant x):
+CSx_Observer CSO;
 // Declaration of data structure for a GPI controller in the robot space:
 GPI_Controller GPI;
 // Declaration of data structure for the sliding surfaces in the cluster space:
@@ -295,6 +311,20 @@ void main(void){
     controlSignals = (char *)malloc(bufferSize/2 * sizeof(char));                   // Preallocate memory for control signals data set.
     angularVelocities = (char *)malloc(bufferSize/2 * sizeof(char));                // Preallocate memory for angular velocities data set.
     errors_k = (float *)malloc(3*Robots_Qty * sizeof(float));                       // Preallocate memory to save pose error variables in a floating-point values vector.
+    // Preallocating memory for used multi-purpose char *variables:
+    var00 = (char *)malloc(16 * sizeof(char));
+    var01 = (char *)malloc(16 * sizeof(char));
+    var02 = (char *)malloc(16 * sizeof(char));
+    var03 = (char *)malloc(16 * sizeof(char));
+    var04 = (char *)malloc(16 * sizeof(char));
+    var05 = (char *)malloc(16 * sizeof(char));
+    var06 = (char *)malloc(16 * sizeof(char));
+    var07 = (char *)malloc(16 * sizeof(char));
+    var08 = (char *)malloc(16 * sizeof(char));
+    var09 = (char *)malloc(16 * sizeof(char));
+    var10 = (char *)malloc(16 * sizeof(char));
+    var11 = (char *)malloc(16 * sizeof(char));
+    var12 = (char *)malloc(16 * sizeof(char));
 
     // Interrupts that are used in this project are re-mapped to
     // ISR functions found within this file.
@@ -358,7 +388,7 @@ void main(void){
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
     // Creating data structure for a high-gain observer in the cluster space:
-    CSO = createCS_Observer01(sampleTime,cso_Gains,epsilon,diff_fc);
+    CSO = createCSx_Observer01(sampleTime,cso_Gains,epsilon,diff_pg,diff_lc);
     // Creating data structure for a GPI controller in the robot space:
     GPI = createGPI_Controller(sampleTime,gpi_Gains);
     // Creating data structure for the sliding surfaces in the cluster space:
@@ -506,7 +536,7 @@ __interrupt void cpu_timer1_isr(void){
             case SMC_CS:{
                 //---------------------------------------------SMC_CS----------------------------------------------------
                 // Estimation via High-gain Observer:
-                CS_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);                    // Estimates the OMRs formation output c(k), first derivative and disturbances.
+                CSx_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);                   // Estimates the OMRs formation output c(k), first derivative and disturbances.
                 //-------------------------------------------------------------------------------------------------------
                 // Computing the sliding surfaces required by SMC CS:
                 compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);               // Update to current values for sliding surfaces.
@@ -581,8 +611,20 @@ __interrupt void cpu_timer2_isr(void){
         else timeoutCount++;
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the measurement variables of OMRs formation:
+        memset_fast(var00,0,16);
+        ftoa(roundToThreeDecimals(RSO.y_k[6]),var00,3);
+        memset_fast(var01,0,16);
+        ftoa(roundToThreeDecimals(RSO.y_k[7]),var01,3);
+        memset_fast(var02,0,16);
+        ftoa(roundToThreeDecimals(RSO.y_k[8]),var02,3);
+        memset_fast(var03,0,16);
+        ftoa(roundToThreeDecimals(RSO.y_k[9]),var03,3);
+        memset_fast(var04,0,16);
+        ftoa(roundToThreeDecimals(RSO.y_k[10]),var04,3);
+        memset_fast(var05,0,16);
+        ftoa(roundToThreeDecimals(RSO.y_k[11]),var05,3);
         memset_fast(measurements,0,bufferSize);                                     // Initialize measurements data chain.
-        snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],FMR.cs_k.data[0],FMR.cs_k.data[1],FMR.cs_k.data[2],FMR.cs_k.data[3],FMR.cs_k.data[4],FMR.cs_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
+        snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,(unsigned long)(CpuTimer1.InterruptCount));
         scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
     }
     else if(CpuTimer1.InterruptCount > final_iteration && flagcommand_0){
@@ -663,8 +705,8 @@ __interrupt void scia_rx_isr(void){
                 case SMC_CS:{
                     //----------------------------------------------SMC_CS---------------------------------------------
                     // Float vector z_0 to define initial conditions for states of HGO observer in the cluster space:
-                    float obs_z0[9*Robots_Qty] = {FMR.c_k[0], FMR.c_k[1], FMR.c_k[2], FMR.c_k[3], FMR.c_k[4], FMR.c_k[5], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                    init_CS_Observer01(CSO,obs_z0);                                 // Initialize the observer CSO.
+                    float obs_z0[9*Robots_Qty] = {FMR.c_k[0],FMR.c_k[1],FMR.c_k[2],FMR.c_k[3],FMR.c_k[4],FMR.c_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+                    init_CSx_Observer01(CSO,obs_z0);                                // Initialize the observer CSO.
                     //-------------------------------------------------------------------------------------------------
                     // Initial conditions for previous observer is taken here:
                     init_SlidingSurfaces(SLS,REF.Z_0,obs_z0);                       // Initialize sliding surfaces algorithm.
