@@ -16,7 +16,7 @@
 // 10. SCIC communication (UART).
 // 11. Sending data via SCIC to ChipKit WF32.
 // 12. Control system implementation.
-// 13. Communication with Xbee module (PWM signals to the robots at a baud-rate of 115200 bits/secs).
+// 13. Communication with XBee module (PWM signals to the robots at a baud-rate of 115200 bits/second).
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
@@ -29,6 +29,7 @@
 #define DEVICE_SYSCLK_FREQ 200000000                                                // Native working system clock frequency.
 #define BLINKY_LED_GPIO_01 12                                                       // Define pin number for LED 01.
 #define BLINKY_LED_GPIO_02 13                                                       // Define pin number for LED 02.
+#define XBEE_RST 41                                                                 // Define RST pin number for XBee module.
 #define freq_hz_0 250                                                               // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                               // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 10                                                                // Frequency in Hz for instructions execution of Timer 2.
@@ -237,6 +238,11 @@ void main(void){
     GPIO_SetupPinOptions(BLINKY_LED_GPIO_02, GPIO_OUTPUT, GPIO_PUSHPULL);           // Set behavior of Pin 13.
     GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                           // Turn LED GPIO 1 to OFF.
     //-------------------------------------------------------------------------------------------------------------------
+    // Configuring RST pin for XBee module:
+    GPIO_SetupPinMux(XBEE_RST, GPIO_MUX_CPU1, 0);                                   // Configure role of Pin 41 (XBEE_RST).
+    GPIO_SetupPinOptions(XBEE_RST, GPIO_OUTPUT, GPIO_PUSHPULL);                     // Set behavior of Pin 41.
+    GpioDataRegs.GPBSET.bit.GPIO41 = 1;                                             // Turn Pin 41 to ON.
+    //-------------------------------------------------------------------------------------------------------------------
     EALLOW;
     // Choosing the pins 84 and 85 to the SCI-A port (UART Communication - UART 0):
     GpioCtrlRegs.GPCGMUX2.bit.GPIO84 = 1;                                           // SCIA TXD.
@@ -429,6 +435,7 @@ void main(void){
                     break;
             }
             flagcommand_3 = false;                                                  // Reset flag command 3.
+            GPIO_WritePin(XBEE_RST, 1);                                             // Turn XBee RST pin to OFF.
         }
         else NOP;                                                                   // No Operation (burn a cycle).
     }
