@@ -96,7 +96,9 @@ void scic_msg(char *msg);
 void memset_fast(void* dst, int16 value, Uint16 N);
 //-----------------------------------------------------------------------------------------------------------------------
 // Global dynamic variables will be declared here, together with some required-definition configuration constants:
-const Uint16 bufferSize = 256;                                                      // buffer length.
+const Uint16 bufferSize_0 = 256;                                                    // buffer length 0.
+const Uint16 bufferSize_1 = 64;                                                     // buffer length 1.
+const Uint16 bufferSize_2 = 10;                                                     // buffer length 2.
 const float sampleTime = 1.0f/freq_hz_1;                                            // Float parameter to define the global control system sample time.
 //-----------------------------------------------------------------------------------------------------------------------
 Uint32 final_iteration;                                                             // Declare variable to save final iteration value of program execution.
@@ -313,24 +315,24 @@ void main(void){
     scic_init();                                                                    // Initialize the SCIC.
 
     // Preallocating memory for used *variables:
-    measurements = (char *)malloc(bufferSize * sizeof(char));                       // Preallocate memory for measurement data set.
-    controlSignals = (char *)malloc(bufferSize/2 * sizeof(char));                   // Preallocate memory for control signals data set.
-    angularVelocities = (char *)malloc(bufferSize/2 * sizeof(char));                // Preallocate memory for angular velocities data set.
+    measurements = (char *)malloc(bufferSize_0 * sizeof(char));                     // Preallocate memory for measurement data set.
+    controlSignals = (char *)malloc(bufferSize_1 * sizeof(char));                   // Preallocate memory for control signals data set.
+    angularVelocities = (char *)malloc(bufferSize_1 * sizeof(char));                // Preallocate memory for angular velocities data set.
     errors_k = (float *)malloc(3*Robots_Qty * sizeof(float));                       // Preallocate memory to save pose error variables in a floating-point values vector.
     // Preallocating memory for used multi-purpose char *variables:
-    var00 = (char *)malloc(16 * sizeof(char));
-    var01 = (char *)malloc(16 * sizeof(char));
-    var02 = (char *)malloc(16 * sizeof(char));
-    var03 = (char *)malloc(16 * sizeof(char));
-    var04 = (char *)malloc(16 * sizeof(char));
-    var05 = (char *)malloc(16 * sizeof(char));
-    var06 = (char *)malloc(16 * sizeof(char));
-    var07 = (char *)malloc(16 * sizeof(char));
-    var08 = (char *)malloc(16 * sizeof(char));
-    var09 = (char *)malloc(16 * sizeof(char));
-    var10 = (char *)malloc(16 * sizeof(char));
-    var11 = (char *)malloc(16 * sizeof(char));
-    var12 = (char *)malloc(16 * sizeof(char));
+    var00 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var01 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var02 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var03 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var04 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var05 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var06 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var07 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var08 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var09 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var10 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var11 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var12 = (char *)malloc(bufferSize_2 * sizeof(char));
 
     // Interrupts that are used in this project are re-mapped to
     // ISR functions found within this file.
@@ -386,10 +388,10 @@ void main(void){
 
     // Step 6. Defining data structure that will be used by this code:
     // Definition of data structure for SCIA peripheral (required for getting and arranging data from MATLAB):
-    SCIA = createDataStruct(bufferSize,1,3*Robots_Qty,16);
+    SCIA = createDataStruct(bufferSize_0,1,3*Robots_Qty,bufferSize_2);
     init_charBuffer(&SCIA);                                                         // Initialize dedicated char-type data buffer of SCIA.
     // Definition of data structure for SCIB peripheral (required for getting and arranging data from XBee):
-    SCIB = createDataStruct(bufferSize,2,3,16);
+    SCIB = createDataStruct(bufferSize_0,2,3,bufferSize_2);
     init_charBuffer(&SCIB);                                                         // Initialize dedicated char-type data buffer of SCIB.
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
@@ -435,7 +437,7 @@ void main(void){
                     break;
             }
             flagcommand_3 = false;                                                  // Reset flag command 3.
-            GPIO_WritePin(XBEE_RST, 1);                                             // Turn XBee RST pin to OFF.
+            GpioDataRegs.GPBCLEAR.bit.GPIO41 = 1;                                   // Turn Pin 41 to OFF.                                             // Turn XBee RST pin to OFF.
         }
         else NOP;                                                                   // No Operation (burn a cycle).
     }
@@ -493,12 +495,17 @@ __interrupt void cpu_timer1_isr(void){
         FMR.q_k[2] = FMR.CORq.y_k[0];                                               // Determines ph1(k).
         FMR.q_k[5] = FMR.CORq.y_k[1];                                               // Determines ph2(k).
         computeCSVariables(FMR);                                                    // Compute the cluster space variables of FMR formation.
+        //---------------------------------------------------------------------------------------------------------------
         // Saving OMRs formation pose data in a string-format version:
-        for(i = 0; i < 3*Robots_Qty; i++){
-            memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                    // Clear char-type string vector where OMRs' robot space pose will be saved.
-            memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                    // Clear char-type string vector where OMRs' cluster space pose will be saved.
-            ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);              // Saving same robot space pose of OMRs formation, but in string-format.
-            ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);              // Saving same cluster space pose of OMRs formation, but in string-format.
+        Uint16 mod_result;
+        mod_result = CpuTimer1.InterruptCount % freq_hz_2;                          // Computes modulus operation.
+        if(mod_result == 0){
+            for(i = 0; i < 3*Robots_Qty; i++){
+                memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                // Clear char-type string vector where OMRs' robot space pose will be saved.
+                memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                // Clear char-type string vector where OMRs' cluster space pose will be saved.
+                ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);          // Saving same robot space pose of OMRs formation, but in string-format.
+                ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);          // Saving same cluster space pose of OMRs formation, but in string-format.
+            }
         }
         //---------------------------------------------------------------------------------------------------------------
         // Computing the desired reference tracking-trajectories:
@@ -524,19 +531,22 @@ __interrupt void cpu_timer1_isr(void){
                 //-------------------------------------------------------------------------------------------------------
                 // Conditioning input torque control for OMRs formation:
                 for(i = 0; i < 3; i++){
-                  FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-100.0f/ke_1,100.0f/ke_1),t_cl,sampleTime,CpuTimer1.InterruptCount);
-                  FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
-                  FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
-                  FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
-                  //-----------------------------------------------------------------------------------------------------
-                  memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);              // Clear char-type string vector where OMRs' control signals will be saved.
-                  ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                              // Saving same control signals of OMRs formation, but in string-format.
-                  memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);              // Clear char-type string vector where OMRs' PWMs control signals will be saved.
-                  ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                              // Saving same PWMs control signals of OMRs formation, but in string-format.
-                  memset_fast(FMR.us_k.data[i+3],0,FMR.us_k.bufferSize);            // Clear char-type string vector where OMRs' control signals will be saved.
-                  ftoa(FMR.u_k[i+3],FMR.us_k.data[i+3],3);                          // Saving same control signals of OMRs formation, but in string-format.
-                  memset_fast(FMR.vs_k.data[i+3],0,FMR.vs_k.bufferSize);            // Clear char-type string vector where OMRs' PWMs control signals will be saved.
-                  ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                          // Saving same PWMs control signals of OMRs formation, but in string-format.
+                    FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-40.0f/ke_1,40.0f/ke_1),t_cl,sampleTime,CpuTimer1.InterruptCount);
+                    FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
+                    FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-40.0f/ke_2,40.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
+                    FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
+                    //-----------------------------------------------------------------------------------------------------
+                    // Saving OMRs formation control signals data in a string-format version:
+                    if(mod_result == 5){
+                        memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);              // Clear char-type string vector where OMRs' control signals will be saved.
+                        ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                              // Saving same control signals of OMRs formation, but in string-format.
+                        memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);              // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                        ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                              // Saving same PWMs control signals of OMRs formation, but in string-format.
+                        memset_fast(FMR.us_k.data[i+3],0,FMR.us_k.bufferSize);            // Clear char-type string vector where OMRs' control signals will be saved.
+                        ftoa(FMR.u_k[i+3],FMR.us_k.data[i+3],3);                          // Saving same control signals of OMRs formation, but in string-format.
+                        memset_fast(FMR.vs_k.data[i+3],0,FMR.vs_k.bufferSize);            // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                        ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                          // Saving same PWMs control signals of OMRs formation, but in string-format.
+                    }
                 }
                 break;
               }
@@ -558,14 +568,17 @@ __interrupt void cpu_timer1_isr(void){
                   FMR.u_k[i+3] = clutch(saturation(SMC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
                   FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
                   //-----------------------------------------------------------------------------------------------------
-                  memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);              // Clear char-type string vector where OMRs' control signals will be saved.
-                  ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                              // Saving same control signals of OMRs formation, but in string-format.
-                  memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);              // Clear char-type string vector where OMRs' PWMs control signals will be saved.
-                  ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                              // Saving same PWMs control signals of OMRs formation, but in string-format.
-                  memset_fast(FMR.us_k.data[i+3],0,FMR.us_k.bufferSize);            // Clear char-type string vector where OMRs' control signals will be saved.
-                  ftoa(FMR.u_k[i+3],FMR.us_k.data[i+3],3);                          // Saving same control signals of OMRs formation, but in string-format.
-                  memset_fast(FMR.vs_k.data[i+3],0,FMR.vs_k.bufferSize);            // Clear char-type string vector where OMRs' PWMs control signals will be saved.
-                  ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                          // Saving same PWMs control signals of OMRs formation, but in string-format.
+                  // Saving OMRs formation control signals data in a string-format version:
+                  if(mod_result == 5){
+                      memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);              // Clear char-type string vector where OMRs' control signals will be saved.
+                      ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                              // Saving same control signals of OMRs formation, but in string-format.
+                      memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);              // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                      ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                              // Saving same PWMs control signals of OMRs formation, but in string-format.
+                      memset_fast(FMR.us_k.data[i+3],0,FMR.us_k.bufferSize);            // Clear char-type string vector where OMRs' control signals will be saved.
+                      ftoa(FMR.u_k[i+3],FMR.us_k.data[i+3],3);                          // Saving same control signals of OMRs formation, but in string-format.
+                      memset_fast(FMR.vs_k.data[i+3],0,FMR.vs_k.bufferSize);            // Clear char-type string vector where OMRs' PWMs control signals will be saved.
+                      ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                          // Saving same PWMs control signals of OMRs formation, but in string-format.
+                  }
                   //-----------------------------------------------------------------------------------------------------
                   // Computing tracking errors states:
                   errors_k[i] = FMR.q_k[i] - REF.x1_k[i];
@@ -576,9 +589,9 @@ __interrupt void cpu_timer1_isr(void){
         }
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the control signals for OMRs formation:
-        memset_fast(controlSignals,0,sizeof(controlSignals));                       // Initialize controlSignals data chain.
-        snprintf(controlSignals,sizeof(controlSignals),":0,%s,%s,%s,%s,%s,%s;\n",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
-        scib_msg(controlSignals);                                                   // Write measured variables through SCIB peripheral.
+        memset_fast(controlSignals,0,bufferSize_1);                                     // Initialize controlSignals data chain.
+        snprintf(controlSignals,bufferSize_1,":0,%s,%s,%s,%s,%s,%s;\n",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
+        scib_msg(controlSignals);                                                       // Write measured variables through SCIB peripheral.
     }
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
@@ -614,24 +627,24 @@ __interrupt void cpu_timer2_isr(void){
             flagcommand_4 = false;                                                  // Reset this flag to check if exist timeout state for SCIA receiving data.
             timeoutCount = 1;                                                       // Increasing timeout counter.
         }
-        else if(timeoutCount >= 20) final_iteration = CpuTimer1.InterruptCount;     // Force ending execution.
+        else if(timeoutCount >= 20) final_iteration = CpuTimer1.InterruptCount;     // Force to ending execution.
         else timeoutCount++;
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the measurement variables of OMRs formation:
-        memset_fast(var00,0,16);
-        ftoa(roundToThreeDecimals(RSO.y_k[6]),var00,3);
-        memset_fast(var01,0,16);
-        ftoa(roundToThreeDecimals(RSO.y_k[7]),var01,3);
-        memset_fast(var02,0,16);
-        ftoa(roundToThreeDecimals(RSO.y_k[8]),var02,3);
-        memset_fast(var03,0,16);
-        ftoa(roundToThreeDecimals(RSO.y_k[9]),var03,3);
-        memset_fast(var04,0,16);
-        ftoa(roundToThreeDecimals(RSO.y_k[10]),var04,3);
-        memset_fast(var05,0,16);
-        ftoa(roundToThreeDecimals(RSO.y_k[11]),var05,3);
-        memset_fast(measurements,0,bufferSize);                                     // Initialize measurements data chain.
-        snprintf(measurements,bufferSize,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,(unsigned long)(CpuTimer1.InterruptCount));
+        memset_fast(var00,0,bufferSize_2);
+        ftoa(roundToThreeDecimals(errors_k[0]),var00,3);
+        memset_fast(var01,0,bufferSize_2);
+        ftoa(roundToThreeDecimals(errors_k[1]),var01,3);
+        memset_fast(var02,0,bufferSize_2);
+        ftoa(roundToThreeDecimals(errors_k[2]),var02,3);
+        memset_fast(var03,0,bufferSize_2);
+        ftoa(roundToThreeDecimals(errors_k[3]),var03,3);
+        memset_fast(var04,0,bufferSize_2);
+        ftoa(roundToThreeDecimals(errors_k[4]),var04,3);
+        memset_fast(var05,0,bufferSize_2);
+        ftoa(roundToThreeDecimals(errors_k[5]),var05,3);
+        memset_fast(measurements,0,bufferSize_0);                                   // Initialize measurements data chain.
+        snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,(unsigned long)(CpuTimer1.InterruptCount));
         scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
     }
     else if(CpuTimer1.InterruptCount > final_iteration && flagcommand_0){
@@ -661,7 +674,7 @@ __interrupt void scia_rx_isr(void){
         timeoutCount = 0;                                                           // Reset timeout counter.
         classify_charBuffer(&SCIA);                                                 // Classify data from assigned buffer to UART1 structure data matrix.
         init_charBuffer(&SCIA);                                                     // Initialize char-type data buffer associated to UART 1.
-        if(!flagcommand_0){
+        if(!flagcommand_0 && CpuTimer1.InterruptCount > 2*freq_hz_1){
             //-----------------------------------------------------------------------------------------------------------
             // Saving initial state variables:
             for(i = 0; i < 3*Robots_Qty; i++){
@@ -786,8 +799,8 @@ __interrupt void scia_rx_isr(void){
                     float dc_0 = FMR.c_k[3];                                        // [mm], initial distance between both OMRs.
                     float ph1_0 = FMR.q_k[2];                                       // [rad], initial orientation of robot 1.
                     float ph2_0 = FMR.q_k[5];                                       // [rad], initial orientation of robot 2.
-                    float d_ph1_0 = 0.25f;                                          // [rad/s], desired initial angular velocity of robot 1.
-                    float d_ph2_0 = -0.25f;                                         // [rad/s], desired initial angular velocity of robot 2.
+                    float d_ph1_0 = 0.0f;                                           // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = 0.0f;                                           // [rad/s], desired initial angular velocity of robot 2.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                       // Initialize reference builder.
                     break;
@@ -839,8 +852,8 @@ __interrupt void scib_rx_isr(void){
         }
         //---------------------------------------------------------------------------------------------------------------
         // Packing the corresponding angular velocities variables of OMRs formation:
-        memset_fast(angularVelocities,0,sizeof(angularVelocities));                 // Initialize angularVelocities data chain.
-        snprintf(angularVelocities,sizeof(angularVelocities),"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
+        memset_fast(angularVelocities,0,bufferSize_1);                              // Initialize angularVelocities data chain.
+        snprintf(angularVelocities,bufferSize_1,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
         // Clearing buffer within SCIB data structure:
         init_charBuffer(&SCIB);                                                     // Initialize dedicated char-type data buffer of SCIB.
     }
@@ -940,9 +953,13 @@ void scib_fifo_init(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit a character through the SCIB:
 void scib_xmit(char a){
-    while(ScibRegs.SCIFFTX.bit.TXFFST != 0);                                        // Wait until FIFO TX is ready.
+    if(ScibRegs.SCIFFTX.bit.TXFFST < 15) ScibRegs.SCITXBUF.all = a;                 // Load character to SCIB TX buffer.
+    else{
+        ScibRegs.SCITXBUF.all = a;                                                  // Load character to SCIB TX buffer.
+        while(ScibRegs.SCIFFTX.bit.TXFFST > 1);                                     // Wait until FIFO TX is ready.
+    }
     // while(ScibRegs.SCICTL2.bit.TXRDY == 0);                                         // Wait until TX is ready (standard SCIB).
-    ScibRegs.SCITXBUF.all = a;                                                      // Load character to SCIB TX buffer.
+    // ScibRegs.SCITXBUF.all = a;                                                      // Load character to SCIB TX buffer.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit message via SCIB:
@@ -971,8 +988,8 @@ void scic_init(){
     // ScicRegs.SCICTL2.bit.RXBKINTENA = 1;                                            // Receiver-buffer break interrupt enabled (standard SCIC).
     //-------------------------------------------------------------------------------------------------------------------
     // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
-    ScicRegs.SCIHBAUD.all = 0x0000;                                                 // Desired baud_rate = 1250000, @LSPCLK = 50MHz (200 MHz SYSCLK).
-    ScicRegs.SCILBAUD.all = 0x0004;
+    ScicRegs.SCIHBAUD.all = 0x0000;                                                 // Desired baud_rate = 2E6, @LSPCLK = 50MHz (200 MHz SYSCLK).
+    ScicRegs.SCILBAUD.all = 0x0002;
     //-------------------------------------------------------------------------------------------------------------------
     ScicRegs.SCICTL1.all = 0x0023;                                                  // Relinquish SCI from Reset.
     //-------------------------------------------------------------------------------------------------------------------

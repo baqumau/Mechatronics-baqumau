@@ -7,7 +7,7 @@ Unfortunately ChipKit WF32 with PLATFORMIO framework does not work appropriately
 // Defining configuration values:
 #define FPB 80E6                                                        // Peripheral bus clock (PBCLK) frequency.
 #define desired_baudrate_1 20E5                                         // Desired baud rate for communication via UART 1 module.
-#define desired_baudrate_4 1250000                                      // Desired baud rate for communication via UART 4 module.
+#define desired_baudrate_4 20E5                                         // Desired baud rate for communication via UART 4 module.
 #define NOP __asm__ __volatile__ ("nop\n\t")                            // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
 // Including libraries to the program:
@@ -30,15 +30,17 @@ const unsigned int chipSelect_SD_default = 51;                          // Selec
 const unsigned int chipSelect_SD = chipSelect_SD_default;
 //---------------------------------------------------------------------------------------------------------------
 // Defining the variables used in this sketch:
-const unsigned int bufferSize = 256;                                    // buffer length.
+const unsigned int bufferSize_0 = 256;                                  // buffer length 0.
+const unsigned int bufferSize_1 = 64;                                   // buffer length 1.
+const unsigned int bufferSize_2 = 10;                                   // buffer length 2.
 const unsigned int varQty = 6*Robots_Qty + 1;                           // Quantity of state varaibles that must be saved.
 char character_1;                                                       // Variable where received character from UART 1 is saved.
 char character_4;                                                       // Variable where received character from UART 4 is saved.
-char measurements[bufferSize];                                          // Variable to arrange the measured variables.
+char measurements[bufferSize_0];                                        // Variable to arrange the measured variables.
 bool flagcommand_0 = false;                                             // Available flag command 0 (It is used to control UART receiving data).
 //---------------------------------------------------------------------------------------------------------------
 // Creating data structure for UART 4 peripheral:
-Data_Struct UART4 = createDataStruct(bufferSize,2,varQty,16);
+Data_Struct UART4 = createDataStruct(bufferSize_0,2,varQty,bufferSize_2);
 // Creating a robot formation structure for arranging their relevant variables:
 Formation FMR = createFormation(Robots_Qty);                            // Create the OMRs formation structure.
 //---------------------------------------------------------------------------------------------------------------
@@ -168,10 +170,10 @@ void loop(){
   int i;                                                                // Declaration of i as index integer variable.
   if(UART4.identifier == 0 && flagcommand_0){
     flagcommand_0 = false;                                              // Reset flag command 0 to FALSE.
-    snprintf(measurements,bufferSize,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5],UART4.MAT3.data[0][6],UART4.MAT3.data[0][7],UART4.MAT3.data[0][8],UART4.MAT3.data[0][9],UART4.MAT3.data[0][10],UART4.MAT3.data[0][11],UART4.MAT3.data[0][12]);
+    snprintf(measurements,bufferSize_0,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5],UART4.MAT3.data[0][6],UART4.MAT3.data[0][7],UART4.MAT3.data[0][8],UART4.MAT3.data[0][9],UART4.MAT3.data[0][10],UART4.MAT3.data[0][11],UART4.MAT3.data[0][12]);
     baqumau.println(measurements);                                      // Writes data in microSD.
     Serial.println(measurements);                                       // Print measured data through UART 1.
-    initString(measurements,bufferSize);                                // Clear measurements buffer.
+    initString(measurements,bufferSize_0);                              // Clear measurements buffer.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on to indicate that board is writing on microSD.
   }
   else if(UART4.identifier == 1 && flagcommand_0){
@@ -188,3 +190,4 @@ void loop(){
 }
 //---------------------------------------------------------------------------------------------------------------
 // No more...
+//---------------------------------------------------------------------------------------------------------------

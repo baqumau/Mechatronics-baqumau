@@ -37,12 +37,13 @@ fprintf('\nPrinting rigid bodies frame data, approximately to a volatile frequen
 counter = 0;                                                                % Ticks counter of sine function.
 flag_1 = 0;                                                                 % Streaming flag.
 t_sleep = 8;                                                                % Java sleeping time.
-iter_stop = (1000/t_sleep)*2.5*60;                                          % Iteration stop.
+iter_stop = (2000/t_sleep)*2.5*60;                                          % Iteration stop.
 %--------------------------------------------------------------------------
 % A serial port object is constructed:
 BaudRate = 2000000;                                                         % Specify baud rate for UART communication.
 % Creating Serial Object (COM6 is specified):
-S1 = serial('COM6','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
+% S1 = serial('COM6','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
+S1 = serial('COM16','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
 fopen(S1);                                                                  % Establishes serial communication via S1.
 %--------------------------------------------------------------------------
 tic
