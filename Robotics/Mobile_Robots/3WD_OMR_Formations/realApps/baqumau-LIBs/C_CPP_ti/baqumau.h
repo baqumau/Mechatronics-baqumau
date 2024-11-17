@@ -19,13 +19,20 @@ typedef struct{
     char ***data;                                                               // Arranged values of data set streaming.
 } Matrix3;
 //---------------------------------------------------------------------------------------------------------------
-// Data structure to get values from streming data set:
+// Data structure to get values from receiving streaming data set or configure sending streaming data set via FIFO peripheral:
 typedef struct{
-    int bufferSize;                                                             // Size of developed buffer.
-    int bufferIndex;                                                            // Index within developed buffer.
-    char *charBuffer;                                                           // Buffer to temporarily store a char-type streaming data set.
+    // RX structure:
+    int RX_bufferSize;                                                          // Size of developed buffer (receiving data).
+    int RX_bufferIndex;                                                         // Index within developed buffer (receiving data).
+    char *RX_charBuffer;                                                        // Buffer to temporarily store a char-type streaming data set (receiving data).
     int identifier;                                                             // Data set frame identifier.
     Matrix3 MAT3;                                                               // Arranged values of data set streaming within a 3D matrix.
+    // TX structure:
+    int TX_bufferSize;                                                          // Size of developed buffer (sending data).
+    int TX_bufferIndex;                                                         // Index within developed buffer (sending data).
+    char *TX_charBuffer;                                                        // Buffer to temporarily store a char-type streaming data set (sending data).
+    int strLength;                                                              // Length of the streaming data set to transmit.
+    //-----------------------------------------------
     bool *flag;                                                                 // Execution flag.
 } Data_Struct;
 //---------------------------------------------------------------------------------------------------------------
@@ -36,13 +43,15 @@ extern bool allocateMatrix3(Matrix3 *MAT3, int xSize, int ySize, int zSize);
 // Function to free memory for the 3d matrix in the structure:
 extern void freeMatrix3(Matrix3 *MAT3);
 // Creating data structure that will be used to arrange streaming data set:
-extern Data_Struct createDataStruct(int bufferSize, int xSize, int ySize, int zSize);
-// initializing char-type buffer data:
-extern void init_charBuffer(Data_Struct *DAT);
+extern Data_Struct createDataStruct(int rx_bufferSize, int xSize, int ySize, int zSize, int tx_bufferSize);
+// initializing char-type buffer data (receiving data):
+extern void init_RX_charBuffer(Data_Struct *DAT);
+// initializing char-type buffer data (sending data):
+extern void init_TX_charBuffer(Data_Struct *DAT);
 // Adding characters to buffer:
-extern void add_2_charBuffer(Data_Struct *DAT, char c);
+extern void add_2_RX_charBuffer(Data_Struct *DAT, char c);
 // Classify char-type data from developed buffer within data structure as DAT:
-extern void classify_charBuffer(Data_Struct *DAT);
+extern void classify_RX_charBuffer(Data_Struct *DAT);
 // A helper function to reverse a string:
 extern void reverse(char *str, int len);
 // Utility function to convert an integer to a string:

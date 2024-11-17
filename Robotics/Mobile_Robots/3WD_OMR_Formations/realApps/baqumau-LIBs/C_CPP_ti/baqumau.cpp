@@ -69,31 +69,47 @@ void freeMatrix3(Matrix3 *MAT3){
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating data structure that will be used to arrange streaming data set:
-Data_Struct createDataStruct(int bufferSize, int xSize, int ySize, int zSize){
-    // Configuring the members of the desired data structure:
+Data_Struct createDataStruct(int rx_bufferSize, int xSize, int ySize, int zSize, int tx_bufferSize){
+    // Configuring the members of the desired data structure (receiving data):
     Data_Struct DAT;                                                                        // Creates the desired data structure as DAT.
-    DAT.bufferSize = bufferSize;                                                            // Setting buffer size.
-    DAT.bufferIndex = 0;                                                                    // Clear buffer index.
-    DAT.charBuffer = (char *)malloc(bufferSize * sizeof(char));                             // Allocate memory for char-type data buffer.
-    DAT.flag = (bool *)malloc(2 * sizeof(bool));                                            // Allocate memory for some execution flags.
-    DAT.flag[0] = allocateMatrix3(&DAT.MAT3,xSize,ySize,zSize);                             // Succesful 3d matrix allocation in DAT.flag[0].
+    DAT.RX_bufferSize = rx_bufferSize;                                                      // Setting buffer size (receiving data).
+    DAT.RX_bufferIndex = 0;                                                                 // Clear buffer index (receiving data).
+    DAT.RX_charBuffer = (char *)malloc(rx_bufferSize * sizeof(char));                       // Allocate memory for char-type data buffer (receiving data).
+    DAT.flag = (bool *)malloc(3 * sizeof(bool));                                            // Allocate memory for some execution flags.
+    DAT.flag[0] = allocateMatrix3(&DAT.MAT3,xSize,ySize,zSize);                             // Successful 3d matrix allocation in DAT.flag[0].
     DAT.flag[1] = false;                                                                    // Setting DAT.flag[1] to false.
+    // Configuring the members of the desired data structure (sending data):
+    DAT.TX_bufferSize = tx_bufferSize;                                                      // Setting buffer size (sending data).
+    DAT.TX_bufferIndex = 0;                                                                 // Clear buffer index (sending data).
+    DAT.TX_charBuffer = (char *)malloc(tx_bufferSize * sizeof(char));                       // Allocate memory for char-type data buffer (sending data).
+    DAT.strLength = 0;                                                                      // Determines length of streaming data set (sending data).
+    DAT.flag[2] = false;                                                                    // Setting DAT.flag[2] to false.
     return DAT;
 }
 //---------------------------------------------------------------------------------------------------------------
-// initializing char-type buffer data:
-void init_charBuffer(Data_Struct *DAT){
+// initializing char-type buffer data (receiving data):
+void init_RX_charBuffer(Data_Struct *DAT){
     int i;                                                                                  // Declaration of i as integer variable.
     DAT->flag[1] = false;                                                                   // Setting data flag to false.
-    for(i = 0; i < DAT->bufferSize; i++){                                                   // Bucle that set to 0 all.
-        DAT->charBuffer[i] = 0x00;                                                          // Clear characters in buffer.
+    for(i = 0; i < DAT->RX_bufferSize; i++){                                                // Loop that set all to 0.
+        DAT->RX_charBuffer[i] = 0x00;                                                       // Clear characters in buffer.
     }
-    DAT->bufferIndex = 0;                                                                   // Clear buffer index.
+    DAT->RX_bufferIndex = 0;                                                                // Clear buffer index.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Adding characters to buffer:
-void add_2_charBuffer(Data_Struct *DAT, char c){
-    if (DAT->bufferIndex >= DAT->bufferSize) return;
+// initializing char-type buffer data (sending data):
+void init_TX_charBuffer(Data_Struct *DAT){
+    int i;                                                                                  // Declaration of i as integer variable.
+    DAT->flag[2] = false;                                                                   // Setting data flag to false.
+    for(i = 0; i < DAT->TX_bufferSize; i++){                                                // Loop that set all to 0.
+        DAT->TX_charBuffer[i] = 0x00;                                                       // Clear characters in buffer.
+    }
+    DAT->TX_bufferIndex = 0;                                                                // Clear buffer index.
+}
+//---------------------------------------------------------------------------------------------------------------
+// Adding characters to buffer (receiving data):
+void add_2_RX_charBuffer(Data_Struct *DAT, char c){
+    if (DAT->RX_bufferIndex >= DAT->RX_bufferSize) return;
     switch(c){
         case 0x0D:                                                                          // Line Feed 1 -> Enable flag.
         DAT->flag[1] = true;                                                                // Setting flag 1 to true.
@@ -102,21 +118,21 @@ void add_2_charBuffer(Data_Struct *DAT, char c){
         DAT->flag[1] = true;                                                                // Setting flag 1 to true.
         break;
         case 0x08:                                                                          // Del -> Delete last character from buffer.
-        if(DAT->bufferIndex > 0) DAT->charBuffer[--DAT->bufferIndex] = 0x00;                // Backspace.
+        if(DAT->RX_bufferIndex > 0) DAT->RX_charBuffer[--DAT->RX_bufferIndex] = 0x00;       // Backspace.
         break;
         default:                                                                            // Add received character to buffer.
-        DAT->charBuffer[DAT->bufferIndex++] = c;
+        DAT->RX_charBuffer[DAT->RX_bufferIndex++] = c;
     }
 }
 //---------------------------------------------------------------------------------------------------------------
 // Classify char-type data from developed buffer within data structure as DAT:
-void classify_charBuffer(Data_Struct *DAT){
+void classify_RX_charBuffer(Data_Struct *DAT){
     int i, j = 0, k = 0;                                                                    // Declaration of i, j, and k as index integer variables.
     char *charValue = (char *)malloc(DAT->MAT3.zSize * sizeof(char));                       // Declaration of char variable to temporarily store a value from buffer data set.
     if(DAT->flag[0]){
         // separating data consigned in buffer:
-        for(i = 0; i < DAT->bufferIndex; i++){
-            if(DAT->charBuffer[i] == ','){
+        for(i = 0; i < DAT->RX_bufferIndex; i++){
+            if(DAT->RX_charBuffer[i] == ','){
                 j++;                                                                        // Increasing j variable.
                 if(j == 1){
                     charValue[k] = '\0';                                                    // String termination of charValue.
@@ -124,11 +140,11 @@ void classify_charBuffer(Data_Struct *DAT){
                 }
                 k = 0;                                                                      // Reset k index.
             }
-            else if(DAT->charBuffer[i] != ':' && DAT->charBuffer[i] != ',' && j == 0){
-                charValue[k++] = DAT->charBuffer[i];                                        // Using charValue.
+            else if(DAT->RX_charBuffer[i] != ':' && DAT->RX_charBuffer[i] != ',' && j == 0){
+                charValue[k++] = DAT->RX_charBuffer[i];                                     // Using charValue.
             }
-            else if(DAT->charBuffer[i] != ',' && DAT->charBuffer[i] != ';' && j > 0){
-                DAT->MAT3.data[DAT->identifier][j-1][k++] = DAT->charBuffer[i];             // Using 3d matrix of DAT structure.
+            else if(DAT->RX_charBuffer[i] != ',' && DAT->RX_charBuffer[i] != ';' && j > 0){
+                DAT->MAT3.data[DAT->identifier][j-1][k++] = DAT->RX_charBuffer[i];          // Using 3d matrix of DAT structure.
             }
         }
     }

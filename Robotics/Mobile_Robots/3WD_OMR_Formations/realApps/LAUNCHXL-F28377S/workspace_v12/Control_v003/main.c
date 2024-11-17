@@ -204,6 +204,8 @@ float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                  
 Data_Struct SCIA;                                                                       // Data structure to arrange data from SCIA.
 // Declaration of data structure for SCIB peripheral:
 Data_Struct SCIB;                                                                       // Data structure to arrange data from SCIB.
+// Declaration of data structure for SCIC peripheral:
+Data_Struct SCIC;                                                                       // Data structure to arrange data from SCIC.
 // Declaration of data structure for a high-gain observer in the robot space:
 RS_Observer RSO;
 // Declaration of data structure for a high-gain observer in the cluster space (variant x):
@@ -389,11 +391,15 @@ void main(void){
 
     // Step 6. Defining data structure that will be used by this code:
     // Definition of data structure for SCIA peripheral (required for getting and arranging data from MATLAB):
-    SCIA = createDataStruct(bufferSize_0,1,3*Robots_Qty,bufferSize_2);
-    init_charBuffer(&SCIA);                                                             // Initialize dedicated char-type data buffer of SCIA.
+    SCIA = createDataStruct(bufferSize_0,1,3*Robots_Qty,bufferSize_2,bufferSize_0);
+    init_RX_charBuffer(&SCIA);                                                          // Initialize dedicated char-type data buffer of SCIA (receiving data).
     // Definition of data structure for SCIB peripheral (required for getting and arranging data from XBee):
-    SCIB = createDataStruct(bufferSize_0,2,3,bufferSize_2);
-    init_charBuffer(&SCIB);                                                             // Initialize dedicated char-type data buffer of SCIB.
+    SCIB = createDataStruct(bufferSize_0,2,3,bufferSize_2,bufferSize_0);
+    init_RX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (receiving data).
+    init_TX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (sending data).
+    // Definition of data structure for SCIC peripheral (required for arranging and sending data to ChipKit WF32):
+    SCIC = createDataStruct(bufferSize_0,2,3,bufferSize_2,bufferSize_0);
+    init_TX_charBuffer(&SCIC);                                                          // Initialize dedicated char-type data buffer of SCIC (sending data).
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
     // Creating data structure for a high-gain observer in the cluster space:
@@ -673,14 +679,14 @@ __interrupt void scia_rx_isr(void){
     // Loop to read all available data in the FIFO:
     while(SciaRegs.SCIFFRX.bit.RXFFST > 0){
         receivedChar_a = SciaRegs.SCIRXBUF.all;                                         // Read one byte from the RX buffer.
-        add_2_charBuffer(&SCIA,receivedChar_a);                                         // Adding character to data buffer assigned to SCIA peripheral.
+        add_2_RX_charBuffer(&SCIA,receivedChar_a);                                      // Adding character to data buffer assigned to SCIA peripheral.
     }
     // If streaming data is completely added to the char buffer of SCIA structure:
     if(SCIA.flag[1]){
         flagcommand_4 = true;                                                           // Start to check the time out state for SCIA receiving data.
         timeoutCount = 0;                                                               // Reset timeout counter.
-        classify_charBuffer(&SCIA);                                                     // Classify data from assigned buffer to UART1 structure data matrix.
-        init_charBuffer(&SCIA);                                                         // Initialize char-type data buffer associated to UART 1.
+        classify_RX_charBuffer(&SCIA);                                                  // Classify data from assigned buffer to UART1 structure data matrix.
+        init_RX_charBuffer(&SCIA);                                                      // Initialize char-type data buffer associated to UART 1.
         if(!flagcommand_0 && CpuTimer1.InterruptCount > 2*freq_hz_1){
             //-----------------------------------------------------------------------------------------------------------
             // Saving initial state variables:
@@ -844,11 +850,11 @@ __interrupt void scib_rx_isr(void){
     // Loop to read all available data in the FIFO:
     while(ScibRegs.SCIFFRX.bit.RXFFST > 0){
         receivedChar_b = ScibRegs.SCIRXBUF.all;                                         // Read one byte from the RX buffer.
-        add_2_charBuffer(&SCIB,receivedChar_b);                                         // Adding character to data buffer assigned to SCIB peripheral.
+        add_2_RX_charBuffer(&SCIB,receivedChar_b);                                      // Adding character to data buffer assigned to SCIB peripheral.
     }
     // If streaming data is completely added to the char buffer of SCIB structure:
     if(SCIB.flag[1] && CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
-        classify_charBuffer(&SCIB);                                                     // Classify data from assigned buffer to SCIB structure data matrix.
+        classify_RX_charBuffer(&SCIB);                                                  // Classify data from assigned buffer to SCIB structure data matrix.
         for(i = 0; i < 3; i++){
             // Saving the angular velocities of omni-wheels attached on OMRs formation (in rad/s).
             FMR.w_k[i+3*SCIB.identifier] = atof(SCIB.MAT3.data[SCIB.identifier][i]);
@@ -862,10 +868,10 @@ __interrupt void scib_rx_isr(void){
         memset_fast(angularVelocities,0,bufferSize_1);                                  // Initialize angularVelocities data chain.
         snprintf(angularVelocities,bufferSize_1,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
         // Clearing buffer within SCIB data structure:
-        init_charBuffer(&SCIB);                                                         // Initialize dedicated char-type data buffer of SCIB.
+        init_RX_charBuffer(&SCIB);                                                      // Initialize dedicated char-type data buffer of SCIB.
     }
     // Initializing char-type data buffer associated to SCIB when control system is not running:
-    else if(SCIB.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_charBuffer(&SCIB);
+    else if(SCIB.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_RX_charBuffer(&SCIB);
     else NOP;                                                                           // No Operation (burn a cycle).
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
