@@ -28,9 +28,9 @@ BaudRate = 2000000;                                                         % Sp
 S1 = serial('COM16','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
 %--------------------------------------------------------------------------
 fopen(S1);                                                                  % Establishes serial communication via S1.
+java.lang.Thread.sleep(100);                                                % 10 milliseconds delay.
 tic
 while true
-%     java.lang.Thread.sleep(1);                                              % .1 milliseconds delay.
     % Receiving data from UART1:
     data_r = fscanf(S1,'%c');                                               % Read from serial peripheral until the Terminator.
     if isempty(data_r)

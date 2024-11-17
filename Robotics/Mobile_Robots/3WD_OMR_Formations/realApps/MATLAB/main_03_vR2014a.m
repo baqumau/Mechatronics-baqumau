@@ -45,6 +45,7 @@ BaudRate = 2000000;                                                         % Sp
 % S1 = serial('COM6','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
 S1 = serial('COM16','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
 fopen(S1);                                                                  % Establishes serial communication via S1.
+java.lang.Thread.sleep(100);                                                % 10 milliseconds delay.
 %--------------------------------------------------------------------------
 tic
 while true

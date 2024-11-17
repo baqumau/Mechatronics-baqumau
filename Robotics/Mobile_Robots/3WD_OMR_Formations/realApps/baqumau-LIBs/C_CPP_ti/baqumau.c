@@ -76,7 +76,7 @@ Data_Struct createDataStruct(int bufferSize, int xSize, int ySize, int zSize){
     DAT.bufferIndex = 0;                                                                    // Clear buffer index.
     DAT.charBuffer = (char *)malloc(bufferSize * sizeof(char));                             // Allocate memory for char-type data buffer.
     DAT.flag = (bool *)malloc(2 * sizeof(bool));                                            // Allocate memory for some execution flags.
-    DAT.flag[0] = allocateMatrix3(&DAT.MAT3,xSize,ySize,zSize);                             // Succesful 3d matrix allocation in DAT.flag[0].
+    DAT.flag[0] = allocateMatrix3(&DAT.MAT3,xSize,ySize,zSize);                             // Successful 3d matrix allocation in DAT.flag[0].
     DAT.flag[1] = false;                                                                    // Setting DAT.flag[1] to false.
     return DAT;
 }
@@ -85,7 +85,7 @@ Data_Struct createDataStruct(int bufferSize, int xSize, int ySize, int zSize){
 void init_charBuffer(Data_Struct *DAT){
     int i;                                                                                  // Declaration of i as integer variable.
     DAT->flag[1] = false;                                                                   // Setting data flag to false.
-    for(i = 0; i < DAT->bufferSize; i++){                                                   // Bucle that set to 0 all.
+    for(i = 0; i < DAT->bufferSize; i++){                                                   // Loop that set to 0 all.
         DAT->charBuffer[i] = 0x00;                                                          // Clear characters in buffer.
     }
     DAT->bufferIndex = 0;                                                                   // Clear buffer index.
