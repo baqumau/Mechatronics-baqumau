@@ -231,3 +231,18 @@ void initString(char *str, int strSize){
     }
 }
 //---------------------------------------------------------------------------------------------------------------
+// Function to shift characters (bytes) of a string (with "len" dimension) backward in a data set:
+extern void shiftCharsBackward(char *str, int bytes){
+    int i, l;                                                                               // Declaration of i and l as integer variables.
+    l = strlen(str);                                                                        // Determine the dimension of input string.
+    if (l <= 1){
+        return;                                                                             // No need to shift for empty or single-character strings.
+    }
+    char last_char = str[l - 1];                                                            // Store the last character.
+    // Shifting characters to the corresponding position (number of bytes) backward:
+    for (i = l - 1; i > bytes - 1; i--){
+        str[i] = str[i - bytes];
+    }
+    str[0] = last_char;                                                                     // Move the last character to the first position.
+}
+//---------------------------------------------------------------------------------------------------------------

@@ -60,6 +60,8 @@ extern int intToStr(int x, char str[], int d);
 extern void ftoa(float num, char *res, int afterpoint);
 // Function to initialize whichever char-type data string:
 extern void initString(char *str, int strSize);
+// Function to shift the characters of a string backward in a data set:
+extern void shiftCharsBackward(char *str, int bytes);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _baqumau_H_ */
 //---------------------------------------------------------------------------------------------------------------

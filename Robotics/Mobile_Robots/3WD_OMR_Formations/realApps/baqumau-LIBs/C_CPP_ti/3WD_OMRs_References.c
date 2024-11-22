@@ -496,7 +496,7 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Compute the statical reference trajectory n: 01, for OMRs control system:
+// Compute the static reference trajectory n: 01, for OMRs control system:
 void computeStatical01(Reference REF, enum Control_System consys){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing builder algorithm for static trajectory:
@@ -511,11 +511,11 @@ void computeStatical01(Reference REF, enum Control_System consys){
             REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
             REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
         }
-        // Computing ecuations for generation of statical reference profiles in the cluster space:
+        // Computing equations for generation of static reference profiles in the cluster space:
         switch(Robots_Qty){
             case 2:{
-                float d_ph1_k = 0.25f;                                                      // Desired angular velocity of robot 1 (rad/s).
-                float d_ph2_k = -0.25f;                                                     // Desired angular velocity of robot 2 (rad/s).
+                float d_ph1_k = 0.0f;                                                      // Desired angular velocity of robot 1 (rad/s).
+                float d_ph2_k = -0.0f;                                                     // Desired angular velocity of robot 2 (rad/s).
                 //------------------------------Cluster Space--------------------------------
                 REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
                 REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.

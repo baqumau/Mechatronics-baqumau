@@ -6,7 +6,7 @@
 // OBJECTIVES:
 // 1. Blink functionality of LED 09 and LED 10, with timer interrupts.
 // 2. Timer 0 interrupt to 250 Hz (Higher priority).
-// 3. SCIA communication (UART).
+// 3. SCIA communication (communication with MATLAB).
 // 4. Receiving FIFO interrupt via SCIA.
 // 5. SCIB communication (UART).
 // 6. Receiving FIFO interrupt via SCIB.
@@ -61,6 +61,8 @@ __interrupt void cpu_timer2_isr(void);
 __interrupt void scia_rx_isr(void);
 // Function to generate interrupt service through SCIB received data:
 __interrupt void scib_rx_isr(void);
+// Function to generate interrupt service through SCIC transmitted data:
+__interrupt void scic_tx_isr(void);
 //-----------------------------------------------------------------------------------------------------------------------
 // UART communication with MATLAB:
 // Function to initialize SCIA (8-bit word, baud rate 2E6, default, 1 STOP bit, no parity):
@@ -70,7 +72,7 @@ void scia_fifo_init(void);
 // Function to transmit a character through the SCIA:
 void scia_xmit(char a);
 // Function to transmit message via SCIA:
-void scia_msg(char *msg);
+void scia_msgXmit(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
 // UART communication with XBee:
 // Function to initialize SCIB (8-bit word, baud rate 115200, default, 1 STOP bit, no parity):
@@ -80,7 +82,7 @@ void scib_fifo_init(void);
 // Function to transmit a character through the SCIB:
 void scib_xmit(char a);
 // Function to transmit message via SCIB:
-void scib_msg(char *msg);
+void scib_msgXmit(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
 // UART communication with ChipKit WF32:
 // Function to initialize SCIC (8-bit word, baud rate 2E6, default, 1 STOP bit, no parity):
@@ -90,7 +92,7 @@ void scic_fifo_init(void);
 // Function to transmit a character through the SCIC:
 void scic_xmit(char a);
 // Function to transmit message via SCIC:
-void scic_msg(char *msg);
+void scic_msgXmit(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
 // Optimized Memory Set:
 void memset_fast(void* dst, int16 value, Uint16 N);                                     // Optimized memory set.
@@ -118,6 +120,7 @@ char *msg_1;                                                                    
 char *msg_2;                                                                            // Variable 2 to save a char data chain.
 char *msg_3;                                                                            // Variable 3 to save a char data chain.
 char *msg_4;                                                                            // Variable 4 to save a char data chain.
+char *msg_5;                                                                            // Variable 5 to save a char data chain.
 char *measurements;                                                                     // Variable to save a char data chain that contains the measured signals.
 char *controlSignals;                                                                   // Variable to save a char data chain that contains the computed control signals.
 char *angularVelocities;                                                                // Variable to save a char data chain that contains the angular velocities of robots' wheels.
@@ -252,18 +255,24 @@ void main(void){
     // Choosing the pins 84 and 85 to the SCI-A port (UART Communication - UART 0):
     GpioCtrlRegs.GPCGMUX2.bit.GPIO84 = 1;                                               // SCIA TXD.
     GpioCtrlRegs.GPCMUX2.bit.GPIO84 = 1;
+    GpioCtrlRegs.GPCQSEL2.bit.GPIO84 = 3;                                               // The GPIO input qualification of GPIO84 is settled to asynchronous mode.
     GpioCtrlRegs.GPCGMUX2.bit.GPIO85 = 1;                                               // SCIA RXD.
     GpioCtrlRegs.GPCMUX2.bit.GPIO85 = 1;
+    GpioCtrlRegs.GPCQSEL2.bit.GPIO85 = 3;                                               // The GPIO input qualification of GPIO85 is settled to asynchronous mode.
     // Choosing the pins 86 and 87 to the SCI-B port (UART Communication - UART 1):
     GpioCtrlRegs.GPCGMUX2.bit.GPIO86 = 1;                                               // SCIB TXD.
     GpioCtrlRegs.GPCMUX2.bit.GPIO86 = 1;
+    GpioCtrlRegs.GPCQSEL2.bit.GPIO86 = 3;                                               // The GPIO input qualification of GPIO86 is settled to asynchronous mode.
     GpioCtrlRegs.GPCGMUX2.bit.GPIO87 = 1;                                               // SCIB RXD.
     GpioCtrlRegs.GPCMUX2.bit.GPIO87 = 1;
+    GpioCtrlRegs.GPCQSEL2.bit.GPIO87 = 3;                                               // The GPIO input qualification of GPIO87 is settled to asynchronous mode.
     // Choosing the pins 89 and 90 to the SCI-C port (UART Communication - UART 2):
     GpioCtrlRegs.GPCGMUX2.bit.GPIO89 = 1;                                               // SCIC TXD.
     GpioCtrlRegs.GPCMUX2.bit.GPIO89 = 2;
+    GpioCtrlRegs.GPCQSEL2.bit.GPIO89 = 3;                                               // The GPIO input qualification of GPIO89 is settled to asynchronous mode.
     GpioCtrlRegs.GPCGMUX2.bit.GPIO90 = 1;                                               // SCIC RXD.
     GpioCtrlRegs.GPCMUX2.bit.GPIO90 = 2;
+    GpioCtrlRegs.GPCQSEL2.bit.GPIO90 = 3;                                               // The GPIO input qualification of GPIO90 is settled to asynchronous mode.
     EDIS;
 
     // Step 3. Clear all interrupts and initialize PIE vector table:
@@ -308,14 +317,15 @@ void main(void){
     msg_4 = ":0,0.0,0.0,0.0,0.0,0.0,0.0;\n";                                            // Message to stop movement of the omni-wheels.
 
     // Initializing SCIA:
-    scia_fifo_init();                                                                   // Initialize the SCIA FIFO.
     scia_init();                                                                        // Initialize the SCIA.
+    scia_fifo_init();                                                                   // Initialize the SCIA FIFO.
     // Initializing SCIB:
-    scib_fifo_init();                                                                   // Initialize the SCIB FIFO.
     scib_init();                                                                        // Initialize the SCIB.
+    scib_fifo_init();                                                                   // Initialize the SCIB FIFO.
     // Initializing SCIC:
-    scic_fifo_init();                                                                   // Initialize the SCIC FIFO.
     scic_init();                                                                        // Initialize the SCIC.
+    scic_fifo_init();                                                                   // Initialize the SCIC FIFO.
+
 
     // Preallocating memory for used *variables:
     measurements = (char *)malloc(bufferSize_0 * sizeof(char));                         // Preallocate memory for measurement data set.
@@ -345,6 +355,7 @@ void main(void){
     PieVectTable.TIMER2_INT = &cpu_timer2_isr;
     PieVectTable.SCIA_RX_INT = &scia_rx_isr;
     PieVectTable.SCIB_RX_INT = &scib_rx_isr;
+    PieVectTable.SCIC_TX_INT = &scic_tx_isr;
     EDIS;                                                                               // This is needed to disable write to EALLOW protected registers.
 
     // Step 4. Initialize the Device Peripheral. This function can be
@@ -375,11 +386,15 @@ void main(void){
     IER |= M_INT13;
     IER |= M_INT14;
     //-------------------------------------------------------------------------------------------------------------------
+    // Enabling PIE interrupt group 8 globally at the CPU level (SCIC):
+    IER |= M_INT8;                                                                      // Enable CPU INT8 (for SCIC interrupts).
     // Enabling PIE interrupt group 9 globally at the CPU level (SCIA and SCIB):
     IER |= M_INT9;                                                                      // Enable CPU INT9 (for SCIA interrupts).
 
     // Enable TINT0 in the PIE: Group 1 interrupt 7:
     PieCtrlRegs.PIEIER1.bit.INTx7 = 1;                                                  // Enable PIE Group 1, interrupt 7 (CPU Timer 0).
+    // Enable SCITXINTC in the PIE: Group 8 interrupt 6:
+    PieCtrlRegs.PIEIER8.bit.INTx6 = 1;                                                  // Enable PIE Group 8, interrupt 6 (SCIC TX).
     // Enable SCIRXINTA in the PIE: Group 9 interrupt 1:
     PieCtrlRegs.PIEIER9.bit.INTx1 = 1;                                                  // Enable PIE Group 9, interrupt 1 (SCIA RX).
     // Enable SCIRXINTB in the PIE: Group 9 interrupt 3:
@@ -423,7 +438,7 @@ void main(void){
         if(flagcommand_3){
             GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                       // Turn LED GPIO 1 to OFF.
             GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                       // Turn LED GPIO 1 to OFF.
-            scib_msg(msg_4);                                                            // Send message to stop omni-wheels in the formation.
+            scib_msgXmit(msg_4);                                                        // Send message to stop omni-wheels in the formation.
             //-----------------------------------------------------------------------------------------------------------
             IER &= ~M_INT1;                                                             // Disable CPU timer 0 interrupt.
             IER &= ~M_INT13;                                                            // Disable CPU timer 1 interrupt.
@@ -469,8 +484,8 @@ __interrupt void cpu_timer0_isr(void){
     }
     //-------------------------------------------------------------------------------------------------------------------
     // Sending command to MATLAB:
-    if(CpuTimer1.InterruptCount <= final_iteration) scia_msg(msg_1);                    // Write message 1 through SCIA peripheral.
-    else scia_msg(msg_2);                                                               // Otherwise write message 2 through SCIA peripheral.
+    if(CpuTimer1.InterruptCount <= final_iteration) scia_msgXmit(msg_1);                // Write message 1 through SCIA peripheral.
+    else scia_msgXmit(msg_2);                                                           // Otherwise write message 2 through SCIA peripheral.
     //-------------------------------------------------------------------------------------------------------------------
     // Clearing the interrupt flag:
     CpuTimer0Regs.TCR.bit.TIF = 1;                                                      // Clear the Timer 0 interrupt flag.
@@ -582,7 +597,7 @@ __interrupt void cpu_timer1_isr(void){
         // Packing and streaming the control signals for OMRs formation:
         memset_fast(controlSignals,0,bufferSize_1);                                     // Initialize controlSignals data chain.
         snprintf(controlSignals,bufferSize_1,":0,%s,%s,%s,%s,%s,%s;\n",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
-        scib_msg(controlSignals);                                                       // Write measured variables through SCIB peripheral.
+        scib_msgXmit(controlSignals);                                                   // Write measured variables through SCIB peripheral.
     }
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
@@ -622,50 +637,68 @@ __interrupt void cpu_timer2_isr(void){
         else if(timeoutCount >= 2*freq_hz_2) final_iteration = CpuTimer1.InterruptCount;// Force to ending execution.
         else timeoutCount++;
         //---------------------------------------------------------------------------------------------------------------
-        // Saving OMRs formation pose data in a string-format version:
         Uint16 mod_result;
-        mod_result = CpuTimer2.InterruptCount % (freq_hz_2/10);                         // Computes modulus operation.
-        if(mod_result == 1){
-            for(i = 0; i < 3*Robots_Qty; i++){
-                memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                    // Clear char-type string vector where OMRs' robot space pose will be saved.
-                ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);              // Saving same robot space pose of OMRs formation, but in string-format.
-                memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                    // Clear char-type string vector where OMRs' cluster space pose will be saved.
-                ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);              // Saving same cluster space pose of OMRs formation, but in string-format.
+        mod_result = CpuTimer2.InterruptCount % (freq_hz_2/10);                         // Computes modulus operation for doing a code execution selection at 50 Hz.
+        switch(mod_result){
+            case 1:{
+                // Saving OMRs formation pose data in a string-format version:
+                for(i = 0; i < 3*Robots_Qty; i++){
+                    memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                // Clear char-type string vector where OMRs' robot space pose will be saved.
+                    ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);          // Saving same robot space pose of OMRs formation, but in string-format.
+                    memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                // Clear char-type string vector where OMRs' cluster space pose will be saved.
+                    ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);          // Saving same cluster space pose of OMRs formation, but in string-format.
+                }
+                break;
             }
-        }
-        //---------------------------------------------------------------------------------------------------------------
-        // Saving another OMRs formation variables data in a string-format version:
-        if(mod_result == 2){
-            memset_fast(var00,0,bufferSize_2);
-            ftoa(roundToThreeDecimals(errors_k[0]),var00,3);
-            memset_fast(var01,0,bufferSize_2);
-            ftoa(roundToThreeDecimals(errors_k[1]),var01,3);
-            memset_fast(var02,0,bufferSize_2);
-            ftoa(roundToThreeDecimals(errors_k[2]),var02,3);
-            memset_fast(var03,0,bufferSize_2);
-            ftoa(roundToThreeDecimals(errors_k[3]),var03,3);
-            memset_fast(var04,0,bufferSize_2);
-            ftoa(roundToThreeDecimals(errors_k[4]),var04,3);
-            memset_fast(var05,0,bufferSize_2);
-            ftoa(roundToThreeDecimals(errors_k[5]),var05,3);
-        }
-        //---------------------------------------------------------------------------------------------------------------
-        // Packing and streaming the measurement variables of OMRs formation:
-        if(mod_result == 3){
-            memset_fast(measurements,0,bufferSize_0);                                   // Initialize measurements data chain.
-            snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,(unsigned long)(CpuTimer1.InterruptCount));
-        }
-        if(mod_result == 4){
-            scic_msg(measurements);                                                     // Write measured variables through SCIC peripheral.
+            case 2:{
+                // Saving another OMRs formation variables data in a string-format version:
+                memset_fast(var00,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(errors_k[0]),var00,3);
+                memset_fast(var01,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(errors_k[1]),var01,3);
+                memset_fast(var02,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(errors_k[2]),var02,3);
+                memset_fast(var03,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(errors_k[3]),var03,3);
+                memset_fast(var04,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(errors_k[4]),var04,3);
+                memset_fast(var05,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(errors_k[5]),var05,3);
+                memset_fast(var06,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(FMR.v_k[0]),var06,3);
+                memset_fast(var07,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(FMR.v_k[1]),var07,3);
+                memset_fast(var08,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(FMR.v_k[2]),var08,3);
+                memset_fast(var09,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(FMR.v_k[3]),var09,3);
+                memset_fast(var10,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(FMR.v_k[4]),var10,3);
+                memset_fast(var11,0,bufferSize_2);
+                ftoa(roundToThreeDecimals(FMR.v_k[5]),var11,3);
+                break;
+            }
+            case 3:{
+                // Packing the relevant measurement variables of OMRs formation:
+                memset_fast(measurements,0,bufferSize_0);                               // Initialize measurements data chain.
+                snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,var06,var07,var08,var09,var10,var11,(unsigned long)(CpuTimer1.InterruptCount));
+                break;
+            }
+            case 4:{
+                // Streaming the relevant measurement variables of OMRs formation:
+                scic_msgXmit(measurements);                                             // Write string of measured variables through SCIC peripheral.
+                break;
+            }
         }
     }
     //-------------------------------------------------------------------------------------------------------------------
     else if(CpuTimer1.InterruptCount > final_iteration && flagcommand_0){
         // Stopping the streaming of measurement variables:
-        scic_msg(msg_3);                                                                // Write streaming stop command via SCIC peripheral.
+        scic_msgXmit(msg_3);                                                            // Write streaming stop command via SCIC peripheral.
         flagcommand_0 = false;                                                          // Reset flag command 0.
         flagcommand_3 = true;                                                           // Set flag command 3 to TRUE (disable interrupts).
     }
+    else NOP;                                                                           // No Operation (burn a cycle).
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
     DINT;
@@ -840,7 +873,7 @@ __interrupt void scia_rx_isr(void){
 // Function to generate interrupt service through SCIB received data (Receiving data from OMRs):
 __interrupt void scib_rx_isr(void){
     int i;                                                                              // Declaration of i as index integer variable.
-    // Clearing the interrupt flag and acknowledge the interrupt:
+    // Clearing the interrupt flag:
     ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                                // Clear RX FIFO interrupt flag.
     // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
     EINT;
@@ -880,165 +913,312 @@ __interrupt void scib_rx_isr(void){
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;                                             // Acknowledge PIE group 9 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------
+// Function to generate interrupt service through SCIC transmitted data (Transmitting data of OMRs to be stored in ChipKit WF32):
+__interrupt void scic_tx_isr(void){
+    //-------------------------------------------------------------------------------------------------------------------
+    // Clearing the interrupt flag:
+    ScicRegs.SCIFFTX.bit.TXFFINTCLR = 1;                                                // Clear TX FIFO interrupt flag.
+    // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
+    EINT;
+    //-------------------------------------------------------------------------------------------------------------------
+    while(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0' && ScicRegs.SCIFFTX.bit.TXFFST < 15){
+        scic_xmit(SCIC.TX_charBuffer[SCIC.TX_bufferIndex++]);                           // Transmit byte via SCIC peripheral.
+    }
+    if(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] == '\0'){
+        ScicRegs.SCIFFTX.bit.TXFFIENA = 0;                                              // Disable TX FIFO interrupt.
+    }
+    //-------------------------------------------------------------------------------------------------------------------
+    // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
+    DINT;
+    // Acknowledge this interrupt to receive more interrupts from group 8:
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP8;                                             // Acknowledge PIE group 8 interrupt.
+}
+//-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize SCIA (8-bit word, baud rate 0x0002, default, 1 STOP bit, no parity):
 void scia_init(){
-    // Note: Clocks were turned on to the SCIA peripheral,
-    // in the InitSysCtrl() function.
+    // Note: Clocks were turned on to the SCIA peripheral, in the InitSysCtrl() function.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Disabling SCIA module:
+    SciaRegs.SCIFFTX.bit.SCIFFENA = 0;                                                  // Disable FIFO.
+    SciaRegs.SCICTL1.bit.TXENA = 0;                                                     // Disable the SCI TX peripheral.
+    SciaRegs.SCICTL1.bit.RXENA = 0;                                                     // Disable the SCI RX peripheral.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
+    SciaRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud_rate = 2E6, @LSPCLK = 50MHz (200 MHz for SYSCLK).
+    SciaRegs.SCILBAUD.all = 0x0002;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting parity, data length, and number of stop bits:
     SciaRegs.SCICCR.all = 0x0007;                                                       // 1 stop bit, no loop-back,
-                                                                                        // no parity, 8 char bits,
+                                                                                        // no parity, 8 bits for char,
                                                                                         // asynchronous mode, idle-line protocol.
-    SciaRegs.SCICTL1.all = 0x0003;                                                      // Enable TX, RX, internal SCICLK,
-                                                                                        // disable RX ERR, SLEEP, TXWAKE.
-    EALLOW;
-    GpioCtrlRegs.GPCQSEL2.bit.GPIO85 = 3;                                               // The GPIO input qualification of GPIO85 is settled to asynchronous mode.
-    EDIS;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling standard TX and RX interrupts without FIFO:
     // SciaRegs.SCICTL2.bit.TXINTENA = 1;                                                  // Transmit interrupt enabled (standard SCIA).
     // SciaRegs.SCICTL1.bit.RXERRINTENA = 1;                                               // Receive Error interrupt enabled (standard SCIA).
     // SciaRegs.SCICTL2.bit.RXBKINTENA = 1;                                                // Receiver-buffer break interrupt enabled (standard SCIA).
     //-------------------------------------------------------------------------------------------------------------------
-    // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
-    SciaRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud_rate = 2E6, @LSPCLK = 50MHz (200 MHz SYSCLK).
-    SciaRegs.SCILBAUD.all = 0x0002;
-    //-------------------------------------------------------------------------------------------------------------------
-    SciaRegs.SCICTL1.all = 0x0023;                                                      // Relinquish SCI from Reset.
+    // Starting the SCI:
+    SciaRegs.SCICTL1.all = 0x0023;                                                      // Enable TX, RX, internal SCICLK,
+                                                                                        // disable RX ERR, SLEEP, TXWAKE,
+                                                                                        // relinquish SCI from Reset.
     //-------------------------------------------------------------------------------------------------------------------
     return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize the SCIA FIFO:
 void scia_fifo_init(void){
-    SciaRegs.SCIFFTX.all = 0xE040;                                                      // Enable SCIA FIFO mode,
-                                                                                        // transmission FIFO interrupt is disabled.
-    SciaRegs.SCIFFRX.all = 0x2061;                                                      // Enable reception FIFO interrupt,
-                                                                                        // with interrupt FIFO level 1.
-    SciaRegs.SCIFFCT.all = 0x0;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Reseting TX and RX channels:
+    SciaRegs.SCIFFTX.bit.SCIRST = 0;
+    SciaRegs.SCIFFTX.bit.SCIRST = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling the TX and RX FIFO enhancements:
+    SciaRegs.SCIFFTX.bit.SCIFFENA = 1;
+    SciaRegs.SCIFFTX.bit.TXFIFORESET = 1;
+    SciaRegs.SCIFFRX.bit.RXFIFORESET = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling the RX FIFO interrupt:
+    SciaRegs.SCIFFRX.bit.RXFFIENA = 1;
+    SciaRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting FIFO interrupt levels:
+    SciaRegs.SCIFFTX.bit.TXFFIL = 0;                                                    // TX FIFO interrupt is disabled.
+    SciaRegs.SCIFFRX.bit.RXFFIL = 1;                                                    // Configures the RX FIFO interrupt level with one word only.
+    //-------------------------------------------------------------------------------------------------------------------
+    // FIFO transmit delay:
+    SciaRegs.SCIFFCT.all = 0x0;                                                         // Generates a FIFO transfer execution with an internal delay of 0 baud rate cycles.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Performing a software reset (a SW reset of the module is required to clear all errors):
+    SciaRegs.SCICTL1.bit.SWRESET = 0;
+    SciaRegs.SCICTL1.bit.SWRESET = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Reseting TX and RX FIFO enhancements:
+    SciaRegs.SCIFFTX.bit.TXFIFORESET = 0;
+    SciaRegs.SCIFFTX.bit.TXFIFORESET = 1;                                               // Reset TX FIFO enhancement.
+    SciaRegs.SCIFFRX.bit.RXFIFORESET = 0;
+    SciaRegs.SCIFFRX.bit.RXFIFORESET = 1;                                               // Reset RX FIFO enhancement.
+    return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit a character through the SCIA:
 void scia_xmit(char a){
+    //-------------------------------------------------------------------------------------------------------------------
+    // Option 2. Transmitting a character by using FIFO, but without interrupt:
     if(SciaRegs.SCIFFTX.bit.TXFFST < 15) SciaRegs.SCITXBUF.all = a;                     // Load character to SCIA TX buffer.
     else{
         SciaRegs.SCITXBUF.all = a;                                                      // Load character to SCIA TX buffer.
         while(SciaRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
     }
+    //-------------------------------------------------------------------------------------------------------------------
+    // Option 3. Transmitting a character neither using FIFO nor interrupt:
     // while(SciaRegs.SCICTL2.bit.TXRDY == 0);                                             // Wait until TX is ready (standard SCIA).
     // SciaRegs.SCITXBUF.all = a;                                                          // Load character to SCIA TX buffer.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit message via SCIA:
-void scia_msg(char *msg){
+void scia_msgXmit(char *msg){
+    // Option 2 and 3. Transmitting by using FIFO without interrupt or standard FIFO disabled:
     int i = 0;                                                                          // Declaration of i as integer variable.
     while(msg[i] != '\0'){
-        scia_xmit(msg[i]);                                                              // Transmit byte via SCIA peripheral.
-        i++;
+        scia_xmit(msg[i++]);                                                            // Transmit byte via SCIA peripheral.
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize SCIB (8-bit word, baud rate 0x0035, default, 1 STOP bit, no parity):
 void scib_init(){
-    // Note: Clocks were turned on to the SCIB peripheral,
-    // in the InitSysCtrl() function.
+    // Note: Clocks were turned on to the SCIB peripheral, in the InitSysCtrl() function.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Disabling SCIB module:
+    ScibRegs.SCIFFTX.bit.SCIFFENA = 0;                                                  // Disable FIFO.
+    ScibRegs.SCICTL1.bit.TXENA = 0;                                                     // Disable the SCI TX peripheral.
+    ScibRegs.SCICTL1.bit.RXENA = 0;                                                     // Disable the SCI RX peripheral.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
+    ScibRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud-rate = 115200, @LSPCLK = 50MHz (200 MHz for SYSCLK).
+    ScibRegs.SCILBAUD.all = 0x0035;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting parity, data length, and number of stop bits:
     ScibRegs.SCICCR.all = 0x0007;                                                       // 1 stop bit, no loop-back,
-                                                                                        // no parity, 8 char bits,
+                                                                                        // no parity, 8 bits for char,
                                                                                         // asynchronous mode, idle-line protocol.
-    ScibRegs.SCICTL1.all = 0x0003;                                                      // Enable TX, RX, internal SCICLK,
-                                                                                        // disable RX ERR, SLEEP, TXWAKE.
-    EALLOW;
-    GpioCtrlRegs.GPCQSEL2.bit.GPIO87 = 3;                                               // The GPIO input qualification of GPIO87 is settled to asynchronous mode.
-    EDIS;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling standard TX and RX interrupts without FIFO:
     // ScibRegs.SCICTL2.bit.TXINTENA = 1;                                                  // Transmit interrupt enabled (standard SCIB).
     // ScibRegs.SCICTL1.bit.RXERRINTENA = 1;                                               // Receive Error interrupt enabled (standard SCIB).
     // ScibRegs.SCICTL2.bit.RXBKINTENA = 1;                                                // Receiver-buffer break interrupt enabled (standard SCIB).
     //-------------------------------------------------------------------------------------------------------------------
-    // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
-    ScibRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud_rate = 115200, @LSPCLK = 50MHz (200 MHz SYSCLK).
-    ScibRegs.SCILBAUD.all = 0x0035;
-    //-------------------------------------------------------------------------------------------------------------------
-    ScibRegs.SCICTL1.all = 0x0023;                                                      // Relinquish SCI from Reset.
+    // Starting the SCI:
+    ScibRegs.SCICTL1.all = 0x0023;                                                      // Enable TX, RX, internal SCICLK,
+                                                                                        // disable RX ERR, SLEEP, TXWAKE,
+                                                                                        // relinquish SCI from Reset.
     //-------------------------------------------------------------------------------------------------------------------
     return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize the SCIB FIFO:
 void scib_fifo_init(void){
-    ScibRegs.SCIFFTX.all = 0xE040;                                                      // Enable SCIB FIFO mode,
-                                                                                        // transmission FIFO interrupt is disabled.
-    ScibRegs.SCIFFRX.all = 0x2061;                                                      // Enable reception FIFO interrupt,
-                                                                                        // with interrupt FIFO level 1.
-    ScibRegs.SCIFFCT.all = 0x0;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Reseting TX and RX channels:
+    ScibRegs.SCIFFTX.bit.SCIRST = 0;
+    ScibRegs.SCIFFTX.bit.SCIRST = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling the TX and RX FIFO enhancements:
+    ScibRegs.SCIFFTX.bit.SCIFFENA = 1;
+    ScibRegs.SCIFFTX.bit.TXFIFORESET = 1;
+    ScibRegs.SCIFFRX.bit.RXFIFORESET = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling the RX FIFO interrupt:
+    ScibRegs.SCIFFRX.bit.RXFFIENA = 1;
+    ScibRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting FIFO interrupt levels:
+    ScibRegs.SCIFFTX.bit.TXFFIL = 0;                                                    // TX FIFO interrupt is disabled.
+    ScibRegs.SCIFFRX.bit.RXFFIL = 1;                                                    // Configures the RX FIFO interrupt level with one word only.
+    //-------------------------------------------------------------------------------------------------------------------
+    // FIFO transmit delay:
+    ScibRegs.SCIFFCT.all = 0x0;                                                         // Generates a FIFO transfer execution with an internal delay of 0 baud rate cycles.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Performing a software reset (a SW reset of the module is required to clear all errors):
+    ScibRegs.SCICTL1.bit.SWRESET = 0;
+    ScibRegs.SCICTL1.bit.SWRESET = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Reseting TX and RX FIFO enhancements:
+    ScibRegs.SCIFFTX.bit.TXFIFORESET = 0;
+    ScibRegs.SCIFFTX.bit.TXFIFORESET = 1;                                               // Reset TX FIFO enhancement.
+    ScibRegs.SCIFFRX.bit.RXFIFORESET = 0;
+    ScibRegs.SCIFFRX.bit.RXFIFORESET = 1;                                               // Reset RX FIFO enhancement.
+    return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit a character through the SCIB:
 void scib_xmit(char a){
+    // Option 2. Transmitting a character by using FIFO, but without interrupt:
     if(ScibRegs.SCIFFTX.bit.TXFFST < 15) ScibRegs.SCITXBUF.all = a;                     // Load character to SCIB TX buffer.
     else{
         ScibRegs.SCITXBUF.all = a;                                                      // Load character to SCIB TX buffer.
         while(ScibRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
     }
+    //-------------------------------------------------------------------------------------------------------------------
+    // Option 3. Transmitting a character neither using FIFO nor interrupt:
     // while(ScibRegs.SCICTL2.bit.TXRDY == 0);                                             // Wait until TX is ready (standard SCIB).
     // ScibRegs.SCITXBUF.all = a;                                                          // Load character to SCIB TX buffer.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit message via SCIB:
-void scib_msg(char *msg){
+void scib_msgXmit(char *msg){
+    // Option 2 and 3. Transmitting by using FIFO without interrupt or standard FIFO disabled:
     int i = 0;                                                                          // Declaration of i as integer variable.
     while(msg[i] != '\0'){
-        scib_xmit(msg[i]);                                                              // Transmit byte via SCIB peripheral.
-        i++;
+        scib_xmit(msg[i++]);                                                            // Transmit byte via SCIB peripheral.
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize SCIC (8-bit word, baud rate 0x0002, default, 1 STOP bit, no parity):
 void scic_init(){
-    // Note: Clocks were turned on to the SCIC peripheral,
-    // in the InitSysCtrl() function.
+    // Note: Clocks were turned on to the SCIC peripheral, in the InitSysCtrl() function.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Disabling SCIC module:
+    ScicRegs.SCIFFTX.bit.SCIFFENA = 0;                                                  // Disable FIFO.
+    ScicRegs.SCICTL1.bit.TXENA = 0;                                                     // Disable the SCI TX peripheral.
+    ScicRegs.SCICTL1.bit.RXENA = 0;                                                     // Disable the SCI RX peripheral.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting baud-rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
+    ScicRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud-rate = 2E6, @LSPCLK = 50MHz (200 MHz for SYSCLK).
+    ScicRegs.SCILBAUD.all = 0x0002;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting parity, data length, and number of stop bits:
     ScicRegs.SCICCR.all = 0x0007;                                                       // 1 stop bit, no loop-back,
-                                                                                        // no parity, 8 char bits,
+                                                                                        // no parity, 8 bits for char,
                                                                                         // asynchronous mode, idle-line protocol.
-    ScicRegs.SCICTL1.all = 0x0003;                                                      // Enable TX, RX, internal SCICLK,
-                                                                                        // disable RX ERR, SLEEP, TXWAKE.
-    EALLOW;
-    GpioCtrlRegs.GPCQSEL2.bit.GPIO90 = 3;                                               // The GPIO input qualification of GPIO90 is settled to asynchronous mode.
-    EDIS;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling standard TX and RX interrupts without FIFO enhancement:
     // ScicRegs.SCICTL2.bit.TXINTENA = 1;                                                  // Transmit interrupt enabled (standard SCIC).
     // ScicRegs.SCICTL1.bit.RXERRINTENA = 1;                                               // Receive Error interrupt enabled (standard SCIC).
     // ScicRegs.SCICTL2.bit.RXBKINTENA = 1;                                                // Receiver-buffer break interrupt enabled (standard SCIC).
     //-------------------------------------------------------------------------------------------------------------------
-    // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
-    ScicRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud_rate = 2E6, @LSPCLK = 50MHz (200 MHz SYSCLK).
-    ScicRegs.SCILBAUD.all = 0x0002;
-    //-------------------------------------------------------------------------------------------------------------------
-    ScicRegs.SCICTL1.all = 0x0023;                                                      // Relinquish SCI from Reset.
+    // Starting the SCI:
+    ScicRegs.SCICTL1.all = 0x0023;                                                      // Enable TX, RX, internal SCICLK,
+                                                                                        // disable RX ERR, SLEEP, TXWAKE,
+                                                                                        // relinquish SCI from Reset.
     //-------------------------------------------------------------------------------------------------------------------
     return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize the SCIC FIFO:
 void scic_fifo_init(void){
-    ScicRegs.SCIFFTX.all = 0xE040;                                                      // Enable SCIC FIFO mode,
-                                                                                        // transmission FIFO interrupt is disabled.
-    ScicRegs.SCIFFRX.all = 0x2000;                                                      // Reception FIFO interrupt is disabled,
-                                                                                        // without interrupt FIFO level.
-    ScicRegs.SCIFFCT.all = 0x0002;                                                      // Generates a FIFO transfer execution with an internal delay of 2 baud rate cycles.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Reseting TX and RX channels:
+    ScicRegs.SCIFFTX.bit.SCIRST = 0;
+    ScicRegs.SCIFFTX.bit.SCIRST = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling the TX and RX FIFO enhancements:
+    ScicRegs.SCIFFTX.bit.SCIFFENA = 1;
+    ScicRegs.SCIFFTX.bit.TXFIFORESET = 1;
+    ScicRegs.SCIFFRX.bit.RXFIFORESET = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Enabling the RX FIFO interrupt:
+    ScicRegs.SCIFFRX.bit.RXFFIENA = 1;
+    ScicRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Setting FIFO interrupt levels:
+    ScicRegs.SCIFFTX.bit.TXFFIL = 1;                                                    // TX FIFO interrupt is disabled.
+    ScicRegs.SCIFFRX.bit.RXFFIL = 1;                                                    // Configures the RX FIFO interrupt level with one word only.
+    //-------------------------------------------------------------------------------------------------------------------
+    // FIFO transmit delay:
+    ScicRegs.SCIFFCT.all = 0x0;                                                         // Generates a TX FIFO transfer execution with an internal delay of zero baud-rate cycles.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Performing a software reset (a SW reset of the module is required to clear all errors):
+    ScicRegs.SCICTL1.bit.SWRESET = 0;
+    ScicRegs.SCICTL1.bit.SWRESET = 1;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Reseting TX and RX FIFO enhancements:
+    ScicRegs.SCIFFTX.bit.TXFIFORESET = 0;
+    ScicRegs.SCIFFTX.bit.TXFIFORESET = 1;                                               // Reset TX FIFO enhancement.
+    ScicRegs.SCIFFRX.bit.RXFIFORESET = 0;
+    ScicRegs.SCIFFRX.bit.RXFIFORESET = 1;                                               // Reset RX FIFO enhancement.
+    return;
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to transmit a character through the SCIC:
+// Function to transmit a character through the SCIC peripheral:
 void scic_xmit(char a){
+    // Option 1. Transmitting a character by using both FIFO and interrupt of SCIC peripheral:
+    // ScicRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Option 2. Transmitting a character by using FIFO, but without interrupt:
     if(ScicRegs.SCIFFTX.bit.TXFFST < 15) ScicRegs.SCITXBUF.all = a;                     // Load character to SCIC TX buffer.
     else{
         ScicRegs.SCITXBUF.all = a;                                                      // Load character to SCIC TX buffer.
         while(ScicRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
     }
+    //-------------------------------------------------------------------------------------------------------------------
+    // Option 3. Transmitting a character neither using FIFO nor interrupt:
     // while(ScicRegs.SCICTL2.bit.TXRDY == 0);                                             // Wait until TX is ready (standard SCIC).
     // ScicRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit message via SCIC:
-void scic_msg(char *msg){
+void scic_msgXmit(char *msg){
+    // Option 1. Transmitting by using both FIFO and interrupt of SCIC peripheral:
+    // ScicRegs.SCIFFTX.bit.TXFFIENA = 0;                                                  // Disable SCIC TX FIFO interrupt.
+    // shiftCharsBackward(SCIC.TX_charBuffer,SCIC.TX_bufferIndex + 1);                     // Shift TX buffer backward according to the sent characters.
+    // SCIC.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
+    // if((strlen(SCIC.TX_charBuffer) + strlen(msg)) > SCIC.TX_bufferSize) return;         // Transmission buffer is full.
+    // else{
+    //     //---------------------------------------------------------------------------------------------------------------
+    //     // Initializing data transmission:
+    //     strcat(SCIC.TX_charBuffer,msg);                                                 // Append transmitting data to TX_charBuffer.
+    //     while(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0' && ScicRegs.SCIFFTX.bit.TXFFST < 15){
+    //         scic_xmit(SCIC.TX_charBuffer[SCIC.TX_bufferIndex++]);                       // Transmit byte via SCIC peripheral.
+    //     }
+    //     if(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0'){
+    //         ScicRegs.SCIFFTX.bit.TXFFIENA = 1;                                          // Enable SCIC TX FIFO interrupt.
+    //     }
+    // }
+    //-------------------------------------------------------------------------------------------------------------------
+    // Option 2 and 3. Transmitting by using FIFO without interrupt or standard communication with FIFO disabled:
     int i = 0;                                                                          // Declaration of i as integer variable.
     while(msg[i] != '\0'){
-        scic_xmit(msg[i]);                                                              // Transmit byte via SCIC peripheral.
-        i++;
+        scic_xmit(msg[i++]);                                                            // Transmit byte via SCIB peripheral.
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------

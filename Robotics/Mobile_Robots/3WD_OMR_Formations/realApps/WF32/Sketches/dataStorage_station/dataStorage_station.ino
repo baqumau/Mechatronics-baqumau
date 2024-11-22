@@ -33,7 +33,7 @@ const unsigned int chipSelect_SD = chipSelect_SD_default;
 const unsigned int bufferSize_0 = 256;                                  // buffer length 0.
 const unsigned int bufferSize_1 = 64;                                   // buffer length 1.
 const unsigned int bufferSize_2 = 10;                                   // buffer length 2.
-const unsigned int varQty = 6*Robots_Qty + 1;                           // Quantity of state varaibles that must be saved.
+const unsigned int varQty = 9*Robots_Qty + 1;                           // Quantity of state varaibles that must be saved.
 char character_1;                                                       // Variable where received character from UART 1 is saved.
 char character_4;                                                       // Variable where received character from UART 4 is saved.
 char measurements[bufferSize_0];                                        // Variable to arrange the measured variables.
@@ -170,7 +170,7 @@ void loop(){
   int i;                                                                // Declaration of i as index integer variable.
   if(UART4.identifier == 0 && flagcommand_0){
     flagcommand_0 = false;                                              // Reset flag command 0 to FALSE.
-    snprintf(measurements,bufferSize_0,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5],UART4.MAT3.data[0][6],UART4.MAT3.data[0][7],UART4.MAT3.data[0][8],UART4.MAT3.data[0][9],UART4.MAT3.data[0][10],UART4.MAT3.data[0][11],UART4.MAT3.data[0][12]);
+    snprintf(measurements,bufferSize_0,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s;",UART4.MAT3.data[0][0],UART4.MAT3.data[0][1],UART4.MAT3.data[0][2],UART4.MAT3.data[0][3],UART4.MAT3.data[0][4],UART4.MAT3.data[0][5],UART4.MAT3.data[0][6],UART4.MAT3.data[0][7],UART4.MAT3.data[0][8],UART4.MAT3.data[0][9],UART4.MAT3.data[0][10],UART4.MAT3.data[0][11],UART4.MAT3.data[0][12],UART4.MAT3.data[0][13],UART4.MAT3.data[0][14],UART4.MAT3.data[0][15],UART4.MAT3.data[0][16],UART4.MAT3.data[0][17],UART4.MAT3.data[0][18]);
     baqumau.println(measurements);                                      // Writes data in microSD.
     Serial.println(measurements);                                       // Print measured data through UART 1.
     initString(measurements,bufferSize_0);                              // Clear measurements buffer.

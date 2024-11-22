@@ -74,7 +74,7 @@ while true
                 angles(i,:) = euler(q,'XYZ','frame');
             end
             % Getting and arraying data from NatNet SDK:
-            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',(1800 + positions(1,1)),(1700 - positions(1,3)),angleCorrection_1(angles(1,2),angles(1,1)),(1800 + positions(2,1)),(1700 - positions(2,3)),angleCorrection_1(angles(2,2),angles(2,1)));
+            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',(1500 - positions(1,1)),(1500 + positions(1,3)),angleCorrection_1(angles(1,2),angles(1,1)),(1500 - positions(2,1)),(1500 + positions(2,3)),angleCorrection_1(angles(2,2),angles(2,1)));
             % Sending data via UART communication:
             fprintf(S1,data_s);                                             % Write data to serial peripheral.
             % flush(S1);
