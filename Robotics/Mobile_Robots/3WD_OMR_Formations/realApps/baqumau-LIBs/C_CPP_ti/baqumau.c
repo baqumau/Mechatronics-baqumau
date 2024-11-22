@@ -238,11 +238,10 @@ extern void shiftCharsBackward(char *str, int bytes){
     if (l <= 1){
         return;                                                                             // No need to shift for empty or single-character strings.
     }
-    char last_char = str[l - 1];                                                            // Store the last character.
+    initString(str,bytes);                                                                  // Clear spaces where characters will be reallocated.
     // Shifting characters to the corresponding position (number of bytes) backward:
     for (i = l - 1; i > bytes - 1; i--){
         str[i] = str[i - bytes];
     }
-    str[0] = last_char;                                                                     // Move the last character to the first position.
 }
 //---------------------------------------------------------------------------------------------------------------
