@@ -17,7 +17,7 @@
 // 11. Sending data via SCIC to ChipKit WF32.
 // 12. Control system implementation.
 // 13. Communication with XBee module (PWM signals to the robots at a baud-rate of 115200 bits/second).
-// 14. TX interrupts for SCIB and SCIC.
+// 14. TX FIFO interrupts for SCIB and SCIC.
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
@@ -103,8 +103,10 @@ void memcpy_fast(void* dst, const void* src, Uint16 N);                         
 //-----------------------------------------------------------------------------------------------------------------------
 // Global dynamic variables will be declared here, together with some required-definition configuration constants:
 const Uint16 bufferSize_0 = 256;                                                        // buffer length 0.
-const Uint16 bufferSize_1 = 64;                                                         // buffer length 1.
-const Uint16 bufferSize_2 = 10;                                                         // buffer length 2.
+const Uint16 bufferSize_1 = 80;                                                         // buffer length 1.
+const Uint16 bufferSize_2 = 64;                                                         // buffer length 2.
+const Uint16 bufferSize_3 = 10;                                                         // buffer length 3.
+const Uint16 bufferSize_4 = 8;                                                          // buffer length 4.
 const float sampleTime = 1.0f/freq_hz_1;                                                // Float parameter to define the global control system sample time.
 //-----------------------------------------------------------------------------------------------------------------------
 Uint32 final_iteration;                                                                 // Declare variable to save final iteration value of program execution.
@@ -316,8 +318,8 @@ void main(void){
     // Some messages to control SCIA, SCIB and SCIC peripherals:
     msg_1 = ":9\r\n\0";                                                                 // Message to ask to MATLAB for data.
     msg_2 = ":10\r\n\0";                                                                // Message to stop streaming data with MATLAB.
-    msg_3 = ":1,0.0;\n";                                                                // Message to stop the saving data process.
-    msg_4 = ":0,0.0,0.0,0.0,0.0,0.0,0.0;\n";                                            // Message to stop movement of the omni-wheels.
+    msg_3 = ":1,0.0;\n\0";                                                              // Message to stop the saving data process.
+    msg_4 = ":0,0.0,0.0,0.0,0.0,0.0,0.0;\n\0";                                          // Message to stop movement of the omni-wheels.
 
     // Initializing SCIA:
     scia_init();                                                                        // Initialize the SCIA.
@@ -329,26 +331,25 @@ void main(void){
     scic_init();                                                                        // Initialize the SCIC.
     scic_fifo_init();                                                                   // Initialize the SCIC FIFO.
 
-
     // Preallocating memory for used *variables:
     measurements = (char *)malloc(bufferSize_0 * sizeof(char));                         // Preallocate memory for measurement data set.
-    controlSignals = (char *)malloc(bufferSize_1 * sizeof(char));                       // Preallocate memory for control signals data set.
-    angularVelocities = (char *)malloc(bufferSize_1 * sizeof(char));                    // Preallocate memory for angular velocities data set.
+    controlSignals = (char *)malloc(bufferSize_2 * sizeof(char));                       // Preallocate memory for control signals data set.
+    angularVelocities = (char *)malloc(bufferSize_2 * sizeof(char));                    // Preallocate memory for angular velocities data set.
     errors_k = (float *)malloc(3*Robots_Qty * sizeof(float));                           // Preallocate memory to save pose error variables in a floating-point values vector.
     // Preallocating memory for used multi-purpose char *variables:
-    var00 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var01 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var02 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var03 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var04 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var05 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var06 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var07 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var08 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var09 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var10 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var11 = (char *)malloc(bufferSize_2 * sizeof(char));
-    var12 = (char *)malloc(bufferSize_2 * sizeof(char));
+    var00 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var01 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var02 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var03 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var04 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var05 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var06 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var07 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var08 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var09 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var10 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var11 = (char *)malloc(bufferSize_3 * sizeof(char));
+    var12 = (char *)malloc(bufferSize_3 * sizeof(char));
 
     // Interrupts that are used in this project are re-mapped to
     // ISR functions found within this file.
@@ -412,14 +413,14 @@ void main(void){
 
     // Step 6. Defining data structure that will be used by this code:
     // Definition of data structure for SCIA peripheral (required for getting and arranging data from MATLAB):
-    SCIA = createDataStruct(bufferSize_0,1,3*Robots_Qty,bufferSize_2,bufferSize_0);
+    SCIA = createDataStruct(bufferSize_1,1,3*Robots_Qty,bufferSize_3,bufferSize_4);
     init_RX_charBuffer(&SCIA);                                                          // Initialize dedicated char-type data buffer of SCIA (receiving data).
     // Definition of data structure for SCIB peripheral (required for getting and arranging data from XBee):
-    SCIB = createDataStruct(bufferSize_0,2,3,bufferSize_2,bufferSize_0);
+    SCIB = createDataStruct(bufferSize_2,2,3,bufferSize_3,bufferSize_2);
     init_RX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (receiving data).
     init_TX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (sending data).
     // Definition of data structure for SCIC peripheral (required for arranging and sending data to ChipKit WF32):
-    SCIC = createDataStruct(bufferSize_0,2,3,bufferSize_2,bufferSize_0);
+    SCIC = createDataStruct(bufferSize_4,1,1,bufferSize_4,bufferSize_0);
     init_TX_charBuffer(&SCIC);                                                          // Initialize dedicated char-type data buffer of SCIC (sending data).
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
@@ -601,8 +602,8 @@ __interrupt void cpu_timer1_isr(void){
         }
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the control signals for OMRs formation:
-        memset_fast(controlSignals,0,bufferSize_1);                                     // Initialize controlSignals data chain.
-        snprintf(controlSignals,bufferSize_1,":0,%s,%s,%s,%s,%s,%s;\n",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
+        memset_fast(controlSignals,0,bufferSize_2);                                     // Initialize controlSignals data chain.
+        snprintf(controlSignals,bufferSize_2,":0,%s,%s,%s,%s,%s,%s;\n",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
         scib_msgXmit(controlSignals);                                                   // Write measured variables through SCIB peripheral.
     }
     //-------------------------------------------------------------------------------------------------------------------
@@ -920,8 +921,8 @@ __interrupt void scib_rx_isr(void){
         }
         //---------------------------------------------------------------------------------------------------------------
         // Packing the corresponding angular velocities variables of OMRs formation:
-        memset_fast(angularVelocities,0,bufferSize_1);                                  // Initialize angularVelocities data chain.
-        snprintf(angularVelocities,bufferSize_1,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
+        memset_fast(angularVelocities,0,bufferSize_2);                                  // Initialize angularVelocities data chain.
+        snprintf(angularVelocities,bufferSize_2,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
         // Clearing buffer within SCIB data structure:
         init_RX_charBuffer(&SCIB);                                                      // Initialize dedicated char-type data buffer of SCIB.
     }
@@ -1110,14 +1111,14 @@ void scib_fifo_init(void){
 // Function to transmit a character through the SCIB:
 void scib_xmit(char a){
     // Option 1. Transmitting a character by using both FIFO and interrupt of SCIB peripheral:
-    ScibRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
+    // ScibRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
     //-------------------------------------------------------------------------------------------------------------------
     // Option 2. Transmitting a character by using FIFO, but without interrupt:
-    // if(ScibRegs.SCIFFTX.bit.TXFFST < 15) ScibRegs.SCITXBUF.all = a;                     // Load character to SCIB TX buffer.
-    // else{
-    //     ScibRegs.SCITXBUF.all = a;                                                      // Load character to SCIB TX buffer.
-    //     while(ScibRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
-    // }
+    if(ScibRegs.SCIFFTX.bit.TXFFST < 15) ScibRegs.SCITXBUF.all = a;                     // Load character to SCIB TX buffer.
+    else{
+        ScibRegs.SCITXBUF.all = a;                                                      // Load character to SCIB TX buffer.
+        while(ScibRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
+    }
     //-------------------------------------------------------------------------------------------------------------------
     // Option 3. Transmitting a character neither using FIFO nor interrupt:
     // while(ScibRegs.SCICTL2.bit.TXRDY == 0);                                             // Wait until TX is ready (standard SCIB).
@@ -1127,29 +1128,23 @@ void scib_xmit(char a){
 // Function to transmit message via SCIB:
 void scib_msgXmit(char *msg){
     // Option 1. Transmitting by using both FIFO and interrupt of SCIB peripheral:
-    // shiftCharsBackward(SCIB.TX_charBuffer,SCIB.TX_bufferIndex + 1);                     // Shift TX buffer backward according to the sent characters.
-    // memset_fast(SCIB.TX_charBuffer,0,SCIB.TX_bufferSize);                               // Clear the dedicated char-type TX buffer where OMRs formation variables are arranged to be transmitted.
-    memcpy_fast(SCIB.TX_charBuffer,msg,SCIB.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIB structure.
-    SCIB.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
-    // if((strlen(SCIB.TX_charBuffer) + strlen(msg)) > SCIB.TX_bufferSize) return;         // Transmission buffer is full.
-    // else{
-        //---------------------------------------------------------------------------------------------------------------
-        // Initializing data transmission:
-        // strcat(SCIB.TX_charBuffer,msg);                                                 // Append transmitting data to TX_charBuffer.
-        while(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0' && ScibRegs.SCIFFTX.bit.TXFFST < 6){
-            scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                       // Transmit byte via SCIB peripheral.
-        }
-        if(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0'){
-            scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                       // Transmit byte via SCIB peripheral.
-            ScibRegs.SCIFFTX.bit.TXFFIENA = 1;                                          // Enable SCIB TX FIFO interrupt.
-        }
+    // memcpy_fast(SCIB.TX_charBuffer,msg,SCIB.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIB structure.
+    // SCIB.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
+    //---------------------------------------------------------------------------------------------------------------
+    // Initializing data transmission:
+    // while(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0' && ScibRegs.SCIFFTX.bit.TXFFST < 15){
+    //     scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                       // Transmit byte via SCIB peripheral.
+    // }
+    // if(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0'){
+    //     scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                       // Transmit byte via SCIB peripheral.
+    //     ScibRegs.SCIFFTX.bit.TXFFIENA = 1;                                          // Enable SCIB TX FIFO interrupt.
     // }
     //-------------------------------------------------------------------------------------------------------------------
     // Option 2 and 3. Transmitting by using FIFO without interrupt or standard FIFO disabled:
-    // int i = 0;                                                                          // Declaration of i as integer variable.
-    // while(msg[i] != '\0'){
-    //     scib_xmit(msg[i++]);                                                            // Transmit byte via SCIB peripheral.
-    // }
+    int i = 0;                                                                          // Declaration of i as integer variable.
+    while(msg[i] != '\0'){
+        scib_xmit(msg[i++]);                                                            // Transmit byte via SCIB peripheral.
+    }
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize SCIC (8-bit word, baud rate 0x0002, default, 1 STOP bit, no parity):
