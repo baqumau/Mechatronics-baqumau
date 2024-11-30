@@ -73,8 +73,9 @@ void __attribute__((interrupt)) UART4_RX_Handler(){
   if(UART4.flag[1]){
     classify_charBuffer(&UART4);                                        // Classify data from assigned buffer to UART4 struct data matrix.
     for(i = 0; i < 3; i++){
-      FMR.w_k[i] = roundToThreeDecimals(atof(UART4.MAT3.data[0][i]));   // Saving angular velocities of omni-wheels attached on vehicle 1.
-      FMR.w_k[i+3] = roundToThreeDecimals(atof(UART4.MAT3.data[1][i])); // Saving angular velocities of omni-wheels attached on vehicle 2.
+      // Saving the angular velocities of omni-wheels attached on both vehicles:
+      FMR.w_k[i+3*UART4.identifier] = atof(UART4.MAT3.data[UART4.identifier][i]);
+      initString(UART4.MAT3.data[UART4.identifier][i],UART4.MAT3.zSize);
     }
     init_charBuffer(&UART4);                                            // Initialize char-type data buffer associated to UART 4.
     //-----------------------------------------------------------------------------------------------------------

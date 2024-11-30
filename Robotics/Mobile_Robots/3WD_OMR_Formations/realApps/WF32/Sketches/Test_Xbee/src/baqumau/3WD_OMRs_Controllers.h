@@ -9,6 +9,7 @@ will be implemented in this library to run ADRC-RS and SMC-CS control systems in
 #include <stdio.h>
 #include <stdbool.h>
 #include <float.h>
+#include <math.h>
 #include <xc.h>                                                                 // Header file that allows code in the source file to access compiler-specific or device-specific features.
                                                                                 // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
                                                                                 // header file.
@@ -16,6 +17,7 @@ will be implemented in this library to run ADRC-RS and SMC-CS control systems in
 /* Define _USE_MATH_DEFINES before including 3WD-OMRs_Controllers.h to expose their macro definitions for common
 math constants. */
 #define M_PI_6 0.523598775598299                                                // Math definition.
+#define F_PI (float)(M_PI)                                                      // PI conversion to float type number.
 //---------------------------------------------------------------------------------------------------------------
 // Definition of kinematic and dynamical parameters of OMRs that will be exported by the library:
 #define Robots_Qty 2                                                            // [Un], Qty of robots in the formation;
@@ -86,7 +88,8 @@ typedef struct{
     float *u_k;                                                                 // [N.mm], control signal applied to each omni-wheel is arranged in this vector.
     float *v_k;                                                                 // [%(PWM)], control signal applied to each omni-wheel is arranged in this vector.
     float *params;                                                              // Several constant values needed in the formation control system.
-    Correction_Struct COR;                                                      // Adding angle correction structure for obtained angles through atan2(.) function.
+    Correction_Struct CORq;                                                     // Adding angle correction structure for measured angles in the robot space.
+    Correction_Struct CORc;                                                     // Adding angle correction structure for obtained angles through atan2(.) function in the cluster space.
 } Formation;
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement trapezoidal integrators:
@@ -138,6 +141,25 @@ typedef struct{
     bool *flag;                                                                 // Execution flag.
 } Differentiator;
 //---------------------------------------------------------------------------------------------------------------
+// Data structure to implement 2nd-order HOSM-based homogeneous discrete-time differentiators (HDDs):
+typedef struct{
+    int s_in;                                                                   // Size of input.
+    int s_out;                                                                  // Size of output.
+    int s_state;                                                                // Size of the state.
+    float Ts;                                                                   // Sample time.
+    float *lambda;                                                              // Performance coefficients of differentiator.
+    float *Lip;                                                                 // Lipschitz constants.
+    float *X_0;                                                                 // Initial conditions.
+    float *x1_k;                                                                // State variables to compute the tracking of the input signal u(k).
+    float *x1_kp1;                                                              // State variables in which is intended to achieve the corresponding forwarded input signals u(k+1).
+    float *x2_k;                                                                // State variables x2(k) where first differentiation results.
+    float *x2_kp1;                                                              // State variables x2(k+1) where first differentiation equations are stated.
+    float *x3_k;                                                                // State variables x3(k) where second differentiation results.
+    float *x3_kp1;                                                              // State variables x3(k+1) where second differentiation equations are stated.
+    float *y_k;                                                                 // Output variables.
+    bool *flag;                                                                 // Execution flag.
+} HOSM_Differentiator;
+//---------------------------------------------------------------------------------------------------------------
 // Data structure to implement the m-robot high-gain observer:
 typedef struct{
     int s_base;                                                                 // Size for basis of the computations. 
@@ -160,7 +182,7 @@ typedef struct{
     float *x3_kp1;                                                              // State variables used in this case to compute the derivative of x3(k) according to the model.
     float *y_k;                                                                 // Output variables.
     bool *flag;                                                                 // Execution flag.
-    Integrator INT;                                                             // Creates a Integrator needed for this RS_Observer struct.
+    Integrator INT;                                                             // Creates a Integrator needed for this RS_Observer structure.
 } RS_Observer;                                                                  // High-gain observer in the robot space.
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement the m-robot cluster high-gain observer:
@@ -184,9 +206,34 @@ typedef struct{
     float *z3_kp1;                                                              // State variables used in this case to compute the derivative of z3(k) according to the model.
     float *y_k;                                                                 // Output variables.
     bool *flag;                                                                 // Execution flag.
-    Integrator INT;                                                             // Creates a Integrator needed for this CS_Observer struct.
-    Differentiator DIF;                                                         // Creates a Differentiator needed for this CS_Observer struct.
+    Integrator INT;                                                             // Creates a Integrator needed for this CS_Observer structure.
+    Differentiator DIF;                                                         // Creates a Differentiator needed for this CS_Observer structure.
 } CS_Observer;                                                                  // High-gain observer in the cluster space.
+//---------------------------------------------------------------------------------------------------------------
+// Data structure to implement the m-robot cluster high-gain observer (variant x):
+typedef struct{
+    int s_in;                                                                   // Size of input.
+    int s_out;                                                                  // Size of output.
+    int s_state;                                                                // Size of the state.
+    float Ts;                                                                   // Sample time.
+    float gamma;                                                                // Including a sufficiently small positive constant (0 < gamma < 1).
+    Matrix alpha_1;                                                             // First gains matrix of CS observer.
+    Matrix alpha_2;                                                             // Second gains matrix of CS observer.
+    Matrix alpha_3;                                                             // Third gains matrix of CS observer.
+    float *F_k;                                                                 // Variable matrix F(k) of dynamical behavior for OMR formation in the cluster space.
+    float *G_k;                                                                 // Variable matrix G(k) of dynamical behavior for OMR formation in the cluster space.
+    float *Z_0;                                                                 // Initial conditions z(0) = [z1(0) z2(0) z3(0)]'.
+    float *z1_k;                                                                // State variables z1(k) that arrange the estimated CS pose of OMRs as c(k*Ts).
+    float *z1_kp1;                                                              // State variables used in this case to compute the derivative of z1(k) according to the model.
+    float *z2_k;                                                                // State variables z2(k) that arrange the derivative of estimated CS pose of OMRs as d(c(k*Ts))/dt.
+    float *z2_kp1;                                                              // State variables used in this case to compute the derivative of z2(k) according to the model.
+    float *z3_k;                                                                // State variables z3(k) that arrange the estimated disturbances of OMRs formation in the cluster space.
+    float *z3_kp1;                                                              // State variables used in this case to compute the derivative of z3(k) according to the model.
+    float *y_k;                                                                 // Output variables.
+    bool *flag;                                                                 // Execution flag.
+    Integrator INT;                                                             // Creates a Integrator needed for this CS_Observer structure.
+    HOSM_Differentiator SMDIF;                                                  // Creates a HOSM-based Differentiator needed for this CS_Observer structure.
+} CSx_Observer;                                                                 // High-gain observer in the cluster space.
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement GPI controller (discrete proper transfer function):
 typedef struct{
@@ -218,7 +265,7 @@ typedef struct{
     float *v1_max;                                                              // Saturation values for sliding surfaces functions.
     float *y_k;                                                                 // Output variables of sliding function.
     bool *flag;                                                                 // Execution flag.
-    Integrator INT;                                                             // Creates a Integrator needed for this Sl_Surfaces struct.
+    Integrator INT;                                                             // Creates a Integrator needed for this Sl_Surfaces structure.
 } Sl_Surfaces;
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement robot space ADRC control law:
@@ -247,12 +294,16 @@ typedef struct{
 //---------------------------------------------------------------------------------------------------------------
 // Defining an enumeration to choose the different control strategy:
 enum Control_System{
-    ADRC_RS,                                                                    // Active disturbance rejection control on robot space framwork.
-    SMC_CS                                                                      // Sliding mode control on cluster space framwork.
+    ADRC_RS,                                                                    // Active disturbance rejection control on robot space framework.
+    SMC_CS                                                                      // Sliding mode control on cluster space framework.
 };
 //---------------------------------------------------------------------------------------------------------------
 // Declaration of functions library:
 //---------------------------------------------------------------------------------------------------------------
+// Function to determine the sign of an integer number:
+extern int sign(int num);
+// Function to determine the sign of a floating-point number:
+extern int signf(double num);
 // Function to round a floating-point number to three decimal places:
 extern float roundToThreeDecimals(float num);
 // Function to round a floating-point number to four decimal places:
@@ -261,29 +312,35 @@ extern float roundToFourDecimals(float num);
 extern float saturation(float signal, float minValue, float maxValue);
 // Clutch function to attenuate high-peaking phenomena during the initial seconds of runtime:
 extern float clutch(float signal_k, float t_cl, float sampleTime, int iterations);
-// Function to allocate memory for the matrix in the struct:
+// Function to allocate memory for the matrix in the structure:
 extern bool allocateMatrix(Matrix *MAT, int rows, int cols);
-// Function to free memory for the matrix in the struct:
+// Function to free memory for the matrix in the structure:
 extern void freeMatrix(Matrix *MAT);
-// Creating integrator structure:
+// Creating integration structure:
 extern Integrator createIntegrator(int inputSize, float sampleTime, float gain);
-// Adding initial conditions to INT Integrator struct:
+// Adding initial conditions to INT Integration structure:
 extern void initIntegrator(Integrator INT, float x_0[]);
 // Integration function:
 extern void Integration(Integrator INT, float input[]);
-// Creating a simple differentiator structure:
+// Creating a simple differentiation structure:
 extern simpleDifferentiator createSimpleDifferentiator(int inputSize, float sampleTime, float gain);
 // Initialization function for simple differentiator:
 extern void initSimpleDifferentiator(simpleDifferentiator SDIF, float x_0[]);
 // Simple differentiation function:
 extern void simpleDifferentiation(simpleDifferentiator SDIF, float input[]);
-// Creating differentiator structure:
+// Creating differentiation structure:
 extern Differentiator createDifferentiator(int inputSize, float sampleTime, float gain, float filter_coeff);
 // Initialization function for differentiator:
 extern void initDifferentiator(Differentiator DIF, float x_0[]);
 // Differentiation function:
 extern void Differentiation(Differentiator DIF, float input[]);
-// Creating the robot space observer struct:
+// Creating a HOSM-based differentiation structure:
+extern HOSM_Differentiator createHOSMDifferentiator(int inputSize, float sampleTime, float per_gains[], float lip_const[]);
+// Initialization function for HOSM-based differentiator:
+extern void initHOSMDifferentiator(HOSM_Differentiator SMDIF, float x_0[]);
+// HOSM-based differentiation function:
+extern void HOSMDifferentiation(HOSM_Differentiator SMDIF, float input[]);
+// Creating the robot space observer structure:
 extern RS_Observer createRS_Observer(float sampleTime, float gains[9*Robots_Qty][3*Robots_Qty], float epsilon);
 // Adding initial conditions to high-gain observer structured as RSO:
 extern void init_RS_Observer(RS_Observer RSO, float x_0[]);
@@ -303,10 +360,16 @@ extern void initADRC_Controller(ADRC_Controller ADRC, float ref_x_0[], float rso
 extern void computeADRC(ADRC_Controller ADRC, float ref_y_k[], float rso_y_k[], float gpi_y_k[], float fmr_params[]);
 // Creating the cluster space high-gain observer structure (type 01):
 extern CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][Robots_Qty-1], float epsilon, float diff_fc);
+// Creating the cluster space high-gain observer structure (type 01 - variant x):
+extern CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][Robots_Qty-1], float epsilon, float diff_pg[], float diff_lc[]);
 // Adding initial conditions to high-gain observer 01 structured as CSO:
 extern void init_CS_Observer01(CS_Observer CSO, float z_0[]);
+// Adding initial conditions to high-gain observer 01 structured as CSO (variant x):
+extern void init_CSx_Observer01(CSx_Observer CSO, float z_0[]);
 // Cluster space estimation function for CS observer 01:
 extern void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]);
+// Cluster space estimation function for CS observer 01 (variant x):
+extern void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]);
 // Creating the sliding surfaces:
 extern Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float satValues[]);
 // Adding initial conditions to sliding surfaces structured within SLS:

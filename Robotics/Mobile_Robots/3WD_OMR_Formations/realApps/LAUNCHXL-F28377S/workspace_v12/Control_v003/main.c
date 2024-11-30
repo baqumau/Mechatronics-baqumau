@@ -440,6 +440,9 @@ void main(void){
     FMR = createFormation(Robots_Qty);                                                  // Create the OMRs formation structure.
     while(!FMR.flag[0]) FMR = createFormation(Robots_Qty);                              // Create the OMRs formation structure.
 
+    // Sending first instruction to OMRs (zero actuation):
+    scib_msgXmit(msg_4);                                                                // Send message to stop omni-wheels in the formation.
+
     // Step 7. IDLE loop. Just sit and loop forever (optional):
     for(;;){
         if(flagcommand_3){
@@ -910,7 +913,7 @@ __interrupt void scib_rx_isr(void){
     }
     // If streaming data is completely added to the char buffer of SCIB structure:
     if(SCIB.flag[1] && CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
-        classify_RX_charBuffer(&SCIB);                                                  // Classify data from assigned buffer to SCIB structure data matrix.
+        // classify_RX_charBuffer(&SCIB);                                                  // Classify data from assigned buffer to SCIB structure data matrix.
         for(i = 0; i < 3; i++){
             // Saving the angular velocities of omni-wheels attached on OMRs formation (in rad/s).
             FMR.w_k[i+3*SCIB.identifier] = atof(SCIB.MAT3.data[SCIB.identifier][i]);
@@ -1086,7 +1089,7 @@ void scib_fifo_init(void){
     ScibRegs.SCIFFRX.bit.RXFIFORESET = 1;
     //-------------------------------------------------------------------------------------------------------------------
     // Enabling the RX FIFO interrupt:
-    ScibRegs.SCIFFRX.bit.RXFFIENA = 1;
+    ScibRegs.SCIFFRX.bit.RXFFIENA = 0;
     ScibRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
     //-------------------------------------------------------------------------------------------------------------------
     // Setting FIFO interrupt levels:

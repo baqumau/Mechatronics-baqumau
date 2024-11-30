@@ -97,7 +97,7 @@ void setup(){
   init_cbuff();                                                   // Clear buffer.
   //---------------------------------------------------------------------------------------------------------------------------
   // Enable Timer TC7 interrupt at 10 Hz:
-  TC3_setup();                                                    // Call TC4_setup function.
+  TC3_setup();                                                    // Call TC3_setup function.
   delay(100);                                                     // 100 milliseconds delay.
   // Enable Timer TC8 interrupt at 10 Hz:
   TC8_setup();                                                    // Call TC8_setup function.
@@ -111,7 +111,7 @@ void setup(){
   attachInterrupt(digitalPinToInterrupt(Q3B),Q3B_Interrupt,CHANGE);
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-// Setting Timer TC5 and TC5 interrupt:
+// Setting Timer TC3 and TC3 interrupt:
 void TC3_setup(){
   pmc_set_writeprotect(false);                                    // Disables the write protection.
   PMC -> PMC_PCER0 |= PMC_PCER0_PID30;                            // TC3 power ON: Timer counter 1 channel 0 is TC3.
@@ -137,13 +137,13 @@ void TC8_setup(){
   NVIC_EnableIRQ(TC8_IRQn);                                       // Enables TC8 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-// TC7 interrupt at 10 Hz:
+// TC3 interrupt at 10 Hz:
 void TC3_Handler(){
   TC1 -> TC_CHANNEL[0].TC_SR;                                     // Read and clear status register.
-  // Packing and streaming the angular velocities of this OMR:
-  sprintf(angular_velocities,":0,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   // Sending angular velocities values through UART 2:
   if(identifier == 0 && flagcommand_2){
+    // Packing and streaming the angular velocities of this OMR:
+    sprintf(angular_velocities,":0,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
     Serial2.println(angular_velocities);                          // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
     if(counter_7 >= 12 && counter_7 < 18){
       MovingWheel_1(0.0f);                                        // Calling function that moves wheel 1 at certain desired angular velocity (turn motion off for omni wheel 1).

@@ -107,9 +107,9 @@ void onTimer2(void* arg);                                                       
 //-----------------------------------------------------------------------------------
 // Callback function for the Timer 1 at 10 Hz:
 void onTimer1(void* arg){
-  // Packing and streaming the angular velocities of this OMR:
-  sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
   if(flagcommand_2 == 1){
+    // Packing and streaming the angular velocities of this OMR:
+    sprintf(angular_velocities,":1,%1.3f,%1.3f,%1.3f;",ang_vel_1,ang_vel_2,ang_vel_3);
     MySerial.println(angular_velocities);                                         // Print angular velocities via UART 2 peripheral (only on Optitrack mode).
     if(counter_7 >= 12 && counter_7 < 18){
       MovingWheel_1(0.0f);                                                        // Calling function that moves wheel 1 at certain desired angular velocity (turn motion off for omni wheel 1).
@@ -210,7 +210,7 @@ void setup(){
   //---------------------------------------------------------------------------------
 }
 //-----------------------------------------------------------------------------------
-// Setting Timer 2 and configuring its interruption function (at 10 Hz):
+// Setting Timer 1 and configuring its interruption function (at 10 Hz):
 void Timer1_Setup(){
   // Timer 1 configuration:
   esp_timer_create_args_t timer1Config;
@@ -229,7 +229,7 @@ void Timer1_Setup(){
     }
 }
 //-----------------------------------------------------------------------------------
-// Setting Timer 3 and configuring its interruption function (at 10 Hz):
+// Setting Timer 2 and configuring its interruption function (at 10 Hz):
 void Timer2_Setup(){
   // Timer 2 configuration:
   esp_timer_create_args_t timer2Config;
