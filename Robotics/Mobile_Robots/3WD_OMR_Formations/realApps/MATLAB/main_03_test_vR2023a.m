@@ -1,4 +1,4 @@
-function dataRate = main_03_test()
+function dataRate = main_03_test_vR2023a()
 clc, clear
 disp("Executing main_03_test");
 % data_s = [];

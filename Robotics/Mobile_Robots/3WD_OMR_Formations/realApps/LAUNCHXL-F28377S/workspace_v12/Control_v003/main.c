@@ -6,18 +6,17 @@
 // OBJECTIVES:
 // 1. Blink functionality of LED 09 and LED 10, with timer interrupts.
 // 2. Timer 0 interrupt to 250 Hz (Higher priority).
-// 3. SCIA communication (communication with MATLAB).
+// 3. SCIA communication (Serial communication with MATLAB).
 // 4. Receiving FIFO interrupt via SCIA.
-// 5. SCIB communication (UART).
+// 5. SCIB communication (UART communication with ChipKit WF32).
 // 6. Receiving FIFO interrupt via SCIB.
-// 7. SCIC communication (UART).
+// 7. SCIC communication (Serial communication with XBee module).
 // 8. Timer 1 interrupt to 200 Hz.
 // 9. Timer 2 interrupt to 50 Hz (Lower priority).
-// 10. SCIC communication (UART).
-// 11. Sending data via SCIC to ChipKit WF32.
-// 12. Control system implementation.
-// 13. Communication with XBee module (PWM signals to the robots at a baud-rate of 115200 bits/second).
-// 14. TX FIFO interrupts for SCIB and SCIC.
+// 10. Sending relevant data of control system via SCIB to ChipKit WF32 for storing them.
+// 11. Control system implementation.
+// 12. Communication with XBee module (PWM signals to the robots at a baud-rate of 115200 bits/second).
+// 13. TX FIFO interrupts for SCIB and SCIC.
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
@@ -66,8 +65,10 @@ __interrupt void scib_tx_isr(void);
 __interrupt void scib_rx_isr(void);
 // Function to generate interrupt service through SCIC transmitted data:
 __interrupt void scic_tx_isr(void);
+// Function to generate interrupt service through SCIC received data:
+__interrupt void scic_rx_isr(void);
 //-----------------------------------------------------------------------------------------------------------------------
-// UART communication with MATLAB:
+// Serial communication with MATLAB:
 // Function to initialize SCIA (8-bit word, baud rate 2E6, default, 1 STOP bit, no parity):
 void scia_init();
 // Function to initialize the SCIA FIFO:
@@ -77,7 +78,7 @@ void scia_xmit(char a);
 // Function to transmit message via SCIA:
 void scia_msgXmit(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
-// UART communication with XBee:
+// UART communication with ChipKit WF32:
 // Function to initialize SCIB (8-bit word, baud rate 115200, default, 1 STOP bit, no parity):
 void scib_init();
 // Function to initialize the SCIB FIFO:
@@ -87,7 +88,7 @@ void scib_xmit(char a);
 // Function to transmit message via SCIB:
 void scib_msgXmit(char *msg);
 //-----------------------------------------------------------------------------------------------------------------------
-// UART communication with ChipKit WF32:
+// Serial communication with XBee module:
 // Function to initialize SCIC (8-bit word, baud rate 2E6, default, 1 STOP bit, no parity):
 void scic_init();
 // Function to initialize the SCIC FIFO:
@@ -120,6 +121,7 @@ volatile bool flagcommand_4;                                                    
 //-----------------------------------------------------------------------------------------------------------------------
 volatile char receivedChar_a;                                                           // Variable to save received character from SCIA.
 volatile char receivedChar_b;                                                           // Variable to save received character from SCIB.
+volatile char receivedChar_c;                                                           // Variable to save received character from SCIC.
 //-----------------------------------------------------------------------------------------------------------------------
 char *msg_1;                                                                            // Variable 1 to save a char data chain.
 char *msg_2;                                                                            // Variable 2 to save a char data chain.
@@ -209,11 +211,11 @@ float diff_pg[3] = {5.3f, 14.1f, 9.8f};                                         
 float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
 //-----------------------------------------------------------------------------------------------------------------------
 // Declaration of data structure for SCIA peripheral:
-Data_Struct SCIA;                                                                       // Data structure to arrange data from SCIA.
+Data_Struct SCIA;                                                                       // Data structure to arrange data from SCIA peripheral.
 // Declaration of data structure for SCIB peripheral:
-Data_Struct SCIB;                                                                       // Data structure to arrange data from SCIB.
+Data_Struct SCIB;                                                                       // Data structure to arrange data from SCIB peripheral.
 // Declaration of data structure for SCIC peripheral:
-Data_Struct SCIC;                                                                       // Data structure to arrange data from SCIC.
+Data_Struct SCIC;                                                                       // Data structure to arrange data from SCIC peripheral.
 // Declaration of data structure for a high-gain observer in the robot space:
 RS_Observer RSO;
 // Declaration of data structure for a high-gain observer in the cluster space (variant x):
@@ -360,6 +362,7 @@ void main(void){
     PieVectTable.SCIA_RX_INT = &scia_rx_isr;
     PieVectTable.SCIB_TX_INT = &scib_tx_isr;
     PieVectTable.SCIB_RX_INT = &scib_rx_isr;
+    PieVectTable.SCIC_RX_INT = &scic_rx_isr;
     PieVectTable.SCIC_TX_INT = &scic_tx_isr;
     EDIS;                                                                               // This is needed to disable write to EALLOW protected registers.
 
@@ -398,6 +401,8 @@ void main(void){
 
     // Enable TINT0 in the PIE: Group 1 interrupt 7:
     PieCtrlRegs.PIEIER1.bit.INTx7 = 1;                                                  // Enable PIE Group 1, interrupt 7 (CPU Timer 0).
+    // Enable SCIRXINTC in the PIE: Group 8 interrupt 5:
+    PieCtrlRegs.PIEIER8.bit.INTx5 = 1;                                                  // Enable PIE Group 8, interrupt 5 (SCIC RX).
     // Enable SCITXINTC in the PIE: Group 8 interrupt 6:
     PieCtrlRegs.PIEIER8.bit.INTx6 = 1;                                                  // Enable PIE Group 8, interrupt 6 (SCIC TX).
     // Enable SCIRXINTA in the PIE: Group 9 interrupt 1:
@@ -415,12 +420,13 @@ void main(void){
     // Definition of data structure for SCIA peripheral (required for getting and arranging data from MATLAB):
     SCIA = createDataStruct(bufferSize_1,1,3*Robots_Qty,bufferSize_3,bufferSize_4);
     init_RX_charBuffer(&SCIA);                                                          // Initialize dedicated char-type data buffer of SCIA (receiving data).
-    // Definition of data structure for SCIB peripheral (required for getting and arranging data from XBee):
-    SCIB = createDataStruct(bufferSize_2,2,3,bufferSize_3,bufferSize_2);
-    init_RX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (receiving data).
+    // Definition of data structure for SCIB peripheral (required for arranging and sending data to ChipKit WF32):
+    SCIB = createDataStruct(bufferSize_4,1,1,bufferSize_4,bufferSize_0);
+    // init_RX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (receiving data).
     init_TX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (sending data).
-    // Definition of data structure for SCIC peripheral (required for arranging and sending data to ChipKit WF32):
-    SCIC = createDataStruct(bufferSize_4,1,1,bufferSize_4,bufferSize_0);
+    // Definition of data structure for SCIC peripheral (required for getting and arranging data from XBee):
+    SCIC = createDataStruct(bufferSize_2,2,3,bufferSize_3,bufferSize_2);
+    init_RX_charBuffer(&SCIC);                                                          // Initialize dedicated char-type data buffer of SCIC (receiving data).
     init_TX_charBuffer(&SCIC);                                                          // Initialize dedicated char-type data buffer of SCIC (sending data).
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
@@ -441,14 +447,14 @@ void main(void){
     while(!FMR.flag[0]) FMR = createFormation(Robots_Qty);                              // Create the OMRs formation structure.
 
     // Sending first instruction to OMRs (zero actuation):
-    scib_msgXmit(msg_4);                                                                // Send message to stop omni-wheels in the formation.
+    scic_msgXmit(msg_4);                                                                // Send message to stop omni-wheels in the formation.
 
     // Step 7. IDLE loop. Just sit and loop forever (optional):
     for(;;){
         if(flagcommand_3){
             GPIO_WritePin(BLINKY_LED_GPIO_01, 1);                                       // Turn LED GPIO 1 to OFF.
             GPIO_WritePin(BLINKY_LED_GPIO_02, 1);                                       // Turn LED GPIO 1 to OFF.
-            scib_msgXmit(msg_4);                                                        // Send message to stop omni-wheels in the formation.
+            scic_msgXmit(msg_4);                                                        // Send message to stop omni-wheels in the formation.
             //-----------------------------------------------------------------------------------------------------------
             IER &= ~M_INT1;                                                             // Disable CPU timer 0 interrupt.
             IER &= ~M_INT13;                                                            // Disable CPU timer 1 interrupt.
@@ -551,9 +557,9 @@ __interrupt void cpu_timer1_isr(void){
                 //-------------------------------------------------------------------------------------------------------
                 // Conditioning input torque control for OMRs formation:
                 for(i = 0; i < 3; i++){
-                    FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-40.0f/ke_1,40.0f/ke_1),t_cl,sampleTime,CpuTimer1.InterruptCount);
+                    FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-100.0f/ke_1,100.0f/ke_1),t_cl,sampleTime,CpuTimer1.InterruptCount);
                     FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
-                    FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-40.0f/ke_2,40.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
+                    FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
                     FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
                     //---------------------------------------------------------------------------------------------------
                     // Saving OMRs formation control signals data in a string-format version:
@@ -607,7 +613,7 @@ __interrupt void cpu_timer1_isr(void){
         // Packing and streaming the control signals for OMRs formation:
         memset_fast(controlSignals,0,bufferSize_2);                                     // Initialize controlSignals data chain.
         snprintf(controlSignals,bufferSize_2,":0,%s,%s,%s,%s,%s,%s;\n",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
-        scib_msgXmit(controlSignals);                                                   // Write measured variables through SCIB peripheral.
+        scic_msgXmit(controlSignals);                                                   // Write measured variables through SCIB peripheral.
     }
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
@@ -663,29 +669,29 @@ __interrupt void cpu_timer2_isr(void){
             case 2:{
                 // Saving another OMRs formation variables data in a string-format version:
                 memset_fast(var00,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(errors_k[0]),var00,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[6]),var00,3);
                 memset_fast(var01,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(errors_k[1]),var01,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[7]),var01,3);
                 memset_fast(var02,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(errors_k[2]),var02,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[8]),var02,3);
                 memset_fast(var03,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(errors_k[3]),var03,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[9]),var03,3);
                 memset_fast(var04,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(errors_k[4]),var04,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[10]),var04,3);
                 memset_fast(var05,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(errors_k[5]),var05,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[11]),var05,3);
                 memset_fast(var06,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(FMR.v_k[0]),var06,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[12]),var06,3);
                 memset_fast(var07,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(FMR.v_k[1]),var07,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[13]),var07,3);
                 memset_fast(var08,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(FMR.v_k[2]),var08,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[14]),var08,3);
                 memset_fast(var09,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(FMR.v_k[3]),var09,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[15]),var09,3);
                 memset_fast(var10,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(FMR.v_k[4]),var10,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[16]),var10,3);
                 memset_fast(var11,0,bufferSize_2);
-                ftoa(roundToThreeDecimals(FMR.v_k[5]),var11,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[17]),var11,3);
                 break;
             }
             case 3:{
@@ -696,7 +702,7 @@ __interrupt void cpu_timer2_isr(void){
             }
             case 4:{
                 // Streaming the relevant measurement variables of OMRs formation:
-                scic_msgXmit(measurements);                                             // Write string of measured variables through SCIC peripheral.
+                scib_msgXmit(measurements);                                             // Write string of measured variables through SCIC peripheral.
                 break;
             }
         }
@@ -704,7 +710,7 @@ __interrupt void cpu_timer2_isr(void){
     //-------------------------------------------------------------------------------------------------------------------
     else if(CpuTimer1.InterruptCount > final_iteration && flagcommand_0){
         // Stopping the streaming of measurement variables:
-        scic_msgXmit(msg_3);                                                            // Write streaming stop command via SCIC peripheral.
+        scib_msgXmit(msg_3);                                                            // Write streaming stop command via SCIC peripheral.
         flagcommand_0 = false;                                                          // Reset flag command 0.
         flagcommand_3 = true;                                                           // Set flag command 3 to TRUE (disable interrupts).
     }
@@ -883,7 +889,7 @@ __interrupt void scia_rx_isr(void){
 // Function to generate interrupt service through SCIB transmitted data (Transmitting the control signals to OMRs formation via XBee module):
 __interrupt void scib_tx_isr(void){
     //-------------------------------------------------------------------------------------------------------------------
-    while(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0' && ScibRegs.SCIFFTX.bit.TXFFST < 6){
+    while(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0' && ScibRegs.SCIFFTX.bit.TXFFST < 16){
         scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                           // Transmit byte via SCIB peripheral.
     }
     if(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] == '\0'){
@@ -898,44 +904,11 @@ __interrupt void scib_tx_isr(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through SCIB received data (Receiving data from OMRs):
 __interrupt void scib_rx_isr(void){
-    int i;                                                                              // Declaration of i as index integer variable.
+    NOP;                                                                                // No Operation (burn a cycle).
+    //-------------------------------------------------------------------------------------------------------------------
     // Clearing the interrupt flag:
-    ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                                // Clear RX FIFO interrupt flag.
-    // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
-    EINT;
-    //-------------------------------------------------------------------------------------------------------------------
-    // Checking how many bytes are in the FIFO (you can use this information):
-    Uint16 fifo_level = ScibRegs.SCIFFRX.bit.RXFFST;                                    // Checks how many characters are available in SCIB FIFO peripheral.
-    // Loop to read all available data in the FIFO:
-    while(ScibRegs.SCIFFRX.bit.RXFFST > 0){
-        receivedChar_b = ScibRegs.SCIRXBUF.all;                                         // Read one byte from the RX buffer.
-        add_2_RX_charBuffer(&SCIB,receivedChar_b);                                      // Adding character to data buffer assigned to SCIB peripheral.
-    }
-    // If streaming data is completely added to the char buffer of SCIB structure:
-    if(SCIB.flag[1] && CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
-        // classify_RX_charBuffer(&SCIB);                                                  // Classify data from assigned buffer to SCIB structure data matrix.
-        for(i = 0; i < 3; i++){
-            // Saving the angular velocities of omni-wheels attached on OMRs formation (in rad/s).
-            FMR.w_k[i+3*SCIB.identifier] = atof(SCIB.MAT3.data[SCIB.identifier][i]);
-            // Saving same angular velocities of moni-wheels attached on OMRs formation, but in a string-format version:
-            memset_fast(FMR.ws_k.data[i+3*SCIB.identifier],0,FMR.ws_k.bufferSize);      // Initialize or clear char-type string vector where OMRs' angular velocities of wheels will be saved.
-            // Saving angular velocities in string-format:
-            ftoa(FMR.w_k[i+3*SCIB.identifier],FMR.ws_k.data[i+3*SCIB.identifier],3);
-        }
-        //---------------------------------------------------------------------------------------------------------------
-        // Packing the corresponding angular velocities variables of OMRs formation:
-        memset_fast(angularVelocities,0,bufferSize_2);                                  // Initialize angularVelocities data chain.
-        snprintf(angularVelocities,bufferSize_2,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
-        // Clearing buffer within SCIB data structure:
-        init_RX_charBuffer(&SCIB);                                                      // Initialize dedicated char-type data buffer of SCIB.
-    }
-    // Initializing char-type data buffer associated to SCIB when control system is not running:
-    else if(SCIB.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_RX_charBuffer(&SCIB);
-    else NOP;                                                                           // No Operation (burn a cycle).
-    //-------------------------------------------------------------------------------------------------------------------
-    // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
-    DINT;
-    // Acknowledge this interrupt to receive more interrupts from group 9:
+    ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                                // Clear TX FIFO interrupt flag.
+    // Acknowledge this interrupt to receive more interrupts from group 8:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;                                             // Acknowledge PIE group 9 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------
@@ -953,6 +926,49 @@ __interrupt void scic_tx_isr(void){
     ScicRegs.SCIFFTX.bit.TXFFINTCLR = 1;                                                // Clear TX FIFO interrupt flag.
     // Acknowledge this interrupt to receive more interrupts from group 8:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP8;                                             // Acknowledge PIE group 8 interrupt.
+}
+//-----------------------------------------------------------------------------------------------------------------------
+// Function to generate interrupt service through SCIC received data (Receiving data from OMRs):
+__interrupt void scic_rx_isr(void){
+    int i;                                                                              // Declaration of i as index integer variable.
+    // Clearing the interrupt flag:
+    ScicRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                                // Clear RX FIFO interrupt flag.
+    // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
+    EINT;
+    //-------------------------------------------------------------------------------------------------------------------
+    // Checking how many bytes are in the FIFO (you can use this information):
+    Uint16 fifo_level = ScicRegs.SCIFFRX.bit.RXFFST;                                    // Checks how many characters are available in SCIC FIFO peripheral.
+    // Loop to read all available data in the FIFO:
+    while(ScicRegs.SCIFFRX.bit.RXFFST > 0){
+        receivedChar_c = ScicRegs.SCIRXBUF.all;                                         // Read one byte from the RX buffer.
+        add_2_RX_charBuffer(&SCIC,receivedChar_c);                                      // Adding character to data buffer assigned to SCIC peripheral.
+    }
+    // If streaming data is completely added to the char buffer of SCIB structure:
+    if(SCIC.flag[1] && CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
+        classify_RX_charBuffer(&SCIC);                                                  // Classify data from assigned buffer to SCIC structure data matrix.
+        for(i = 0; i < 3; i++){
+            // Saving the angular velocities of omni-wheels attached on OMRs formation (in rad/s).
+            FMR.w_k[i+3*SCIC.identifier] = atof(SCIC.MAT3.data[SCIC.identifier][i]);
+            // Saving same angular velocities of moni-wheels attached on OMRs formation, but in a string-format version:
+            memset_fast(FMR.ws_k.data[i+3*SCIC.identifier],0,FMR.ws_k.bufferSize);      // Initialize or clear char-type string vector where OMRs' angular velocities of wheels will be saved.
+            // Saving angular velocities in string-format:
+            ftoa(FMR.w_k[i+3*SCIC.identifier],FMR.ws_k.data[i+3*SCIC.identifier],3);
+        }
+        //---------------------------------------------------------------------------------------------------------------
+        // Packing the corresponding angular velocities variables of OMRs formation:
+        memset_fast(angularVelocities,0,bufferSize_2);                                  // Initialize angularVelocities data chain.
+        snprintf(angularVelocities,bufferSize_2,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
+        // Clearing buffer within SCIB data structure:
+        init_RX_charBuffer(&SCIC);                                                      // Initialize dedicated char-type data buffer of SCIC.
+    }
+    // Initializing char-type data buffer associated to SCIC when control system is not running:
+    else if(SCIC.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_RX_charBuffer(&SCIC);
+    else NOP;                                                                           // No Operation (burn a cycle).
+    //-------------------------------------------------------------------------------------------------------------------
+    // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
+    DINT;
+    // Acknowledge this interrupt to receive more interrupts from group 8:
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP8;                                             // Acknowledge PIE group 9 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to initialize SCIA (8-bit word, baud rate 0x0002, default, 1 STOP bit, no parity):
@@ -1002,6 +1018,9 @@ void scia_fifo_init(void){
     SciaRegs.SCIFFRX.bit.RXFFIENA = 1;
     SciaRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
     //-------------------------------------------------------------------------------------------------------------------
+    // Disabling the TX FIFO interrupt:
+    SciaRegs.SCIFFTX.bit.TXFFIENA = 0;
+    //-------------------------------------------------------------------------------------------------------------------
     // Setting FIFO interrupt levels:
     SciaRegs.SCIFFTX.bit.TXFFIL = 0;                                                    // TX FIFO interrupt is disabled.
     SciaRegs.SCIFFRX.bit.RXFFIL = 1;                                                    // Configures the RX FIFO interrupt level with one word only.
@@ -1045,7 +1064,7 @@ void scia_msgXmit(char *msg){
     }
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to initialize SCIB (8-bit word, baud rate 0x0035, default, 1 STOP bit, no parity):
+// Function to initialize SCIB (8-bit word, baud rate 0x0002, default, 1 STOP bit, no parity):
 void scib_init(){
     // Note: Clocks were turned on to the SCIB peripheral, in the InitSysCtrl() function.
     //-------------------------------------------------------------------------------------------------------------------
@@ -1055,8 +1074,8 @@ void scib_init(){
     ScibRegs.SCICTL1.bit.RXENA = 0;                                                     // Disable the SCI RX peripheral.
     //-------------------------------------------------------------------------------------------------------------------
     // Setting baud rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
-    ScibRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud-rate = 115200, @LSPCLK = 50MHz (200 MHz for SYSCLK).
-    ScibRegs.SCILBAUD.all = 0x0035;
+    ScibRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud-rate = 2E6, @LSPCLK = 50MHz (200 MHz for SYSCLK).
+    ScibRegs.SCILBAUD.all = 0x0002;
     //-------------------------------------------------------------------------------------------------------------------
     // Setting parity, data length, and number of stop bits:
     ScibRegs.SCICCR.all = 0x0007;                                                       // 1 stop bit, no loop-back,
@@ -1088,9 +1107,12 @@ void scib_fifo_init(void){
     ScibRegs.SCIFFTX.bit.TXFIFORESET = 1;
     ScibRegs.SCIFFRX.bit.RXFIFORESET = 1;
     //-------------------------------------------------------------------------------------------------------------------
-    // Enabling the RX FIFO interrupt:
+    // Disabling the RX FIFO interrupt:
     ScibRegs.SCIFFRX.bit.RXFFIENA = 0;
     ScibRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Disabling the TX FIFO interrupt:
+    ScibRegs.SCIFFTX.bit.TXFFIENA = 0;
     //-------------------------------------------------------------------------------------------------------------------
     // Setting FIFO interrupt levels:
     ScibRegs.SCIFFTX.bit.TXFFIL = 1;                                                    // TX FIFO interrupt is disabled.
@@ -1114,14 +1136,14 @@ void scib_fifo_init(void){
 // Function to transmit a character through the SCIB:
 void scib_xmit(char a){
     // Option 1. Transmitting a character by using both FIFO and interrupt of SCIB peripheral:
-    // ScibRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
+    ScibRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
     //-------------------------------------------------------------------------------------------------------------------
     // Option 2. Transmitting a character by using FIFO, but without interrupt:
-    if(ScibRegs.SCIFFTX.bit.TXFFST < 15) ScibRegs.SCITXBUF.all = a;                     // Load character to SCIB TX buffer.
-    else{
-        ScibRegs.SCITXBUF.all = a;                                                      // Load character to SCIB TX buffer.
-        while(ScibRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
-    }
+    // if(ScibRegs.SCIFFTX.bit.TXFFST < 15) ScibRegs.SCITXBUF.all = a;                     // Load character to SCIB TX buffer.
+    // else{
+    //     ScibRegs.SCITXBUF.all = a;                                                      // Load character to SCIB TX buffer.
+    //     while(ScibRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
+    // }
     //-------------------------------------------------------------------------------------------------------------------
     // Option 3. Transmitting a character neither using FIFO nor interrupt:
     // while(ScibRegs.SCICTL2.bit.TXRDY == 0);                                             // Wait until TX is ready (standard SCIB).
@@ -1131,26 +1153,26 @@ void scib_xmit(char a){
 // Function to transmit message via SCIB:
 void scib_msgXmit(char *msg){
     // Option 1. Transmitting by using both FIFO and interrupt of SCIB peripheral:
-    // memcpy_fast(SCIB.TX_charBuffer,msg,SCIB.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIB structure.
-    // SCIB.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
+    memcpy_fast(SCIB.TX_charBuffer,msg,SCIB.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIB structure.
+    SCIB.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
     //---------------------------------------------------------------------------------------------------------------
     // Initializing data transmission:
-    // while(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0' && ScibRegs.SCIFFTX.bit.TXFFST < 15){
-    //     scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                       // Transmit byte via SCIB peripheral.
-    // }
-    // if(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0'){
-    //     scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                       // Transmit byte via SCIB peripheral.
-    //     ScibRegs.SCIFFTX.bit.TXFFIENA = 1;                                          // Enable SCIB TX FIFO interrupt.
-    // }
+    while(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0' && ScibRegs.SCIFFTX.bit.TXFFST < 15){
+        scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                       // Transmit byte via SCIB peripheral.
+    }
+    if(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0'){
+        scib_xmit(SCIB.TX_charBuffer[SCIB.TX_bufferIndex++]);                       // Transmit byte via SCIB peripheral.
+        ScibRegs.SCIFFTX.bit.TXFFIENA = 1;                                          // Enable SCIB TX FIFO interrupt.
+    }
     //-------------------------------------------------------------------------------------------------------------------
     // Option 2 and 3. Transmitting by using FIFO without interrupt or standard FIFO disabled:
-    int i = 0;                                                                          // Declaration of i as integer variable.
-    while(msg[i] != '\0'){
-        scib_xmit(msg[i++]);                                                            // Transmit byte via SCIB peripheral.
-    }
+    // int i = 0;                                                                          // Declaration of i as integer variable.
+    // while(msg[i] != '\0'){
+    //     scib_xmit(msg[i++]);                                                            // Transmit byte via SCIB peripheral.
+    // }
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to initialize SCIC (8-bit word, baud rate 0x0002, default, 1 STOP bit, no parity):
+// Function to initialize SCIC (8-bit word, baud rate 0x0035, default, 1 STOP bit, no parity):
 void scic_init(){
     // Note: Clocks were turned on to the SCIC peripheral, in the InitSysCtrl() function.
     //-------------------------------------------------------------------------------------------------------------------
@@ -1160,8 +1182,8 @@ void scic_init(){
     ScicRegs.SCICTL1.bit.RXENA = 0;                                                     // Disable the SCI RX peripheral.
     //-------------------------------------------------------------------------------------------------------------------
     // Setting baud-rate (BRR = @LSPCLK/desired_baudrate/8 - 1):
-    ScicRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud-rate = 2E6, @LSPCLK = 50MHz (200 MHz for SYSCLK).
-    ScicRegs.SCILBAUD.all = 0x0002;
+    ScicRegs.SCIHBAUD.all = 0x0000;                                                     // Desired baud-rate = 115200, @LSPCLK = 50MHz (200 MHz for SYSCLK).
+    ScicRegs.SCILBAUD.all = 0x0035;
     //-------------------------------------------------------------------------------------------------------------------
     // Setting parity, data length, and number of stop bits:
     ScicRegs.SCICCR.all = 0x0007;                                                       // 1 stop bit, no loop-back,
@@ -1197,6 +1219,9 @@ void scic_fifo_init(void){
     ScicRegs.SCIFFRX.bit.RXFFIENA = 1;
     ScicRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
     //-------------------------------------------------------------------------------------------------------------------
+    // Disabling the TX FIFO interrupt:
+    ScicRegs.SCIFFTX.bit.TXFFIENA = 0;
+    //-------------------------------------------------------------------------------------------------------------------
     // Setting FIFO interrupt levels:
     ScicRegs.SCIFFTX.bit.TXFFIL = 1;                                                    // TX FIFO interrupt is disabled.
     ScicRegs.SCIFFRX.bit.RXFFIL = 1;                                                    // Configures the RX FIFO interrupt level with one word only.
@@ -1219,14 +1244,14 @@ void scic_fifo_init(void){
 // Function to transmit a character through the SCIC peripheral:
 void scic_xmit(char a){
     // Option 1. Transmitting a character by using both FIFO and interrupt of SCIC peripheral:
-    ScicRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
+    // ScicRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
     //-------------------------------------------------------------------------------------------------------------------
     // Option 2. Transmitting a character by using FIFO, but without interrupt:
-    // if(ScicRegs.SCIFFTX.bit.TXFFST < 15) ScicRegs.SCITXBUF.all = a;                     // Load character to SCIC TX buffer.
-    // else{
-    //     ScicRegs.SCITXBUF.all = a;                                                      // Load character to SCIC TX buffer.
-    //     while(ScicRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
-    // }
+    if(ScicRegs.SCIFFTX.bit.TXFFST < 15) ScicRegs.SCITXBUF.all = a;                     // Load character to SCIC TX buffer.
+    else{
+        ScicRegs.SCITXBUF.all = a;                                                      // Load character to SCIC TX buffer.
+        while(ScicRegs.SCIFFTX.bit.TXFFST > 1);                                         // Wait until FIFO TX is ready.
+    }
     //-------------------------------------------------------------------------------------------------------------------
     // Option 3. Transmitting a character neither using FIFO nor interrupt:
     // while(ScicRegs.SCICTL2.bit.TXRDY == 0);                                             // Wait until TX is ready (standard SCIC).
@@ -1236,23 +1261,23 @@ void scic_xmit(char a){
 // Function to transmit message via SCIC:
 void scic_msgXmit(char *msg){
     // Option 1. Transmitting by using both FIFO and interrupt of SCIC peripheral:
-    memcpy_fast(SCIC.TX_charBuffer,msg,SCIC.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIC structure.
-    SCIC.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
+    // memcpy_fast(SCIC.TX_charBuffer,msg,SCIC.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIC structure.
+    // SCIC.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
     //---------------------------------------------------------------------------------------------------------------
     // Initializing data transmission:
-    while(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0' && ScicRegs.SCIFFTX.bit.TXFFST < 15){
-        scic_xmit(SCIC.TX_charBuffer[SCIC.TX_bufferIndex++]);                           // Transmit byte via SCIC peripheral.
-    }
-    if(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0'){
-        scic_xmit(SCIC.TX_charBuffer[SCIC.TX_bufferIndex++]);                           // Transmit byte via SCIC peripheral.
-        ScicRegs.SCIFFTX.bit.TXFFIENA = 1;                                              // Enable SCIC TX FIFO interrupt.
-    }
+    // while(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0' && ScicRegs.SCIFFTX.bit.TXFFST < 15){
+    //     scic_xmit(SCIC.TX_charBuffer[SCIC.TX_bufferIndex++]);                           // Transmit byte via SCIC peripheral.
+    // }
+    // if(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0'){
+    //     scic_xmit(SCIC.TX_charBuffer[SCIC.TX_bufferIndex++]);                           // Transmit byte via SCIC peripheral.
+    //     ScicRegs.SCIFFTX.bit.TXFFIENA = 1;                                              // Enable SCIC TX FIFO interrupt.
+    // }
     //-------------------------------------------------------------------------------------------------------------------
     // Option 2 and 3. Transmitting by using FIFO without interrupt or standard communication with FIFO disabled:
-    // int i = 0;                                                                          // Declaration of i as integer variable.
-    // while(msg[i] != '\0'){
-    //     scic_xmit(msg[i++]);                                                            // Transmit byte via SCIB peripheral.
-    // }
+    int i = 0;                                                                          // Declaration of i as integer variable.
+    while(msg[i] != '\0'){
+        scic_xmit(msg[i++]);                                                            // Transmit byte via SCIB peripheral.
+    }
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // No more.

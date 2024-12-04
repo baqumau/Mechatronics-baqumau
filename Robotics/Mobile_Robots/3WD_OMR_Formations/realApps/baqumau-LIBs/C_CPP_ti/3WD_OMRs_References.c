@@ -66,7 +66,7 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
         REF.z2_kp1[i] = REF.Ts*z_0[i+6*Robots_Qty] + z_0[i+3*Robots_Qty];                   // Saving cluster's velocity prediction c2(k + 1) within REF structure.
         REF.z3_k[i] = z_0[i+6*Robots_Qty];                                                  // Saving initial cluster's acceleration c3(k = 0) for OMRs formation.
         REF.z3_kp1[i] = (1.0/REF.Ts)*(REF.z2_kp1[i] - REF.z2_k[i]);                         // Differentiation operator to obtain prediction c3(k + 1).
-        // Adding initial conditions to associated integrators INT_1 and INT_2 within REF structure:
+        // Adding initial conditions to associated INT_1 and INT_2 integration structures, within REF structure:
         Ci1_0[i] = REF.z2_k[i];
         Ci1_0[i+3*Robots_Qty] = REF.z1_k[i];
         Ci2_0[i] = REF.z3_k[i];
@@ -127,7 +127,7 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
         REF.x3_k[i] = REF.X_0[i+6*Robots_Qty];                                              // Saving initial robots' acceleration x3(k = 0) for OMRs formation.
         REF.x3_kp1[i] = (1.0f/REF.Ts)*(REF.x2_kp1[i] - REF.x2_k[i]);                        // Differentiation operator to obtain prediction x3(k + 1).
     }
-    // Initiating integrators REF.INT_1 and REF.INT_2:
+    // Initiating REF.INT_1 and REF.INT_2 integration structures:
     initIntegrator(REF.INT_1,Ci1_0);                                                        // Initialize first common integrator of REF references builder.
     initIntegrator(REF.INT_2,Ci2_0);                                                        // Initialize second common integrator of REF references builder.
     switch(reftype){

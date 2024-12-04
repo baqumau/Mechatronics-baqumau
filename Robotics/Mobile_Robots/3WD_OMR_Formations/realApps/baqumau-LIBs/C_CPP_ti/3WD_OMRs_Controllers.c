@@ -808,7 +808,7 @@ void init_CS_Observer01(CS_Observer CSO, float z_0[]){
         Xd_0[i] = z_0[i];                                                                   // Saving initial conditions for x1(0) within CSO.DIF structure.
         Xd_0[i+n] = 0.0f;                                                                   // Saving initial conditions for x2(0) within CSO.DIF structure.
     }
-    // Initiating integrator CSO.INT and differentiator CSO.DIF:
+    // Initiating CSO.INT integration and CSO.DIF differentiation structures:
     initIntegrator(CSO.INT,Xi_0);                                                           // Initialize integrator of CSO high-gain observer.
     initDifferentiator(CSO.DIF,Xd_0);                                                       // Initialize differentiator of CSO high-gain observer.
     // Initiating variables z1(k), z2(k) and z3(k):

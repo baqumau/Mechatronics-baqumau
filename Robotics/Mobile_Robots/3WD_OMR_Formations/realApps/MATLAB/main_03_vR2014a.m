@@ -56,6 +56,7 @@ while true
         flag_1 = 1;
         break
     else
+        % flushinput(S1);                                                     % Clear input buffer.
         command = sscanf(data_r,strcat(':','%u'));
         if (isempty(command) == 0) && (command == 9) && (flag_1 == 0)
             %--------------------------------------------------------------
@@ -74,10 +75,10 @@ while true
                 angles(i,:) = euler(q,'XYZ','frame');
             end
             % Getting and arraying data from NatNet SDK:
-            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',(1500 - positions(1,1)),(1500 + positions(1,3)),angleCorrection_1(angles(1,2),angles(1,1)),(1500 - positions(2,1)),(1500 + positions(2,3)),angleCorrection_1(angles(2,2),angles(2,1)));
+            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',(1600 + positions(1,1)),(1600 - positions(1,3)),angleCorrection_1(angles(1,2),angles(1,1)),(1600 + positions(2,1)),(1600 - positions(2,3)),angleCorrection_1(angles(2,2),angles(2,1)));
             % Sending data via UART communication:
             fprintf(S1,data_s);                                             % Write data to serial peripheral.
-            % flush(S1);
+            % flushoutput(S1);                                                % Clear buffer output.
             counter = counter + 1;                                          % Increasing the counter.
             time_x(counter,1) = toc;
             tic
