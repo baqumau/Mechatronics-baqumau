@@ -459,7 +459,7 @@ void init_RS_Observer(RS_Observer RSO, float x_0[]){
 // Robot space estimation function:
 void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_params[]){
     int i, j;                                                                               // Declaration of i and j as integer variables.
-    // Getting output of RSO.INT integrator:
+    // Getting output of RSO.INT integration structure:
     for(i = 0; i < RSO.s_base; i++){
         RSO.x1_k[i] = RSO.INT.y_k[i];                                                       // Updating data for x1(k) within RSO structure.
         RSO.x2_k[i] = RSO.INT.y_k[i+RSO.s_base];                                            // Updating data for x2(k) within RSO structure.

@@ -32,7 +32,7 @@ const unsigned int chipSelect_SD = chipSelect_SD_default;
 // Defining the variables used in this sketch:
 const unsigned int bufferSize_0 = 256;                                  // buffer length 0.
 const unsigned int bufferSize_1 = 64;                                   // buffer length 1.
-const unsigned int bufferSize_2 = 10;                                   // buffer length 2.
+const unsigned int bufferSize_2 = 16;                                   // buffer length 2.
 const unsigned int varQty = 9*Robots_Qty + 1;                           // Quantity of state varaibles that must be saved.
 char character_1;                                                       // Variable where received character from UART 1 is saved.
 char character_4;                                                       // Variable where received character from UART 4 is saved.

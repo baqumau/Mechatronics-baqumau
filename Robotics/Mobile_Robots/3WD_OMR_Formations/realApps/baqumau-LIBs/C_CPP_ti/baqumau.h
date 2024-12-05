@@ -55,7 +55,7 @@ extern void classify_RX_charBuffer(Data_Struct *DAT);
 // A helper function to reverse a string:
 extern void reverse(char *str, int len);
 // Utility function to convert an integer to a string:
-extern int intToStr(int x, char str[], int d);
+extern int intToStr(unsigned long x, char str[], int d);
 // Convert a floating-point number (such as float or double) to a string representation:
 extern void ftoa(float num, char *res, int afterpoint);
 // Function to initialize whichever char-type data string:

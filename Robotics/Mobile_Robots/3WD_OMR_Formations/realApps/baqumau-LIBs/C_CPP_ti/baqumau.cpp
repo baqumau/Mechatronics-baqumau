@@ -164,7 +164,7 @@ void reverse(char *str, int len){
 }
 //---------------------------------------------------------------------------------------------------------------
 // Utility function to convert an integer to a string:
-int intToStr(int x, char str[], int dig){
+int intToStr(unsigned long x, char str[], int dig){
     int i = 0;                                                                              // Declaration of i as index integer variable.
     if(x == 0) str[i++] = '0';                                                              // Add character '0' to output string.
     else{
@@ -198,9 +198,9 @@ void ftoa(float num, char *res, int afterpoint){
             num = -num;                                                                     // Float number is changed to positive.
         }
         // Extracting integer part:
-        int ipart = (int)num;
+        unsigned long ipart = (unsigned long)num;                                           // Integer part as large as needed.
         // Extracting floating part:
-        float fpart = num - (float)ipart;
+        float fpart = num - (float)ipart;                                                   // Fractional part.
         // Converting integer part to string:
         int i = intToStr(ipart, res, 0);
         // Adding negative sign if needed:
@@ -218,7 +218,7 @@ void ftoa(float num, char *res, int afterpoint){
             // Multiplying the fractional part by 10^afterpoint:
             fpart = fpart * pow(10, afterpoint);
             // Converting fractional part to string:
-            intToStr((int)fpart, res + i + 1, afterpoint);
+            intToStr((unsigned long)fpart, res + i + 1, afterpoint);
         }
     }
 }

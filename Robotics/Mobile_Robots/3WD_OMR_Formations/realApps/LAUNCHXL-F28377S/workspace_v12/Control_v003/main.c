@@ -12,7 +12,7 @@
 // 6. Receiving FIFO interrupt via SCIB.
 // 7. SCIC communication (Serial communication with XBee module).
 // 8. Timer 1 interrupt to 200 Hz.
-// 9. Timer 2 interrupt to 50 Hz (Lower priority).
+// 9. Timer 2 interrupt to 40 Hz (Lower priority).
 // 10. Sending relevant data of control system via SCIB to ChipKit WF32 for storing them.
 // 11. Control system implementation.
 // 12. Communication with XBee module (PWM signals to the robots at a baud-rate of 115200 bits/second).
@@ -32,7 +32,7 @@
 #define XBEE_RST 41                                                                     // Define RST pin number for XBee module.
 #define freq_hz_0 250                                                                   // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                                   // Frequency in Hz for instructions execution of Timer 1.
-#define freq_hz_2 50                                                                    // Frequency in Hz for instructions execution of Timer 2.
+#define freq_hz_2 40                                                                    // Frequency in Hz for instructions execution of Timer 2.
 #define exe_minutes 4                                                                   // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
@@ -106,7 +106,7 @@ void memcpy_fast(void* dst, const void* src, Uint16 N);                         
 const Uint16 bufferSize_0 = 256;                                                        // buffer length 0.
 const Uint16 bufferSize_1 = 80;                                                         // buffer length 1.
 const Uint16 bufferSize_2 = 64;                                                         // buffer length 2.
-const Uint16 bufferSize_3 = 10;                                                         // buffer length 3.
+const Uint16 bufferSize_3 = 16;                                                         // buffer length 3.
 const Uint16 bufferSize_4 = 8;                                                          // buffer length 4.
 const float sampleTime = 1.0f/freq_hz_1;                                                // Float parameter to define the global control system sample time.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -375,7 +375,7 @@ void main(void){
     ConfigCpuTimer(&CpuTimer0,200.0f,1000000.0f/freq_hz_0);
     // Timer 1 -> 200MHz CPU Frequency, 1/200 seconds of Period (in uSeconds):
     ConfigCpuTimer(&CpuTimer1,200.0f,1000000.0f/freq_hz_1);
-    // Timer 2 -> 200MHz CPU Frequency, 1/50 seconds of Period (in uSeconds):
+    // Timer 2 -> 200MHz CPU Frequency, 1/40 seconds of Period (in uSeconds):
     ConfigCpuTimer(&CpuTimer2,200.0f,1000000.0f/freq_hz_2);
 
     // To ensure precise timing, use write-only instructions to write to the entire register. Therefore, if any
@@ -620,7 +620,7 @@ __interrupt void cpu_timer1_isr(void){
     DINT;
 }
 //-----------------------------------------------------------------------------------------------------------------------
-// Function to generate interrupt service through CPU timer 2 (Sending OMRs formation variables to ChipKit WF32 board at 10 Hz (working on two steps at 20 Hz)):
+// Function to generate interrupt service through CPU timer 2 (Sending OMRs formation variables to ChipKit WF32 board at 10 Hz (working on four steps at 40 Hz)):
 __interrupt void cpu_timer2_isr(void){
     int i;                                                                              // Declaration of i as integer iteration variable.
     // Clearing the interrupt flag:
@@ -654,7 +654,7 @@ __interrupt void cpu_timer2_isr(void){
         else timeoutCount++;
         //---------------------------------------------------------------------------------------------------------------
         Uint16 mod_result;
-        mod_result = CpuTimer2.InterruptCount % (freq_hz_2/10);                         // Computes modulus operation for doing a code execution selection at 50 Hz.
+        mod_result = CpuTimer2.InterruptCount % (freq_hz_2/10);                         // Computes modulus operation for doing a code execution selection at 40 Hz.
         switch(mod_result){
             case 1:{
                 // Saving OMRs formation pose data in a string-format version:
@@ -700,7 +700,7 @@ __interrupt void cpu_timer2_isr(void){
                 snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,var06,var07,var08,var09,var10,var11,(unsigned long)(CpuTimer1.InterruptCount));
                 break;
             }
-            case 4:{
+            case 0:{
                 // Streaming the relevant measurement variables of OMRs formation:
                 scib_msgXmit(measurements);                                             // Write string of measured variables through SCIC peripheral.
                 break;
@@ -1153,8 +1153,8 @@ void scib_xmit(char a){
 // Function to transmit message via SCIB:
 void scib_msgXmit(char *msg){
     // Option 1. Transmitting by using both FIFO and interrupt of SCIB peripheral:
+    init_TX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type TX data buffer of SCIB (sending data).
     memcpy_fast(SCIB.TX_charBuffer,msg,SCIB.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIB structure.
-    SCIB.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
     //---------------------------------------------------------------------------------------------------------------
     // Initializing data transmission:
     while(SCIB.TX_charBuffer[SCIB.TX_bufferIndex] != '\0' && ScibRegs.SCIFFTX.bit.TXFFST < 15){
@@ -1261,8 +1261,8 @@ void scic_xmit(char a){
 // Function to transmit message via SCIC:
 void scic_msgXmit(char *msg){
     // Option 1. Transmitting by using both FIFO and interrupt of SCIC peripheral:
+    // init_TX_charBuffer(&SCIC);                                                          // Initialize dedicated char-type TX data buffer of SCIC (sending data).
     // memcpy_fast(SCIC.TX_charBuffer,msg,SCIC.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIC structure.
-    // SCIC.TX_bufferIndex = 0;                                                            // Clear TX buffer index.
     //---------------------------------------------------------------------------------------------------------------
     // Initializing data transmission:
     // while(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0' && ScicRegs.SCIFFTX.bit.TXFFST < 15){
