@@ -425,7 +425,7 @@ void main(void){
     // init_RX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (receiving data).
     init_TX_charBuffer(&SCIB);                                                          // Initialize dedicated char-type data buffer of SCIB (sending data).
     // Definition of data structure for SCIC peripheral (required for getting and arranging data from XBee):
-    SCIC = createDataStruct(bufferSize_2,2,3,bufferSize_3,bufferSize_2);
+    SCIC = createDataStruct(bufferSize_2,2,3,bufferSize_3,bufferSize_1);
     init_RX_charBuffer(&SCIC);                                                          // Initialize dedicated char-type data buffer of SCIC (receiving data).
     init_TX_charBuffer(&SCIC);                                                          // Initialize dedicated char-type data buffer of SCIC (sending data).
     // Creating data structure for a high-gain observer in the robot space:
@@ -668,29 +668,29 @@ __interrupt void cpu_timer2_isr(void){
             }
             case 2:{
                 // Saving another OMRs formation variables data in a string-format version:
-                memset_fast(var00,0,bufferSize_2);
+                memset_fast(var00,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[6]),var00,3);
-                memset_fast(var01,0,bufferSize_2);
+                memset_fast(var01,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[7]),var01,3);
-                memset_fast(var02,0,bufferSize_2);
+                memset_fast(var02,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[8]),var02,3);
-                memset_fast(var03,0,bufferSize_2);
+                memset_fast(var03,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[9]),var03,3);
-                memset_fast(var04,0,bufferSize_2);
+                memset_fast(var04,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[10]),var04,3);
-                memset_fast(var05,0,bufferSize_2);
+                memset_fast(var05,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[11]),var05,3);
-                memset_fast(var06,0,bufferSize_2);
+                memset_fast(var06,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[12]),var06,3);
-                memset_fast(var07,0,bufferSize_2);
+                memset_fast(var07,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[13]),var07,3);
-                memset_fast(var08,0,bufferSize_2);
+                memset_fast(var08,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[14]),var08,3);
-                memset_fast(var09,0,bufferSize_2);
+                memset_fast(var09,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[15]),var09,3);
-                memset_fast(var10,0,bufferSize_2);
+                memset_fast(var10,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[16]),var10,3);
-                memset_fast(var11,0,bufferSize_2);
+                memset_fast(var11,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[17]),var11,3);
                 break;
             }
@@ -908,14 +908,14 @@ __interrupt void scib_rx_isr(void){
     //-------------------------------------------------------------------------------------------------------------------
     // Clearing the interrupt flag:
     ScibRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                                // Clear TX FIFO interrupt flag.
-    // Acknowledge this interrupt to receive more interrupts from group 8:
+    // Acknowledge this interrupt to receive more interrupts from group 9:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;                                             // Acknowledge PIE group 9 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through SCIC transmitted data (Transmitting data of OMRs to be stored in ChipKit WF32):
 __interrupt void scic_tx_isr(void){
     //-------------------------------------------------------------------------------------------------------------------
-    while(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0' && ScicRegs.SCIFFTX.bit.TXFFST < 16){
+    while(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0' && ScicRegs.SCIFFTX.bit.TXFFST < 15){
         scic_xmit(SCIC.TX_charBuffer[SCIC.TX_bufferIndex++]);                           // Transmit byte via SCIC peripheral.
     }
     if(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] == '\0'){
@@ -931,10 +931,6 @@ __interrupt void scic_tx_isr(void){
 // Function to generate interrupt service through SCIC received data (Receiving data from OMRs):
 __interrupt void scic_rx_isr(void){
     int i;                                                                              // Declaration of i as index integer variable.
-    // Clearing the interrupt flag:
-    ScicRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                                // Clear RX FIFO interrupt flag.
-    // Re-enabling global interrupts to allow nesting of higher-priority interrupts:
-    EINT;
     //-------------------------------------------------------------------------------------------------------------------
     // Checking how many bytes are in the FIFO (you can use this information):
     Uint16 fifo_level = ScicRegs.SCIFFRX.bit.RXFFST;                                    // Checks how many characters are available in SCIC FIFO peripheral.
@@ -965,8 +961,8 @@ __interrupt void scic_rx_isr(void){
     else if(SCIC.flag[1] && CpuTimer1.InterruptCount > final_iteration && !flagcommand_0) init_RX_charBuffer(&SCIC);
     else NOP;                                                                           // No Operation (burn a cycle).
     //-------------------------------------------------------------------------------------------------------------------
-    // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
-    DINT;
+    // Clearing the interrupt flag:
+    ScicRegs.SCIFFRX.bit.RXFFINTCLR = 1;                                                // Clear RX FIFO interrupt flag.
     // Acknowledge this interrupt to receive more interrupts from group 8:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP8;                                             // Acknowledge PIE group 9 interrupt.
 }
@@ -1243,6 +1239,7 @@ void scic_fifo_init(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit a character through the SCIC peripheral:
 void scic_xmit(char a){
+    //-------------------------------------------------------------------------------------------------------------------
     // Option 1. Transmitting a character by using both FIFO and interrupt of SCIC peripheral:
     // ScicRegs.SCITXBUF.all = a;                                                          // Load character to SCIC TX buffer.
     //-------------------------------------------------------------------------------------------------------------------
@@ -1260,10 +1257,15 @@ void scic_xmit(char a){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to transmit message via SCIC:
 void scic_msgXmit(char *msg){
+    //-------------------------------------------------------------------------------------------------------------------
     // Option 1. Transmitting by using both FIFO and interrupt of SCIC peripheral:
-    // init_TX_charBuffer(&SCIC);                                                          // Initialize dedicated char-type TX data buffer of SCIC (sending data).
-    // memcpy_fast(SCIC.TX_charBuffer,msg,SCIC.TX_bufferSize);                             // Copy "msg" string to dedicated transmission buffer within SCIC structure.
-    //---------------------------------------------------------------------------------------------------------------
+    // if(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] == '\0') memcpy_fast(SCIC.TX_charBuffer,msg,SCIC.TX_bufferSize);// Copy "msg" string to dedicated transmission buffer within SCIC structure.
+    // else{
+    //     removeCharacters(SCIC.TX_charBuffer,0,(SCIC.TX_bufferIndex + 1));               // Shift the already sent characters backward from TX buffer array.
+    //     strcat(SCIC.TX_charBuffer,msg);                                                 // Concatenate message "msg" to SCIC TX buffer.
+    // }
+    // SCIC.TX_bufferIndex = 0;                                                            // Initialize buffer index.
+    //-------------------------------------------------------------------------------------------------------------------
     // Initializing data transmission:
     // while(SCIC.TX_charBuffer[SCIC.TX_bufferIndex] != '\0' && ScicRegs.SCIFFTX.bit.TXFFST < 15){
     //     scic_xmit(SCIC.TX_charBuffer[SCIC.TX_bufferIndex++]);                           // Transmit byte via SCIC peripheral.

@@ -226,8 +226,22 @@ void ftoa(float num, char *res, int afterpoint){
 // Function to initialize whichever char-type data string:
 void initString(char *str, int strSize){
     int i;                                                                                  // Declaration of i as integer variable.
-    for(i = 0; i < strSize; i++){                                                           // Bucle that set to 0 all.
+    for(i = 0; i < strSize; i++){                                                           // Loop that set to 0 all.
         str[i] = 0x00;                                                                      // Characters in buffer.
+    }
+}
+//---------------------------------------------------------------------------------------------------------------
+// Function to completely remove the characters and shorten the string, shift the remaining characters:
+void removeCharacters(char *str, size_t start, size_t count){
+    size_t length = strlen(str);
+
+    // Ensure the range is within the string's length:
+    if(start < length){
+        size_t i;
+        for(i = start; i + count < length; i++){
+            str[i] = str[i + count];
+        }
+        str[i] = '\0';                                                                      // Null-terminate the truncated string.
     }
 }
 //---------------------------------------------------------------------------------------------------------------

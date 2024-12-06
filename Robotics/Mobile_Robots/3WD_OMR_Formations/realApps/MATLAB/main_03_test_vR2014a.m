@@ -26,9 +26,10 @@ BaudRate = 2000000;                                                         % Sp
 % S1 = serial('COM6','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
 % Creating Serial Object (COM16 is specified for TI LAUNCHPAD):
 S1 = serial('COM16','BaudRate',BaudRate,'FlowControl','none','Terminator',{'CR/LF','LF'});
+S1.InputBufferSize = 8;                                                     % Configure the input buffer size.
 %--------------------------------------------------------------------------
 fopen(S1);                                                                  % Establishes serial communication via S1.
-java.lang.Thread.sleep(100);                                                % 100 milliseconds delay.
+java.lang.Thread.sleep(1000);                                               % A delay for one second.
 tic
 while true
     % Receiving data from UART1:
@@ -37,6 +38,7 @@ while true
         flag_1 = 1;
         break
     else
+        % flushinput(S1);                                                     % Clear the input buffer.
         command = sscanf(data_r,strcat(':','%u'));
         if (isempty(command) == 0) && (command == 9) && (flag_1 == 0)
             % Sinusiodal test signals:
