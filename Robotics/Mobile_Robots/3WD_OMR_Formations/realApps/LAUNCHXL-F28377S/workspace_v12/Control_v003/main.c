@@ -730,6 +730,25 @@ __interrupt void scia_rx_isr(void){
         receivedChar_a = SciaRegs.SCIRXBUF.all;                                         // Read one byte from the RX buffer.
         add_2_RX_charBuffer(&SCIA,receivedChar_a);                                      // Adding character to data buffer assigned to SCIA peripheral.
     }
+    if(fifo_level == 1 && SCIA.RX_charBuffer[SCIA.RX_bufferIndex] == ':'){
+        SciaRegs.SCIFFRX.bit.RXFFIL = 16;                                               // Changing quantity of whose received bytes that generate interrupt.
+    }
+    else if(fifo_level >= 15) SciaRegs.SCIFFRX.bit.RXFFIL = 12;                         // Changing quantity of whose received bytes that generate interrupt.
+    else if(fifo_level >= 12 && SciaRegs.SCIFFRX.bit.RXFFIL == 12){
+        SciaRegs.SCIFFRX.bit.RXFFIL = 8;                                                // Changing quantity of whose received bytes that generate interrupt.
+    }
+    else if(fifo_level >= 8 && SciaRegs.SCIFFRX.bit.RXFFIL == 8){
+        SciaRegs.SCIFFRX.bit.RXFFIL = 6;                                                // Changing quantity of whose received bytes that generate interrupt.
+    }
+    else if(fifo_level >= 6 && SciaRegs.SCIFFRX.bit.RXFFIL == 6){
+        SciaRegs.SCIFFRX.bit.RXFFIL = 4;                                                // Changing quantity of whose received bytes that generate interrupt.
+    }
+    else if(fifo_level >= 4 && SciaRegs.SCIFFRX.bit.RXFFIL == 4){
+        SciaRegs.SCIFFRX.bit.RXFFIL = 2;                                                // Changing quantity of whose received bytes that generate interrupt.
+    }
+    else if(fifo_level >= 2 && SciaRegs.SCIFFRX.bit.RXFFIL == 2){
+        SciaRegs.SCIFFRX.bit.RXFFIL = 1;                                                // Changing quantity of whose received bytes that generate interrupt.
+    }
     // If streaming data is completely added to the char buffer of SCIA structure:
     if(SCIA.flag[1]){
         flagcommand_4 = true;                                                           // Start to check the time out state for SCIA receiving data.
@@ -938,6 +957,16 @@ __interrupt void scic_rx_isr(void){
     while(ScicRegs.SCIFFRX.bit.RXFFST > 0){
         receivedChar_c = ScicRegs.SCIRXBUF.all;                                         // Read one byte from the RX buffer.
         add_2_RX_charBuffer(&SCIC,receivedChar_c);                                      // Adding character to data buffer assigned to SCIC peripheral.
+    }
+    if(fifo_level == 1 && SCIC.RX_charBuffer[SCIC.RX_bufferIndex] == ':'){
+        ScicRegs.SCIFFRX.bit.RXFFIL = 16;                                               // Changing quantity of whose received bytes that generate interrupt.
+    }
+    else if(fifo_level >= 15) ScicRegs.SCIFFRX.bit.RXFFIL = 8;                          // Changing quantity of whose received bytes that generate interrupt.
+    else if(fifo_level >= 8 && ScicRegs.SCIFFRX.bit.RXFFIL == 8){
+        ScicRegs.SCIFFRX.bit.RXFFIL = 2;                                                // Changing quantity of whose received bytes that generate interrupt.
+    }
+    else if(fifo_level >= 2 && ScicRegs.SCIFFRX.bit.RXFFIL == 2){
+        ScicRegs.SCIFFRX.bit.RXFFIL = 1;                                                // Changing quantity of whose received bytes that generate interrupt.
     }
     // If streaming data is completely added to the char buffer of SCIB structure:
     if(SCIC.flag[1] && CpuTimer1.InterruptCount <= final_iteration && flagcommand_0){
