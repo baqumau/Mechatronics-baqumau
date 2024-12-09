@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
+// #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "baqumau.h"
 //---------------------------------------------------------------------------------------------------------------
 // Developing references builder functions:
@@ -243,5 +244,33 @@ void removeCharacters(char *str, size_t start, size_t count){
         }
         str[i] = '\0';                                                                      // Null-terminate the truncated string.
     }
+}
+//---------------------------------------------------------------------------------------------------------------
+// Function to check if a float value is at the limit "inf".
+bool _isinf(float x){
+    // Extracting the raw bits of the float:
+    union{
+        float f;
+        unsigned long u;
+    } float_bits;
+
+    float_bits.f = x;
+
+    // Checking if exponent is all 1s and mantissa is 0:
+    unsigned long exp_mask = 0x7F800000;                                                    // Mask for the exponent (8 bits).
+    unsigned long mantissa_mask = 0x007FFFFF;                                               // Mask for the mantissa (23 bits).
+
+    unsigned long exponent = float_bits.u & exp_mask;
+    unsigned long mantissa = float_bits.u & mantissa_mask;
+
+    if (exponent == exp_mask && mantissa == 0) {
+        return true;                                                                        // x is infinity.
+    }
+    return false;                                                                           // x is not infinity.
+}
+//---------------------------------------------------------------------------------------------------------------
+// Function to check if a floating-point value is considered NaN (Not a Number) when it does not compare equal to itself:
+bool _isnan(float value){
+    return (value != value);                                                                // NaN is the only value that does not equal itself.
 }
 //---------------------------------------------------------------------------------------------------------------

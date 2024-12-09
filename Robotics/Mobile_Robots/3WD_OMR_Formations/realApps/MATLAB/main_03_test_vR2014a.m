@@ -8,7 +8,7 @@ dataRate = 0;                                                               % Va
 % Setting parameters and test signals:
 counter = 0;                                                                % Ticks counter of sine function.
 flag_1 = 0;                                                                 % Streaming flag.
-Ts = 1/160;                                                                 % Sample time in seconds.
+Ts = 1/250;                                                                 % Sample time in seconds.
 t_sleep = 8;                                                                % Java sleeping time.
 iter_stop = (2000/t_sleep)*9.5*60;                                          % Iteration stop.
 x1_t = zeros(iter_stop,1);                                                  % Preallocating memory for variable x1_t.
@@ -43,9 +43,11 @@ while true
         if (isempty(command) == 0) && (command == 9) && (flag_1 == 0)
             % Sinusiodal test signals:
             % Time function 1:
-            x1_t(counter+1) = 3000*sin(2*pi*.02.*counter*Ts);
+            % x1_t(counter+1) = 3000*sin(2*pi*.02.*counter*Ts);
+            x1_t(counter+1) = 1500 + randi(120,1,1) - 60;
             % Time function 2:
-            x2_t(counter+1) = 1500*sin(2*pi*.02.*counter*Ts) + 1500*cos(2*pi*.08.*counter*Ts);
+            % x2_t(counter+1) = 1500*sin(2*pi*.02.*counter*Ts) + 1500*cos(2*pi*.08.*counter*Ts);
+            x2_t(counter+1) = 2000 + randi(160,1,1) - 80;
             % Time function 3:
             x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2;
             % Time function 4:

@@ -315,7 +315,7 @@ enum Control_System{
 // Function to determine the sign of an integer number:
 extern int sign(int num);
 // Function to determine the sign of a floating-point number:
-extern int signf(double num);
+extern int signf(float num);
 // Function to round a floating-point number to three decimal places:
 extern float roundToThreeDecimals(float num);
 // Function to round a floating-point number to four decimal places:
@@ -410,6 +410,16 @@ extern Correction_Struct createAngleConverter(int inputSize);
 extern void initAngleConverter(Correction_Struct COR, float x1_0[]);
 // Compute the angle correction algorithm for translating angles to an absolute format:
 extern void angleConversion(Correction_Struct COR, float angles_k[]);
+// Function for fast computing of the cube root using an iterative method:
+extern float cbrtf_fast(float num);
+// Function to round a floating-point number to the nearest integer, with ties rounded away from zero (using FastRTS):
+extern float roundf_fast(float num);
+// Function that rounds a floating-point number up to the nearest integer:
+extern float ceil_fast(float num);
+// Function that rounds a floating-point number down to the nearest integer:
+float floor_fast(float num);
+// Function to compute a custom hyperbolic tangent for a floating-point number "num":
+float tanhf_custom(float num);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _3WD_OMRs_CONTROLLERS_H_ */
 //---------------------------------------------------------------------------------------------------------------

@@ -6,17 +6,18 @@
 // OBJECTIVES:
 // 1. Blink functionality of LED 09 and LED 10, with timer interrupts.
 // 2. Timer 0 interrupt to 250 Hz (Higher priority).
-// 3. SCIA communication (Serial communication with MATLAB).
-// 4. Receiving FIFO interrupt via SCIA.
-// 5. SCIB communication (UART communication with ChipKit WF32).
-// 6. Receiving FIFO interrupt via SCIB.
-// 7. SCIC communication (Serial communication with XBee module).
-// 8. Timer 1 interrupt to 200 Hz.
-// 9. Timer 2 interrupt to 40 Hz (Lower priority).
-// 10. Sending relevant data of control system via SCIB to ChipKit WF32 for storing them.
-// 11. Control system implementation.
-// 12. Communication with XBee module (PWM signals to the robots at a baud-rate of 115200 bits/second).
-// 13. TX FIFO interrupts for SCIB and SCIC.
+// 3. SCIC communication (Serial communication with XBee module).
+// 4. Receiving FIFO interrupt via SCIC.
+// 5. SCIA communication (Serial communication with MATLAB).
+// 6. Receiving FIFO interrupt via SCIA.
+// 7. SCIB communication (UART communication with ChipKit WF32).
+// 8. Transmitting FIFO interrupt via SCIB.
+// 9. Timer 1 interrupt to 200 Hz.
+// 10. Timer 2 interrupt to 40 Hz (Lower priority).
+// 12. Sending relevant data of control system via SCIB to ChipKit WF32 for storing them.
+// 13. Control system implementation.
+// 14. Communication with XBee module (PWM signals to the robots at a baud-rate of 115200 bits/second).
+// 15. TX FIFO interrupts for SCIB and SCIC.
 //
 // LAUNCHXL-F28377S works to 200 MHz...
 //
@@ -33,7 +34,7 @@
 #define freq_hz_0 250                                                                   // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                                   // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 40                                                                    // Frequency in Hz for instructions execution of Timer 2.
-#define exe_minutes 4                                                                   // Run time minutes.
+#define exe_minutes 5                                                                   // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
 #include <math.h>
@@ -49,6 +50,7 @@
 #include <baqumau.h>                                                                    // My library.
 #include "F28x_Project.h"                                                               // Device Header file and Examples Include File.
 #include "dsp.h"                                                                        // Defines new data types and macros.
+// #include "C28x_FPU_FastRTS.h"                                                           // Include operators from FPUfastRTS library.
 //-----------------------------------------------------------------------------------------------------------------------
 // Putting function declarations here:
 //-----------------------------------------------------------------------------------------------------------------------
@@ -669,29 +671,29 @@ __interrupt void cpu_timer2_isr(void){
             case 2:{
                 // Saving another OMRs formation variables data in a string-format version:
                 memset_fast(var00,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[6]),var00,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[0]),var00,3);
                 memset_fast(var01,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[7]),var01,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[1]),var01,3);
                 memset_fast(var02,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[8]),var02,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[2]),var02,3);
                 memset_fast(var03,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[9]),var03,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[3]),var03,3);
                 memset_fast(var04,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[10]),var04,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[4]),var04,3);
                 memset_fast(var05,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[11]),var05,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[5]),var05,3);
                 memset_fast(var06,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[12]),var06,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[6]),var06,3);
                 memset_fast(var07,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[13]),var07,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[7]),var07,3);
                 memset_fast(var08,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[14]),var08,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[8]),var08,3);
                 memset_fast(var09,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[15]),var09,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[9]),var09,3);
                 memset_fast(var10,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[16]),var10,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[10]),var10,3);
                 memset_fast(var11,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[17]),var11,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[11]),var11,3);
                 break;
             }
             case 3:{
@@ -839,8 +841,8 @@ __interrupt void scia_rx_isr(void){
                     float Vc_0 = 40.0f;                                                 // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
                     float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
                     // Arraying initial conditions for circumference-shape reference trajectory profiles:
-                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cosf(M_PI_4), Vc_0*cosf(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
-                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cosf(M_PI_4), Vc_0*sinf(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cos(M_PI_4), Vc_0*cos(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cos(M_PI_4), Vc_0*sinf(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -853,7 +855,7 @@ __interrupt void scia_rx_isr(void){
                     float Vcx_0 = Sc_0/Kc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Sc_0/Kc_0;                                       // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2f(Vcx_0,Vcy_0), -2.0f*atan2f(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2(Vcx_0,Vcy_0), -2.0f*atan2(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -866,7 +868,7 @@ __interrupt void scia_rx_isr(void){
                     float Vcx_0 = Sc_0/Kc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Sc_0/Kc_0;                                       // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2f(Vcx_0,Vcy_0)-M_PI_2, -atan2f(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2(Vcx_0,Vcy_0)-M_PI_2, -atan2(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }

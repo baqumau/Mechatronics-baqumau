@@ -61,7 +61,11 @@ extern void ftoa(float num, char *res, int afterpoint);
 // Function to initialize whichever char-type data string:
 extern void initString(char *str, int strSize);
 // Function to completely remove the characters and shorten the string, shift the remaining characters:
-void removeCharacters(char *str, size_t start, size_t count);
+extern void removeCharacters(char *str, size_t start, size_t count);
+// Function to check if a float value is at the limit "inf".
+extern bool _isinf(float x);
+// Function to check if a floating-point value is considered NaN (Not a Number) when it does not compare equal to itself:
+extern bool _isnan(float value);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _baqumau_H_ */
 //---------------------------------------------------------------------------------------------------------------

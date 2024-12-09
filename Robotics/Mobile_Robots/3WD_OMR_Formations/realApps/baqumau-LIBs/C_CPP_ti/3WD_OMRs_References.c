@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
+// #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "3WD_OMRs_References.h"
 #include "3WD_OMRs_Controllers.h"
 //---------------------------------------------------------------------------------------------------------------
@@ -11,7 +12,7 @@
 //---------------------------------------------------------------------------------------------------------------
 // Configuring the corresponding reference trajectory for OMRs control system:
 Reference createReference(float sampleTime, enum Reference_Type reftype){
-    // Configuring the members of the desired cirumference trajectory structure:
+    // Configuring the members of the desired circumference trajectory structure:
     Reference REF;                                                                          // Creates a reference trajectory structure as REF.
     REF.s_out = 9*Robots_Qty;                                                               // Assign value of output size to the member s_out for the REF structure.
     REF.s_state = 9*Robots_Qty;                                                             // Assign value of state size to the member s_state for the REF structure.
@@ -75,8 +76,8 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
     // Initial conditions X_0 of desired robot pose trajectories:
     switch(Robots_Qty){
         case 2:{
-            float SC2_0 = sinf(REF.Z_0[2]);
-            float CC2_0 = cosf(REF.Z_0[2]);
+            float SC2_0 = sin(REF.Z_0[2]);
+            float CC2_0 = cos(REF.Z_0[2]);
             float OP1_0 = REF.Z_0[3]*SC2_0;
             float OP2_0 = REF.Z_0[3]*CC2_0;
             float OP3_0 = REF.Z_0[9]*SC2_0;
@@ -184,21 +185,21 @@ void computeCircumference01(Reference REF, enum Control_System consys, int itera
             REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
-        // Computing ecuations for circumference profiles generation in the cluster space:
+        // Computing equations for circumference profiles generation in the cluster space:
         float Vc = 40.0f;                                                                   // [mm/s], linear velocity of cluster centroid.
         float Rc = 1200.0f;                                                                 // [mm], desired radius of planned trajectory.
         float Ac = Vc*Vc/Rc;                                                                // Precompute angular acceleration Vc^2/Rc.
         switch(Robots_Qty){
             case 2:{
-                REF.z3_kp1[0] = Ac*sin(Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2]);      // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = Ac*cos(Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2]);      // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = Ac*sinf(Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2]);     // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = Ac*cosf(Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2]);     // Computing d^2(yc)/dt^2.
                 REF.z3_kp1[2] = 0.0f;                                                       // Computing d^2(thc)/dt^2.
                 REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
                 REF.z3_kp1[4] = 0.0f;                                                       // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = 0.0f;                                                       // Computing d^2(psi_2)/dt^2.
                 Integration(REF.INT_2,REF.z3_kp1);                                          // Compute second integration to c3(k + 1).
                 Integration(REF.INT_1,REF.INT_2.y_k);                                       // Compute first integration to second integration output.
-                // Computing ecuations for circumference profiles generation in the robot space:
+                // Computing equations for circumference profiles generation in the robot space:
                 float SC2_kp1 = sin(REF.z1_kp1[2]);
                 float CC2_kp1 = cos(REF.z1_kp1[2]);
                 float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;
