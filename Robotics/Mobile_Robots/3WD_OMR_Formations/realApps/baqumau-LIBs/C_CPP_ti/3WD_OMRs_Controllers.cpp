@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <math.h>
+// #include <math.h>
 #include <float.h>
-// #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
+#include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "3WD_OMRs_Controllers.h"
 //---------------------------------------------------------------------------------------------------------------
 // Developing control functions:
@@ -43,14 +43,14 @@ float roundf_fast(float num){
 //---------------------------------------------------------------------------------------------------------------
 // Function to round a floating-point number to three decimal places:
 float roundToThreeDecimals(float num){
-    // return roundf_fast(num*1000.0f)/1000.0f;                                                // Return a fixed-point number with three decimals.
-    return roundf(num*1000.0f)/1000.0f;                                                     // Return a fixed-point number with three decimals.
+    return roundf_fast(num*1000.0f)/1000.0f;                                                // Return a fixed-point number with three decimals.
+    // return roundf(num*1000.0f)/1000.0f;                                                     // Return a fixed-point number with three decimals.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Function to round a floating-point number to four decimal places:
 float roundToFourDecimals(float num){
-    // return roundf_fast(num*10000.0f)/10000.0f;                                              // Return a fixed-point number with four decimals.
-    return roundf(num*10000.0f)/10000.0f;                                                   // Return a fixed-point number with four decimals.
+    return roundf_fast(num*10000.0f)/10000.0f;                                              // Return a fixed-point number with four decimals.
+    // return roundf(num*10000.0f)/10000.0f;                                                   // Return a fixed-point number with four decimals.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Function to compute a custom hyperbolic tangent for a floating-point number x:
@@ -401,11 +401,11 @@ void HOSMDifferentiation(HOSM_Differentiator SMDIF, float input[]){
             SMDIF.x3_k[i] = SMDIF.x3_kp1[i];                                                // Updates the state vector x3(k), corresponding to the second derivative of SMDIF differentiator.
             // Computing auxiliary operations:
             float OP1 = SMDIF.x1_k[i] - input[i];                                           // Precompute required operator 1 (tracking error of the input).
-            // float OP2 = cbrtf_fast(fabsf(OP1));                                             // Precompute required operator 2 (cbrt is the cubic root of a number).
-            float OP2 = cbrtf(fabs(OP1));                                                   // Precompute required operator 2 (cbrt is the cubic root of a number).
+            float OP2 = cbrtf_fast(fabsf(OP1));                                             // Precompute required operator 2 (cbrt is the cubic root of a number).
+            // float OP2 = cbrtf(fabsf(OP1));                                                   // Precompute required operator 2 (cbrt is the cubic root of a number).
             float OP3 = signf(OP1);                                                         // Precompute required operator 3 (sign function).
-            // float OP4 = cbrtf_fast(SMDIF.Lip[i]);                                           // Precompute required operator 4.
-            float OP4 = cbrtf(SMDIF.Lip[i]);                                                // Precompute required operator 4.
+            float OP4 = cbrtf_fast(SMDIF.Lip[i]);                                           // Precompute required operator 4.
+            // float OP4 = cbrtf(SMDIF.Lip[i]);                                                // Precompute required operator 4.
             // Computing x1(k + 1) equation, for SMDIF differentiation structure:
             SMDIF.x1_kp1[i] = SMDIF.x1_k[i] - SMDIF.Ts*(SMDIF.lambda[2]*OP2*OP2*OP3*OP4) + SMDIF.Ts*SMDIF.x2_k[i] + SMDIF.Ts*SMDIF.Ts*SMDIF.x3_k[i]/2.0f;
             // Computing x2(k + 1) equation, for SMDIF differentiation structure:
@@ -1791,8 +1791,8 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                         else SMC.kappa_k[i] += fabsf(W3_k[i][j])*(til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
                     }
                     // Updating the auxiliary control input:
-                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
-                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon*sls_y_k[i]);
+                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
+                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon*sls_y_k[i]);
                 }
                 for(i = 0; i < SMC.s_out; i++){
                     // Updating the output of SMC strategy --> y(k):

@@ -3,9 +3,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
+// #include <math.h>
 #include <float.h>
-// #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
+#include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "baqumau.h"
 //---------------------------------------------------------------------------------------------------------------
 // Developing references builder functions:

@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <math.h>
+// #include <math.h>
 #include <float.h>
-// #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
+#include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "3WD_OMRs_References.h"
 #include "3WD_OMRs_Controllers.h"
 //---------------------------------------------------------------------------------------------------------------

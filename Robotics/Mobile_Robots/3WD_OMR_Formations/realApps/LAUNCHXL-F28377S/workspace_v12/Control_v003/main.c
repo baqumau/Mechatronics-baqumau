@@ -37,7 +37,7 @@
 #define exe_minutes 5                                                                   // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
-#include <math.h>
+// #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -50,7 +50,7 @@
 #include <baqumau.h>                                                                    // My library.
 #include "F28x_Project.h"                                                               // Device Header file and Examples Include File.
 #include "dsp.h"                                                                        // Defines new data types and macros.
-// #include "C28x_FPU_FastRTS.h"                                                           // Include operators from FPUfastRTS library.
+#include "C28x_FPU_FastRTS.h"                                                           // Include operators from FPUfastRTS library.
 //-----------------------------------------------------------------------------------------------------------------------
 // Putting function declarations here:
 //-----------------------------------------------------------------------------------------------------------------------
