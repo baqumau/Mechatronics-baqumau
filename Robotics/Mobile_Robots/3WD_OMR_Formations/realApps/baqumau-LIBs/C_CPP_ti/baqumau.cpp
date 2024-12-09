@@ -186,10 +186,10 @@ void ftoa(float num, char *res, int afterpoint){
     int j;                                                                                  // Declaration of j as integer variable.
     int isNegative = 0;                                                                     // Flag indicator that float number is negative.
     // handling special cases:
-    if(isnan(num)){
+    if(_isnan(num)){
         strcpy(res,"nan");
     }
-    else if (isinf(num)){
+    else if(_isinf(num)){
         strcpy(res,"inf");
     }
     else{
@@ -217,7 +217,7 @@ void ftoa(float num, char *res, int afterpoint){
         if(afterpoint != 0){
             res[i] = '.';                                                                   // Add decimal point.
             // Multiplying the fractional part by 10^afterpoint:
-            fpart = fpart * pow(10, afterpoint);
+            fpart = fpart * powf(10, afterpoint);
             // Converting fractional part to string:
             intToStr((unsigned long)fpart, res + i + 1, afterpoint);
         }

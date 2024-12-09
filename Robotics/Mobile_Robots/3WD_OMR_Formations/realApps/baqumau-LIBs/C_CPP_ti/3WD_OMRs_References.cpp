@@ -76,8 +76,8 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
     // Initial conditions X_0 of desired robot pose trajectories:
     switch(Robots_Qty){
         case 2:{
-            float SC2_0 = sin(REF.Z_0[2]);
-            float CC2_0 = cos(REF.Z_0[2]);
+            float SC2_0 = sinf(REF.Z_0[2]);
+            float CC2_0 = cosf(REF.Z_0[2]);
             float OP1_0 = REF.Z_0[3]*SC2_0;
             float OP2_0 = REF.Z_0[3]*CC2_0;
             float OP3_0 = REF.Z_0[9]*SC2_0;
@@ -200,8 +200,8 @@ void computeCircumference01(Reference REF, enum Control_System consys, int itera
                 Integration(REF.INT_2,REF.z3_kp1);                                          // Compute second integration to c3(k + 1).
                 Integration(REF.INT_1,REF.INT_2.y_k);                                       // Compute first integration to second integration output.
                 // Computing equations for circumference profiles generation in the robot space:
-                float SC2_kp1 = sin(REF.z1_kp1[2]);
-                float CC2_kp1 = cos(REF.z1_kp1[2]);
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);
                 float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;
                 float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;
                 float OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;
@@ -289,13 +289,13 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
         float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
         float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
         float Wc2 = Wc1/Kc;                                                                 // Precompute operation Sc/(Kc^3).
-        float ddd_xc_k = -Wc2*cos((float)(iterations)*REF.Ts/Kc);                           // Computing d^3(xc)/dt^3.
-        float ddd_yc_k = -8.0f*Wc2*cos(2.0f*(float)(iterations)*REF.Ts/Kc);                 // Computing d^3(yc)/dt^3.
+        float ddd_xc_k = -Wc2*cosf((float)(iterations)*REF.Ts/Kc);                          // Computing d^3(xc)/dt^3.
+        float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*(float)(iterations)*REF.Ts/Kc);                // Computing d^3(yc)/dt^3.
         switch(Robots_Qty){
             case 2:{
                 //------------------------------Cluster Space--------------------------------
-                REF.z3_kp1[0] = -Wc1*sin((float)(iterations)*REF.Ts/Kc);                    // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = -4.0f*Wc1*sin(2.0f*(float)(iterations)*REF.Ts/Kc);          // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = -Wc1*sinf((float)(iterations)*REF.Ts/Kc);                   // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*(float)(iterations)*REF.Ts/Kc);         // Computing d^2(yc)/dt^2.
                 // Computing d^2(thc)/dt^2:
                 float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Precompute operation OP1(k).
                 float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Precompute operation OP2(k).
@@ -307,8 +307,8 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
                 //------------------------------
                 REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sin(REF.z1_kp1[2]);                                         // Precompute sin(thc).
-                float CC2_kp1 = cos(REF.z1_kp1[2]);                                         // Precompute cos(thc).
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
                 OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Precompute operation OP1(k).
                 OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Precompute operation OP2(k).
                 OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Precompute operation OP3(k).
@@ -340,7 +340,7 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
                 REF.x2_kp1[3] = REF.z2_kp1[0] - OP17_kp1;
                 REF.x2_kp1[4] = REF.z2_kp1[1] - OP18_kp1;
                 //------------------------------
-                float angles_k[Robots_Qty] = {-atan2(REF.x2_kp1[0],REF.x2_kp1[1]), -atan2(REF.x2_kp1[3],REF.x2_kp1[4])};
+                float angles_k[Robots_Qty] = {-atan2f(REF.x2_kp1[0],REF.x2_kp1[1]), -atan2f(REF.x2_kp1[3],REF.x2_kp1[4])};
                 angleConversion(REF.COR,angles_k);                                          // OMRs' orientation angles th1(k) and th2(k) are converted to absolute format.
                 REF.x1_kp1[2] = M_PI_2 + REF.COR.y_k[0];
                 REF.x1_kp1[5] = M_PI_2 + REF.COR.y_k[1];
@@ -406,13 +406,13 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
         float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
         float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
         float Wc2 = Wc1/Kc;                                                                 // Precompute operation Sc/(Kc^3).
-        float ddd_xc_k = -Wc2*cos((float)(iterations)*REF.Ts/Kc);                           // Computing d^3(xc)/dt^3.
-        float ddd_yc_k = -8.0f*Wc2*cos(2.0f*(float)(iterations)*REF.Ts/Kc);                 // Computing d^3(yc)/dt^3.
+        float ddd_xc_k = -Wc2*cosf((float)(iterations)*REF.Ts/Kc);                          // Computing d^3(xc)/dt^3.
+        float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*(float)(iterations)*REF.Ts/Kc);                // Computing d^3(yc)/dt^3.
         switch(Robots_Qty){
             case 2:{
                 //------------------------------Cluster Space--------------------------------
-                REF.z3_kp1[0] = -Wc1*sin((float)(iterations)*REF.Ts/Kc);                    // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = -4.0f*Wc1*sin(2.0f*(float)(iterations)*REF.Ts/Kc);          // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = -Wc1*sinf((float)(iterations)*REF.Ts/Kc);                   // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*(float)(iterations)*REF.Ts/Kc);         // Computing d^2(yc)/dt^2.
                 // Computing d^2(thc)/dt^2:
                 float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Precompute operation OP1(k).
                 float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Precompute operation OP2(k).
@@ -426,8 +426,8 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
                 REF.z3_kp1[4] = -REF.z3_kp1[2];                                             // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = -REF.z3_kp1[2];                                             // Computing d^2(psi_2)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sin(REF.z1_kp1[2]);                                         // Precompute sin(thc).
-                float CC2_kp1 = cos(REF.z1_kp1[2]);                                         // Precompute cos(thc).
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
                 OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Precompute operation OP1(k).
                 OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Precompute operation OP2(k).
                 OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Precompute operation OP3(k).
@@ -532,8 +532,8 @@ void computeStatical01(Reference REF, enum Control_System consys){
                 REF.z3_kp1[4] = 0.0f;                                                       // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = 0.0f;                                                       // Computing d^2(psi_2)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sin(REF.z1_kp1[2]);                                         // Precompute sin(thc).
-                float CC2_kp1 = cos(REF.z1_kp1[2]);                                         // Precompute cos(thc).
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
                 float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                      // Precompute operation OP1(k).
                 float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                      // Precompute operation OP2(k).
                 //------------------------------

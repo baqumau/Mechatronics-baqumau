@@ -766,13 +766,6 @@ __interrupt void scia_rx_isr(void){
                 initAngleConverter(FMR.CORq,angles_k);                                  // Initialize angle conversion to absolute domain in the robot space.
             }
             computeCSVariables(FMR);                                                    // Compute the cluster space variables of FMR formation.
-            // Saving OMRs formation pose data in a string-format version:
-            for(i = 0; i < 3*Robots_Qty; i++){
-                memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                    // Clear char-type string vector where OMRs' pose will be saved.
-                ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);              // Saving same robot space pose of OMRs formation, but in string-format.
-                memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                    // Clear char-type string vector where OMRs' cluster space pose will be saved.
-                ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);              // Saving same pose of OMRs formation, but in string-format.
-            }
             //---------------------------------------------------------------------------------------------------------
             // Initializing the selected control system:
             switch(consys){
@@ -841,8 +834,8 @@ __interrupt void scia_rx_isr(void){
                     float Vc_0 = 40.0f;                                                 // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
                     float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
                     // Arraying initial conditions for circumference-shape reference trajectory profiles:
-                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cos(M_PI_4), Vc_0*cos(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sin(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
-                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sin(M_PI_4), Cy_0-Rc_0*cos(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cos(M_PI_4), Vc_0*sinf(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cos(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cosf(M_PI_4), Vc_0*cosf(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cosf(M_PI_4), Vc_0*sinf(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -855,7 +848,7 @@ __interrupt void scia_rx_isr(void){
                     float Vcx_0 = Sc_0/Kc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Sc_0/Kc_0;                                       // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2(Vcx_0,Vcy_0), -2.0f*atan2(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2f(Vcx_0,Vcy_0), -2.0f*atan2f(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -868,7 +861,7 @@ __interrupt void scia_rx_isr(void){
                     float Vcx_0 = Sc_0/Kc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Sc_0/Kc_0;                                       // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2(Vcx_0,Vcy_0)-M_PI_2, -atan2(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2f(Vcx_0,Vcy_0)-M_PI_2, -atan2f(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -890,7 +883,7 @@ __interrupt void scia_rx_isr(void){
             //---------------------------------------------------------------------------------------------------------
             // Adjusting the clutch interval time (t_cl):
             for(i = 0; i < 3*Robots_Qty; i++){
-                t_cl += abs(FMR.q_k[i] - REF.y_k[i])/(3.0f*Robots_Qty*1000.0f);         // Partial value of clutch interval time.
+                t_cl += fabsf(FMR.q_k[i] - REF.y_k[i])/(3.0f*Robots_Qty*1000.0f);       // Partial value of clutch interval time.
             }
             t_cl += 8.0f;                                                               // Final value of clutch interval time.
             //-----------------------------------------------------------------------------------------------------------
@@ -1244,7 +1237,7 @@ void scic_fifo_init(void){
     ScicRegs.SCIFFRX.bit.RXFIFORESET = 1;
     //-------------------------------------------------------------------------------------------------------------------
     // Enabling the RX FIFO interrupt:
-    ScicRegs.SCIFFRX.bit.RXFFIENA = 1;
+    ScicRegs.SCIFFRX.bit.RXFFIENA = 0;
     ScicRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling the TX FIFO interrupt:
