@@ -16,8 +16,8 @@ int sign(int num){
 //---------------------------------------------------------------------------------------------------------------
 // Function to determine the sign of a floating-point number:
 int signf(float num){
-    if(num > 0.0) return 1;                                                                 // Return 1 if num is positive.
-    else if(num < 0.0) return -1;                                                           // Return -1 if num is negative.
+    if(num > 0.0f) return 1;                                                                // Return 1 if num is positive.
+    else if(num < 0.0f) return -1;                                                          // Return -1 if num is negative.
     else return 0;                                                                          // Return 0 if num is zero.
 }
 //---------------------------------------------------------------------------------------------------------------

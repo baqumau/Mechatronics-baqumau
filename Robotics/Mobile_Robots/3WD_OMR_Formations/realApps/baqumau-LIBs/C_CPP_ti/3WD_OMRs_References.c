@@ -284,7 +284,7 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
             REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
-        // Computing ecuations for infinity reference profiles generation in the cluster space:
+        // Computing equations for infinity reference profiles generation in the cluster space:
         float Sc = 1200.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
         float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
         float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
@@ -401,7 +401,7 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
             REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
-        // Computing ecuations for infinity reference profiles generation in the cluster space:
+        // Computing equations for infinity reference profiles generation in the cluster space:
         float Sc = 1200.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
         float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
         float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
@@ -515,8 +515,8 @@ void computeStatical01(Reference REF, enum Control_System consys){
         // Computing equations for generation of static reference profiles in the cluster space:
         switch(Robots_Qty){
             case 2:{
-                float d_ph1_k = 0.0f;                                                      // Desired angular velocity of robot 1 (rad/s).
-                float d_ph2_k = -0.0f;                                                     // Desired angular velocity of robot 2 (rad/s).
+                float d_ph1_k = 0.0f;                                                       // Desired angular velocity of robot 1 (rad/s).
+                float d_ph2_k = 0.0f;                                                       // Desired angular velocity of robot 2 (rad/s).
                 //------------------------------Cluster Space--------------------------------
                 REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
                 REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.

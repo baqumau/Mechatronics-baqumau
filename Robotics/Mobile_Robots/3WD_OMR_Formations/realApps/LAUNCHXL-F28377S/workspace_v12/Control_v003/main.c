@@ -129,14 +129,8 @@ char *msg_1;                                                                    
 char *msg_2;                                                                            // Variable 2 to save a char data chain.
 char *msg_3;                                                                            // Variable 3 to save a char data chain.
 char *msg_4;                                                                            // Variable 4 to save a char data chain.
-char *msg_5;                                                                            // Variable 5 to save a char data chain.
 char *measurements;                                                                     // Variable to save a char data chain that contains the measured signals.
 char *controlSignals;                                                                   // Variable to save a char data chain that contains the computed control signals.
-char *angularVelocities;                                                                // Variable to save a char data chain that contains the angular velocities of robots' wheels.
-char *disturbances;                                                                     // Variable to save a char data chain that contains the respective disturbances of OMRs.
-char *rsPose;                                                                           // Variable to save a char data chain that contains the robot space pose of OMRs.
-char *csPose;                                                                           // Variable to save a char data chain that contains the cluster space pose of OMRs.
-char *trackingErrors;                                                                   // Variable to save a char data chain that contains the tracking errors for the reference trajectories.
 char *var00;                                                                            // Multi-purpose char variable 0.
 char *var01;                                                                            // Multi-purpose char variable 1.
 char *var02;                                                                            // Multi-purpose char variable 2.
@@ -338,7 +332,6 @@ void main(void){
     // Preallocating memory for used *variables:
     measurements = (char *)malloc(bufferSize_0 * sizeof(char));                         // Preallocate memory for measurement data set.
     controlSignals = (char *)malloc(bufferSize_2 * sizeof(char));                       // Preallocate memory for control signals data set.
-    angularVelocities = (char *)malloc(bufferSize_2 * sizeof(char));                    // Preallocate memory for angular velocities data set.
     errors_k = (float *)malloc(3*Robots_Qty * sizeof(float));                           // Preallocate memory to save pose error variables in a floating-point values vector.
     // Preallocating memory for used multi-purpose char *variables:
     var00 = (char *)malloc(bufferSize_3 * sizeof(char));
@@ -565,12 +558,8 @@ __interrupt void cpu_timer1_isr(void){
                     FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
                     //---------------------------------------------------------------------------------------------------
                     // Saving OMRs formation control signals data in a string-format version:
-                    memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);                // Clear char-type string vector where OMRs' control signals will be saved.
-                    ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                                // Saving same control signals of OMRs formation, but in string-format.
                     memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);                // Clear char-type string vector where OMRs' PWMs control signals will be saved.
                     ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                                // Saving same PWMs control signals of OMRs formation, but in string-format.
-                    memset_fast(FMR.us_k.data[i+3],0,FMR.us_k.bufferSize);              // Clear char-type string vector where OMRs' control signals will be saved.
-                    ftoa(FMR.u_k[i+3],FMR.us_k.data[i+3],3);                            // Saving same control signals of OMRs formation, but in string-format.
                     memset_fast(FMR.vs_k.data[i+3],0,FMR.vs_k.bufferSize);              // Clear char-type string vector where OMRs' PWMs control signals will be saved.
                     ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                            // Saving same PWMs control signals of OMRs formation, but in string-format.
                 }
@@ -595,12 +584,8 @@ __interrupt void cpu_timer1_isr(void){
                   FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
                   //-----------------------------------------------------------------------------------------------------
                   // Saving OMRs formation control signals data in a string-format version:
-                  memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);                  // Clear char-type string vector where OMRs' control signals will be saved.
-                  ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                                  // Saving same control signals of OMRs formation, but in string-format.
                   memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);                  // Clear char-type string vector where OMRs' PWMs control signals will be saved.
                   ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                                  // Saving same PWMs control signals of OMRs formation, but in string-format.
-                  memset_fast(FMR.us_k.data[i+3],0,FMR.us_k.bufferSize);                // Clear char-type string vector where OMRs' control signals will be saved.
-                  ftoa(FMR.u_k[i+3],FMR.us_k.data[i+3],3);                              // Saving same control signals of OMRs formation, but in string-format.
                   memset_fast(FMR.vs_k.data[i+3],0,FMR.vs_k.bufferSize);                // Clear char-type string vector where OMRs' PWMs control signals will be saved.
                   ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                              // Saving same PWMs control signals of OMRs formation, but in string-format.
                   //-----------------------------------------------------------------------------------------------------
@@ -659,12 +644,16 @@ __interrupt void cpu_timer2_isr(void){
         mod_result = CpuTimer2.InterruptCount % (freq_hz_2/10);                         // Computes modulus operation for doing a code execution selection at 40 Hz.
         switch(mod_result){
             case 1:{
-                // Saving OMRs formation pose data in a string-format version:
+                // Saving OMRs formation pose and control signals data in a string-format version:
                 for(i = 0; i < 3*Robots_Qty; i++){
                     memset_fast(FMR.qs_k.data[i],0,FMR.qs_k.bufferSize);                // Clear char-type string vector where OMRs' robot space pose will be saved.
                     ftoa(roundToThreeDecimals(FMR.q_k[i]),FMR.qs_k.data[i],3);          // Saving same robot space pose of OMRs formation, but in string-format.
                     memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                // Clear char-type string vector where OMRs' cluster space pose will be saved.
                     ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);          // Saving same cluster space pose of OMRs formation, but in string-format.
+                    memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);                // Clear char-type string vector where OMRs' control signals will be saved.
+                    ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                                // Saving same control signals of OMRs formation, but in string-format.
+                    memset_fast(FMR.ws_k.data[i],0,FMR.ws_k.bufferSize);                // Clear char-type string vector where angular velocities of OMRs' wheels will be saved.
+                    ftoa(FMR.w_k[i],FMR.ws_k.data[i],3);                                // Saving same above angular velocities of OMRs formation, but in string-format.
                 }
                 break;
             }
@@ -699,7 +688,7 @@ __interrupt void cpu_timer2_isr(void){
             case 3:{
                 // Packing the relevant measurement variables of OMRs formation:
                 memset_fast(measurements,0,bufferSize_0);                               // Initialize measurements data chain.
-                snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,var06,var07,var08,var09,var10,var11,(unsigned long)(CpuTimer1.InterruptCount));
+                snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var06,var07,var08,var09,var10,var11,FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
                 break;
             }
             case 0:{
@@ -787,12 +776,6 @@ __interrupt void scia_rx_isr(void){
                         FMR.u_k[i] = 0.0f;                                              // Initial torque control in the formation.
                         FMR.v_k[i] = 0.0f;                                              // Initial voltage control in the formation.
                         FMR.w_k[i] = 0.0f;                                              // Initial angular velocities in the formation.
-                        memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);            // Clear char-type string vector where OMRs' control signals will be saved.
-                        ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                            // Saving same control signals of OMRs formation, but in string-format.
-                        memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);            // Clear char-type string vector where OMRs' PWMs control signals will be saved.
-                        ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                            // Saving same PWMs control signals of OMRs formation, but in string-format.
-                        memset_fast(FMR.ws_k.data[i],0,FMR.ws_k.bufferSize);            // Clear char-type string vector where angular velocities of OMRs' wheels will be saved.
-                        ftoa(FMR.w_k[i],FMR.ws_k.data[i],3);                            // Saving same above angular velocities of OMRs formation, but in string-format.
                     }
                     break;
                 }
@@ -813,12 +796,6 @@ __interrupt void scia_rx_isr(void){
                         FMR.u_k[i] = 0.0f;                                              // Initial torque control in the formation.
                         FMR.v_k[i] = 0.0f;                                              // Initial voltage control in the formation.
                         FMR.w_k[i] = 0.0f;                                              // Initial angular velocities in the formation.
-                        memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);            // Clear char-type string vector where OMRs' control signals will be saved.
-                        ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                            // Saving same control signals of OMRs formation, but in string-format.
-                        memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);            // Clear char-type string vector where OMRs' PWMs control signals will be saved.
-                        ftoa(FMR.v_k[i],FMR.vs_k.data[i],3);                            // Saving same PWMs control signals of OMRs formation, but in string-format.
-                        memset_fast(FMR.ws_k.data[i],0,FMR.ws_k.bufferSize);            // Clear char-type string vector where angular velocities of OMRs' wheels will be saved.
-                        ftoa(FMR.w_k[i],FMR.ws_k.data[i],3);                            // Saving same above angular velocities of OMRs formation, but in string-format.
                     }
                     break;
                 }
@@ -828,8 +805,8 @@ __interrupt void scia_rx_isr(void){
             switch(reftype){
                 case CIRCUMFERENCE_01:{
                     // Configuring initial parameters for circumference-shape trajectory (check that Rc_0 and Vc_0 are equals to Rc and Vc placed in the trajectory generation source code):
-                    float Cx_0 = 1800.0f;                                               // [mm], initial reference's centre along workspace's x axis.
-                    float Cy_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's y axis.
+                    float Cx_0 = 1800.0f;                                               // [mm], initial reference's rotational centre along the workspace's x axis.
+                    float Cy_0 = 1500.0f;                                               // [mm], initial reference's rotational centre along the workspace's y axis.
                     float Rc_0 = 1200.0f;                                               // [mm], initial desired radius of planned circumference-shape trajectory.
                     float Vc_0 = 40.0f;                                                 // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
                     float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
@@ -970,15 +947,8 @@ __interrupt void scic_rx_isr(void){
         for(i = 0; i < 3; i++){
             // Saving the angular velocities of omni-wheels attached on OMRs formation (in rad/s).
             FMR.w_k[i+3*SCIC.identifier] = atof(SCIC.MAT3.data[SCIC.identifier][i]);
-            // Saving same angular velocities of moni-wheels attached on OMRs formation, but in a string-format version:
-            memset_fast(FMR.ws_k.data[i+3*SCIC.identifier],0,FMR.ws_k.bufferSize);      // Initialize or clear char-type string vector where OMRs' angular velocities of wheels will be saved.
-            // Saving angular velocities in string-format:
-            ftoa(FMR.w_k[i+3*SCIC.identifier],FMR.ws_k.data[i+3*SCIC.identifier],3);
         }
         //---------------------------------------------------------------------------------------------------------------
-        // Packing the corresponding angular velocities variables of OMRs formation:
-        memset_fast(angularVelocities,0,bufferSize_2);                                  // Initialize angularVelocities data chain.
-        snprintf(angularVelocities,bufferSize_2,"%s,%s,%s,%s,%s,%s",FMR.ws_k.data[0],FMR.ws_k.data[1],FMR.ws_k.data[2],FMR.ws_k.data[3],FMR.ws_k.data[4],FMR.ws_k.data[5]);
         // Clearing buffer within SCIB data structure:
         init_RX_charBuffer(&SCIC);                                                      // Initialize dedicated char-type data buffer of SCIC.
     }
@@ -1237,7 +1207,7 @@ void scic_fifo_init(void){
     ScicRegs.SCIFFRX.bit.RXFIFORESET = 1;
     //-------------------------------------------------------------------------------------------------------------------
     // Enabling the RX FIFO interrupt:
-    ScicRegs.SCIFFRX.bit.RXFFIENA = 0;
+    ScicRegs.SCIFFRX.bit.RXFFIENA = 1;
     ScicRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling the TX FIFO interrupt:
