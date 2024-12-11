@@ -660,35 +660,35 @@ __interrupt void cpu_timer2_isr(void){
             case 2:{
                 // Saving another OMRs formation variables data in a string-format version:
                 memset_fast(var00,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[0]),var00,3);
+                ftoa(roundToThreeDecimals(GPI.y_k[0]),var00,3);
                 memset_fast(var01,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[1]),var01,3);
+                ftoa(roundToThreeDecimals(GPI.y_k[1]),var01,3);
                 memset_fast(var02,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[2]),var02,3);
+                ftoa(roundToThreeDecimals(GPI.y_k[2]),var02,3);
                 memset_fast(var03,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[3]),var03,3);
+                ftoa(roundToThreeDecimals(GPI.y_k[3]),var03,3);
                 memset_fast(var04,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[4]),var04,3);
+                ftoa(roundToThreeDecimals(GPI.y_k[4]),var04,3);
                 memset_fast(var05,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[5]),var05,3);
+                ftoa(roundToThreeDecimals(GPI.y_k[5]),var05,3);
                 memset_fast(var06,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[6]),var06,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[12]),var06,3);
                 memset_fast(var07,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[7]),var07,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[13]),var07,3);
                 memset_fast(var08,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[8]),var08,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[14]),var08,3);
                 memset_fast(var09,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[9]),var09,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[15]),var09,3);
                 memset_fast(var10,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[10]),var10,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[16]),var10,3);
                 memset_fast(var11,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[11]),var11,3);
+                ftoa(roundToThreeDecimals(RSO.y_k[17]),var11,3);
                 break;
             }
             case 3:{
                 // Packing the relevant measurement variables of OMRs formation:
                 memset_fast(measurements,0,bufferSize_0);                               // Initialize measurements data chain.
-                snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var06,var07,var08,var09,var10,var11,FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
+                snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,var06,var07,var08,var09,var10,var11,FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
                 break;
             }
             case 0:{

@@ -44,10 +44,10 @@ while true
             % Sinusiodal test signals:
             % Time function 1:
             % x1_t(counter+1) = 3000*sin(2*pi*.02.*counter*Ts);
-            x1_t(counter+1) = 1500 + randi(4,1,1) - 2;
+            x1_t(counter+1) = 1500 + rand(1,1)*10 - 5;
             % Time function 2:
             % x2_t(counter+1) = 1500*sin(2*pi*.02.*counter*Ts) + 1500*cos(2*pi*.08.*counter*Ts);
-            x2_t(counter+1) = 2000 + randi(4,1,1) - 2;
+            x2_t(counter+1) = 2000 + rand(1,1)*10 - 5;
             % Time function 3:
             x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2;
             % Time function 4:

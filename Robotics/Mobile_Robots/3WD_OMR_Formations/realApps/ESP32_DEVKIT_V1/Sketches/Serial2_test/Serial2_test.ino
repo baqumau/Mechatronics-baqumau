@@ -18,7 +18,7 @@ HardwareSerial MySerial(1);                                                     
 const unsigned int RXD2 = 16;                                                     // Choosing this pin as UART 1 receiving data.
 const unsigned int TXD2 = 17;                                                     // Choosing this pin as UART 1 transmitting data.
 const unsigned int bufferSize_str = 64;                                           // buffer length for characters string.
-unsigned int long pulsetime = 0;                                                  // Variable to save pulse time when data is received by UART.
+unsigned int long pulseTime = 0;                                                  // Variable to save pulse time when data is received by UART.
 char character_1;                                                                 // Variable to save received character by UART 0 module.
 char character_2;                                                                 // Variable to save received character by UART 2 module.
 hw_timer_t *Timer2_Cfg = NULL;                                                    // Pointer declaration for timer 2 execution.
@@ -70,14 +70,17 @@ void loop(){
       character_2 = MySerial.read();                                              // Last received character from UART 0.
       Serial.print(character_2);                                                  // Print character 1 through UART 0.
       if(character_2 == '\n'){
+        delayMilliseconds(5);                                                     // Generate a 5 milliseconds delay.
         flagcommand = false;                                                      
-        pulsetime = timerRead(Timer2_Cfg) - pulsetime;                            // Read the Compare Timer 2 register.
+        pulseTime = timerRead(Timer2_Cfg) - pulseTime;                            // Read the Compare Timer 2 register.
+        pulseTime = pulseTime/APB_CLK;                                            // Pulse time is translated from ticks to seconds.
+        Serial.print("Time: %1.4f",pulseTime);                                    // Print time of data reception.
       }
     }
   }
   else NOP();                                                                     // No operation cycle.
   if(!flagcommand){
-    pulsetime = timerRead(Timer2_Cfg);                                            // Read the Compare Timer 2 register.
+    pulseTime = timerRead(Timer2_Cfg);                                            // Read the Compare Timer 2 register.
     flagcommand = true;                                                           // Turn flagcommand ON.
   }
 }
