@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.461"
+    ComputedModelVersion    "1.465"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, 0.0, 1382.0, 744.0]
+      Location		      [-8.0, -8.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -63,11 +63,11 @@ Model {
 	$ObjectID		6
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	ViewObjType		"SimulinkTopLevel"
-	LoadSaveID		"0"
+	ViewObjType		"SimulinkSubsys"
+	LoadSaveID		"625"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[51.0, 2.0]
+	Offset			[-14.0, 221.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Nov 30 09:40:01 2024"
-  RTWModifiedTimeStamp	  654860400
-  ModelVersionFormat	  "1.%<AutoIncrement:461>"
+  LastModifiedDate	  "Wed Dec 11 00:42:06 2024"
+  RTWModifiedTimeStamp	  655749742
+  ModelVersionFormat	  "1.%<AutoIncrement:465>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1143,8 +1143,8 @@ Model {
   }
   System {
     Name		    "conSys_2robots_1_vR2014a"
-    Location		    [-8, 0, 1374, 744]
-    Open		    on
+    Location		    [-8, -8, 1374, 736]
+    Open		    off
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1157,7 +1157,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "3526"
+    SIDHighWatermark	    "3527"
     Block {
       BlockType		      Scope
       Name		      "Angular Velocity of Wheel 11"
@@ -1358,6 +1358,7 @@ Model {
       Position		      [110, 35, 150, 95]
       ZOrder		      4047
       BackgroundColor	      "lightBlue"
+      Commented		      "on"
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references 1"
@@ -6523,11 +6524,10 @@ Model {
       Position		      [260, 35, 300, 95]
       ZOrder		      4433
       BackgroundColor	      "lightBlue"
-      Commented		      "on"
       RequestExecContextInheritance off
       System {
 	Name			"Cluster space references 2"
-	Location		[-8, 0, 1374, 744]
+	Location		[-8, -8, 1374, 736]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -8376,7 +8376,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Reference Variables"
-	    Location		    [-8, 0, 1374, 744]
+	    Location		    [-8, -8, 1374, 736]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -11352,6 +11352,7 @@ Model {
       Position		      [175, 58, 215, 72]
       ZOrder		      4049
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "dQr"
     }
     Block {
@@ -11371,6 +11372,7 @@ Model {
       Position		      [175, 78, 215, 92]
       ZOrder		      4050
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "ddQr"
     }
     Block {
@@ -11380,6 +11382,7 @@ Model {
       Position		      [175, 38, 215, 52]
       ZOrder		      4048
       ShowName		      off
+      Commented		      "on"
       GotoTag		      "Qr"
     }
     Block {
@@ -11492,7 +11495,6 @@ Model {
       Position		      [325, 58, 365, 72]
       ZOrder		      4435
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "dQr"
     }
     Block {
@@ -11502,7 +11504,6 @@ Model {
       Position		      [325, 78, 365, 92]
       ZOrder		      4436
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "ddQr"
     }
     Block {
@@ -11512,7 +11513,6 @@ Model {
       Position		      [325, 38, 365, 52]
       ZOrder		      4434
       ShowName		      off
-      Commented		      "on"
       GotoTag		      "Qr"
     }
     Block {
@@ -13846,6 +13846,7 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
+		Visible			"off"
 	      }
 	      Object {
 		$ObjectID		37
@@ -15590,7 +15591,7 @@ Model {
       System {
 	Name			"Robot Space Controller"
 	Location		[-8, -8, 1374, 736]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -18548,7 +18549,7 @@ Model {
 	  BlockMirror		  on
 	  ShowName		  off
 	  Floating		  off
-	  Location		  [1, 49, 1367, 727]
+	  Location		  [5, 49, 1371, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "xonly"
@@ -19323,8 +19324,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-100"
-	  YMax			  "100"
+	  YMin			  "-50"
+	  YMax			  "50"
 	  SaveName		  "ScopeData119"
 	  LimitDataPoints	  off
 	}
@@ -19458,6 +19459,39 @@ Model {
 	  YMin			  "-20"
 	  YMax			  "20"
 	  SaveName		  "ScopeData45"
+	  LimitDataPoints	  off
+	}
+	Block {
+	  BlockType		  Scope
+	  Name			  "Scope 8"
+	  SID			  "3527"
+	  Ports			  [1]
+	  Position		  [750, 489, 765, 511]
+	  ZOrder		  4503
+	  ShowName		  off
+	  Floating		  off
+	  Location		  [1, 49, 1367, 727]
+	  Open			  off
+	  NumInputPorts		  "1"
+	  ZoomMode		  "yonly"
+	  List {
+	    ListType		    AxesTitles
+	    axes1		    "%<SignalLabel>"
+	  }
+	  List {
+	    ListType		    ScopeGraphics
+	    FigureColor		    "[0.5 0.5 0.5]"
+	    AxesColor		    "[0 0 0]"
+	    AxesTickColor	    "[1 1 1]"
+	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	    LineStyles		    "-|-|-|-|-|-"
+	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
+	    MarkerStyles	    "none|none|none|none|none|none"
+	  }
+	  ShowLegends		  off
+	  YMin			  "-1"
+	  YMax			  "1"
+	  SaveName		  "ScopeData30"
 	  LimitDataPoints	  off
 	}
 	Block {
@@ -20765,8 +20799,18 @@ Model {
 	  ZOrder		  1918
 	  SrcBlock		  "Mux5"
 	  SrcPort		  1
-	  DstBlock		  "Goto21"
-	  DstPort		  1
+	  Points		  [5, 0]
+	  Branch {
+	    ZOrder		    2639
+	    Points		    [0, -20]
+	    DstBlock		    "Scope 8"
+	    DstPort		    1
+	  }
+	  Branch {
+	    ZOrder		    2638
+	    DstBlock		    "Goto21"
+	    DstPort		    1
+	  }
 	}
 	Line {
 	  ZOrder		  1919

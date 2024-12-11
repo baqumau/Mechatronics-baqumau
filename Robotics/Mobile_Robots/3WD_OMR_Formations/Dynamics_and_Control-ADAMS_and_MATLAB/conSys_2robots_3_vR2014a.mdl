@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.510"
+    ComputedModelVersion    "1.512"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1382.0, 744.0]
+      Location		      [-8.0, 0.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -63,11 +63,11 @@ Model {
 	$ObjectID		6
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	ViewObjType		"SimulinkSubsys"
-	LoadSaveID		"625"
+	ViewObjType		"SimulinkTopLevel"
+	LoadSaveID		"0"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[-14.0, 216.0]
+	Offset			[0.0, 0.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Nov 08 17:49:32 2024"
-  RTWModifiedTimeStamp	  652975500
-  ModelVersionFormat	  "1.%<AutoIncrement:510>"
+  LastModifiedDate	  "Tue Dec 10 13:59:24 2024"
+  RTWModifiedTimeStamp	  655739954
+  ModelVersionFormat	  "1.%<AutoIncrement:512>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -831,6 +831,15 @@ Model {
       PreserveConstantTs      off
     }
     Block {
+      BlockType		      DeadZone
+      LowerValue	      "-0.5"
+      UpperValue	      "0.5"
+      SaturateOnIntegerOverflow	on
+      LinearizeAsGain	      on
+      ZeroCross		      on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Demux
       Outputs		      "4"
       DisplayOption	      "none"
@@ -1134,8 +1143,8 @@ Model {
   }
   System {
     Name		    "conSys_2robots_3_vR2014a"
-    Location		    [-8, -8, 1374, 736]
-    Open		    off
+    Location		    [-8, 0, 1374, 744]
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1148,7 +1157,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "4239"
+    SIDHighWatermark	    "4245"
     Block {
       BlockType		      Scope
       Name		      "Angular Velocity of Wheel 11"
@@ -1352,8 +1361,8 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Cluster Space Controller"
-	Location		[-8, -8, 1374, 736]
-	Open			on
+	Location		[-8, 0, 1374, 744]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -5365,7 +5374,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque23"
 	  SID			  "4123"
-	  Position		  [930, 68, 970, 82]
+	  Position		  [930, 63, 970, 77]
 	  ZOrder		  4503
 	  ShowName		  off
 	  GotoTag		  "X21"
@@ -5392,7 +5401,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque26"
 	  SID			  "4126"
-	  Position		  [930, 128, 970, 142]
+	  Position		  [930, 123, 970, 137]
 	  ZOrder		  4506
 	  ShowName		  off
 	  GotoTag		  "X22"
@@ -5419,7 +5428,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque29"
 	  SID			  "4129"
-	  Position		  [930, 188, 970, 202]
+	  Position		  [930, 183, 970, 197]
 	  ZOrder		  4509
 	  ShowName		  off
 	  GotoTag		  "X23"
@@ -5446,7 +5455,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque31"
 	  SID			  "4132"
-	  Position		  [930, 248, 970, 262]
+	  Position		  [930, 243, 970, 257]
 	  ZOrder		  4512
 	  ShowName		  off
 	  GotoTag		  "X24"
@@ -5464,7 +5473,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque33"
 	  SID			  "4139"
-	  Position		  [1040, 118, 1080, 132]
+	  Position		  [1040, 113, 1080, 127]
 	  ZOrder		  4519
 	  ShowName		  off
 	  GotoTag		  "X25"
@@ -5482,7 +5491,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque35"
 	  SID			  "4143"
-	  Position		  [1040, 203, 1080, 217]
+	  Position		  [1040, 198, 1080, 212]
 	  ZOrder		  4523
 	  ShowName		  off
 	  GotoTag		  "X26"
@@ -5509,7 +5518,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque39"
 	  SID			  "4192"
-	  Position		  [930, 98, 970, 112]
+	  Position		  [930, 103, 970, 117]
 	  ZOrder		  4546
 	  ShowName		  off
 	  GotoTag		  "Z11"
@@ -5527,7 +5536,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque40"
 	  SID			  "4193"
-	  Position		  [930, 158, 970, 172]
+	  Position		  [930, 163, 970, 177]
 	  ZOrder		  4547
 	  ShowName		  off
 	  GotoTag		  "Z12"
@@ -5536,7 +5545,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque41"
 	  SID			  "4194"
-	  Position		  [930, 218, 970, 232]
+	  Position		  [930, 223, 970, 237]
 	  ZOrder		  4548
 	  ShowName		  off
 	  GotoTag		  "Z13"
@@ -5554,7 +5563,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque43"
 	  SID			  "4195"
-	  Position		  [930, 278, 970, 292]
+	  Position		  [930, 283, 970, 297]
 	  ZOrder		  4549
 	  ShowName		  off
 	  GotoTag		  "Z14"
@@ -5563,7 +5572,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque44"
 	  SID			  "4196"
-	  Position		  [1040, 148, 1080, 162]
+	  Position		  [1040, 153, 1080, 167]
 	  ZOrder		  4550
 	  ShowName		  off
 	  GotoTag		  "Z15"
@@ -5572,7 +5581,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque45"
 	  SID			  "4197"
-	  Position		  [1040, 233, 1080, 247]
+	  Position		  [1040, 238, 1080, 252]
 	  ZOrder		  4551
 	  ShowName		  off
 	  GotoTag		  "Z16"
@@ -5617,7 +5626,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque54"
 	  SID			  "4211"
-	  Position		  [1035, 478, 1075, 492]
+	  Position		  [1035, 483, 1075, 497]
 	  ZOrder		  4566
 	  ShowName		  off
 	  GotoTag		  "Z01"
@@ -5863,7 +5872,7 @@ Model {
 	  Name			  "Mux10"
 	  SID			  "4213"
 	  Ports			  [2, 1]
-	  Position		  [1095, 452, 1100, 498]
+	  Position		  [1095, 454, 1100, 501]
 	  ZOrder		  4564
 	  ShowName		  off
 	  Inputs		  "2"
@@ -7055,7 +7064,7 @@ Model {
 	  Name			  "Scope 38"
 	  SID			  "4214"
 	  Ports			  [1]
-	  Position		  [1120, 464, 1135, 486]
+	  Position		  [1120, 469, 1135, 491]
 	  ZOrder		  4567
 	  ShowName		  off
 	  Floating		  off
@@ -17948,6 +17957,66 @@ Model {
       Value		      "0"
     }
     Block {
+      BlockType		      DeadZone
+      Name		      "Dead Zone 1"
+      SID		      "4240"
+      Position		      [925, 64, 945, 86]
+      ZOrder		      4438
+      ShowName		      off
+      LowerValue	      "-25"
+      UpperValue	      "25"
+    }
+    Block {
+      BlockType		      DeadZone
+      Name		      "Dead Zone 2"
+      SID		      "4241"
+      Position		      [925, 109, 945, 131]
+      ZOrder		      4439
+      ShowName		      off
+      LowerValue	      "-25"
+      UpperValue	      "25"
+    }
+    Block {
+      BlockType		      DeadZone
+      Name		      "Dead Zone 3"
+      SID		      "4242"
+      Position		      [925, 154, 945, 176]
+      ZOrder		      4440
+      ShowName		      off
+      LowerValue	      "-25"
+      UpperValue	      "25"
+    }
+    Block {
+      BlockType		      DeadZone
+      Name		      "Dead Zone 4"
+      SID		      "4243"
+      Position		      [925, 199, 945, 221]
+      ZOrder		      4441
+      ShowName		      off
+      LowerValue	      "-25"
+      UpperValue	      "25"
+    }
+    Block {
+      BlockType		      DeadZone
+      Name		      "Dead Zone 5"
+      SID		      "4244"
+      Position		      [925, 244, 945, 266]
+      ZOrder		      4442
+      ShowName		      off
+      LowerValue	      "-25"
+      UpperValue	      "25"
+    }
+    Block {
+      BlockType		      DeadZone
+      Name		      "Dead Zone 6"
+      SID		      "4245"
+      Position		      [925, 289, 945, 311]
+      ZOrder		      4443
+      ShowName		      off
+      LowerValue	      "-25"
+      UpperValue	      "25"
+    }
+    Block {
       BlockType		      Demux
       Name		      "Demux3"
       SID		      "776"
@@ -19852,7 +19921,7 @@ Model {
       BlockType		      From
       Name		      "Left Torque14"
       SID		      "2826"
-      Position		      [885, 68, 925, 82]
+      Position		      [865, 68, 905, 82]
       ZOrder		      4284
       ShowName		      off
       GotoTag		      "T11"
@@ -19861,7 +19930,7 @@ Model {
       BlockType		      From
       Name		      "Left Torque15"
       SID		      "2827"
-      Position		      [885, 113, 925, 127]
+      Position		      [865, 113, 905, 127]
       ZOrder		      4285
       ShowName		      off
       GotoTag		      "T12"
@@ -19870,7 +19939,7 @@ Model {
       BlockType		      From
       Name		      "Left Torque16"
       SID		      "2828"
-      Position		      [885, 158, 925, 172]
+      Position		      [865, 158, 905, 172]
       ZOrder		      4286
       ShowName		      off
       GotoTag		      "T13"
@@ -19897,7 +19966,7 @@ Model {
       BlockType		      From
       Name		      "Left Torque19"
       SID		      "2829"
-      Position		      [885, 203, 925, 217]
+      Position		      [865, 203, 905, 217]
       ZOrder		      4287
       ShowName		      off
       GotoTag		      "T21"
@@ -19924,7 +19993,7 @@ Model {
       BlockType		      From
       Name		      "Left Torque21"
       SID		      "2830"
-      Position		      [885, 248, 925, 262]
+      Position		      [865, 248, 905, 262]
       ZOrder		      4288
       ShowName		      off
       GotoTag		      "T22"
@@ -19933,7 +20002,7 @@ Model {
       BlockType		      From
       Name		      "Left Torque22"
       SID		      "2831"
-      Position		      [885, 293, 925, 307]
+      Position		      [865, 293, 905, 307]
       ZOrder		      4289
       ShowName		      off
       GotoTag		      "T23"
@@ -20583,7 +20652,6 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
-		Visible			"off"
 	      }
 	      Object {
 		$ObjectID		37
@@ -26704,43 +26772,43 @@ Model {
       ZOrder		      871
       SrcBlock		      "Left Torque14"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
+      DstBlock		      "Dead Zone 1"
       DstPort		      1
     }
     Line {
       ZOrder		      872
       SrcBlock		      "Left Torque15"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
-      DstPort		      2
+      DstBlock		      "Dead Zone 2"
+      DstPort		      1
     }
     Line {
       ZOrder		      873
       SrcBlock		      "Left Torque16"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
-      DstPort		      3
+      DstBlock		      "Dead Zone 3"
+      DstPort		      1
     }
     Line {
       ZOrder		      874
       SrcBlock		      "Left Torque19"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
-      DstPort		      4
+      DstBlock		      "Dead Zone 4"
+      DstPort		      1
     }
     Line {
       ZOrder		      875
       SrcBlock		      "Left Torque21"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
-      DstPort		      5
+      DstBlock		      "Dead Zone 5"
+      DstPort		      1
     }
     Line {
       ZOrder		      876
       SrcBlock		      "Left Torque22"
       SrcPort		      1
-      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
-      DstPort		      6
+      DstBlock		      "Dead Zone 6"
+      DstPort		      1
     }
     Line {
       ZOrder		      894
@@ -26983,6 +27051,48 @@ Model {
       SrcPort		      1
       DstBlock		      "Omni Two-Robot ADAMS Model v2015"
       DstPort		      7
+    }
+    Line {
+      ZOrder		      984
+      SrcBlock		      "Dead Zone 1"
+      SrcPort		      1
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      985
+      SrcBlock		      "Dead Zone 2"
+      SrcPort		      1
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
+      DstPort		      2
+    }
+    Line {
+      ZOrder		      986
+      SrcBlock		      "Dead Zone 3"
+      SrcPort		      1
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
+      DstPort		      3
+    }
+    Line {
+      ZOrder		      987
+      SrcBlock		      "Dead Zone 4"
+      SrcPort		      1
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
+      DstPort		      4
+    }
+    Line {
+      ZOrder		      988
+      SrcBlock		      "Dead Zone 5"
+      SrcPort		      1
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
+      DstPort		      5
+    }
+    Line {
+      ZOrder		      989
+      SrcBlock		      "Dead Zone 6"
+      SrcPort		      1
+      DstBlock		      "Omni Two-Robot ADAMS Model v2015"
+      DstPort		      6
     }
   }
 }
