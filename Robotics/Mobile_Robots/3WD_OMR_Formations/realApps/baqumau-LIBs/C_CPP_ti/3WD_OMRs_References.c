@@ -515,8 +515,8 @@ void computeStatical01(Reference REF, enum Control_System consys){
         // Computing equations for generation of static reference profiles in the cluster space:
         switch(Robots_Qty){
             case 2:{
-                float d_ph1_k = 0.0f;                                                       // Desired angular velocity of robot 1 (rad/s).
-                float d_ph2_k = 0.0f;                                                       // Desired angular velocity of robot 2 (rad/s).
+                float d_ph1_k = 1.0f;                                                       // Desired angular velocity of robot 1 (rad/s).
+                float d_ph2_k = -1.0f;                                                      // Desired angular velocity of robot 2 (rad/s).
                 //------------------------------Cluster Space--------------------------------
                 REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
                 REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.

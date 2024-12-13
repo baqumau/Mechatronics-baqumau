@@ -660,17 +660,17 @@ __interrupt void cpu_timer2_isr(void){
             case 2:{
                 // Saving another OMRs formation variables data in a string-format version:
                 memset_fast(var00,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(GPI.y_k[0]),var00,3);
+                ftoa(roundToThreeDecimals(errors_k[0]),var00,3);
                 memset_fast(var01,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(GPI.y_k[1]),var01,3);
+                ftoa(roundToThreeDecimals(errors_k[1]),var01,3);
                 memset_fast(var02,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(GPI.y_k[2]),var02,3);
+                ftoa(roundToThreeDecimals(errors_k[2]),var02,3);
                 memset_fast(var03,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(GPI.y_k[3]),var03,3);
+                ftoa(roundToThreeDecimals(errors_k[3]),var03,3);
                 memset_fast(var04,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(GPI.y_k[4]),var04,3);
+                ftoa(roundToThreeDecimals(errors_k[4]),var04,3);
                 memset_fast(var05,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(GPI.y_k[5]),var05,3);
+                ftoa(roundToThreeDecimals(errors_k[5]),var05,3);
                 memset_fast(var06,0,bufferSize_3);
                 ftoa(roundToThreeDecimals(RSO.y_k[12]),var06,3);
                 memset_fast(var07,0,bufferSize_3);
@@ -850,8 +850,8 @@ __interrupt void scia_rx_isr(void){
                     float dc_0 = FMR.c_k[3];                                            // [mm], initial distance between both OMRs.
                     float ph1_0 = FMR.q_k[2];                                           // [rad], initial orientation of robot 1.
                     float ph2_0 = FMR.q_k[5];                                           // [rad], initial orientation of robot 2.
-                    float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
-                    float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
+                    float d_ph1_0 = 1.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = -1.0f;                                              // [rad/s], desired initial angular velocity of robot 2.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
@@ -1207,7 +1207,7 @@ void scic_fifo_init(void){
     ScicRegs.SCIFFRX.bit.RXFIFORESET = 1;
     //-------------------------------------------------------------------------------------------------------------------
     // Enabling the RX FIFO interrupt:
-    ScicRegs.SCIFFRX.bit.RXFFIENA = 1;
+    ScicRegs.SCIFFRX.bit.RXFFIENA = 0;
     ScicRegs.SCICTL1.bit.RXERRINTENA = 0;                                               // Disables the receive error interrupt.
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling the TX FIFO interrupt:
