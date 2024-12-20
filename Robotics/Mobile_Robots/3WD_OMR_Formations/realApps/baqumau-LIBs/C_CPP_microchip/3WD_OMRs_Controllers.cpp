@@ -74,11 +74,11 @@ bool allocateMatrix(Matrix *MAT, int rows, int cols){
     return true;                                                                            // Memory allocation successful.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Function to free memory for the matrix in the struct:
+// Function to free memory for the matrix in the structure:
 void freeMatrix(Matrix *MAT){
     int i;                                                                                  // Declaration of i as integer variable.
     for(i = 0; i < MAT->rows; i++){
-        free(MAT->data[i]);                                                                 // Liberate space for MAT struct.
+        free(MAT->data[i]);                                                                 // Liberate space for MAT structure.
     }
     free(MAT->data);
     MAT->rows = 0;                                                                          // Set rows size of MAT to zero.
@@ -356,6 +356,8 @@ RS_Observer createRS_Observer(float sampleTime, float gains[9*Robots_Qty][3*Robo
     RSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the RSO structure.
     RSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the RSO structure.
     RSO.gamma = epsilon;                                                                    // Small constant used in the RSO observer.
+    RSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    RSO.gamma_gamma_gamma = epsilon*RSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&RSO.alpha_1, s, s) && allocateMatrix(&RSO.alpha_2, s, s) && allocateMatrix(&RSO.alpha_3, s, s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -390,7 +392,7 @@ void init_RS_Observer(RS_Observer RSO, float x_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
     float Xi_0[2*RSO.s_state];                                                              // Variable to save initial conditions for integrator RSO.INT.
     for(i = 0; i < RSO.s_state; i++){
-        RSO.X_0[i] = x_0[i];                                                                // Saving initial conditions data for x(0) within struct RSO.
+        RSO.X_0[i] = x_0[i];                                                                // Saving initial conditions data for x(0) within RSO structure.
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within RSO.INT structure.
         Xi_0[i+RSO.s_state] = x_0[i];                                                       // Saving initial conditions for x2(0) within RSO.INT structure.
     }
@@ -463,9 +465,9 @@ void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_
                     for(j = 0; j < RSO.s_base; j++){
                         // Compute state correction for x1(k + 1), x2(k + 1) and x3(k + 1):
                         RSO.x1_kp1[i] += RSO.alpha_1.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma);
-                        RSO.x2_kp1[i] += RSO.alpha_2.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma*RSO.gamma);
+                        RSO.x2_kp1[i] += RSO.alpha_2.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma_gamma);
                         // Final prediction result for x3(k + 1):
-                        RSO.x3_kp1[i] += RSO.alpha_3.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma*RSO.gamma*RSO.gamma);
+                        RSO.x3_kp1[i] += RSO.alpha_3.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma_gamma_gamma);
                         // Updating vector fields F(k) and G(k):
                         RSO.F_k[i] += W1_k[i][j]*RSO.x2_k[j];                               // Compute vector field F(k).
                         RSO.G_k[i] += W2_k[i][j]*fmr_u_k[j];                                // Compute vector field G(k).
@@ -714,6 +716,8 @@ CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][
     CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the CSO structure.
     CSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the CSO structure.
     CSO.gamma = epsilon;                                                                    // Small constant used in the CSO observer.
+    CSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    CSO.gamma_gamma_gamma = epsilon*CSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&CSO.alpha_1,s,s) && allocateMatrix(&CSO.alpha_2,s,s) && allocateMatrix(&CSO.alpha_3,s,s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -850,9 +854,9 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                     for(j = 0; j < m; j++){
                         // Compute state correction for z1(k + 1), z2(k + 1) and z3(k + 1):
                         CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma);
-                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma);
+                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma);
                         // Final prediction result for z3(k + 1):
-                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma*CSO.gamma);
+                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
                     }
                     for(j = 0; j < n; j++){
                         // Updating vector fields F(k) and G(k):
@@ -895,6 +899,8 @@ CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)
     CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the CSO structure.
     CSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the CSO structure.
     CSO.gamma = epsilon;                                                                    // Small constant used in the CSO observer.
+    CSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    CSO.gamma_gamma_gamma = epsilon*CSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&CSO.alpha_1,s,s) && allocateMatrix(&CSO.alpha_2,s,s) && allocateMatrix(&CSO.alpha_3,s,s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -1033,9 +1039,9 @@ void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                     for(j = 0; j < m; j++){
                         // Compute state correction for z1(k + 1), z2(k + 1) and z3(k + 1):
                         CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma);
-                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma);
+                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma);
                         // Final prediction result for z3(k + 1):
-                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma*CSO.gamma);
+                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
                     }
                     for(j = 0; j < n; j++){
                         // Updating vector fields F(k) and G(k):

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-// #include <math.h>
+#include <math.h>
 #include <float.h>
 #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "3WD_OMRs_References.h"
@@ -186,8 +186,8 @@ void computeCircumference01(Reference REF, enum Control_System consys, int itera
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
         // Computing equations for circumference profiles generation in the cluster space:
-        float Vc = 40.0f;                                                                   // [mm/s], linear velocity of cluster centroid.
-        float Rc = 1200.0f;                                                                 // [mm], desired radius of planned trajectory.
+        float Vc = 100.0f;                                                                  // [mm/s], linear velocity of cluster centroid.
+        float Rc = 800.0f;                                                                  // [mm], desired radius of planned trajectory.
         float Ac = Vc*Vc/Rc;                                                                // Precompute angular acceleration Vc^2/Rc.
         switch(Robots_Qty){
             case 2:{
@@ -515,8 +515,8 @@ void computeStatical01(Reference REF, enum Control_System consys){
         // Computing equations for generation of static reference profiles in the cluster space:
         switch(Robots_Qty){
             case 2:{
-                float d_ph1_k = 0.2f;                                                      // Desired angular velocity of robot 1 (rad/s).
-                float d_ph2_k = -0.2f;                                                     // Desired angular velocity of robot 2 (rad/s).
+                float d_ph1_k = 0.0f;                                                       // Desired angular velocity of robot 1 (rad/s).
+                float d_ph2_k = 0.0f;                                                       // Desired angular velocity of robot 2 (rad/s).
                 //------------------------------Cluster Space--------------------------------
                 REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
                 REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.

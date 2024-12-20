@@ -168,8 +168,6 @@ typedef struct{
     int s_state;                                                                // Size of the state.
     float Ts;                                                                   // Sample time.
     float gamma;                                                                // Including a sufficiently small positive constant (0 < gamma < 1).
-    float gamma_gamma;                                                          // Saves gamma^2.
-    float gamma_gamma_gamma;                                                    // Saves gamma^3.
     Matrix alpha_1;                                                             // First gains matrix of RS observer.
     Matrix alpha_2;                                                             // Second gains matrix of RS observer.
     Matrix alpha_3;                                                             // Third gains matrix of RS observer.
@@ -184,7 +182,7 @@ typedef struct{
     float *x3_kp1;                                                              // State variables used in this case to compute the derivative of x3(k) according to the model.
     float *y_k;                                                                 // Output variables.
     bool *flag;                                                                 // Execution flag.
-    Integrator INT;                                                             // Creates a Integrator needed for this RS_Observer structure.
+    Integrator INT;                                                             // Creates a Integrator needed for this RS_Observer struct.
 } RS_Observer;                                                                  // High-gain observer in the robot space.
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to implement the m-robot cluster high-gain observer:
@@ -194,8 +192,6 @@ typedef struct{
     int s_state;                                                                // Size of the state.
     float Ts;                                                                   // Sample time.
     float gamma;                                                                // Including a sufficiently small positive constant (0 < gamma < 1).
-    float gamma_gamma;                                                          // Saves gamma^2.
-    float gamma_gamma_gamma;                                                    // Saves gamma^3.
     Matrix alpha_1;                                                             // First gains matrix of CS observer.
     Matrix alpha_2;                                                             // Second gains matrix of CS observer.
     Matrix alpha_3;                                                             // Third gains matrix of CS observer.
@@ -221,8 +217,6 @@ typedef struct{
     int s_state;                                                                // Size of the state.
     float Ts;                                                                   // Sample time.
     float gamma;                                                                // Including a sufficiently small positive constant (0 < gamma < 1).
-    float gamma_gamma;                                                          // Saves gamma^2.
-    float gamma_gamma_gamma;                                                    // Saves gamma^3.
     Matrix alpha_1;                                                             // First gains matrix of CS observer.
     Matrix alpha_2;                                                             // Second gains matrix of CS observer.
     Matrix alpha_3;                                                             // Third gains matrix of CS observer.

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-// #include <math.h>
+#include <math.h>
 #include <float.h>
 #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "3WD_OMRs_Controllers.h"
@@ -43,14 +43,14 @@ float roundf_fast(float num){
 //---------------------------------------------------------------------------------------------------------------
 // Function to round a floating-point number to three decimal places:
 float roundToThreeDecimals(float num){
-    return roundf_fast(num*1000.0f)/1000.0f;                                                // Return a fixed-point number with three decimals.
-    // return roundf(num*1000.0f)/1000.0f;                                                     // Return a fixed-point number with three decimals.
+    // return roundf_fast(num*1000.0f)/1000.0f;                                                // Return a fixed-point number with three decimals.
+    return roundf(num*1000.0f)/1000.0f;                                                     // Return a fixed-point number with three decimals.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Function to round a floating-point number to four decimal places:
 float roundToFourDecimals(float num){
-    return roundf_fast(num*10000.0f)/10000.0f;                                              // Return a fixed-point number with four decimals.
-    // return roundf(num*10000.0f)/10000.0f;                                                   // Return a fixed-point number with four decimals.
+    // return roundf_fast(num*10000.0f)/10000.0f;                                              // Return a fixed-point number with four decimals.
+    return roundf(num*10000.0f)/10000.0f;                                                   // Return a fixed-point number with four decimals.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Function to compute a custom hyperbolic tangent for a floating-point number x:
@@ -162,14 +162,15 @@ void initStMatrix(St_Matrix *SMAT){
 //---------------------------------------------------------------------------------------------------------------
 // Creating integration structure:
 Integrator createIntegrator(int inputSize, float sampleTime, float gain){
+    int s = 2*inputSize;                                                                    // Declaration of s as integer variable.
     // Configuring the members of the Integrator structure:
     Integrator INT;                                                                         // Creates integrator structure.
     INT.s_in = inputSize;                                                                   // Assign value of inputSize to the member s_in of the INT structure.
     INT.s_out = inputSize;                                                                  // Assign value of outputSize to the member s_out of the INT structure.
-    INT.s_state = 2*inputSize;                                                              // Assign value of statetSize to the member s_state of the INT structure.
+    INT.s_state = s;                                                                        // Assign value of statetSize to the member s_state of the INT structure.
     INT.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the INT structure.
     INT.gain = gain;                                                                        // Assign a gain value to the integrator.
-    INT.X_0 = (float *)malloc(2*inputSize * sizeof(float));                                 // Allocate memory for the initial state vector x(0) = [x1(0) x2(0)]'.
+    INT.X_0 = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the initial state vector x(0) = [x1(0) x2(0)]'.
     INT.x1_k = (float *)malloc(inputSize * sizeof(float));                                  // Allocate memory for the input vector u(k) = x1(k).
     INT.x1_kp1 = (float *)malloc(inputSize * sizeof(float));                                // Allocate memory for the input vector u(k + 1) = x1(k + 1).
     INT.x2_k = (float *)malloc(inputSize * sizeof(float));                                  // Allocate memory for the state vector x2(k).
@@ -216,14 +217,15 @@ void Integration(Integrator INT, float input[]){
 //---------------------------------------------------------------------------------------------------------------
 // Creating a simple differentiation structure:
 simpleDifferentiator createSimpleDifferentiator(int inputSize, float sampleTime, float gain){
+    int s = 2*inputSize;                                                                    // Declaration of s as integer variable.
     // Configuring the members of the differentiation structure:
     simpleDifferentiator SDIF;                                                              // Creates differentiation structure.
     SDIF.s_in = inputSize;                                                                  // Assign value of inputSize to the member s_in of the SDIF structure.
     SDIF.s_out = inputSize;                                                                 // Assign value of outputSize to the member s_out of the SDIF structure.
-    SDIF.s_state = 2*inputSize;                                                             // Assign value of statetSize to the member s_state of the SDIF structure.
+    SDIF.s_state = s;                                                                       // Assign value of statetSize to the member s_state of the SDIF structure.
     SDIF.Ts = sampleTime;                                                                   // Assign value of sampleTime to the member TS of the SDIF structure.
     SDIF.gain = gain;                                                                       // Assign a gain value to this differentiation structure.
-    SDIF.X_0 = (float *)malloc(2*inputSize * sizeof(float));                                // Allocate memory for the initial state vector x(0) = [x1(0) x2(0)]'.
+    SDIF.X_0 = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the initial state vector x(0) = [x1(0) x2(0)]'.
     SDIF.x1_k = (float *)malloc(inputSize * sizeof(float));                                 // Allocate memory for the input vector u(k) = x1(k).
     SDIF.x1_kp1 = (float *)malloc(inputSize * sizeof(float));                               // Allocate memory for the input vector u(k + 1) = x1(k + 1).
     SDIF.x2_k = (float *)malloc(inputSize * sizeof(float));                                 // Allocate memory for the state vector x2(k).
@@ -272,16 +274,17 @@ void simpleDifferentiation(simpleDifferentiator SDIF, float input[]){
 //---------------------------------------------------------------------------------------------------------------
 // Creating a differentiation structure:
 Differentiator createDifferentiator(int inputSize, float sampleTime, float gain, float filter_coeff){
+    int s = 2*inputSize;                                                                    // Declaration of s as integer variable.
     // Configuring the members of the differentiation structure:
     Differentiator DIF;                                                                     // Creates differentiation structure.
     DIF.s_in = inputSize;                                                                   // Assign value of inputSize to the member s_in of the DIF structure.
     DIF.s_out = inputSize;                                                                  // Assign value of outputSize to the member s_out of the DIF structure.
-    DIF.s_state = 2*inputSize;                                                              // Assign value of statetSize to the member s_state of the DIF structure.
+    DIF.s_state = s;                                                                        // Assign value of statetSize to the member s_state of the DIF structure.
     DIF.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the DIF structure.
     DIF.gain = gain;                                                                        // Assign a gain value to this differentiation structure.
     DIF.fc = filter_coeff;                                                                  // Assign a filter coefficient for achieving a differentiation smooth function.
     //-----------------------------------------------
-    DIF.X_0 = (float *)malloc(2*inputSize * sizeof(float));                                 // Allocate memory for the initial state vector x(0) = [x1(0) x2(0)]'.
+    DIF.X_0 = (float *)malloc(s * sizeof(float));                                 // Allocate memory for the initial state vector x(0) = [x1(0) x2(0)]'.
     DIF.x1_k = (float *)malloc(inputSize * sizeof(float));                                  // Allocate memory for the input vector u(k) = x1(k).
     DIF.x1_kp1 = (float *)malloc(inputSize * sizeof(float));                                // Allocate memory for the input vector u(k + 1) = x1(k + 1).
     DIF.x2_k = (float *)malloc(inputSize * sizeof(float));                                  // Allocate memory for the state vector x2(k).
@@ -368,7 +371,7 @@ HOSM_Differentiator createHOSMDifferentiator(int inputSize, float sampleTime, fl
     return SMDIF;
 }
 //---------------------------------------------------------------------------------------------------------------
-// Initialization function for HOSM-based differentiator:
+// Initialization function for HOSM-based differentiation structure:
 void initHOSMDifferentiator(HOSM_Differentiator SMDIF, float x_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
     for(i = 0; i < SMDIF.s_state; i++){
@@ -401,11 +404,11 @@ void HOSMDifferentiation(HOSM_Differentiator SMDIF, float input[]){
             SMDIF.x3_k[i] = SMDIF.x3_kp1[i];                                                // Updates the state vector x3(k), corresponding to the second derivative of SMDIF differentiator.
             // Computing auxiliary operations:
             float OP1 = SMDIF.x1_k[i] - input[i];                                           // Precompute required operator 1 (tracking error of the input).
-            float OP2 = cbrtf_fast(fabsf(OP1));                                             // Precompute required operator 2 (cbrt is the cubic root of a number).
-            // float OP2 = cbrtf(fabsf(OP1));                                                   // Precompute required operator 2 (cbrt is the cubic root of a number).
+            // float OP2 = cbrtf_fast(fabsf(OP1));                                             // Precompute required operator 2 (cbrt is the cubic root of a number).
+            float OP2 = cbrtf(fabsf(OP1));                                                   // Precompute required operator 2 (cbrt is the cubic root of a number).
             float OP3 = signf(OP1);                                                         // Precompute required operator 3 (sign function).
-            float OP4 = cbrtf_fast(SMDIF.Lip[i]);                                           // Precompute required operator 4.
-            // float OP4 = cbrtf(SMDIF.Lip[i]);                                                // Precompute required operator 4.
+            // float OP4 = cbrtf_fast(SMDIF.Lip[i]);                                           // Precompute required operator 4.
+            float OP4 = cbrtf(SMDIF.Lip[i]);                                                // Precompute required operator 4.
             // Computing x1(k + 1) equation, for SMDIF differentiation structure:
             SMDIF.x1_kp1[i] = SMDIF.x1_k[i] - SMDIF.Ts*(SMDIF.lambda[2]*OP2*OP2*OP3*OP4) + SMDIF.Ts*SMDIF.x2_k[i] + SMDIF.Ts*SMDIF.Ts*SMDIF.x3_k[i]/2.0f;
             // Computing x2(k + 1) equation, for SMDIF differentiation structure:
@@ -432,6 +435,8 @@ RS_Observer createRS_Observer(float sampleTime, float gains[9*Robots_Qty][3*Robo
     RSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the RSO structure.
     RSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the RSO structure.
     RSO.gamma = epsilon;                                                                    // Small constant used in the RSO observer.
+    RSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    RSO.gamma_gamma_gamma = epsilon*RSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&RSO.alpha_1, s, s) && allocateMatrix(&RSO.alpha_2, s, s) && allocateMatrix(&RSO.alpha_3, s, s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -470,7 +475,7 @@ void init_RS_Observer(RS_Observer RSO, float x_0[]){
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within RSO.INT structure.
         Xi_0[i+RSO.s_state] = x_0[i];                                                       // Saving initial conditions for x2(0) within RSO.INT structure.
     }
-    // Initiating integrator RSO.INT and variables x1(k), x2(k) and x3(k):
+    // Initiating RSO.INT integration structure and variables x1(k), x2(k) and x3(k):
     initIntegrator(RSO.INT,Xi_0);                                                           // Initialize integrator of RSO high-gain observer.
     for(i = 0; i < RSO.s_base; i++){
         RSO.x1_k[i] = x_0[i];                                                               // Saving initial conditions data for x1(k) within RSO structure.
@@ -539,9 +544,9 @@ void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_
                     for(j = 0; j < RSO.s_base; j++){
                         // Compute state correction for x1(k + 1), x2(k + 1) and x3(k + 1):
                         RSO.x1_kp1[i] += RSO.alpha_1.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma);
-                        RSO.x2_kp1[i] += RSO.alpha_2.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma*RSO.gamma);
+                        RSO.x2_kp1[i] += RSO.alpha_2.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma_gamma);
                         // Final prediction result for x3(k + 1):
-                        RSO.x3_kp1[i] += RSO.alpha_3.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma*RSO.gamma*RSO.gamma);
+                        RSO.x3_kp1[i] += RSO.alpha_3.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma_gamma_gamma);
                         // Updating vector fields F(k) and G(k):
                         RSO.F_k[i] += W1_k[i][j]*RSO.x2_k[j];                               // Compute vector field F(k).
                         RSO.G_k[i] += W2_k[i][j]*fmr_u_k[j];                                // Compute vector field G(k).
@@ -790,6 +795,8 @@ CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][
     CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the CSO structure.
     CSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the CSO structure.
     CSO.gamma = epsilon;                                                                    // Small constant used in the CSO observer.
+    CSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    CSO.gamma_gamma_gamma = epsilon*CSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&CSO.alpha_1,s,s) && allocateMatrix(&CSO.alpha_2,s,s) && allocateMatrix(&CSO.alpha_3,s,s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -830,15 +837,15 @@ void init_CS_Observer01(CS_Observer CSO, float z_0[]){
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within CSO.INT structure.
     }
     for(i = 0; i < 3; i++){
-        for (j = 0; j < m; j++){
+        for(j = 0; j < m; j++){
             CSO.Z_0[s] = z_0[6*i+3+j];                                                      // Saving initial conditions data for z(0) within CSO structure.
-            Xi_0[s+3*m] = z_0[6*i+3+j];                                                     // Saving initial conditions for x2(0) within CSO.INT structure.
+            Xi_0[s+CSO.s_state] = z_0[6*i+3+j];                                             // Saving initial conditions for x2(0) within CSO.INT structure.
             s++;                                                                            // Increasing s.
         }
     }
     for(i = 0; i < n; i++){
         Xd_0[i] = z_0[i];                                                                   // Saving initial conditions for x1(0) within CSO.DIF structure.
-        Xd_0[i+n] = 0.0f;                                                                   // Saving initial conditions for x2(0) within CSO.DIF structure.
+        Xd_0[i+n] = z_0[i+n];                                                               // Saving initial conditions for x2(0) within CSO.DIF structure.
     }
     // Initiating CSO.INT integration and CSO.DIF differentiation structures:
     initIntegrator(CSO.INT,Xi_0);                                                           // Initialize integrator of CSO high-gain observer.
@@ -927,9 +934,9 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                     for(j = 0; j < m; j++){
                         // Compute state correction for z1(k + 1), z2(k + 1) and z3(k + 1):
                         CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma);
-                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma);
+                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma);
                         // Final prediction result for z3(k + 1):
-                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma*CSO.gamma);
+                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
                     }
                     for(j = 0; j < n; j++){
                         // Updating vector fields F(k) and G(k):
@@ -945,7 +952,7 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                 }
                 for(i = 0; i < n; i++){
                     // Output of high-gain observer CSO:
-                    CSO.y_k[i] = CSO.DIF.y_k[i];                                            // Saving internal differentaition of CSO structure within its output y(k).
+                    CSO.y_k[i] = CSO.DIF.y_k[i];                                            // Saving internal differentiation of CSO structure within its output y(k).
                     CSO.y_k[i+n] = 0.0f;
                 }
                 for (j = 0; j < m; j++){
@@ -972,6 +979,8 @@ CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)
     CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the CSO structure.
     CSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the CSO structure.
     CSO.gamma = epsilon;                                                                    // Small constant used in the CSO observer.
+    CSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    CSO.gamma_gamma_gamma = epsilon*CSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&CSO.alpha_1,s,s) && allocateMatrix(&CSO.alpha_2,s,s) && allocateMatrix(&CSO.alpha_3,s,s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -1012,9 +1021,9 @@ void init_CSx_Observer01(CSx_Observer CSO, float z_0[]){
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within CSO.INT structure.
     }
     for(i = 0; i < 3; i++){
-        for (j = 0; j < m; j++){
+        for(j = 0; j < m; j++){
             CSO.Z_0[s] = z_0[6*i+3+j];                                                      // Saving initial conditions data for z(0) within CSO structure.
-            Xi_0[s+3*m] = z_0[6*i+3+j];                                                     // Saving initial conditions for x2(0) within CSO.INT structure.
+            Xi_0[s+CSO.s_state] = z_0[6*i+3+j];                                             // Saving initial conditions for x2(0) within CSO.INT structure.
             s++;                                                                            // Increasing s.
         }
     }
@@ -1050,7 +1059,7 @@ void init_CSx_Observer01(CSx_Observer CSO, float z_0[]){
 // Cluster space estimation function for CS observer 01 (variant x):
 void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]){
     int i, j, m = Robots_Qty-1, n = 3*Robots_Qty;                                           // Declaration of i, j, m and n as integer variables.
-    // Getting output of integrator CSO.INT:
+    // Getting output of CSO.INT integration structure:
     for(i = 0; i < m; i++){
         CSO.z1_k[i] = CSO.INT.y_k[i];                                                       // Updating data for z1(k) within CSO structure.
         CSO.z2_k[i] = CSO.INT.y_k[i+m];                                                     // Updating data for z2(k) within CSO structure.
@@ -1110,9 +1119,9 @@ void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                     for(j = 0; j < m; j++){
                         // Compute state correction for z1(k + 1), z2(k + 1) and z3(k + 1):
                         CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma);
-                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma);
+                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma);
                         // Final prediction result for z3(k + 1):
-                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma*CSO.gamma);
+                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
                     }
                     for(j = 0; j < n; j++){
                         // Updating vector fields F(k) and G(k):
@@ -1128,7 +1137,7 @@ void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                 }
                 for(i = 0; i < n; i++){
                     // Output of high-gain observer CSO:
-                    CSO.y_k[i] = CSO.SMDIF.y_k[i+n];                                        // Saving internal differentaition of CSO structure within its output y(k).
+                    CSO.y_k[i] = CSO.SMDIF.y_k[i+n];                                        // Saving internal differentiation of CSO structure within its output y(k).
                     CSO.y_k[i+n] = 0.0f;
                 }
                 for (j = 0; j < m; j++){
@@ -1201,7 +1210,7 @@ void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], 
     // Execute time-updating algorithm for designed sliding surfaces as SLS:
     if(SLS.flag[0]){
         for(i = 0; i < SLS.s_out; i++){
-            // Getting output of integrator SLS.INT:
+            // Getting output of SLS.INT integration structure:
             SLS.v2_k[i] = SLS.INT.y_k[i];                                                   // Updating data for v2(k) within SLS structure (integration function).
             //-----------------------------------------------
             // Cumputing the current values for sliding surfaces as v1(k):
@@ -1791,8 +1800,8 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                         else SMC.kappa_k[i] += fabsf(W3_k[i][j])*(til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
                     }
                     // Updating the auxiliary control input:
-                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
-                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon*sls_y_k[i]);
+                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
+                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon*sls_y_k[i]);
                 }
                 for(i = 0; i < SMC.s_out; i++){
                     // Updating the output of SMC strategy --> y(k):

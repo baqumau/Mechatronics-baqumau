@@ -34,10 +34,10 @@
 #define freq_hz_0 250                                                                   // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                                   // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 40                                                                    // Frequency in Hz for instructions execution of Timer 2.
-#define exe_minutes 5                                                                   // Run time minutes.
+#define exe_minutes 2                                                                   // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
-// #include <math.h>
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -145,7 +145,7 @@ char *var10;                                                                    
 char *var11;                                                                            // Multi-purpose char variable 11.
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
-enum Control_System consys = ADRC_RS;                                                   // Declare the control system type (ADRC_RS or SMC_CS at the moment).
+enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
 enum Reference_Type reftype = STATIC_01;                                                // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
@@ -184,18 +184,18 @@ float gpi_Gains[3*Robots_Qty][3] = {
 };
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
-// Float parameters to define the observer gains of CSO, for CS SMC:
+// Float parameters to define the observer gains of CSO, for SMC_CS:
 float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                                           // Setting alpha_1.
   {75.3099f},                                                                           // Setting alpha_2.
   {68.4636f}                                                                            // Setting alpha_3.
 };
-// Float parameters to define the sliding gains of SLS, for CS SMC strategy:
+// Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
 float sls_Gains[3*Robots_Qty+1] = {1.54f, 1.54f, 1.68f, 1.57f, 1.68f, 1.68f, 22.0f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
 float sms_Gains[3*Robots_Qty] = {1.44f, 1.44f, 1.44f, 1.44f, 1.44f, 1.44f};
-// Defining the constants for bounding the input torque disturbances according to the CS SMC strategy:
+// Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
 #define rho_1 (3.0f/4.0f)*mt_1*l_1*l_1/(r_1*r_1)                                        // Constant for bounding the input torque disturbances in robot 1.
 #define rho_2 (3.0f/4.0f)*mt_2*l_2*l_2/(r_2*r_2)                                        // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
@@ -530,7 +530,7 @@ __interrupt void cpu_timer1_isr(void){
         computeCSVariables(FMR);                                                        // Compute the cluster space variables of FMR formation.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the desired reference tracking-trajectories:
-        // computeCircumference01(REF,consys,CpuTimer1.InterruptCount);                 // Compute desired reference profiles for OMRs synchronization.
+        // computeCircumference01(REF,consys,CpuTimer1.InterruptCount);                    // Compute desired reference profiles for OMRs synchronization.
         // computeInfinity01(REF,consys,CpuTimer1.InterruptCount);                      // Compute desired reference profiles for OMRs synchronization.
         computeStatical01(REF,consys);                                                  // Compute desired reference profiles for OMRs synchronization.
         //---------------------------------------------------------------------------------------------------------------
@@ -567,14 +567,14 @@ __interrupt void cpu_timer1_isr(void){
               }
             case SMC_CS:{
                 //---------------------------------------------SMC_CS----------------------------------------------------
-                // Estimation via High-gain Observer:
+                // Computing the estimation via High-gain Observer:
                 CSx_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);                       // Estimates the OMRs formation output c(k), first derivative and disturbances.
                 //-------------------------------------------------------------------------------------------------------
                 // Computing the sliding surfaces required by SMC CS:
-                compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);                   // Update to current values for sliding surfaces.
+                // compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);                   // Update to current values for sliding surfaces.
                 //-------------------------------------------------------------------------------------------------------
                 // Computing SMC CS strategy:
-                computeSMC_Controller(SMC,REF.y_k,FMR.c_k,CSO.y_k,SLS.y_k,FMR.params);  // Update the current values for SMC CS strategy.
+                // computeSMC_Controller(SMC,REF.y_k,FMR.c_k,CSO.y_k,SLS.y_k,FMR.params);  // Update the current values for SMC CS strategy.
                 //-------------------------------------------------------------------------------------------------------
                 // Conditioning input torque control for OMRs formation:
                 for(i = 0; i < 3; i++){
@@ -590,8 +590,8 @@ __interrupt void cpu_timer1_isr(void){
                   ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                              // Saving same PWMs control signals of OMRs formation, but in string-format.
                   //-----------------------------------------------------------------------------------------------------
                   // Computing tracking errors states:
-                  errors_k[i] = FMR.q_k[i] - REF.x1_k[i];
-                  errors_k[i+3] = FMR.q_k[i+3] - REF.x1_k[i+3];
+                  errors_k[i] = FMR.c_k[i] - REF.y_k[i];
+                  errors_k[i+3] = FMR.c_k[i+3] - REF.y_k[i+3];
                 }
                 break;
             }
@@ -651,44 +651,75 @@ __interrupt void cpu_timer2_isr(void){
                     memset_fast(FMR.cs_k.data[i],0,FMR.cs_k.bufferSize);                // Clear char-type string vector where OMRs' cluster space pose will be saved.
                     ftoa(roundToThreeDecimals(FMR.c_k[i]),FMR.cs_k.data[i],3);          // Saving same cluster space pose of OMRs formation, but in string-format.
                     memset_fast(FMR.us_k.data[i],0,FMR.us_k.bufferSize);                // Clear char-type string vector where OMRs' control signals will be saved.
-                    ftoa(FMR.u_k[i],FMR.us_k.data[i],3);                                // Saving same control signals of OMRs formation, but in string-format.
+                    ftoa(roundToThreeDecimals(FMR.u_k[i]),FMR.us_k.data[i],3);          // Saving same control signals of OMRs formation, but in string-format.
                     memset_fast(FMR.ws_k.data[i],0,FMR.ws_k.bufferSize);                // Clear char-type string vector where angular velocities of OMRs' wheels will be saved.
-                    ftoa(FMR.w_k[i],FMR.ws_k.data[i],3);                                // Saving same above angular velocities of OMRs formation, but in string-format.
+                    ftoa(roundToThreeDecimals(FMR.w_k[i]),FMR.ws_k.data[i],3);          // Saving same above angular velocities of OMRs formation, but in string-format.
                 }
                 break;
             }
             case 2:{
                 // Saving another OMRs formation variables data in a string-format version:
                 memset_fast(var00,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(errors_k[0]),var00,3);
+                ftoa(roundToThreeDecimals(REF.y_k[0]),var00,3);
                 memset_fast(var01,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(errors_k[1]),var01,3);
+                ftoa(roundToThreeDecimals(REF.y_k[1]),var01,3);
                 memset_fast(var02,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(errors_k[2]),var02,3);
+                ftoa(roundToThreeDecimals(REF.y_k[2]),var02,3);
                 memset_fast(var03,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(errors_k[3]),var03,3);
+                ftoa(roundToThreeDecimals(REF.y_k[3]),var03,3);
                 memset_fast(var04,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(errors_k[4]),var04,3);
+                ftoa(roundToThreeDecimals(REF.y_k[4]),var04,3);
                 memset_fast(var05,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(errors_k[5]),var05,3);
-                memset_fast(var06,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[12]),var06,3);
-                memset_fast(var07,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[13]),var07,3);
-                memset_fast(var08,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[14]),var08,3);
-                memset_fast(var09,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[15]),var09,3);
-                memset_fast(var10,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[16]),var10,3);
-                memset_fast(var11,0,bufferSize_3);
-                ftoa(roundToThreeDecimals(RSO.y_k[17]),var11,3);
+                ftoa(roundToThreeDecimals(REF.y_k[5]),var05,3);
+                switch(consys){
+                    case ADRC_RS:{
+                        memset_fast(var06,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(RSO.y_k[12]),var06,3);
+                        memset_fast(var07,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(RSO.y_k[13]),var07,3);
+                        memset_fast(var08,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(RSO.y_k[14]),var08,3);
+                        memset_fast(var09,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(RSO.y_k[15]),var09,3);
+                        memset_fast(var10,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(RSO.y_k[16]),var10,3);
+                        memset_fast(var11,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(RSO.y_k[17]),var11,3);
+                        break;
+                    }
+                    case SMC_CS:{
+                        memset_fast(var06,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[0]),var06,3);
+                        memset_fast(var07,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[1]),var07,3);
+                        memset_fast(var08,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[2]),var08,3);
+                        memset_fast(var09,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[3]),var09,3);
+                        memset_fast(var10,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[4]),var10,3);
+                        memset_fast(var11,0,bufferSize_3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[5]),var11,3);
+                        break;
+                    }
+                }
                 break;
             }
             case 3:{
-                // Packing the relevant measurement variables of OMRs formation:
-                memset_fast(measurements,0,bufferSize_0);                               // Initialize measurements data chain.
-                snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,var06,var07,var08,var09,var10,var11,FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
+                switch(consys){
+                    case ADRC_RS:{
+                        // Packing the relevant measurement variables of OMRs formation:
+                        memset_fast(measurements,0,bufferSize_0);                               // Initialize measurements data chain.
+                        snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.qs_k.data[0],FMR.qs_k.data[1],FMR.qs_k.data[2],FMR.qs_k.data[3],FMR.qs_k.data[4],FMR.qs_k.data[5],var00,var01,var02,var03,var04,var05,var06,var07,var08,var09,var10,var11,FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
+                        break;
+                    }
+                    case SMC_CS:{
+                        // Packing the relevant measurement variables of OMRs formation:
+                        memset_fast(measurements,0,bufferSize_0);                               // Initialize measurements data chain.
+                        snprintf(measurements,bufferSize_0,":0,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%lu;\n",FMR.cs_k.data[0],FMR.cs_k.data[1],FMR.cs_k.data[2],FMR.cs_k.data[3],FMR.cs_k.data[4],FMR.cs_k.data[5],var00,var01,var02,var03,var04,var05,var06,var07,var08,var09,var10,var11,FMR.us_k.data[0],FMR.us_k.data[1],FMR.us_k.data[2],FMR.us_k.data[3],FMR.us_k.data[4],FMR.us_k.data[5],(unsigned long)(CpuTimer1.InterruptCount));
+                        break;
+                    }
+                }
                 break;
             }
             case 0:{
@@ -805,14 +836,14 @@ __interrupt void scia_rx_isr(void){
             switch(reftype){
                 case CIRCUMFERENCE_01:{
                     // Configuring initial parameters for circumference-shape trajectory (check that Rc_0 and Vc_0 are equals to Rc and Vc placed in the trajectory generation source code):
-                    float Cx_0 = 1800.0f;                                               // [mm], initial reference's rotational centre along the workspace's x axis.
+                    float Cx_0 = 1500.0f;                                               // [mm], initial reference's rotational centre along the workspace's x axis.
                     float Cy_0 = 1500.0f;                                               // [mm], initial reference's rotational centre along the workspace's y axis.
-                    float Rc_0 = 1200.0f;                                               // [mm], initial desired radius of planned circumference-shape trajectory.
-                    float Vc_0 = 40.0f;                                                 // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
-                    float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
+                    float Rc_0 = 800.0f;                                                // [mm], initial desired radius of planned circumference-shape trajectory.
+                    float Vc_0 = 100.0f;                                                // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
+                    float Dr_0 = 180.0f;                                                // [mm], initial desired half distance between robots.
                     // Arraying initial conditions for circumference-shape reference trajectory profiles:
-                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cosf(M_PI_4), Vc_0*cosf(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
-                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cosf(M_PI_4), Vc_0*sinf(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cosf(M_PI_4), Vc_0*cosf(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cosf(M_PI_4), Vc_0*sinf(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -848,10 +879,10 @@ __interrupt void scia_rx_isr(void){
                     float yc_0 = FMR.c_k[1];                                            // [mm], initial position of whole cluster along workspace's y axis.
                     float thc_0 = FMR.c_k[2];                                           // [rad], initial orientation of whole cluster in the workspace.
                     float dc_0 = FMR.c_k[3];                                            // [mm], initial distance between both OMRs.
-                    float ph1_0 = FMR.q_k[2];                                           // [rad], initial orientation of robot 1.
-                    float ph2_0 = FMR.q_k[5];                                           // [rad], initial orientation of robot 2.
-                    float d_ph1_0 = 1.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
-                    float d_ph2_0 = -1.0f;                                              // [rad/s], desired initial angular velocity of robot 2.
+                    float ph1_0 = FMR.c_k[4];                                           // [rad], initial orientation of robot 1.
+                    float ph2_0 = FMR.c_k[5];                                           // [rad], initial orientation of robot 2.
+                    float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
@@ -947,6 +978,7 @@ __interrupt void scic_rx_isr(void){
         for(i = 0; i < 3; i++){
             // Saving the angular velocities of omni-wheels attached on OMRs formation (in rad/s).
             FMR.w_k[i+3*SCIC.identifier] = atof(SCIC.MAT3.data[SCIC.identifier][i]);
+            memset_fast(SCIC.MAT3.data[SCIC.identifier][i],0,SCIC.MAT3.zSize);          // Clear data in occupied SCIC char vector.
         }
         //---------------------------------------------------------------------------------------------------------------
         // Clearing buffer within SCIB data structure:

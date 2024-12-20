@@ -74,11 +74,11 @@ bool allocateMatrix(Matrix *MAT, int rows, int cols){
     return true;                                                                            // Memory allocation successful.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Function to free memory for the matrix in the struct:
+// Function to free memory for the matrix in the structure:
 void freeMatrix(Matrix *MAT){
     int i;                                                                                  // Declaration of i as integer variable.
     for(i = 0; i < MAT->rows; i++){
-        free(MAT->data[i]);                                                                 // Liberate space for MAT struct.
+        free(MAT->data[i]);                                                                 // Liberate space for MAT structure.
     }
     free(MAT->data);
     MAT->rows = 0;                                                                          // Set rows size of MAT to zero.
@@ -175,7 +175,7 @@ void initSimpleDifferentiator(simpleDifferentiator SDIF, float x_0[]){
         // Updating output y(k):
         SDIF.y_k[i] = SDIF.gain*SDIF.x2_k[i];                                               // Saving initial conditions data for y_k within SDIF structure.
     }
-    SDIF.flag[0] = true;                                                                    // Flag settled to true, which enables differentiation function defined as SDIF.
+    SDIF.flag[0] = true;                                                                    // Flag settled to true, which enables differentiation function within structure defined as SDIF.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Simple differentiation function:
@@ -190,7 +190,7 @@ void simpleDifferentiation(simpleDifferentiator SDIF, float input[]){
             // Computing the differentiator operator as x2(k + 1):
             SDIF.x2_kp1[i] = (SDIF.x1_kp1[i] - SDIF.x1_k[i])*(1.0f/SDIF.Ts);
             // Updating differentiator output y(k):
-            SDIF.y_k[i] = SDIF.gain*SDIF.x2_k[i];                                           // Determines the output y(k) = x2(k), of differentator SDIF.
+            SDIF.y_k[i] = SDIF.gain*SDIF.x2_k[i];                                           // Determines the output y(k) = x2(k), of SDIF differentator.
         }
     }
     else NOP;                                                                               // No operation.
@@ -237,7 +237,7 @@ void initDifferentiator(Differentiator DIF, float x_0[]){
         // Updating output y(k):
         DIF.y_k[i] = DIF.gain*DIF.x2_k[i];                                                  // Saving initial conditions data for y_k within DIF structure.
     }
-    DIF.flag[0] = true;                                                                     // Flag settled to true, which enables differentiation function defined as DIF.
+    DIF.flag[0] = true;                                                                     // Flag settled to true, which enables differentiation function within DIF structure.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Differentiation function:
@@ -349,13 +349,15 @@ void HOSMDifferentiation(HOSM_Differentiator SMDIF, float input[]){
 RS_Observer createRS_Observer(float sampleTime, float gains[9*Robots_Qty][3*Robots_Qty], float epsilon){
     int i, j, s = 3*Robots_Qty;                                                             // Declaration of i, j, and s as integer variables.
     // Configuring the members of the RS observer structure:
-    RS_Observer RSO;                                                                        // Creates observer struct.
+    RS_Observer RSO;                                                                        // Creates observer structure.
     RSO.s_base = s;                                                                         // Assign size value for the basis of computations. 
-    RSO.s_in = 2*s;                                                                         // Assign value of inputSize to the member s_in of the struct RSO.
-    RSO.s_out = 3*s;                                                                        // Assign value of outputSize to the member s_out of the struct RSO.
-    RSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the struct RSO.
-    RSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the struct RSO.
+    RSO.s_in = 2*s;                                                                         // Assign value of inputSize to the member s_in of the RSO structure.
+    RSO.s_out = 3*s;                                                                        // Assign value of outputSize to the member s_out of the RSO structure.
+    RSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the RSO structure.
+    RSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the RSO structure.
     RSO.gamma = epsilon;                                                                    // Small constant used in the RSO observer.
+    RSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    RSO.gamma_gamma_gamma = epsilon*RSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&RSO.alpha_1, s, s) && allocateMatrix(&RSO.alpha_2, s, s) && allocateMatrix(&RSO.alpha_3, s, s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -378,9 +380,9 @@ RS_Observer createRS_Observer(float sampleTime, float gains[9*Robots_Qty][3*Robo
     RSO.x3_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the state vector x3(k).
     RSO.x3_kp1 = (float *)malloc(s * sizeof(float));                                        // Allocate memory for the state vector x3(k + 1).
     RSO.y_k = (float *)malloc(3*s * sizeof(float));                                         // Allocate memory for the output vector y(k).
-    RSO.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as RSO (disable or enable observer).
+    RSO.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as RSO (disable or enable observer).
     //-----------------------------------------------
-    RSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integrator struct within observer ROS struct.
+    RSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integrator struct within observer RSO structure.
     RSO.flag[0] = false;                                                                    // Setting RSO flag to false.
     return RSO;
 }
@@ -390,23 +392,23 @@ void init_RS_Observer(RS_Observer RSO, float x_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
     float Xi_0[2*RSO.s_state];                                                              // Variable to save initial conditions for integrator RSO.INT.
     for(i = 0; i < RSO.s_state; i++){
-        RSO.X_0[i] = x_0[i];                                                                // Saving initial conditions data for x(0) within struct RSO.
-        Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within RSO.INT struct.
-        Xi_0[i+RSO.s_state] = x_0[i];                                                       // Saving initial conditions for x2(0) within RSO.INT struct.
+        RSO.X_0[i] = x_0[i];                                                                // Saving initial conditions data for x(0) within RSO structure.
+        Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within RSO.INT structure.
+        Xi_0[i+RSO.s_state] = x_0[i];                                                       // Saving initial conditions for x2(0) within RSO.INT structure.
     }
     // Initiating integrator RSO.INT and variables x1(k), x2(k) and x3(k):
     initIntegrator(RSO.INT,Xi_0);                                                           // Initialize integrator of RSO high-gain observer.
     for(i = 0; i < RSO.s_base; i++){
-        RSO.x1_k[i] = x_0[i];                                                               // Saving initial conditions data for x1(k) within RSO struct.
-        RSO.x2_k[i] = x_0[i+RSO.s_base];                                                    // Saving initial conditions data for x2(k) within RSO struct.
-        RSO.x3_k[i] = x_0[i+2*RSO.s_base];                                                  // Saving initial conditions data for x3(k) within RSO struct.
-        RSO.x1_kp1[i] = 0.0f;                                                               // Computing initial values for state x1(k + 1) within RSO struct.
-        RSO.x2_kp1[i] = 0.0f;                                                               // Computing initial values for state x2(k + 1) within RSO struct.
-        RSO.x3_kp1[i] = 0.0f;                                                               // Computing initial values for state x3(k + 1) within RSO struct.
+        RSO.x1_k[i] = x_0[i];                                                               // Saving initial conditions data for x1(k) within RSO structure.
+        RSO.x2_k[i] = x_0[i+RSO.s_base];                                                    // Saving initial conditions data for x2(k) within RSO structure.
+        RSO.x3_k[i] = x_0[i+2*RSO.s_base];                                                  // Saving initial conditions data for x3(k) within RSO structure.
+        RSO.x1_kp1[i] = 0.0f;                                                               // Computing initial values for state x1(k + 1) within RSO structure.
+        RSO.x2_kp1[i] = 0.0f;                                                               // Computing initial values for state x2(k + 1) within RSO structure.
+        RSO.x3_kp1[i] = 0.0f;                                                               // Computing initial values for state x3(k + 1) within RSO structure.
         // Updating y(k):
-        RSO.y_k[i] = RSO.x1_k[i];                                                           // Saving initial conditions data for y(k) within RSO struct as x1(k).
-        RSO.y_k[i+RSO.s_base] = RSO.x2_k[i];                                                // Saving initial conditions data for y(k) within RSO struct as x2(k).
-        RSO.y_k[i+2*RSO.s_base] = RSO.x3_k[i];                                              // Saving initial conditions data for y(k) within RSO struct as x3(k).
+        RSO.y_k[i] = RSO.x1_k[i];                                                           // Saving initial conditions data for y(k) within RSO structure as x1(k).
+        RSO.y_k[i+RSO.s_base] = RSO.x2_k[i];                                                // Saving initial conditions data for y(k) within RSO structure as x2(k).
+        RSO.y_k[i+2*RSO.s_base] = RSO.x3_k[i];                                              // Saving initial conditions data for y(k) within RSO structure as x3(k).
     }
     // Updating the observer flag:
     RSO.flag[0] = true;                                                                     // Flag settled to true, which enables the estimation algorithm on RSO structure.
@@ -417,9 +419,9 @@ void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_
     int i, j;                                                                               // Declaration of i and j as integer variables.
     // Getting output of integrator RSO.INT:
     for(i = 0; i < RSO.s_base; i++){
-        RSO.x1_k[i] = RSO.INT.y_k[i];                                                       // Updating data for x1(k) within RSO struct.
-        RSO.x2_k[i] = RSO.INT.y_k[i+RSO.s_base];                                            // Updating data for x2(k) within RSO struct.
-        RSO.x3_k[i] = RSO.INT.y_k[i+2*RSO.s_base];                                          // Updating data for x3(k) within RSO struct.
+        RSO.x1_k[i] = RSO.INT.y_k[i];                                                       // Updating data for x1(k) within RSO structure.
+        RSO.x2_k[i] = RSO.INT.y_k[i+RSO.s_base];                                            // Updating data for x2(k) within RSO structure.
+        RSO.x3_k[i] = RSO.INT.y_k[i+2*RSO.s_base];                                          // Updating data for x3(k) within RSO structure.
     }
     // Execute estimation algorithm:
     if(RSO.flag[0]){
@@ -463,9 +465,9 @@ void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_
                     for(j = 0; j < RSO.s_base; j++){
                         // Compute state correction for x1(k + 1), x2(k + 1) and x3(k + 1):
                         RSO.x1_kp1[i] += RSO.alpha_1.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma);
-                        RSO.x2_kp1[i] += RSO.alpha_2.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma*RSO.gamma);
+                        RSO.x2_kp1[i] += RSO.alpha_2.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma_gamma);
                         // Final prediction result for x3(k + 1):
-                        RSO.x3_kp1[i] += RSO.alpha_3.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma*RSO.gamma*RSO.gamma);
+                        RSO.x3_kp1[i] += RSO.alpha_3.data[i][j]*(fmr_q_k[j] - RSO.x1_k[j])/(RSO.gamma_gamma_gamma);
                         // Updating vector fields F(k) and G(k):
                         RSO.F_k[i] += W1_k[i][j]*RSO.x2_k[j];                               // Compute vector field F(k).
                         RSO.G_k[i] += W2_k[i][j]*fmr_u_k[j];                                // Compute vector field G(k).
@@ -496,11 +498,11 @@ void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_
 GPI_Controller createGPI_Controller(float sampleTime, float gains[3*Robots_Qty][3]){
     int i, j, s = 3*Robots_Qty;                                                             // Declaration of i, j, and s as integer variables.
     // Configuring the members of the GPI controller structure:
-    GPI_Controller GPI;                                                                     // Creates GPI controller struct.
-    GPI.s_in = s;                                                                           // Assign value of inputSize to the member s_in of the GPI struct.
-    GPI.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the GPI struct.
-    GPI.s_state = 2*s;                                                                      // Assign value of statetSize to the member s_state of the GPI struct.
-    GPI.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member Ts of the GPI struct.
+    GPI_Controller GPI;                                                                     // Creates GPI controller structure.
+    GPI.s_in = s;                                                                           // Assign value of inputSize to the member s_in of the GPI structure.
+    GPI.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the GPI structure.
+    GPI.s_state = 2*s;                                                                      // Assign value of statetSize to the member s_state of the GPI structure.
+    GPI.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member Ts of the GPI structure.
     if(allocateMatrix(&GPI.lambda, s, 3)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
         for(i = 0; i < s; i++){
@@ -516,7 +518,7 @@ GPI_Controller createGPI_Controller(float sampleTime, float gains[3*Robots_Qty][
     GPI.x2_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the state vector x2(k).
     GPI.x2_kp1 = (float *)malloc(s * sizeof(float));                                        // Allocate memory for the state vector x2(k + 1).
     GPI.y_k = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the output vector y(k).
-    GPI.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as GPI (disable or enable observer).
+    GPI.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as GPI (disable or enable observer).
     //-----------------------------------------------
     GPI.flag[0] = false;                                                                    // Setting GPI flag to false.
     return GPI;
@@ -526,18 +528,18 @@ GPI_Controller createGPI_Controller(float sampleTime, float gains[3*Robots_Qty][
 void initGPI_Controller(GPI_Controller GPI, float x_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
     for(i = 0; i < GPI.s_state; i++){
-        GPI.X_0[i] = x_0[i];                                                                // Saving initial conditions data for x(0) within GPI struct.
+        GPI.X_0[i] = x_0[i];                                                                // Saving initial conditions data for x(0) within GPI structure.
     }
     for(i = 0; i < GPI.s_in; i++){
-        GPI.x1_k[i] = 0.0f;                                                                 // Saving initial conditions data for delayed input signal u(k) within GPI struct as x1(k) = x1(0).
-        GPI.x1_kp1[i] = x_0[i];                                                             // Saving initial input signal u(k + 1) within GPI struct as x1(k + 1).
-        GPI.x2_k[i] = x_0[i+GPI.s_in];                                                      // Saving initial integration state within GPI struct as x2(k) = x2(0).
+        GPI.x1_k[i] = 0.0f;                                                                 // Saving initial conditions data for delayed input signal u(k) within GPI structure as x1(k) = x1(0).
+        GPI.x1_kp1[i] = x_0[i];                                                             // Saving initial input signal u(k + 1) within GPI structure as x1(k + 1).
+        GPI.x2_k[i] = x_0[i+GPI.s_in];                                                      // Saving initial integration state within GPI structure as x2(k) = x2(0).
         // Updating GPI operator as x2(k + 1):
         GPI.x2_kp1[i] = ((GPI.lambda.data[i][0]*GPI.Ts + 2.0f*GPI.lambda.data[i][1])*GPI.x1_kp1[i] + (GPI.lambda.data[i][0]*GPI.Ts - 2.0f*GPI.lambda.data[i][1])*GPI.x1_k[i] - (GPI.lambda.data[i][2]*GPI.Ts - 2.0f)*GPI.x2_k[i])/(GPI.lambda.data[i][2]*GPI.Ts + 2.0f);
         // Updating GPI output y(k):
-        GPI.y_k[i] = GPI.x2_k[i];                                                           // Saving initial conditions data for y_k within GPI struct.
+        GPI.y_k[i] = GPI.x2_k[i];                                                           // Saving initial conditions data for y_k within GPI structure.
     }
-    GPI.flag[0] = true;                                                                     // Flag settled to true, which enables control function defined as GPI.
+    GPI.flag[0] = true;                                                                     // Flag settled to true, which enables control function defined within GPI structure.
 }
 //---------------------------------------------------------------------------------------------------------------
 // GPI control computing function:
@@ -546,13 +548,13 @@ void computeGPIControl(GPI_Controller GPI, float errors_k[]){
     // Execute integration algorithm:
     if(GPI.flag[0]){
         for(i = 0; i < GPI.s_in; i++){
-            GPI.x1_k[i] = GPI.x1_kp1[i];                                                    // Updates the delayed input signal u(k - 1) as x1(k) for integrator INT.
-            GPI.x1_kp1[i] = errors_k[i];                                                    // Get input signal u(k) as x1(k + 1), for integrator INT.
-            GPI.x2_k[i] = GPI.x2_kp1[i];                                                    // Updates the delayed state x2(k), corresponding to output of integrator INT.
+            GPI.x1_k[i] = GPI.x1_kp1[i];                                                    // Updates the delayed input signal u(k - 1) as x1(k) for INT integrator.
+            GPI.x1_kp1[i] = errors_k[i];                                                    // Get input signal u(k) as x1(k + 1), for INT integrator.
+            GPI.x2_k[i] = GPI.x2_kp1[i];                                                    // Updates the delayed state x2(k), corresponding to output of INT integrator.
             // Updating GPI operator as x2(k + 1):
             GPI.x2_kp1[i] = ((GPI.lambda.data[i][0]*GPI.Ts + 2.0f*GPI.lambda.data[i][1])*GPI.x1_kp1[i] + (GPI.lambda.data[i][0]*GPI.Ts - 2.0f*GPI.lambda.data[i][1])*GPI.x1_k[i] - (GPI.lambda.data[i][2]*GPI.Ts - 2.0f)*GPI.x2_k[i])/(GPI.lambda.data[i][2]*GPI.Ts + 2.0f);
             // Updating GPI output y(k):
-            GPI.y_k[i] = GPI.x2_k[i];                                                       // Updating values data for output y_k within GPI struct.
+            GPI.y_k[i] = GPI.x2_k[i];                                                       // Updating values data for output y_k within GPI structure.
         }
     }
     else NOP;                                                                               // No operation.
@@ -562,12 +564,12 @@ void computeGPIControl(GPI_Controller GPI, float errors_k[]){
 ADRC_Controller createADRC_Controller(void){
     int s = 3*Robots_Qty;                                                                   // Declaration of s as integer variable.
     // Configuring the members of the RS observer structure:
-    ADRC_Controller ADRC;                                                                   // Creates observer struct.
-    ADRC.s_in = 7*s;                                                                        // Assign value of inputSize to the member s_in of the ADRC struct.
-    ADRC.s_out = s;                                                                         // Assign value of outputSize to the member s_out of the ADRC struct.
+    ADRC_Controller ADRC;                                                                   // Creates observer structure.
+    ADRC.s_in = 7*s;                                                                        // Assign value of inputSize to the member s_in of the ADRC structure.
+    ADRC.s_out = s;                                                                         // Assign value of outputSize to the member s_out of the ADRC structure.
     //-----------------------------------------------
     ADRC.y_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the output vector y(k).
-    ADRC.flag = (bool *)malloc(sizeof(bool));                                               // Allocate memory for flag of the struct defined as ADRC (disable or enable ADRC controller).
+    ADRC.flag = (bool *)malloc(sizeof(bool));                                               // Allocate memory for flag of the structure defined as ADRC (disable or enable ADRC controller).
     //-----------------------------------------------
     ADRC.flag[0] = false;                                                                   // Setting GPI flag to false.
     return ADRC;
@@ -709,11 +711,13 @@ CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][
     int i, j, s = Robots_Qty-1, m = 6*Robots_Qty;                                           // Declaration of i, j, s and m as integer variables.
     // Configuring the members of the CS observer structure:
     CS_Observer CSO;                                                                        // Creates observer struct.
-    CSO.s_in = m;                                                                           // Assign value of inputSize to the member s_in of the struct CSO.
-    CSO.s_out = m;                                                                          // Assign value of outputSize to the member s_out of the struct CSO.
-    CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the struct CSO.
-    CSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the struct CSO.
+    CSO.s_in = m;                                                                           // Assign value of inputSize to the member s_in of the CSO structure.
+    CSO.s_out = m;                                                                          // Assign value of outputSize to the member s_out of the CSO structure.
+    CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the CSO structure.
+    CSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the CSO structure.
     CSO.gamma = epsilon;                                                                    // Small constant used in the CSO observer.
+    CSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    CSO.gamma_gamma_gamma = epsilon*CSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&CSO.alpha_1,s,s) && allocateMatrix(&CSO.alpha_2,s,s) && allocateMatrix(&CSO.alpha_3,s,s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -736,10 +740,10 @@ CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][
     CSO.z3_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the state vector z3(k).
     CSO.z3_kp1 = (float *)malloc(s * sizeof(float));                                        // Allocate memory for the state vector d(z3(k))/dt.
     CSO.y_k = (float *)malloc(m * sizeof(float));                                           // Allocate memory for the output vector y(k).
-    CSO.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as CSO (disable or enable observer).
+    CSO.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as CSO (disable or enable observer).
     //-----------------------------------------------
-    CSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integrator struct within observer CSO struct.
-    CSO.DIF = createDifferentiator(3*Robots_Qty,sampleTime,1.0f,diff_fc);                   // Create differentiator struct within observer CSO struct.
+    CSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integrator struct within observer CSO structure.
+    CSO.DIF = createDifferentiator(3*Robots_Qty,sampleTime,1.0f,diff_fc);                   // Create differentiator struct within observer CSO structure.
     //-----------------------------------------------
     CSO.flag[0] = false;                                                                    // Setting CSO flag to false.
     return CSO;
@@ -850,9 +854,9 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                     for(j = 0; j < m; j++){
                         // Compute state correction for z1(k + 1), z2(k + 1) and z3(k + 1):
                         CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma);
-                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma);
+                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma);
                         // Final prediction result for z3(k + 1):
-                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma*CSO.gamma);
+                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
                     }
                     for(j = 0; j < n; j++){
                         // Updating vector fields F(k) and G(k):
@@ -868,11 +872,11 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                 }
                 for(i = 0; i < n; i++){
                     // Output of high-gain observer CSO:
-                    CSO.y_k[i] = CSO.DIF.y_k[i];                                            // Saving internal differentaition of CSO struct within its output y(k).
+                    CSO.y_k[i] = CSO.DIF.y_k[i];                                            // Saving internal differentaition of CSO structure within its output y(k).
                     CSO.y_k[i+n] = 0.0f;
                 }
                 for (j = 0; j < m; j++){
-                    CSO.y_k[j+3+n] = CSO.z3_k[j];                                           // Arranging disturbance estimations on output y(k), within CSO struct.
+                    CSO.y_k[j+3+n] = CSO.z3_k[j];                                           // Arranging disturbance estimations on output y(k), within CSO structure.
                 }
                 Integration(CSO.INT,Z_kp1);                                                 // Compute integration for x1(k + 1), x2(k + 1) and x3(k + 1).
                 break;
@@ -895,6 +899,8 @@ CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)
     CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the CSO structure.
     CSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the CSO structure.
     CSO.gamma = epsilon;                                                                    // Small constant used in the CSO observer.
+    CSO.gamma_gamma = epsilon*epsilon;                                                      // Saves the corresponding value to gamma^2.
+    CSO.gamma_gamma_gamma = epsilon*CSO.gamma_gamma;                                        // Saves the corresponding value to gamma^3.
     //-----------------------------------------------
     if(allocateMatrix(&CSO.alpha_1,s,s) && allocateMatrix(&CSO.alpha_2,s,s) && allocateMatrix(&CSO.alpha_3,s,s)){
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
@@ -1033,9 +1039,9 @@ void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                     for(j = 0; j < m; j++){
                         // Compute state correction for z1(k + 1), z2(k + 1) and z3(k + 1):
                         CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma);
-                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma);
+                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma);
                         // Final prediction result for z3(k + 1):
-                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma*CSO.gamma*CSO.gamma);
+                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
                     }
                     for(j = 0; j < n; j++){
                         // Updating vector fields F(k) and G(k):
@@ -1051,11 +1057,11 @@ void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                 }
                 for(i = 0; i < n; i++){
                     // Output of high-gain observer CSO:
-                    CSO.y_k[i] = CSO.SMDIF.y_k[i+n];                                        // Saving internal differentaition of CSO struct within its output y(k).
+                    CSO.y_k[i] = CSO.SMDIF.y_k[i+n];                                        // Saving internal differentaition of CSO structure within its output y(k).
                     CSO.y_k[i+n] = 0.0f;
                 }
                 for (j = 0; j < m; j++){
-                    CSO.y_k[j+3+n] = CSO.z3_k[j];                                           // Arranging disturbance estimations on output y(k), within CSO struct.
+                    CSO.y_k[j+3+n] = CSO.z3_k[j];                                           // Arranging disturbance estimations on output y(k), within CSO structure.
                 }
                 Integration(CSO.INT,Z_kp1);                                                 // Compute integration for x1(k + 1), x2(k + 1) and x3(k + 1).
                 break;
@@ -1073,10 +1079,10 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float satValu
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
     // Configuring the members of the SLS structure (sliding surfaces):
     Sl_Surfaces SLS;                                                                        // Creates sliding surfaces struct.
-    SLS.s_in = 5*s;                                                                         // Assign value of inputSize to the member s_in of the struct SLS.
-    SLS.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the struct SLS.
-    SLS.s_state = s;                                                                        // Assign value of statetSize to the member s_state of the struct SLS.
-    SLS.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the struct SLS.
+    SLS.s_in = 5*s;                                                                         // Assign value of inputSize to the member s_in of the SLS structure.
+    SLS.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the SLS structure.
+    SLS.s_state = s;                                                                        // Assign value of statetSize to the member s_state of the SLS structure.
+    SLS.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the SLS structure.
     //-----------------------------------------------
     SLS.Gamma = (float *)malloc(s+1 * sizeof(float));                                       // Allocate memory for the sliding gains within SLS.
     SLS.E_0 = (float *)malloc(2*s * sizeof(float));                                         // Allocate memory for the initial tracking error state vector e(0) = [e1(0) e2(0)]'.
@@ -1085,7 +1091,7 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float satValu
     SLS.v2_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the state vector v2(k).
     SLS.v2_kp1 = (float *)malloc(s * sizeof(float));                                        // Allocate memory for the state vector d(v2(k))/dt.
     SLS.y_k = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the output vector y(k) of sliding surfaces as SLS.
-    SLS.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as SLS (disable or enable sliding surfaces generation).
+    SLS.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as SLS (disable or enable sliding surfaces generation).
     //-----------------------------------------------
     // Creating vector array for Gamma:
     for(i = 0; i < s+1; i++){
@@ -1093,7 +1099,7 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float satValu
         if(i < s) SLS.v1_max[i] = satValues[i];                                             // Saving the previously assigned saturation values.
     }
     //-----------------------------------------------
-    SLS.INT = createIntegrator(s,sampleTime,1.0f);                                          // Create integrator struct within sliding surfaces struct as SLS.
+    SLS.INT = createIntegrator(s,sampleTime,1.0f);                                          // Create integrator structure within sliding surfaces structure defined as SLS.INT.
     //-----------------------------------------------
     SLS.flag[0] = false;                                                                    // Setting SLS flag to false.
     return SLS;
@@ -1104,18 +1110,18 @@ void init_SlidingSurfaces(Sl_Surfaces SLS, float ref_z_0[], float fmr_z_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
     float Xi_0[2*SLS.s_out];                                                                // Variable to save initial conditions for integrator SLS.INT.
     for(i = 0; i < SLS.s_out; i++){
-        Xi_0[i] = fmr_z_0[i] - ref_z_0[i];                                                  // Saving initial conditions for x1(0) within SLS.INT struct.
-        Xi_0[i+SLS.s_out] = 0.0f;                                                           // Saving initial conditions for x2(0) within SLS.INT struct.
+        Xi_0[i] = fmr_z_0[i] - ref_z_0[i];                                                  // Saving initial conditions for x1(0) within SLS.INT structure.
+        Xi_0[i+SLS.s_out] = 0.0f;                                                           // Saving initial conditions for x2(0) within SLS.INT structure.
         SLS.E_0[i] = Xi_0[i];                                                               // Saving the initial tracking errors as e1(0).
         SLS.E_0[i+SLS.s_out] = fmr_z_0[i+SLS.s_out] - ref_z_0[i+SLS.s_out];                 // Saving the initial tracking errors as e2(0).
-        SLS.v2_k[i] = 0.0f;                                                                 // Saving initial conditions for vector field v2(k) within SLS struct.
-        SLS.v1_k[i] = 0.0f;                                                                 // Saving initial conditions for vector field v1(k) within SLS struct.
-        SLS.v2_kp1[i] = Xi_0[i];                                                            // Saving initial conditions for d(v2(k))/dt functions within SLS struct.
-        SLS.y_k[i] = 0.0f;                                                                  // Saving initial conditions for output y(k) within SLS struct.
+        SLS.v2_k[i] = 0.0f;                                                                 // Saving initial conditions for vector field v2(k) within SLS structure.
+        SLS.v1_k[i] = 0.0f;                                                                 // Saving initial conditions for vector field v1(k) within SLS structure.
+        SLS.v2_kp1[i] = Xi_0[i];                                                            // Saving initial conditions for d(v2(k))/dt functions within SLS structure.
+        SLS.y_k[i] = 0.0f;                                                                  // Saving initial conditions for output y(k) within SLS structure.
     }
-    initIntegrator(SLS.INT,Xi_0);                                                           // Initialize internal integrator of sliding SLS struct.
+    initIntegrator(SLS.INT,Xi_0);                                                           // Initialize internal integrator of sliding SLS structure.
     // Updating the sliding flag:
-    SLS.flag[0] = true;                                                                     // Flag settled to true, which enables the generation of sliding surfaces on SLS struct.
+    SLS.flag[0] = true;                                                                     // Flag settled to true, which enables the generation of sliding surfaces on SLS structure.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the sliding surfaces algorithm that updates structured variables within SLS:
@@ -1125,14 +1131,14 @@ void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], 
     if(SLS.flag[0]){
         for(i = 0; i < SLS.s_out; i++){
             // Getting output of integrator SLS.INT:
-            SLS.v2_k[i] = SLS.INT.y_k[i];                                                   // Updating data for v2(k) within SLS struct (integration function).
+            SLS.v2_k[i] = SLS.INT.y_k[i];                                                   // Updating data for v2(k) within SLS structure (integration function).
             //-----------------------------------------------
             // Cumputing the current values for sliding surfaces as v1(k):
             float OP1 = 2.0f*SLS.Gamma[i];                                                  // Precomputing operation 1.
             float OP2 = SLS.Gamma[i]*SLS.Gamma[i];                                          // Precomputing operation 2.
             SLS.v1_k[i] = cso_y_k[i] - ref_y_k[i+SLS.s_out] + OP1*(fmr_c_k[i] - ref_y_k[i]) + OP2*SLS.v2_k[i] - SLS.E_0[i+SLS.s_out] - OP1*SLS.E_0[i];
             //-----------------------------------------------
-            SLS.y_k[i] = saturation(SLS.v1_k[i],-SLS.v1_max[i],SLS.v1_max[i]);              // Updating output y(k) of SLS struct.
+            SLS.y_k[i] = saturation(SLS.v1_k[i],-SLS.v1_max[i],SLS.v1_max[i]);              // Updating output y(k) of SLS structure.
             // Updating d(v2(k))/dt:
             SLS.v2_kp1[i] = fmr_c_k[i] - ref_y_k[i] + SLS.Gamma[SLS.s_out]*(SLS.y_k[i] - SLS.v1_k[i]);
         }
@@ -1146,8 +1152,8 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
     // Configuring the members of the SMC structure (sliding mode control):
     SMC_Controller SMC;                                                                     // Creates sliding mode controller data structure.
-    SMC.s_in = 5*s;                                                                         // Assign value of inputSize to the member s_in of the struct SMC.
-    SMC.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the struct SMC.
+    SMC.s_in = 5*s;                                                                         // Assign value of inputSize to the member s_in of the SMC structure.
+    SMC.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the SMC structure.
     SMC.epsilon = epsilon;                                                                  // Small constant used in the SMC strategy.
     //-----------------------------------------------
     SMC.Gamma = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the sliding gains within SMC.
@@ -1158,7 +1164,7 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
     SMC.kappa_k = (float *)malloc(s * sizeof(float));                                       // Allocate memory for the whole variant control gains within SMC strategy.
     SMC.ast_u_k = (float *)malloc(s * sizeof(float));                                       // Allocate memory for the tracking error based control law, within auxiliary control law of SMC.
     SMC.y_k = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the output vector y(k) of sliding mode control strategy as SMC.
-    SMC.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as SMC (disable or enable sliding mode control).
+    SMC.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as SMC (disable or enable sliding mode control).
     //-----------------------------------------------
     // Assigning values to the gains:
     for(i = 0; i < s; i++){
@@ -1297,7 +1303,7 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
         }
     }
     // Updating the sliding mode controller flag:
-    SMC.flag[0] = true;                                                                     // Flag settled to true, which enables the control law algorithm on SMC struct.
+    SMC.flag[0] = true;                                                                     // Flag settled to true, which enables the control law algorithm on SMC structure.
 }
 //---------------------------------------------------------------------------------------------------------------
 // SMC strategy computing function:
@@ -1644,7 +1650,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                     {w4158_k - w301_k*w4035_k/w4095_k, w4159_k - w301_k*w4036_k/w4095_k,                                                               w4050_k*w4098_k/w4124_k + w4046_k*w4099_k/w4124_k + w4161_k,                                           w4163_k - w4051_k*w4099_k/w4122_k + w4045_k*w4098_k/w4122_k, 0, 0},
                     {w4158_k - w301_k*w4037_k/w4096_k, w4159_k - w301_k*w4038_k/w4096_k,                                                               w4052_k*w4101_k/w4125_k + w4048_k*w4100_k/w4125_k + w4160_k,                                           w4162_k - w4053_k*w4100_k/w4123_k + w4047_k*w4101_k/w4123_k, 0, 0},
                 };
-                // Computing the matrix W5(k) = -J(k)*inv(D)*H(k)*inv(J(k)) + d(J(k))/dt*inv(J(k)), needed for SMC struct.
+                // Computing the matrix W5(k) = -J(k)*inv(D)*H(k)*inv(J(k)) + d(J(k))/dt*inv(J(k)), needed for SMC structure.
                 float w501_k = fmr_params[4]*H45_k;                                         // Precompute multiplication 1 in W5(k).
                 float w502_k = fmr_params[6]*H12_k;                                         // Precompute multiplication 2 in W5(k).
                 float w503_k = w501_k - w502_k;                                             // Precompute subtraction 1 in W5(k).
@@ -1735,7 +1741,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
 // Creating formation structure:
 Formation createFormation(int qty){
     // Configuring the members of the OMRs formation structure:
-    Formation FMR;                                                                          // Creates a formation struct (FMR).
+    Formation FMR;                                                                          // Creates a formation structure (FMR).
     FMR.qty = qty;                                                                          // OMRs quantity in the formation as FMR.
     //-----------------------------------------------
     FMR.q_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the robot space states vector q(k).
@@ -1832,9 +1838,9 @@ void computeCSVariables(Formation FMR){
 // Create and initialize the correction structure for translating angles to an absolute format:
 Correction_Struct createAngleConverter(int inputSize){
     Correction_Struct COR;                                                                  // Creates an angle absolute correction structure as COR.
-    COR.s_in = inputSize;                                                                   // Assign value of input size to the member s_out of COR struct.
-    COR.s_out = inputSize;                                                                  // Assign value of output size to the member s_out of COR struct.
-    COR.s_state = inputSize;                                                                // Assign value of state size to the member s_state of COR struct.
+    COR.s_in = inputSize;                                                                   // Assign value of input size to the member s_out of COR structure.
+    COR.s_out = inputSize;                                                                  // Assign value of output size to the member s_out of COR structure.
+    COR.s_state = inputSize;                                                                // Assign value of state size to the member s_state of COR structure.
     COR.m_PI = roundToFourDecimals(M_PI);                                                   // Fixed-pont value for M_PI.
     COR.m_PI_2 = roundToFourDecimals(M_PI_2);                                               // Fixed-pont value for M_PI_2.
     COR.x1_k = (float *)malloc(inputSize * sizeof(float));                                  // Allocate memory for the state vector x1(k).
@@ -1843,7 +1849,7 @@ Correction_Struct createAngleConverter(int inputSize){
     COR.eta_k = (int *)malloc(inputSize * sizeof(int));                                     // Allocate memory for the quadrant multiplier eta(k).
     COR.f1_k = (int *)malloc(inputSize * sizeof(int));                                      // Allocate memory for the quadrant arriving flag f1(k).
     COR.f2_k = (int *)malloc(inputSize * sizeof(int));                                      // Allocate memory for the quadrant arriving flag f2(k).
-    COR.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as COR (disable or enable angle correction).
+    COR.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as COR (disable or enable angle correction).
     //--------------------------------------------------------------------
     COR.flag[0] = false;                                                                    // Setting COR flag[0] to false. Angle conversion is disabled.
     return COR;

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-// #include <math.h>
+#include <math.h>
 #include <float.h>
 #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "baqumau.h"
@@ -186,10 +186,10 @@ void ftoa(float num, char *res, int afterpoint){
     int j;                                                                                  // Declaration of j as integer variable.
     int isNegative = 0;                                                                     // Flag indicator that float number is negative.
     // handling special cases:
-    if(_isnan(num)){
+    if(isnan(num)){
         strcpy(res,"nan");
     }
-    else if(_isinf(num)){
+    else if(isinf(num)){
         strcpy(res,"inf");
     }
     else{

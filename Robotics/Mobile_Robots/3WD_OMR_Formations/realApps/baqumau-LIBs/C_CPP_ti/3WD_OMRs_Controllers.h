@@ -33,9 +33,9 @@ math constants. */
 #define d_th12_max 13.0382f                                                     // [rad/s], Maximum angular velocity of wheel 2.
 #define d_th13_max 15.2282f                                                     // [rad/s], Maximum angular velocity of wheel 3.
 #define V1_x_max (r_1/3.0f)*(d_th11_max + d_th12_max + 2.0f*d_th13_max)         // [mm/s], Maximum linear velocity along X axis (considering x in a parallel direction to wheel 3).
-#define V1_y_max (r_1/sqrt(3.0f))*(d_th11_max + d_th12_max)                     // [mm/s], Maximum linear velocity along Y axis (wheels 1 and 2 are symmetrically oriented by the angle delta with respect to Y axis).
+#define V1_y_max (r_1/sqrtf(3.0f))*(d_th11_max + d_th12_max)                    // [mm/s], Maximum linear velocity along Y axis (wheels 1 and 2 are symmetrically oriented by the angle delta with respect to Y axis).
 #define d_phi1_max (r_1/(3.0f*l_1))*(d_th11_max + d_th12_max + d_th13_max)      // [rad/s], Maximum angular velocity of the robot.
-#define ke_1 0.8f                                                               // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 1.
+#define ke_1 0.75f                                                              // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 1.
 // Constant parameters of OMR No. 2 (black robot in our case):
 #define delta_2 (float)(M_PI_6)                                                 // [rad], Wheels 1 and 2 are placed at this angle, with respect to y_m axis.
 #define l_2 110.0f                                                              // [mm], Distance between the vehicle's center and the center of mass of each wheel.
@@ -49,9 +49,9 @@ math constants. */
 #define d_th22_max 14.0691f                                                     // [rad/s], Maximum angular velocity of wheel 2.
 #define d_th23_max 14.9449f                                                     // [rad/s], Maximum angular velocity of wheel 3.
 #define V2_x_max (r_2/3.0f)*(d_th21_max + d_th22_max + 2.0f*d_th23_max)         // [mm/s], Maximum linear velocity along X axis (considering X in a parallel direction to wheel 3).
-#define V2_y_max (r_2/sqrt(3.0f))*(d_th21_max + d_th22_max)                     // [mm/s], Maximum linear velocity along Y axis (wheels 1 and 2 are symmetrically oriented by the angle delta with respect to Y axis).
+#define V2_y_max (r_2/sqrtf(3.0f))*(d_th21_max + d_th22_max)                    // [mm/s], Maximum linear velocity along Y axis (wheels 1 and 2 are symmetrically oriented by the angle delta with respect to Y axis).
 #define d_phi2_max (r_2/(3.0f*l_2))*(d_th21_max + d_th22_max + d_th23_max)      // [rad/s], Maximum angular velocity of the robot.
-#define ke_2 0.8f                                                               // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 2.
+#define ke_2 0.70f                                                              // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 2.
 // Another constant parameters:
 #define NOP __asm__(" NOP")                                                     // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
@@ -180,6 +180,8 @@ typedef struct{
     int s_state;                                                                // Size of the state.
     float Ts;                                                                   // Sample time.
     float gamma;                                                                // Including a sufficiently small positive constant (0 < gamma < 1).
+    float gamma_gamma;                                                          // Saves gamma^2.
+    float gamma_gamma_gamma;                                                    // Saves gamma^3.
     Matrix alpha_1;                                                             // First gains matrix of RS observer.
     Matrix alpha_2;                                                             // Second gains matrix of RS observer.
     Matrix alpha_3;                                                             // Third gains matrix of RS observer.
@@ -204,6 +206,8 @@ typedef struct{
     int s_state;                                                                // Size of the state.
     float Ts;                                                                   // Sample time.
     float gamma;                                                                // Including a sufficiently small positive constant (0 < gamma < 1).
+    float gamma_gamma;                                                          // Saves gamma^2.
+    float gamma_gamma_gamma;                                                    // Saves gamma^3.
     Matrix alpha_1;                                                             // First gains matrix of CS observer.
     Matrix alpha_2;                                                             // Second gains matrix of CS observer.
     Matrix alpha_3;                                                             // Third gains matrix of CS observer.
@@ -229,6 +233,8 @@ typedef struct{
     int s_state;                                                                // Size of the state.
     float Ts;                                                                   // Sample time.
     float gamma;                                                                // Including a sufficiently small positive constant (0 < gamma < 1).
+    float gamma_gamma;                                                          // Saves gamma^2.
+    float gamma_gamma_gamma;                                                    // Saves gamma^3.
     Matrix alpha_1;                                                             // First gains matrix of CS observer.
     Matrix alpha_2;                                                             // Second gains matrix of CS observer.
     Matrix alpha_3;                                                             // Third gains matrix of CS observer.
@@ -417,9 +423,9 @@ extern float roundf_fast(float num);
 // Function that rounds a floating-point number up to the nearest integer:
 extern float ceil_fast(float num);
 // Function that rounds a floating-point number down to the nearest integer:
-float floor_fast(float num);
+extern float floor_fast(float num);
 // Function to compute a custom hyperbolic tangent for a floating-point number "num":
-float tanhf_custom(float num);
+extern float tanhf_custom(float num);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _3WD_OMRs_CONTROLLERS_H_ */
 //---------------------------------------------------------------------------------------------------------------

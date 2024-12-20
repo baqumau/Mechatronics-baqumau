@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 #include <math.h>
 #include <float.h>
-#include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
+#include <xc.h>                                                                             // Header file that allows code in the source file to access compiler-specific or device-specific features.
+                                                                                            // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
+                                                                                            // header file.
 #include "baqumau.h"
 //---------------------------------------------------------------------------------------------------------------
 // Developing references builder functions:
@@ -58,11 +59,11 @@ void freeMatrix3(Matrix3 *MAT3){
     int i, j;                                                                               // Declaration of i and j as integer variables.
     for(i = 0; i < MAT3->xSize; i++){
         for(j = 0; j < MAT3->xSize; j++){
-            free(MAT3->data[i][j]);                                                         // Liberate space for MAT{i,j} data structure.
+            free(MAT3->data[i][j]);                                                         // Liberate space for MAT{i,j} data struct.
         }
-        free(MAT3->data[i]);                                                                // Liberate space for MAT{i} data structure.
+        free(MAT3->data[i]);                                                                // Liberate space for MAT{i} data struct.
     }
-    free(MAT3->data);                                                                       // Liberate space for whole MAT data structure.
+    free(MAT3->data);                                                                       // Liberate space for whole MAT data struct.
     MAT3->xSize = 0;                                                                        // Set x size of MAT to zero.
     MAT3->ySize = 0;                                                                        // Set y size of MAT to zero.
     MAT3->zSize = 0;                                                                        // Set z size of MAT to zero.
@@ -70,47 +71,31 @@ void freeMatrix3(Matrix3 *MAT3){
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating data structure that will be used to arrange streaming data set:
-Data_Struct createDataStruct(int rx_bufferSize, int xSize, int ySize, int zSize, int tx_bufferSize){
-    // Configuring the members of the desired data structure (receiving data):
+Data_Struct createDataStruct(int bufferSize, int xSize, int ySize, int zSize){
+    // Configuring the members of the desired data structure:
     Data_Struct DAT;                                                                        // Creates the desired data structure as DAT.
-    DAT.RX_bufferSize = rx_bufferSize;                                                      // Setting buffer size (receiving data).
-    DAT.RX_bufferIndex = 0;                                                                 // Clear buffer index (receiving data).
-    DAT.RX_charBuffer = (char *)malloc(rx_bufferSize * sizeof(char));                       // Allocate memory for char-type data buffer (receiving data).
-    DAT.flag = (bool *)malloc(3 * sizeof(bool));                                            // Allocate memory for some execution flags.
-    DAT.flag[0] = allocateMatrix3(&DAT.MAT3,xSize,ySize,zSize);                             // Successful 3d matrix allocation in DAT.flag[0].
+    DAT.bufferSize = bufferSize;                                                            // Setting buffer size.
+    DAT.bufferIndex = 0;                                                                    // Clear buffer index.
+    DAT.charBuffer = (char *)malloc(bufferSize * sizeof(char));                             // Allocate memory for char-type data buffer.
+    DAT.flag = (bool *)malloc(2 * sizeof(bool));                                            // Allocate memory for some execution flags.
+    DAT.flag[0] = allocateMatrix3(&DAT.MAT3,xSize,ySize,zSize);                             // Succesful 3d matrix allocation in DAT.flag[0].
     DAT.flag[1] = false;                                                                    // Setting DAT.flag[1] to false.
-    // Configuring the members of the desired data structure (sending data):
-    DAT.TX_bufferSize = tx_bufferSize;                                                      // Setting buffer size (sending data).
-    DAT.TX_bufferIndex = 0;                                                                 // Clear buffer index (sending data).
-    DAT.TX_charBuffer = (char *)malloc(tx_bufferSize * sizeof(char));                       // Allocate memory for char-type data buffer (sending data).
-    DAT.strLength = 0;                                                                      // Determines length of streaming data set (sending data).
-    DAT.flag[2] = false;                                                                    // Setting DAT.flag[2] to false.
     return DAT;
 }
 //---------------------------------------------------------------------------------------------------------------
-// initializing char-type buffer data (receiving data):
-void init_RX_charBuffer(Data_Struct *DAT){
+// initializing char-type buffer data:
+void init_charBuffer(Data_Struct *DAT){
     int i;                                                                                  // Declaration of i as integer variable.
     DAT->flag[1] = false;                                                                   // Setting data flag to false.
-    for(i = 0; i < DAT->RX_bufferSize; i++){                                                // Loop that set all to 0.
-        DAT->RX_charBuffer[i] = 0x00;                                                       // Clear characters in buffer.
+    for(i = 0; i < DAT->bufferSize; i++){                                                   // Bucle that set to 0 all.
+        DAT->charBuffer[i] = 0x00;                                                          // Clear characters in buffer.
     }
-    DAT->RX_bufferIndex = 0;                                                                // Clear buffer index.
+    DAT->bufferIndex = 0;                                                                   // Clear buffer index.
 }
 //---------------------------------------------------------------------------------------------------------------
-// initializing char-type buffer data (sending data):
-void init_TX_charBuffer(Data_Struct *DAT){
-    int i;                                                                                  // Declaration of i as integer variable.
-    DAT->flag[2] = false;                                                                   // Setting data flag to false.
-    for(i = 0; i < DAT->TX_bufferSize; i++){                                                // Loop that set all to 0.
-        DAT->TX_charBuffer[i] = 0x00;                                                       // Clear characters in buffer.
-    }
-    DAT->TX_bufferIndex = 0;                                                                // Clear buffer index.
-}
-//---------------------------------------------------------------------------------------------------------------
-// Adding characters to buffer (receiving data):
-void add_2_RX_charBuffer(Data_Struct *DAT, char c){
-    if (DAT->RX_bufferIndex >= DAT->RX_bufferSize) return;
+// Adding characters to buffer:
+void add_2_charBuffer(Data_Struct *DAT, char c){
+    if (DAT->bufferIndex >= DAT->bufferSize) return;
     switch(c){
         case 0x0D:                                                                          // Line Feed 1 -> Enable flag.
         DAT->flag[1] = true;                                                                // Setting flag 1 to true.
@@ -119,21 +104,21 @@ void add_2_RX_charBuffer(Data_Struct *DAT, char c){
         DAT->flag[1] = true;                                                                // Setting flag 1 to true.
         break;
         case 0x08:                                                                          // Del -> Delete last character from buffer.
-        if(DAT->RX_bufferIndex > 0) DAT->RX_charBuffer[--DAT->RX_bufferIndex] = 0x00;       // Backspace.
+        if(DAT->bufferIndex > 0) DAT->charBuffer[--DAT->bufferIndex] = 0x00;                // Backspace.
         break;
         default:                                                                            // Add received character to buffer.
-        DAT->RX_charBuffer[DAT->RX_bufferIndex++] = c;
+        DAT->charBuffer[DAT->bufferIndex++] = c;
     }
 }
 //---------------------------------------------------------------------------------------------------------------
 // Classify char-type data from developed buffer within data structure as DAT:
-void classify_RX_charBuffer(Data_Struct *DAT){
+void classify_charBuffer(Data_Struct *DAT){
     int i, j = 0, k = 0;                                                                    // Declaration of i, j, and k as index integer variables.
-    char *charValue = (char *)malloc(DAT->MAT3.zSize * sizeof(char));                       // Declaration of char variable to temporarily store a value from buffer data set.
+    char charValue[DAT->MAT3.zSize];                                                        // Declaration of char variable to temporarily store a value from buffer data set.
     if(DAT->flag[0]){
         // separating data consigned in buffer:
-        for(i = 0; i < DAT->RX_bufferIndex; i++){
-            if(DAT->RX_charBuffer[i] == ','){
+        for(i = 0; i < DAT->bufferIndex; i++){
+            if(DAT->charBuffer[i] == ','){
                 j++;                                                                        // Increasing j variable.
                 if(j == 1){
                     charValue[k] = '\0';                                                    // String termination of charValue.
@@ -141,11 +126,11 @@ void classify_RX_charBuffer(Data_Struct *DAT){
                 }
                 k = 0;                                                                      // Reset k index.
             }
-            else if(DAT->RX_charBuffer[i] != ':' && DAT->RX_charBuffer[i] != ',' && j == 0){
-                charValue[k++] = DAT->RX_charBuffer[i];                                     // Using charValue.
+            else if(DAT->charBuffer[i] != ':' && DAT->charBuffer[i] != ',' && j == 0){
+                charValue[k++] = DAT->charBuffer[i];                                        // Using charValue.
             }
-            else if(DAT->RX_charBuffer[i] != ',' && DAT->RX_charBuffer[i] != ';' && j > 0){
-                DAT->MAT3.data[DAT->identifier][j-1][k++] = DAT->RX_charBuffer[i];          // Using 3d matrix of DAT structure.
+            else if(DAT->charBuffer[i] != ',' && DAT->charBuffer[i] != ';' && j > 0){
+                DAT->MAT3.data[DAT->identifier][j-1][k++] = DAT->charBuffer[i];             // Using 3d matrix of DAT struct.
             }
         }
     }
@@ -165,7 +150,7 @@ void reverse(char *str, int len){
 }
 //---------------------------------------------------------------------------------------------------------------
 // Utility function to convert an integer to a string:
-int intToStr(unsigned long x, char str[], int dig){
+int intToStr(int x, char str[], int dig){
     int i = 0;                                                                              // Declaration of i as index integer variable.
     if(x == 0) str[i++] = '0';                                                              // Add character '0' to output string.
     else{
@@ -189,7 +174,7 @@ void ftoa(float num, char *res, int afterpoint){
     if(isnan(num)){
         strcpy(res,"nan");
     }
-    else if(isinf(num)){
+    else if (isinf(num)){
         strcpy(res,"inf");
     }
     else{
@@ -199,9 +184,9 @@ void ftoa(float num, char *res, int afterpoint){
             num = -num;                                                                     // Float number is changed to positive.
         }
         // Extracting integer part:
-        unsigned long ipart = (unsigned long)num;                                           // Integer part as large as needed.
+        int ipart = (int)num;
         // Extracting floating part:
-        float fpart = num - (float)ipart;                                                   // Fractional part.
+        float fpart = num - (float)ipart;
         // Converting integer part to string:
         int i = intToStr(ipart, res, 0);
         // Adding negative sign if needed:
@@ -217,9 +202,9 @@ void ftoa(float num, char *res, int afterpoint){
         if(afterpoint != 0){
             res[i] = '.';                                                                   // Add decimal point.
             // Multiplying the fractional part by 10^afterpoint:
-            fpart = fpart * powf(10, afterpoint);
+            fpart = fpart * pow(10, afterpoint);
             // Converting fractional part to string:
-            intToStr((unsigned long)fpart, res + i + 1, afterpoint);
+            intToStr((int)fpart, res + i + 1, afterpoint);
         }
     }
 }
@@ -227,50 +212,8 @@ void ftoa(float num, char *res, int afterpoint){
 // Function to initialize whichever char-type data string:
 void initString(char *str, int strSize){
     int i;                                                                                  // Declaration of i as integer variable.
-    for(i = 0; i < strSize; i++){                                                           // Loop that set to 0 all.
+    for(i = 0; i < strSize; i++){                                                           // Bucle that set to 0 all.
         str[i] = 0x00;                                                                      // Characters in buffer.
     }
-}
-//---------------------------------------------------------------------------------------------------------------
-// Function to completely remove the characters and shorten the string, shift the remaining characters:
-void removeCharacters(char *str, size_t start, size_t count){
-    size_t length = strlen(str);
-
-    // Ensure the range is within the string's length:
-    if(start < length){
-        size_t i;
-        for(i = start; i + count < length; i++){
-            str[i] = str[i + count];
-        }
-        str[i] = '\0';                                                                      // Null-terminate the truncated string.
-    }
-}
-//---------------------------------------------------------------------------------------------------------------
-// Function to check if a float value is at the limit "inf".
-bool _isinf(float x){
-    // Extracting the raw bits of the float:
-    union{
-        float f;
-        unsigned long u;
-    } float_bits;
-
-    float_bits.f = x;
-
-    // Checking if exponent is all 1s and mantissa is 0:
-    unsigned long exp_mask = 0x7F800000;                                                    // Mask for the exponent (8 bits).
-    unsigned long mantissa_mask = 0x007FFFFF;                                               // Mask for the mantissa (23 bits).
-
-    unsigned long exponent = float_bits.u & exp_mask;
-    unsigned long mantissa = float_bits.u & mantissa_mask;
-
-    if (exponent == exp_mask && mantissa == 0) {
-        return true;                                                                        // x is infinity.
-    }
-    return false;                                                                           // x is not infinity.
-}
-//---------------------------------------------------------------------------------------------------------------
-// Function to check if a floating-point value is considered NaN (Not a Number) when it does not compare equal to itself:
-bool _isnan(float value){
-    return (value != value);                                                                // NaN is the only value that does not equal itself.
 }
 //---------------------------------------------------------------------------------------------------------------

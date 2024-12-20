@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
-#include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
+#include <xc.h>                                                                             // Header file that allows code in the source file to access compiler-specific or device-specific features.
+                                                                                            // Based on your selected device, the compiler sets macros that allow xc.h to vector to the correct device-specific
+                                                                                            // header file.
 #include "3WD_OMRs_References.h"
 #include "3WD_OMRs_Controllers.h"
 //---------------------------------------------------------------------------------------------------------------
@@ -12,11 +14,11 @@
 //---------------------------------------------------------------------------------------------------------------
 // Configuring the corresponding reference trajectory for OMRs control system:
 Reference createReference(float sampleTime, enum Reference_Type reftype){
-    // Configuring the members of the desired circumference trajectory structure:
+    // Configuring the members of the desired cirumference trajectory structure:
     Reference REF;                                                                          // Creates a reference trajectory structure as REF.
-    REF.s_out = 9*Robots_Qty;                                                               // Assign value of output size to the member s_out for the REF structure.
-    REF.s_state = 9*Robots_Qty;                                                             // Assign value of state size to the member s_state for the REF structure.
-    REF.Ts = sampleTime;                                                                    // Assign value of sample time to the member Ts of the REF structure.
+    REF.s_out = 9*Robots_Qty;                                                               // Assign value of output size to the member s_out for the REF struct.
+    REF.s_state = 9*Robots_Qty;                                                             // Assign value of state size to the member s_state for the REF struct.
+    REF.Ts = sampleTime;                                                                    // Assign value of sample time to the member Ts of the REF struct.
     //-----------------------------------------------
     REF.X_0 = (float *)malloc(9*Robots_Qty * sizeof(float));                                // Allocate memory for the initial state vector x(0) = [x1(0) x2(0) x3(0)]'.
     REF.x1_k = (float *)malloc(3*Robots_Qty * sizeof(float));                               // Allocate memory for the state vector x1(k).
@@ -35,15 +37,15 @@ Reference createReference(float sampleTime, enum Reference_Type reftype){
     REF.z3_kp1 = (float *)malloc(3*Robots_Qty * sizeof(float));                             // Allocate memory for the state vector x3(k + 1).
     //-----------------------------------------------
     REF.y_k = (float *)malloc(9*Robots_Qty * sizeof(float));                                // Allocate memory for the output vector y(k).
-    REF.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as REF (disable or enable reference builder).
+    REF.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as REF (disable or enable reference builder).
     //-----------------------------------------------
-    REF.INT_1 = createIntegrator(3*Robots_Qty,sampleTime,1.0f);                             // Create first integrator structure within reference builder REF structure.
-    REF.INT_2 = createIntegrator(3*Robots_Qty,sampleTime,1.0f);                             // Create second integrator structure within reference builder REF structure.
+    REF.INT_1 = createIntegrator(3*Robots_Qty,sampleTime,1.0f);                             // Create first integrator struct within reference builder REF struct.
+    REF.INT_2 = createIntegrator(3*Robots_Qty,sampleTime,1.0f);                             // Create second integrator struct within reference builder REF struct.
     switch(reftype){
         case MINGYUE_01:{
             REF.COR = createAngleConverter(Robots_Qty);                                     // Create a conversion angle structure.
-            REF.DIF_1 = createDifferentiator(Robots_Qty,sampleTime,1.0f,100.0f);            // Create first differentiator structure within reference builder REF structure.
-            REF.DIF_2 = createDifferentiator(Robots_Qty,sampleTime,1.0f,100.0f);            // Create second differentiator structure within reference builder REF structure.
+            REF.DIF_1 = createDifferentiator(Robots_Qty,sampleTime,1.0f,100.0f);            // Create first differentiator struct within reference builder REF struct.
+            REF.DIF_2 = createDifferentiator(Robots_Qty,sampleTime,1.0f,100.0f);            // Create second differentiator struct within reference builder REF struct.
             break;
         }
     }
@@ -54,20 +56,20 @@ Reference createReference(float sampleTime, enum Reference_Type reftype){
 // Initialize the circumference-shape reference trajectory for OMRs control system:
 void initReference(Reference REF, enum Control_System consys, enum Reference_Type reftype, float z_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
-    float Ci1_0[6*Robots_Qty], Ci2_0[6*Robots_Qty];                                         // Vectors to place the initial conditions of associated integrators INT_1 and INT_2 within REF structure.
+    float Ci1_0[6*Robots_Qty], Ci2_0[6*Robots_Qty];                                         // Vectors to place the initial conditions of associated integrators INT_1 and INT_2 within REF reference structure.
     for(i = 0; i < 3*Robots_Qty; i++){
         // Initial conditions Z_0 of desired cluster reference trajectories:
-        REF.Z_0[i] = z_0[i];                                                                // Saving cluster initial conditions data for c(0) within REF structure.
-        REF.Z_0[i+3*Robots_Qty] = z_0[i+3*Robots_Qty];                                      // Saving cluster initial conditions data for c(0) within REF structure.
-        REF.Z_0[i+6*Robots_Qty] = z_0[i+6*Robots_Qty];                                      // Saving cluster initial conditions data for c(0) within REF structure.
+        REF.Z_0[i] = z_0[i];                                                                // Saving cluster initial conditions data for c(0) within REF struct.
+        REF.Z_0[i+3*Robots_Qty] = z_0[i+3*Robots_Qty];                                      // Saving cluster initial conditions data for c(0) within REF struct.
+        REF.Z_0[i+6*Robots_Qty] = z_0[i+6*Robots_Qty];                                      // Saving cluster initial conditions data for c(0) within REF struct.
         // Initial conditions for cluster space variables:
         REF.z1_k[i] = z_0[i];                                                               // Saving initial cluster's pose c1(k = 0) for OMRs formation.
-        REF.z1_kp1[i] = REF.Ts*z_0[i+3*Robots_Qty] + z_0[i];                                // Saving cluster's pose prediction c1(k + 1) within REF structure.
+        REF.z1_kp1[i] = REF.Ts*z_0[i+3*Robots_Qty] + z_0[i];                                // Saving cluster's pose prediction c1(k + 1) within REF struct.
         REF.z2_k[i] = z_0[i+3*Robots_Qty];                                                  // Saving initial cluster's velocity c2(k = 0) for OMRs formation.
-        REF.z2_kp1[i] = REF.Ts*z_0[i+6*Robots_Qty] + z_0[i+3*Robots_Qty];                   // Saving cluster's velocity prediction c2(k + 1) within REF structure.
+        REF.z2_kp1[i] = REF.Ts*z_0[i+6*Robots_Qty] + z_0[i+3*Robots_Qty];                   // Saving cluster's velocity prediction c2(k + 1) within REF struct.
         REF.z3_k[i] = z_0[i+6*Robots_Qty];                                                  // Saving initial cluster's acceleration c3(k = 0) for OMRs formation.
         REF.z3_kp1[i] = (1.0/REF.Ts)*(REF.z2_kp1[i] - REF.z2_k[i]);                         // Differentiation operator to obtain prediction c3(k + 1).
-        // Adding initial conditions to associated INT_1 and INT_2 integration structures, within REF structure:
+        // Adding initial conditions to associated integrators INT_1 and INT_2 within REF structure:
         Ci1_0[i] = REF.z2_k[i];
         Ci1_0[i+3*Robots_Qty] = REF.z1_k[i];
         Ci2_0[i] = REF.z3_k[i];
@@ -76,8 +78,8 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
     // Initial conditions X_0 of desired robot pose trajectories:
     switch(Robots_Qty){
         case 2:{
-            float SC2_0 = sinf(REF.Z_0[2]);
-            float CC2_0 = cosf(REF.Z_0[2]);
+            float SC2_0 = sin(REF.Z_0[2]);
+            float CC2_0 = cos(REF.Z_0[2]);
             float OP1_0 = REF.Z_0[3]*SC2_0;
             float OP2_0 = REF.Z_0[3]*CC2_0;
             float OP3_0 = REF.Z_0[9]*SC2_0;
@@ -122,13 +124,13 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
     // Initial conditions for robot space variables:
     for(i = 0; i < 3*Robots_Qty; i++){
         REF.x1_k[i] = REF.X_0[i];                                                           // Saving initial robots' pose x1(k = 0) for OMRs formation.
-        REF.x1_kp1[i] = REF.Ts*REF.X_0[i+3*Robots_Qty] + REF.X_0[i];                        // Saving robots' pose prediction x1(k + 1) within REF structure.
+        REF.x1_kp1[i] = REF.Ts*REF.X_0[i+3*Robots_Qty] + REF.X_0[i];                        // Saving robots' pose prediction x1(k + 1) within REF struct.
         REF.x2_k[i] = REF.X_0[i+3*Robots_Qty];                                              // Saving initial robots' velocity x2(k = 0) for OMRs formation.
-        REF.x2_kp1[i] = REF.Ts*REF.X_0[i+6*Robots_Qty] + REF.X_0[i+3*Robots_Qty];           // Saving robots' velocity prediction x2(k + 1) within REF structure.
+        REF.x2_kp1[i] = REF.Ts*REF.X_0[i+6*Robots_Qty] + REF.X_0[i+3*Robots_Qty];           // Saving robots' velocity prediction x2(k + 1) within REF struct.
         REF.x3_k[i] = REF.X_0[i+6*Robots_Qty];                                              // Saving initial robots' acceleration x3(k = 0) for OMRs formation.
         REF.x3_kp1[i] = (1.0f/REF.Ts)*(REF.x2_kp1[i] - REF.x2_k[i]);                        // Differentiation operator to obtain prediction x3(k + 1).
     }
-    // Initiating REF.INT_1 and REF.INT_2 integration structures:
+    // Initiating integrators REF.INT_1 and REF.INT_2:
     initIntegrator(REF.INT_1,Ci1_0);                                                        // Initialize first common integrator of REF references builder.
     initIntegrator(REF.INT_2,Ci2_0);                                                        // Initialize second common integrator of REF references builder.
     switch(reftype){
@@ -143,8 +145,8 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
                 Xd2_0[i+Robots_Qty] = REF.x3_k[2+3*i];
             }                                    
             initAngleConverter(REF.COR,Xco_0);                                              // Initialize angle conversion function to obtained angles after atan2(.) function.
-            initDifferentiator(REF.DIF_1,Xd1_0);                                            // Initialize first differentiator struct within reference builder REF structure.
-            initDifferentiator(REF.DIF_2,Xd2_0);                                            // Initialize second differentiator struct within reference builder REF structure.
+            initDifferentiator(REF.DIF_1,Xd1_0);                                            // Initialize first differentiator struct within reference builder REF struct.
+            initDifferentiator(REF.DIF_2,Xd2_0);                                            // Initialize second differentiator struct within reference builder REF struct.
             break;
         }
     }
@@ -166,7 +168,7 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
         }
         break;
     }
-    REF.flag[0] = true;                                                                     // Flag settled to true, which enables the reference builder within REF structure.
+    REF.flag[0] = true;                                                                     // Flag settled to true, which enables the reference builder within REF struct.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the instantaneous circumference-shape reference trajectory n: 01, for OMRs control system:
@@ -176,32 +178,32 @@ void computeCircumference01(Reference REF, enum Control_System consys, int itera
     if(REF.flag[0]){
         // Updating algorithm:
         for(i = 0; i < 3*Robots_Qty; i++){
-            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF structure.
-            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF structure.
-            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF structure.
-            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
-            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
-            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
-            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
+            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF struct.
+            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF struct.
+            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF struct.
+            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF struct.
+            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF struct.
+            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF struct.
+            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF struct.
+            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF struct.
         }
-        // Computing equations for circumference profiles generation in the cluster space:
-        float Vc = 100.0f;                                                                  // [mm/s], linear velocity of cluster centroid.
-        float Rc = 800.0f;                                                                  // [mm], desired radius of planned trajectory.
+        // Computing ecuations for circumference profiles generation in the cluster space:
+        float Vc = 40.0f;                                                                   // [mm/s], linear velocity of cluster centroid.
+        float Rc = 1200.0f;                                                                 // [mm], desired radius of planned trajectory.
         float Ac = Vc*Vc/Rc;                                                                // Precompute angular acceleration Vc^2/Rc.
         switch(Robots_Qty){
             case 2:{
-                REF.z3_kp1[0] = Ac*sinf(Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2]);     // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = Ac*cosf(Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2]);     // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = Ac*sin(Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2]);      // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = Ac*cos(Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2]);      // Computing d^2(yc)/dt^2.
                 REF.z3_kp1[2] = 0.0f;                                                       // Computing d^2(thc)/dt^2.
                 REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
                 REF.z3_kp1[4] = 0.0f;                                                       // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = 0.0f;                                                       // Computing d^2(psi_2)/dt^2.
                 Integration(REF.INT_2,REF.z3_kp1);                                          // Compute second integration to c3(k + 1).
                 Integration(REF.INT_1,REF.INT_2.y_k);                                       // Compute first integration to second integration output.
-                // Computing equations for circumference profiles generation in the robot space:
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);
+                // Computing ecuations for circumference profiles generation in the robot space:
+                float SC2_kp1 = sin(REF.z1_kp1[2]);
+                float CC2_kp1 = cos(REF.z1_kp1[2]);
                 float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;
                 float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;
                 float OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;
@@ -275,27 +277,27 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
     if(REF.flag[0]){
         // Updating algorithm:
         for(i = 0; i < 3*Robots_Qty; i++){
-            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF structure.
-            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF structure.
-            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF structure.
-            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
-            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
-            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
-            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
+            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF struct.
+            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF struct.
+            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF struct.
+            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF struct.
+            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF struct.
+            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF struct.
+            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF struct.
+            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF struct.
         }
-        // Computing equations for infinity reference profiles generation in the cluster space:
+        // Computing ecuations for infinity reference profiles generation in the cluster space:
         float Sc = 1200.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
         float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
         float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
         float Wc2 = Wc1/Kc;                                                                 // Precompute operation Sc/(Kc^3).
-        float ddd_xc_k = -Wc2*cosf((float)(iterations)*REF.Ts/Kc);                          // Computing d^3(xc)/dt^3.
-        float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*(float)(iterations)*REF.Ts/Kc);                // Computing d^3(yc)/dt^3.
+        float ddd_xc_k = -Wc2*cos((float)(iterations)*REF.Ts/Kc);                           // Computing d^3(xc)/dt^3.
+        float ddd_yc_k = -8.0f*Wc2*cos(2.0f*(float)(iterations)*REF.Ts/Kc);                 // Computing d^3(yc)/dt^3.
         switch(Robots_Qty){
             case 2:{
                 //------------------------------Cluster Space--------------------------------
-                REF.z3_kp1[0] = -Wc1*sinf((float)(iterations)*REF.Ts/Kc);                   // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*(float)(iterations)*REF.Ts/Kc);         // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = -Wc1*sin((float)(iterations)*REF.Ts/Kc);                    // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = -4.0f*Wc1*sin(2.0f*(float)(iterations)*REF.Ts/Kc);          // Computing d^2(yc)/dt^2.
                 // Computing d^2(thc)/dt^2:
                 float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Precompute operation OP1(k).
                 float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Precompute operation OP2(k).
@@ -307,8 +309,8 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
                 //------------------------------
                 REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
+                float SC2_kp1 = sin(REF.z1_kp1[2]);                                         // Precompute sin(thc).
+                float CC2_kp1 = cos(REF.z1_kp1[2]);                                         // Precompute cos(thc).
                 OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Precompute operation OP1(k).
                 OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Precompute operation OP2(k).
                 OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Precompute operation OP3(k).
@@ -340,7 +342,7 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
                 REF.x2_kp1[3] = REF.z2_kp1[0] - OP17_kp1;
                 REF.x2_kp1[4] = REF.z2_kp1[1] - OP18_kp1;
                 //------------------------------
-                float angles_k[Robots_Qty] = {-atan2f(REF.x2_kp1[0],REF.x2_kp1[1]), -atan2f(REF.x2_kp1[3],REF.x2_kp1[4])};
+                float angles_k[Robots_Qty] = {-atan2(REF.x2_kp1[0],REF.x2_kp1[1]), -atan2(REF.x2_kp1[3],REF.x2_kp1[4])};
                 angleConversion(REF.COR,angles_k);                                          // OMRs' orientation angles th1(k) and th2(k) are converted to absolute format.
                 REF.x1_kp1[2] = M_PI_2 + REF.COR.y_k[0];
                 REF.x1_kp1[5] = M_PI_2 + REF.COR.y_k[1];
@@ -392,27 +394,27 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
     if(REF.flag[0]){
         // Updating algorithm:
         for(i = 0; i < 3*Robots_Qty; i++){
-            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF structure.
-            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF structure.
-            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF structure.
-            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
-            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
-            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
-            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
+            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF struct.
+            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF struct.
+            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF struct.
+            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF struct.
+            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF struct.
+            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF struct.
+            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF struct.
+            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF struct.
         }
-        // Computing equations for infinity reference profiles generation in the cluster space:
+        // Computing ecuations for infinity reference profiles generation in the cluster space:
         float Sc = 1200.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
         float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
         float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
         float Wc2 = Wc1/Kc;                                                                 // Precompute operation Sc/(Kc^3).
-        float ddd_xc_k = -Wc2*cosf((float)(iterations)*REF.Ts/Kc);                          // Computing d^3(xc)/dt^3.
-        float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*(float)(iterations)*REF.Ts/Kc);                // Computing d^3(yc)/dt^3.
+        float ddd_xc_k = -Wc2*cos((float)(iterations)*REF.Ts/Kc);                           // Computing d^3(xc)/dt^3.
+        float ddd_yc_k = -8.0f*Wc2*cos(2.0f*(float)(iterations)*REF.Ts/Kc);                 // Computing d^3(yc)/dt^3.
         switch(Robots_Qty){
             case 2:{
                 //------------------------------Cluster Space--------------------------------
-                REF.z3_kp1[0] = -Wc1*sinf((float)(iterations)*REF.Ts/Kc);                   // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*(float)(iterations)*REF.Ts/Kc);         // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = -Wc1*sin((float)(iterations)*REF.Ts/Kc);                    // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = -4.0f*Wc1*sin(2.0f*(float)(iterations)*REF.Ts/Kc);          // Computing d^2(yc)/dt^2.
                 // Computing d^2(thc)/dt^2:
                 float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Precompute operation OP1(k).
                 float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Precompute operation OP2(k).
@@ -426,8 +428,8 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
                 REF.z3_kp1[4] = -REF.z3_kp1[2];                                             // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = -REF.z3_kp1[2];                                             // Computing d^2(psi_2)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
+                float SC2_kp1 = sin(REF.z1_kp1[2]);                                         // Precompute sin(thc).
+                float CC2_kp1 = cos(REF.z1_kp1[2]);                                         // Precompute cos(thc).
                 OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Precompute operation OP1(k).
                 OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Precompute operation OP2(k).
                 OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Precompute operation OP3(k).
@@ -497,26 +499,26 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Compute the static reference trajectory n: 01, for OMRs control system:
+// Compute the statical reference trajectory n: 01, for OMRs control system:
 void computeStatical01(Reference REF, enum Control_System consys){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing builder algorithm for static trajectory:
     if(REF.flag[0]){
         // Updating algorithm:
         for(i = 0; i < 3*Robots_Qty; i++){
-            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF structure.
-            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF structure.
-            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF structure.
-            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
-            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
-            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
+            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF struct.
+            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF struct.
+            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF struct.
+            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF struct.
+            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF struct.
+            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF struct.
+            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF struct.
         }
-        // Computing equations for generation of static reference profiles in the cluster space:
+        // Computing ecuations for generation of statical reference profiles in the cluster space:
         switch(Robots_Qty){
             case 2:{
-                float d_ph1_k = 0.0f;                                                       // Desired angular velocity of robot 1 (rad/s).
-                float d_ph2_k = 0.0f;                                                       // Desired angular velocity of robot 2 (rad/s).
+                float d_ph1_k = 0.25f;                                                      // Desired angular velocity of robot 1 (rad/s).
+                float d_ph2_k = -0.25f;                                                     // Desired angular velocity of robot 2 (rad/s).
                 //------------------------------Cluster Space--------------------------------
                 REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
                 REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.
@@ -532,8 +534,8 @@ void computeStatical01(Reference REF, enum Control_System consys){
                 REF.z3_kp1[4] = 0.0f;                                                       // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = 0.0f;                                                       // Computing d^2(psi_2)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
+                float SC2_kp1 = sin(REF.z1_kp1[2]);                                         // Precompute sin(thc).
+                float CC2_kp1 = cos(REF.z1_kp1[2]);                                         // Precompute cos(thc).
                 float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                      // Precompute operation OP1(k).
                 float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                      // Precompute operation OP2(k).
                 //------------------------------

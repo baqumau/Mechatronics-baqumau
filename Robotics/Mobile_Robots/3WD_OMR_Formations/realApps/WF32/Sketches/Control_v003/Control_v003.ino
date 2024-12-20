@@ -1,7 +1,7 @@
 /* This program was made for intended to control two OMRs through ADRC and CS_ADRC robust control systems.
 Unfortunately ChipKit WF32 with ARDUINO framework does not work appropriately.*/
 // ChipKit WF32 works to 80 Mhz...
-//---------------------------------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------------------------------------------
 // Defining mathematical values:
 #define _USE_MATH_DEFINES
 // Defining configuration values:
@@ -55,7 +55,7 @@ char character_1;                                                       // Varia
 char character_4;                                                       // Variable to save received character from UART 4.
 char controlSignals[bufferSize];                                        // Variable to save control signals data and subsequently send via UART 4 module.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
-enum Control_System consys = ADRC_RS;                                   // Declare the control system type.
+enum Control_System consys = SMC_CS;                                    // Declare the control system type.
 enum Reference_Type reftype = STATIC_01;                                // Declare the reference shape type.
 float errors_k[3*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};    // Declaration of this floating-point values vector for arranging error variables.
 //---------------------------------------------------------------------------------------------------------------
@@ -114,6 +114,8 @@ float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                     // Defin
 // Defining the saturation values of sliding surfaces at the output:
 float sls_satVals[3*Robots_Qty] = {280.0f, 280.0f, 9.5f, 150.0f, 9.5f, 9.5f};
 float diff_fc = 45.0f;                                                  // Assigning an arbitrary value to the filter coefficient of CSO internal differentiator.
+float diff_pg[3] = {5.3f, 14.1f, 9.8f};                                 // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
+float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
 //---------------------------------------------------------------------------------------------------------------
 // Creating data structure for UART 1 peripheral:
 Data_Struct UART1 = createDataStruct(bufferSize,1,3*Robots_Qty,16);
@@ -122,7 +124,7 @@ Data_Struct UART4 = createDataStruct(bufferSize,2,3,16);
 // Creating data structure for a high-gain observer in the robot space:
 RS_Observer RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
 // Creating data structure for a high-gain observer in the cluster space:
-CS_Observer CSO = createCS_Observer01(sampleTime,cso_Gains,epsilon,diff_fc);
+CSx_Observer CSO = createCSx_Observer01(sampleTime,cso_Gains,epsilon,diff_pg,diff_lc);
 // Creating data structure for a GPI controller in the robot space:
 GPI_Controller GPI = createGPI_Controller(sampleTime,gpi_Gains);
 // Creating data structure for the sliding surfaces in the cluster space:
@@ -215,7 +217,7 @@ void __attribute__((interrupt)) Timer_4_Handler(){
       case SMC_CS:{
         //---------------------------------------------SMC_CS----------------------------------------------------
         // Estimation via High-gain Observer:
-        CS_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);                // Estimates the OMRs formation output c(k), first derivative and disturbances.
+        CSx_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);               // Estimates the OMRs formation output c(k), first derivative and disturbances.
         //-------------------------------------------------------------------------------------------------------
         // Computing the sliding surfaces required by SMC CS:
         compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);           // Update to current values for sliding surfaces.
@@ -340,7 +342,7 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
           //------------------------------------------------SMC_CS-----------------------------------------------
           // Float vector z_0 to define initial conditions for states of HGO observer in the cluster space:
           float obs_z0[9*Robots_Qty] = {FMR.c_k[0], FMR.c_k[1], FMR.c_k[2], FMR.c_k[3], FMR.c_k[4], FMR.c_k[5], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-          init_CS_Observer01(CSO,obs_z0);                               // Initialize the observer CSO.
+          init_CSx_Observer01(CSO,obs_z0);                              // Initialize the observer CSO.
           //-----------------------------------------------------------------------------------------------------
           // Initial conditions for previous observer is taken here:
           init_SlidingSurfaces(SLS,REF.Z_0,obs_z0);                     // Initialize sliding surfaces algorithm.
@@ -604,7 +606,7 @@ void loop(){
     stop_uart_4_module();                                               // Stop and disable UART 4 module.
   }
   else if(iterations <= final_iteration && flagcommand_5 && REF.flag[0]){
-    snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",RSO.y_k[6],RSO.y_k[7],RSO.y_k[8],RSO.y_k[9],RSO.y_k[10],RSO.y_k[11],iterations);
+    snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",CSO.y_k[0],CSO.y_k[1],CSO.y_k[2],CSO.y_k[3],CSO.y_k[4],CSO.y_k[5],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     // Serial.println(measurements);                                       // Write measurements by UART 1.
