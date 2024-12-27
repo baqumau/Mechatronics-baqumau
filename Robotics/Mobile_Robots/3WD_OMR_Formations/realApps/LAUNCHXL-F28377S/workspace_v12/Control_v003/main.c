@@ -566,9 +566,6 @@ __interrupt void cpu_timer1_isr(void){
                 break;
             }
             case SMC_CS:{
-                if(CpuTimer1.InterruptCount == 335){
-                    NOP;
-                }
                 //---------------------------------------------SMC_CS----------------------------------------------------
                 // Computing the estimation via High-gain Observer:
                 CSx_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);                       // Estimates the OMRs formation output c(k), first derivative and disturbances.
@@ -692,17 +689,17 @@ __interrupt void cpu_timer2_isr(void){
                     }
                     case SMC_CS:{
                         memset_fast(var06,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[0]),var06,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[6]),var06,3);
                         memset_fast(var07,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[1]),var07,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[7]),var07,3);
                         memset_fast(var08,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[2]),var08,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[8]),var08,3);
                         memset_fast(var09,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[3]),var09,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[9]),var09,3);
                         memset_fast(var10,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[4]),var10,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[10]),var10,3);
                         memset_fast(var11,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[5]),var11,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[11]),var11,3);
                         break;
                     }
                 }
