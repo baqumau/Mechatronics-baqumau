@@ -689,7 +689,7 @@ __interrupt void cpu_timer2_isr(void){
                     }
                     case SMC_CS:{
                         memset_fast(var06,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[6]),var06,3);
+                        ftoa(roundToThreeDecimals(CSO.z1_k[0]),var06,3);
                         memset_fast(var07,0,bufferSize_3);
                         ftoa(roundToThreeDecimals(CSO.y_k[7]),var07,3);
                         memset_fast(var08,0,bufferSize_3);
