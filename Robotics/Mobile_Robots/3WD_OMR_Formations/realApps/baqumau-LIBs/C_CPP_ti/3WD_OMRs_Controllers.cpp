@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <math.h>
+// #include <math.h>
 #include <float.h>
 #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "3WD_OMRs_Controllers.h"
@@ -43,14 +43,14 @@ float roundf_fast(float num){
 //---------------------------------------------------------------------------------------------------------------
 // Function to round a floating-point number to three decimal places:
 float roundToThreeDecimals(float num){
-    // return roundf_fast(num*1000.0f)/1000.0f;                                                // Return a fixed-point number with three decimals.
-    return roundf(num*1000.0f)/1000.0f;                                                     // Return a fixed-point number with three decimals.
+    return roundf_fast(num*1000.0f)/1000.0f;                                                // Return a fixed-point number with three decimals.
+    // return roundf(num*1000.0f)/1000.0f;                                                     // Return a fixed-point number with three decimals.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Function to round a floating-point number to four decimal places:
 float roundToFourDecimals(float num){
-    // return roundf_fast(num*10000.0f)/10000.0f;                                              // Return a fixed-point number with four decimals.
-    return roundf(num*10000.0f)/10000.0f;                                                   // Return a fixed-point number with four decimals.
+    return roundf_fast(num*10000.0f)/10000.0f;                                              // Return a fixed-point number with four decimals.
+    // return roundf(num*10000.0f)/10000.0f;                                                   // Return a fixed-point number with four decimals.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Function to compute a custom hyperbolic tangent for a floating-point number x:
@@ -163,7 +163,7 @@ void initStMatrix(St_Matrix *SMAT){
 // Creating integration structure:
 Integrator createIntegrator(int inputSize, float sampleTime, float gain){
     int s = 2*inputSize;                                                                    // Declaration of s as integer variable.
-    // Configuring the members of the Integrator structure:
+    // Configuring the members of the integration structure:
     Integrator INT;                                                                         // Creates integrator structure.
     INT.s_in = inputSize;                                                                   // Assign value of inputSize to the member s_in of the INT structure.
     INT.s_out = inputSize;                                                                  // Assign value of outputSize to the member s_out of the INT structure.
@@ -404,11 +404,11 @@ void HOSMDifferentiation(HOSM_Differentiator SMDIF, float input[]){
             SMDIF.x3_k[i] = SMDIF.x3_kp1[i];                                                // Updates the state vector x3(k), corresponding to the second derivative of SMDIF differentiator.
             // Computing auxiliary operations:
             float OP1 = SMDIF.x1_k[i] - input[i];                                           // Precompute required operator 1 (tracking error of the input).
-            // float OP2 = cbrtf_fast(fabsf(OP1));                                             // Precompute required operator 2 (cbrt is the cubic root of a number).
-            float OP2 = cbrtf(fabsf(OP1));                                                   // Precompute required operator 2 (cbrt is the cubic root of a number).
-            float OP3 = signf(OP1);                                                         // Precompute required operator 3 (sign function).
-            // float OP4 = cbrtf_fast(SMDIF.Lip[i]);                                           // Precompute required operator 4.
-            float OP4 = cbrtf(SMDIF.Lip[i]);                                                // Precompute required operator 4.
+            float OP2 = cbrtf_fast(fabsf(OP1));                                             // Precompute required operator 2 (cbrt is the cubic root of a number).
+            // float OP2 = cbrtf(fabsf(OP1));                                                   // Precompute required operator 2 (cbrt is the cubic root of a number).
+            float OP3 = (float)(signf(OP1));                                                // Precompute required operator 3 (sign function).
+            float OP4 = cbrtf_fast(SMDIF.Lip[i]);                                           // Precompute required operator 4.
+            // float OP4 = cbrtf(SMDIF.Lip[i]);                                                // Precompute required operator 4.
             // Computing x1(k + 1) equation, for SMDIF differentiation structure:
             SMDIF.x1_kp1[i] = SMDIF.x1_k[i] - SMDIF.Ts*(SMDIF.lambda[2]*OP2*OP2*OP3*OP4) + SMDIF.Ts*SMDIF.x2_k[i] + SMDIF.Ts*SMDIF.Ts*SMDIF.x3_k[i]/2.0f;
             // Computing x2(k + 1) equation, for SMDIF differentiation structure:
@@ -469,7 +469,7 @@ RS_Observer createRS_Observer(float sampleTime, float gains[9*Robots_Qty][3*Robo
 // Adding initial conditions to high-gain observer structured as RSO:
 void init_RS_Observer(RS_Observer RSO, float x_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
-    float Xi_0[2*RSO.s_state];                                                              // Variable to save initial conditions for integrator RSO.INT.
+    float *Xi_0 = (float *)malloc(2*RSO.s_state * sizeof(float));                           // Variable to save initial conditions for RSO.INT integration structure.
     for(i = 0; i < RSO.s_state; i++){
         RSO.X_0[i] = x_0[i];                                                                // Saving initial conditions data for x(0) within RSO structure.
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within RSO.INT structure.
@@ -534,7 +534,7 @@ void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_
                 };
                 //-----------------------------------------------
                 // Updating vector fields F(k) and G(k), together with variables x1(k + 1), x2(k + 1) and x3(k + 1):
-                float X_kp1[9*Robots_Qty];                                                  // Creates a support variable for concatenate x1(k + 1), x2(k + 1) and x3(k + 1) in only a vector.
+                float *X_kp1 = (float *)malloc(9*Robots_Qty * sizeof(float));               // Creates a support variable for concatenate x1(k + 1), x2(k + 1) and x3(k + 1) in only a vector.
                 for(i = 0; i < RSO.s_base; i++){
                     RSO.F_k[i] = 0.0f;                                                      // Clear i^th value of vector field F(k).
                     RSO.G_k[i] = 0.0f;                                                      // Clear i^th value of vector field G(k).
@@ -831,8 +831,8 @@ CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][
 // Adding initial conditions to high-gain observer 01 structured as CSO:
 void init_CS_Observer01(CS_Observer CSO, float z_0[]){
     int i, j, s = 0, m = Robots_Qty-1, n = 3*Robots_Qty;                                    // Declaration of i, j, s, n and m as integer variables.
-    float Xi_0[6*m];                                                                        // Variable to save initial conditions for CSO.INT integrator.
-    float Xd_0[CSO.s_in];                                                                   // Variable to save initial conditions for CSO.DIF differentiator.
+    float *Xi_0 = (float *)malloc(6*m * sizeof(float));                                     // Variable to save initial conditions for CSO.INT integrator.
+    float *Xd_0 = (float *)malloc(CSO.s_in * sizeof(float));                                // Variable to save initial conditions for CSO.DIF differentiator.
     for(i = 0; i < CSO.s_state; i++){
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within CSO.INT structure.
     }
@@ -924,7 +924,7 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                 };
                 //-----------------------------------------------
                 // Updating vector fields F(k) and G(k), together with variables z1(k + 1), z2(k + 1) and z3(k + 1) where derivative of estimated signals were defined in this algorithm:
-                float Z_kp1[3*m];                                                           // Creates a support variable for concatenate z1(k + 1), z2(k + 1) and z3(k + 1) in only a vector.
+                float *Z_kp1 = (float *)malloc(3*m * sizeof(float));                        // Creates a support variable for concatenate z1(k + 1), z2(k + 1) and z3(k + 1) in only a vector.
                 for(i = 0; i < m; i++){
                     CSO.F_k[i] = 0.0f;                                                      // Clear i^th value of vector field F(k).
                     CSO.G_k[i] = 0.0f;                                                      // Clear i^th value of vector field G(k).
@@ -1015,8 +1015,8 @@ CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)
 // Adding initial conditions to high-gain observer 01 structured as CSO (variant x):
 void init_CSx_Observer01(CSx_Observer CSO, float z_0[]){
     int i, j, s = 0, m = Robots_Qty-1, n = 3*Robots_Qty;                                    // Declaration of i, j, s, n and m as integer variables.
-    float Xi_0[6*m];                                                                        // Variable to save initial conditions for CSO.INT integrator.
-    float Xd_0[3*n];                                                                        // Variable to save initial conditions for CSO.SMDIF differentiator.
+    float *Xi_0 = (float *)malloc(6*m * sizeof(float));                                     // Variable to save initial conditions for CSO.INT integration structure.
+    float *Xd_0 = (float *)malloc(3*n * sizeof(float));                                     // Variable to save initial conditions for CSO.SMDIF differentiation structure.
     for(i = 0; i < CSO.s_state; i++){
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within CSO.INT structure.
     }
@@ -1032,7 +1032,7 @@ void init_CSx_Observer01(CSx_Observer CSO, float z_0[]){
         Xd_0[i+n] = z_0[i+n];                                                               // Saving initial conditions for x2(0) within CSO.SMDIF structure.
         Xd_0[i+2*n] = 0.0f;                                                                 // Saving initial conditions for x3(0) within CSO.SMDIF structure (initial values for second derivatives of c(k) are assumed equal to zero).
     }
-    // Initiating integrator CSO.INT and differentiator CSO.DIF:
+    // Initiating CSO.INT integration structure and CSO.DIF differentiation structure:
     initIntegrator(CSO.INT,Xi_0);                                                           // Initialize integrator of CSO high-gain observer.
     initHOSMDifferentiator(CSO.SMDIF,Xd_0);                                                 // Initialize HOSM-based differentiator of CSO high-gain observer.
     // Initiating variables z1(k), z2(k) and z3(k):
@@ -1109,7 +1109,7 @@ void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                 };
                 //-----------------------------------------------
                 // Updating vector fields F(k) and G(k), together with variables z1(k + 1), z2(k + 1) and z3(k + 1) where derivative of estimated signals were defined in this algorithm:
-                float Z_kp1[3*m];                                                           // Creates a support variable for concatenate z1(k + 1), z2(k + 1) and z3(k + 1) in only a vector.
+                float *Z_kp1 = (float *)malloc(3*m * sizeof(float));                        // Creates a support variable for concatenate z1(k + 1), z2(k + 1) and z3(k + 1) in only a vector.
                 for(i = 0; i < m; i++){
                     CSO.F_k[i] = 0.0f;                                                      // Clear i^th value of vector field F(k).
                     CSO.G_k[i] = 0.0f;                                                      // Clear i^th value of vector field G(k).
@@ -1188,7 +1188,7 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float satValu
 // Adding initial conditions to sliding surfaces structured within SLS:
 void init_SlidingSurfaces(Sl_Surfaces SLS, float ref_z_0[], float fmr_z_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
-    float Xi_0[2*SLS.s_out];                                                                // Variable to save initial conditions for SLS.INT integrator.
+    float *Xi_0 = (float *)malloc(2*SLS.s_out * sizeof(float));                             // Variable to save initial conditions for SLS.INT integration structure.
     for(i = 0; i < SLS.s_out; i++){
         Xi_0[i] = fmr_z_0[i] - ref_z_0[i];                                                  // Saving initial conditions for x1(0) within SLS.INT structure.
         Xi_0[i+SLS.s_out] = 0.0f;                                                           // Saving initial conditions for x2(0) within SLS.INT structure.
@@ -1389,8 +1389,8 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
 // SMC strategy computing function:
 void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]){
     int i, j;                                                                               // Declaration of i, and j as integer variables.
-    float hat_Fc_k[SMC.s_out];                                                              // Declaration of nominal vector field.
-    float til_Fc_k[SMC.s_out];                                                              // Declaration of vector field with uncertainty maximum values.
+    float *hat_Fc_k = (float *)malloc(SMC.s_out * sizeof(float));                           // Declaration of nominal vector field.
+    float *til_Fc_k = (float *)malloc(SMC.s_out * sizeof(float));                           // Declaration of vector field with uncertainty maximum values.
     // Execute SMC algorithm:
     if(SMC.flag[0]){
         switch(Robots_Qty){
@@ -1800,8 +1800,8 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                         else SMC.kappa_k[i] += fabsf(W3_k[i][j])*(til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
                     }
                     // Updating the auxiliary control input:
-                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
-                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon*sls_y_k[i]);
+                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
+                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon*sls_y_k[i]);
                 }
                 for(i = 0; i < SMC.s_out; i++){
                     // Updating the output of SMC strategy --> y(k):

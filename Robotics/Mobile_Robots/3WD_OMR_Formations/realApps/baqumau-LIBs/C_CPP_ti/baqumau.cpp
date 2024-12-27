@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
+// #include <math.h>
 #include <float.h>
 #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "baqumau.h"
@@ -186,10 +186,10 @@ void ftoa(float num, char *res, int afterpoint){
     int j;                                                                                  // Declaration of j as integer variable.
     int isNegative = 0;                                                                     // Flag indicator that float number is negative.
     // handling special cases:
-    if(isnan(num)){
+    if(_isnan(num)){
         strcpy(res,"nan");
     }
-    else if(isinf(num)){
+    else if(_isinf(num)){
         strcpy(res,"inf");
     }
     else{
@@ -235,7 +235,7 @@ void initString(char *str, int strSize){
 // Function to completely remove the characters and shorten the string, shift the remaining characters:
 void removeCharacters(char *str, size_t start, size_t count){
     size_t length = strlen(str);
-
+    //-----------------------------------------------
     // Ensure the range is within the string's length:
     if(start < length){
         size_t i;

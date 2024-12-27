@@ -146,7 +146,7 @@ char *var11;                                                                    
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
 enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = STATIC_01;                                                // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
+enum Reference_Type reftype = CIRCUMFERENCE_01;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -175,12 +175,12 @@ float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
 };
 // Float parameters to define the GPI controller gains of RS ADRC:
 float gpi_Gains[3*Robots_Qty][3] = {
-  {41.4770f, 53.9201f, 15.5769f},
-  {41.4770f, 53.9201f, 15.5769f},
-  {68.4636f, 75.3099f, 18.4091f},
-  {41.4770f, 53.9201f, 15.5769f},
-  {41.4770f, 53.9201f, 15.5769f},
-  {68.4636f, 75.3099f, 18.4091f}                                                        // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
+  {125.0f, 112.5f, 22.5f},
+  {125.0f, 112.5f, 22.5f},
+  {729.0f, 364.5f, 40.5f},
+  {27.0f, 40.5f, 13.5f},
+  {27.0f, 40.5f, 13.5f},
+  {5359.375f, 1071.875f, 61.25f}                                                               // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
 };
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
@@ -530,9 +530,9 @@ __interrupt void cpu_timer1_isr(void){
         computeCSVariables(FMR);                                                        // Compute the cluster space variables of FMR formation.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the desired reference tracking-trajectories:
-        // computeCircumference01(REF,consys,CpuTimer1.InterruptCount);                    // Compute desired reference profiles for OMRs synchronization.
-        // computeInfinity01(REF,consys,CpuTimer1.InterruptCount);                      // Compute desired reference profiles for OMRs synchronization.
-        computeStatical01(REF,consys);                                                  // Compute desired reference profiles for OMRs synchronization.
+        computeCircumference01(REF,consys,CpuTimer1.InterruptCount);                    // Compute desired reference profiles for OMRs synchronization.
+        // computeInfinity01(REF,consys,CpuTimer1.InterruptCount);                         // Compute desired reference profiles for OMRs synchronization.
+        // computeStatical01(REF,consys);                                                  // Compute desired reference profiles for OMRs synchronization.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the designed control strategy:
         switch(consys){
@@ -564,17 +564,20 @@ __interrupt void cpu_timer1_isr(void){
                     ftoa(FMR.v_k[i+3],FMR.vs_k.data[i+3],3);                            // Saving same PWMs control signals of OMRs formation, but in string-format.
                 }
                 break;
-              }
+            }
             case SMC_CS:{
+                if(CpuTimer1.InterruptCount == 335){
+                    NOP;
+                }
                 //---------------------------------------------SMC_CS----------------------------------------------------
                 // Computing the estimation via High-gain Observer:
                 CSx_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);                       // Estimates the OMRs formation output c(k), first derivative and disturbances.
                 //-------------------------------------------------------------------------------------------------------
                 // Computing the sliding surfaces required by SMC CS:
-                // compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);                   // Update to current values for sliding surfaces.
+                compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);                   // Update to current values for sliding surfaces.
                 //-------------------------------------------------------------------------------------------------------
                 // Computing SMC CS strategy:
-                // computeSMC_Controller(SMC,REF.y_k,FMR.c_k,CSO.y_k,SLS.y_k,FMR.params);  // Update the current values for SMC CS strategy.
+                computeSMC_Controller(SMC,REF.y_k,FMR.c_k,CSO.y_k,SLS.y_k,FMR.params);  // Update the current values for SMC CS strategy.
                 //-------------------------------------------------------------------------------------------------------
                 // Conditioning input torque control for OMRs formation:
                 for(i = 0; i < 3; i++){
@@ -598,9 +601,9 @@ __interrupt void cpu_timer1_isr(void){
         }
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the control signals for OMRs formation:
-        memset_fast(controlSignals,0,bufferSize_2);                                     // Initialize controlSignals data chain.
+        memset_fast(controlSignals,0,bufferSize_2);                                        // Initialize controlSignals data chain.
         snprintf(controlSignals,bufferSize_2,":0,%s,%s,%s,%s,%s,%s;\n",FMR.vs_k.data[0],FMR.vs_k.data[1],FMR.vs_k.data[2],FMR.vs_k.data[3],FMR.vs_k.data[4],FMR.vs_k.data[5]);
-        scic_msgXmit(controlSignals);                                                   // Write measured variables through SCIB peripheral.
+        scic_msgXmit(controlSignals);                                                      // Write measured variables through SCIB peripheral.
     }
     //-------------------------------------------------------------------------------------------------------------------
     // Disabling global interrupts before exiting ISR to prevent nested interrupts during exit:
@@ -849,13 +852,13 @@ __interrupt void scia_rx_isr(void){
                 }
                 case MINGYUE_01:{
                     // Configuring initial parameters for first Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
-                    float Cx_0 = 1800.0f;                                               // [mm], initial reference's centre along workspace's x axis.
+                    float Cx_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's x axis.
                     float Cy_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's y axis.
-                    float Sc_0 = 1200.0f;                                               // [mm], initial scope of infinity-shape trajectory on workspace.
-                    float Kc_0 = 25.0f;                                                 // Velocity desired gain of planned trajectory.
+                    float Sc_0 = 700.0f;                                                // [mm], initial scope of infinity-shape trajectory on workspace.
+                    float Kc_0 = 50.0f;                                                 // Velocity desired gain of planned trajectory.
                     float Vcx_0 = Sc_0/Kc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Sc_0/Kc_0;                                       // [mm/s], initial cluster's forward speed along y axis.
-                    float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
+                    float Dr_0 = 190.0f;                                                // [mm], initial desired half distance between robots.
                     float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2f(Vcx_0,Vcy_0), -2.0f*atan2f(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
@@ -895,7 +898,9 @@ __interrupt void scia_rx_isr(void){
             }
             t_cl += 8.0f;                                                               // Final value of clutch interval time.
             //-----------------------------------------------------------------------------------------------------------
-            CpuTimer1.InterruptCount = 0;                                               // Reset CPU timer 1 (iterations).
+            CpuTimer0.InterruptCount = 0;                                               // Reset CPU timer 0 counter.
+            CpuTimer1.InterruptCount = 0;                                               // Reset CPU timer 1 counter (iterations).
+            CpuTimer2.InterruptCount = 0;                                               // Reset CPU timer 2 counter.
             flagcommand_0 = true;                                                       // Setting flag 0 to true.
         }
     }

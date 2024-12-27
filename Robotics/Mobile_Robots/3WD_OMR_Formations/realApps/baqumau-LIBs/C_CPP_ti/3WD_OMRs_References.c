@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <math.h>
+// #include <math.h>
 #include <float.h>
 #include "C28x_FPU_FastRTS.h"                                                               // Include operators from FPUfastRTS library.
 #include "3WD_OMRs_References.h"
@@ -54,7 +54,8 @@ Reference createReference(float sampleTime, enum Reference_Type reftype){
 // Initialize the circumference-shape reference trajectory for OMRs control system:
 void initReference(Reference REF, enum Control_System consys, enum Reference_Type reftype, float z_0[]){
     int i;                                                                                  // Declaration of i as integer variable.
-    float Ci1_0[6*Robots_Qty], Ci2_0[6*Robots_Qty];                                         // Vectors to place the initial conditions of associated integrators INT_1 and INT_2 within REF structure.
+    float *Ci1_0 = (float *)malloc(6*Robots_Qty * sizeof(float));                           // Vector to place the initial conditions of associated INT_1 integrator within REF structure.
+    float *Ci2_0 = (float *)malloc(6*Robots_Qty * sizeof(float));                           // Vector to place the initial conditions of associated INT_2 integrator within REF structure.
     for(i = 0; i < 3*Robots_Qty; i++){
         // Initial conditions Z_0 of desired cluster reference trajectories:
         REF.Z_0[i] = z_0[i];                                                                // Saving cluster initial conditions data for c(0) within REF structure.
@@ -133,7 +134,9 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
     initIntegrator(REF.INT_2,Ci2_0);                                                        // Initialize second common integrator of REF references builder.
     switch(reftype){
         case MINGYUE_01:{
-            float Xco_0[Robots_Qty], Xd1_0[2*Robots_Qty], Xd2_0[2*Robots_Qty];              // Vectors to place the initial conditions of associated converter COR and differentiator DIF_1 and DIF_2 within REF reference structure.
+            float *Xco_0 = (float *)malloc(Robots_Qty * sizeof(float));                     // Vector to place the initial conditions for associated converter COR within REF reference structure.
+            float *Xd1_0 = (float *)malloc(2*Robots_Qty * sizeof(float));                   // Vector to place the initial conditions for associated differentiator DIF_1 within REF reference structure.
+            float *Xd2_0 = (float *)malloc(2*Robots_Qty * sizeof(float));                   // Vector to place the initial conditions for associated differentiator DIF_2 within REF reference structure.
             for(i = 0; i < Robots_Qty; i++){
                 Xco_0[i] = REF.X_0[2+3*i];                                                  // Initial condition for angle conversion function.
                 // Adding initial conditions to associated differentiators DIF_1 and DIF_2 within REF structure:
