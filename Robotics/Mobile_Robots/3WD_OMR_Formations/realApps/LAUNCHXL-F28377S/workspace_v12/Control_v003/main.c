@@ -34,10 +34,10 @@
 #define freq_hz_0 250                                                                   // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                                   // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 40                                                                    // Frequency in Hz for instructions execution of Timer 2.
-#define exe_minutes 2                                                                   // Run time minutes.
+#define exe_minutes 5                                                                   // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
-#include <math.h>
+// #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -146,7 +146,7 @@ char *var11;                                                                    
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
 enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = CIRCUMFERENCE_01;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
+enum Reference_Type reftype = MINGYUE_01;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -480,8 +480,11 @@ void main(void){
 //-----------------------------------------------------------------------------------------------------------------------
 // Function to generate interrupt service through CPU timer 0 (streaming data from MATLAB at 250 Hz):
 __interrupt void cpu_timer0_isr(void){
-    CpuTimer0.InterruptCount++;
     //-------------------------------------------------------------------------------------------------------------------
+    // Clearing the interrupt flag:
+    CpuTimer0Regs.TCR.bit.TIF = 1;                                                      // Clear the Timer 0 interrupt flag.
+    //-------------------------------------------------------------------------------------------------------------------
+    CpuTimer0.InterruptCount++;                                                         // Increases value of Timer 0 counter.
     // Blinking LED GPIO 1:
     if(flagcommand_1 && CpuTimer0.InterruptCount == freq_hz_0 && CpuTimer1.InterruptCount <= final_iteration){
         GPIO_WritePin(BLINKY_LED_GPIO_01, 0);                                           // Turn LED GPIO 1 to ON.
@@ -497,9 +500,6 @@ __interrupt void cpu_timer0_isr(void){
     // Sending command to MATLAB:
     if(CpuTimer1.InterruptCount <= final_iteration) scia_msgXmit(msg_1);                // Write message 1 through SCIA peripheral.
     else scia_msgXmit(msg_2);                                                           // Otherwise write message 2 through SCIA peripheral.
-    //-------------------------------------------------------------------------------------------------------------------
-    // Clearing the interrupt flag:
-    CpuTimer0Regs.TCR.bit.TIF = 1;                                                      // Clear the Timer 0 interrupt flag.
     //-------------------------------------------------------------------------------------------------------------------
     // Acknowledge this interrupt to receive more interrupts from group 1:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
@@ -530,8 +530,9 @@ __interrupt void cpu_timer1_isr(void){
         computeCSVariables(FMR);                                                        // Compute the cluster space variables of FMR formation.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the desired reference tracking-trajectories:
-        computeCircumference01(REF,consys,CpuTimer1.InterruptCount);                    // Compute desired reference profiles for OMRs synchronization.
-        // computeInfinity01(REF,consys,CpuTimer1.InterruptCount);                         // Compute desired reference profiles for OMRs synchronization.
+        // computeCircumference01(REF,consys,CpuTimer1.InterruptCount);                    // Compute desired reference profiles for OMRs synchronization.
+        computeInfinity01(REF,consys,CpuTimer1.InterruptCount);                         // Compute desired reference profiles for OMRs synchronization.
+        // computeInfinity02(REF,consys,CpuTimer1.InterruptCount);                         // Compute desired reference profiles for OMRs synchronization.
         // computeStatical01(REF,consys);                                                  // Compute desired reference profiles for OMRs synchronization.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the designed control strategy:
@@ -848,27 +849,27 @@ __interrupt void scia_rx_isr(void){
                     break;
                 }
                 case MINGYUE_01:{
-                    // Configuring initial parameters for first Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
+                    // Configuring initial parameters for first Mingyue's infinity-shape trajectory (check that Sc_0 and Wc_0 are equals to Sc and Wc placed in the infinity generation source code):
                     float Cx_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's x axis.
                     float Cy_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's y axis.
-                    float Sc_0 = 700.0f;                                                // [mm], initial scope of infinity-shape trajectory on workspace.
-                    float Kc_0 = 50.0f;                                                 // Velocity desired gain of planned trajectory.
-                    float Vcx_0 = Sc_0/Kc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
-                    float Vcy_0 = 2.0f*Sc_0/Kc_0;                                       // [mm/s], initial cluster's forward speed along y axis.
-                    float Dr_0 = 190.0f;                                                // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2f(Vcx_0,Vcy_0), -2.0f*atan2f(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float Sc_0 = 1200.0f;                                               // [mm], initial scope of infinity-shape trajectory on workspace.
+                    float Wc_0 = 1.0f/25.0f;                                            // [rad/s], Desired angular velocity relationship gain for planned trajectory.
+                    float Vcx_0 = Sc_0*Wc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
+                    float Vcy_0 = 2.0f*Vcx_0;                                           // [mm/s], initial cluster's forward speed along y axis.
+                    float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
+                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2f(Vcx_0,Vcy_0)-M_PI_2, -2.0f*atan2f(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
                 case MINGYUE_02:{
                     // Configuring initial parameters for second Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
-                    float Cx_0 = 1800.0f;                                               // [mm], initial reference's centre along workspace's x axis.
+                    float Cx_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's x axis.
                     float Cy_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's y axis.
                     float Sc_0 = 1200.0f;                                               // [mm], initial scope of infinity-shape trajectory on workspace.
-                    float Kc_0 = 25.0f;                                                 // Velocity desired gain of planned trajectory.
-                    float Vcx_0 = Sc_0/Kc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
-                    float Vcy_0 = 2.0f*Sc_0/Kc_0;                                       // [mm/s], initial cluster's forward speed along y axis.
-                    float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
+                    float Wc_0 = 1.0f/25.0f;                                            // [rad/s], Desired angular velocity relationship gain for planned trajectory.
+                    float Vcx_0 = Sc_0*Wc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
+                    float Vcy_0 = 2.0f*Vcx_0;                                           // [mm/s], initial cluster's forward speed along y axis.
+                    float Dr_0 = 180.0f;                                                // [mm], initial desired half distance between robots.
                     float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2f(Vcx_0,Vcy_0)-M_PI_2, -atan2f(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
@@ -920,7 +921,7 @@ __interrupt void scib_tx_isr(void){
     //-------------------------------------------------------------------------------------------------------------------
     // Clearing the interrupt flag:
     ScibRegs.SCIFFTX.bit.TXFFINTCLR = 1;                                                // Clear TX FIFO interrupt flag.
-    // Acknowledge this interrupt to receive more interrupts from group 8:
+    // Acknowledge this interrupt to receive more interrupts from group 9:
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;                                             // Acknowledge PIE group 9 interrupt.
 }
 //-----------------------------------------------------------------------------------------------------------------------

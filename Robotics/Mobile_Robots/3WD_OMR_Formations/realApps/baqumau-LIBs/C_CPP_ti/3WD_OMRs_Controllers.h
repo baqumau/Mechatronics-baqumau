@@ -329,7 +329,7 @@ extern float roundToFourDecimals(float num);
 // Function to saturate signal between minimum and maximum values:
 extern float saturation(float signal, float minValue, float maxValue);
 // Clutch function to attenuate high-peaking phenomena during the initial seconds of runtime:
-extern float clutch(float signal_k, float t_cl, float sampleTime, int iterations);
+extern float clutch(float signal_k, float t_cl, float sampleTime, unsigned long iterations);
 // Function to allocate memory for the matrix in the structure (floating-point numbers array):
 extern bool allocateMatrix(Matrix *MAT, int rows, int cols);
 // Function to free memory for the matrix in the structure:

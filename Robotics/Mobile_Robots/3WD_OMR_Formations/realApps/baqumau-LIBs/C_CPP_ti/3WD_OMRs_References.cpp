@@ -146,8 +146,8 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
                 Xd2_0[i+Robots_Qty] = REF.x3_k[2+3*i];
             }                                    
             initAngleConverter(REF.COR,Xco_0);                                              // Initialize angle conversion function to obtained angles after atan2(.) function.
-            initDifferentiator(REF.DIF_1,Xd1_0);                                            // Initialize first differentiator struct within reference builder REF structure.
-            initDifferentiator(REF.DIF_2,Xd2_0);                                            // Initialize second differentiator struct within reference builder REF structure.
+            initDifferentiator(REF.DIF_1,Xd1_0);                                            // Initialize first differentiation structure within reference builder REF structure.
+            initDifferentiator(REF.DIF_2,Xd2_0);                                            // Initialize second differentiation structure within reference builder REF structure.
             break;
         }
     }
@@ -173,7 +173,7 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the instantaneous circumference-shape reference trajectory n: 01, for OMRs control system:
-void computeCircumference01(Reference REF, enum Control_System consys, int iterations){
+void computeCircumference01(Reference REF, enum Control_System consys, unsigned long iterations){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing circumference builder algorithm:
     if(REF.flag[0]){
@@ -272,7 +272,7 @@ void computeCircumference01(Reference REF, enum Control_System consys, int itera
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the instantaneous mingyue's infinity-shape reference trajectory n: 01, for OMRs control system:
-void computeInfinity01(Reference REF, enum Control_System consys, int iterations){
+void computeInfinity01(Reference REF, enum Control_System consys, unsigned long iterations){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing circumference builder algorithm:
     if(REF.flag[0]){
@@ -289,16 +289,16 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
         }
         // Computing equations for infinity reference profiles generation in the cluster space:
         float Sc = 1200.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
-        float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
-        float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
-        float Wc2 = Wc1/Kc;                                                                 // Precompute operation Sc/(Kc^3).
-        float ddd_xc_k = -Wc2*cosf((float)(iterations)*REF.Ts/Kc);                          // Computing d^3(xc)/dt^3.
-        float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*(float)(iterations)*REF.Ts/Kc);                // Computing d^3(yc)/dt^3.
+        float Wc = 1.0f/25.0f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
+        float Wc1 = Sc*Wc*Wc;                                                               // Precompute operation Sc*(Wc^2).
+        float Wc2 = Wc1*Wc;                                                                 // Precompute operation Sc*(Wc^3).
+        float ddd_xc_k = -Wc2*cosf((float)(iterations)*REF.Ts*Wc);                          // Computing d^3(xc)/dt^3.
+        float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*(float)(iterations)*REF.Ts*Wc);                // Computing d^3(yc)/dt^3.
         switch(Robots_Qty){
             case 2:{
                 //------------------------------Cluster Space--------------------------------
-                REF.z3_kp1[0] = -Wc1*sinf((float)(iterations)*REF.Ts/Kc);                   // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*(float)(iterations)*REF.Ts/Kc);         // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = -Wc1*sinf((float)(iterations)*REF.Ts*Wc);                   // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*(float)(iterations)*REF.Ts*Wc);         // Computing d^2(yc)/dt^2.
                 // Computing d^2(thc)/dt^2:
                 float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Precompute operation OP1(k).
                 float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Precompute operation OP2(k).
@@ -389,7 +389,7 @@ void computeInfinity01(Reference REF, enum Control_System consys, int iterations
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the instantaneous mingyue's infinity-shape reference trajectory n: 02, for OMRs control system:
-void computeInfinity02(Reference REF, enum Control_System consys, int iterations){
+void computeInfinity02(Reference REF, enum Control_System consys, unsigned long iterations){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing circumference builder algorithm:
     if(REF.flag[0]){
@@ -406,16 +406,16 @@ void computeInfinity02(Reference REF, enum Control_System consys, int iterations
         }
         // Computing equations for infinity reference profiles generation in the cluster space:
         float Sc = 1200.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
-        float Kc = 25.0f;                                                                   // Velocity desired gain of planned trajectory.
-        float Wc1 = Sc/(Kc*Kc);                                                             // Precompute operation Sc/(Kc^2).
-        float Wc2 = Wc1/Kc;                                                                 // Precompute operation Sc/(Kc^3).
-        float ddd_xc_k = -Wc2*cosf((float)(iterations)*REF.Ts/Kc);                          // Computing d^3(xc)/dt^3.
-        float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*(float)(iterations)*REF.Ts/Kc);                // Computing d^3(yc)/dt^3.
+        float Wc = 1.0f/25.0f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
+        float Wc1 = Sc*Wc*Wc;                                                               // Precompute operation Sc*(Wc^2).
+        float Wc2 = Wc1*Wc;                                                                 // Precompute operation Sc*(Wc^3).
+        float ddd_xc_k = -Wc2*cosf((float)(iterations)*REF.Ts*Wc);                          // Computing d^3(xc)/dt^3.
+        float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*(float)(iterations)*REF.Ts*Wc);                // Computing d^3(yc)/dt^3.
         switch(Robots_Qty){
             case 2:{
                 //------------------------------Cluster Space--------------------------------
-                REF.z3_kp1[0] = -Wc1*sinf((float)(iterations)*REF.Ts/Kc);                   // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*(float)(iterations)*REF.Ts/Kc);         // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = -Wc1*sinf((float)(iterations)*REF.Ts*Wc);                   // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*(float)(iterations)*REF.Ts*Wc);         // Computing d^2(yc)/dt^2.
                 // Computing d^2(thc)/dt^2:
                 float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Precompute operation OP1(k).
                 float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Precompute operation OP2(k).

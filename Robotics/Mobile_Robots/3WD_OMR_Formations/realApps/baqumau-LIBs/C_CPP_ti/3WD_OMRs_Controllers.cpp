@@ -68,7 +68,7 @@ float saturation(float signal_k, float minValue, float maxValue){
 }
 //---------------------------------------------------------------------------------------------------------------
 // Clutch function to attenuate high-peaking phenomena during the initial seconds of runtime:
-float clutch(float signal_k, float t_cl, float sampleTime, int iterations){
+float clutch(float signal_k, float t_cl, float sampleTime, unsigned long iterations){
     if((float)(iterations)*sampleTime < t_cl){
         // Compute clutch function at k instant:
         return signal_k*(1.0f - cosf((float)(M_PI)*(float)(iterations)*sampleTime/t_cl))/2.0f;
@@ -405,7 +405,7 @@ void HOSMDifferentiation(HOSM_Differentiator SMDIF, float input[]){
             // Computing auxiliary operations:
             float OP1 = SMDIF.x1_k[i] - input[i];                                           // Precompute required operator 1 (tracking error of the input).
             float OP2 = cbrtf_fast(fabsf(OP1));                                             // Precompute required operator 2 (cbrt is the cubic root of a number).
-            // float OP2 = cbrtf(fabsf(OP1));                                                   // Precompute required operator 2 (cbrt is the cubic root of a number).
+            // float OP2 = cbrtf(fabsf(OP1));                                                  // Precompute required operator 2 (cbrt is the cubic root of a number).
             float OP3 = (float)(signf(OP1));                                                // Precompute required operator 3 (sign function).
             float OP4 = cbrtf_fast(SMDIF.Lip[i]);                                           // Precompute required operator 4.
             // float OP4 = cbrtf(SMDIF.Lip[i]);                                                // Precompute required operator 4.

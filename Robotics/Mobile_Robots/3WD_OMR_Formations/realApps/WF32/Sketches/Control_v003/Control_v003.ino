@@ -15,7 +15,7 @@ Unfortunately ChipKit WF32 with ARDUINO framework does not work appropriately.*/
 #define prescaler_5 256                                                 // Prescaler for the ticks of Timer 5.
 #define freq_hz_5 10                                                    // Frequency in Hz for instructions execution of Timer 5.
 #define ticks_per_second 80E6                                           // Ticks per seconds of machine's clock.
-#define exe_minutes 5                                                   // Run time minutes.
+#define exe_minutes 9                                                   // Run time minutes.
 #define NOP __asm__ __volatile__ ("nop\n\t")                            // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
 // Including libraries to the program:
@@ -55,8 +55,8 @@ char character_1;                                                       // Varia
 char character_4;                                                       // Variable to save received character from UART 4.
 char controlSignals[bufferSize];                                        // Variable to save control signals data and subsequently send via UART 4 module.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
-enum Control_System consys = SMC_CS;                                    // Declare the control system type.
-enum Reference_Type reftype = STATIC_01;                                // Declare the reference shape type.
+enum Control_System consys = ADRC_RS;                                   // Declare the control system type.
+enum Reference_Type reftype = MINGYUE_01;                               // Declare the reference shape type.
 float errors_k[3*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};    // Declaration of this floating-point values vector for arranging error variables.
 //---------------------------------------------------------------------------------------------------------------
 // Configuring the ADRC_RS strategy:
@@ -186,8 +186,8 @@ void __attribute__((interrupt)) Timer_4_Handler(){
     //-----------------------------------------------------------------------------------------------------------
     // Computing the desired reference tracking-trajectories:
     // computeCircumference01(REF,consys,iterations);                      // Compute desired reference profiles for OMRs synchronization.
-    // computeInfinity01(REF,consys,iterations);                           // Compute desired reference profiles for OMRs synchronization.
-    computeStatical01(REF,consys);                                      // Compute desired reference profiles for OMRs synchronization.
+    computeInfinity01(REF,consys,iterations);                           // Compute desired reference profiles for OMRs synchronization.
+    // computeStatical01(REF,consys);                                      // Compute desired reference profiles for OMRs synchronization.
     //-----------------------------------------------------------------------------------------------------------
     // Computing the designed control strategy:
     switch(consys){
@@ -377,20 +377,20 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
         }
         case MINGYUE_01:{
           // Configuring initial parameters for first Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
-          float Cx_0 = 1800.0f;                                         // [mm], initial reference's centre along workspace's x axis.
+          float Cx_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's x axis.
           float Cy_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's y axis.
           float Sc_0 = 1200.0f;                                         // [mm], initial scope of infinity-shape trajectory on workspace.
-          float Kc_0 = 25.0f;                                           // Velocity desired gain of planned trajectory.
-          float Vcx_0 = Sc_0/Kc_0;                                      // [mm/s], initial cluster's forward speed along x axis.
-          float Vcy_0 = 2.0f*Sc_0/Kc_0;                                 // [mm/s], initial cluster's forward speed along y axis.
+          float Wc_0 = 1.0f/25.0f;                                      // [rad/s], Desired angular velocity relationship gain for planned trajectory.
+          float Vcx_0 = Sc_0*Wc_0;                                      // [mm/s], initial cluster's forward speed along x axis.
+          float Vcy_0 = 2.0f*Vcx_0;                                     // [mm/s], initial cluster's forward speed along y axis.
           float Dr_0 = 150.0f;                                          // [mm], initial desired half distance between robots.
-          float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2(Vcx_0,Vcy_0), -2.0f*atan2(Vcx_0,Vcy_0), Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+          float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2(Vcx_0,Vcy_0)-M_PI_2, -2.0f*atan2(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
           initReference(REF,consys,reftype,ref_z0);                     // Initialize reference builder.
           break;
         }
         case MINGYUE_02:{
           // Configuring initial parameters for second Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
-          float Cx_0 = 1800.0f;                                         // [mm], initial reference's centre along workspace's x axis.
+          float Cx_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's x axis.
           float Cy_0 = 1500.0f;                                         // [mm], initial reference's centre along workspace's y axis.
           float Sc_0 = 1200.0f;                                         // [mm], initial scope of infinity-shape trajectory on workspace.
           float Kc_0 = 25.0f;                                           // Velocity desired gain of planned trajectory.
@@ -606,7 +606,7 @@ void loop(){
     stop_uart_4_module();                                               // Stop and disable UART 4 module.
   }
   else if(iterations <= final_iteration && flagcommand_5 && REF.flag[0]){
-    snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",CSO.y_k[0],CSO.y_k[1],CSO.y_k[2],CSO.y_k[3],CSO.y_k[4],CSO.y_k[5],iterations);
+    snprintf(measurements,bufferSize,"%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%1.3f,%u;",REF.y_k[0],REF.y_k[1],REF.y_k[2],REF.y_k[3],REF.y_k[4],REF.y_k[5],iterations);
     baqumau.println(measurements);                                      // Writing data in microSD.
     digitalWrite(PIN_LED3,HIGH);                                        // Turn led 3 on.
     // Serial.println(measurements);                                       // Write measurements by UART 1.

@@ -58,11 +58,11 @@ extern Reference createReference(float sampleTime, enum Reference_Type reftype);
 // Initialize the desired reference trajectory for OMRs control system:
 extern void initReference(Reference REF, enum Control_System consys, enum Reference_Type reftype, float z_0[]);
 // Compute the instantaneous circumference-shape reference trajectory n: 01, for OMRs control system:
-extern void computeCircumference01(Reference REF, enum Control_System consys, int iterations);
+extern void computeCircumference01(Reference REF, enum Control_System consys, unsigned long iterations);
 // Compute the instantaneous mingyue's infinity-shape reference trajectory n: 01, for OMRs control system:
-extern void computeInfinity01(Reference REF, enum Control_System consys, int iterations);
+extern void computeInfinity01(Reference REF, enum Control_System consys, unsigned long iterations);
 // Compute the instantaneous mingyue's infinity-shape reference trajectory n: 02, for OMRs control system:
-extern void computeInfinity02(Reference REF, enum Control_System consys, int iterations);
+extern void computeInfinity02(Reference REF, enum Control_System consys, unsigned long iterations);
 // Compute the statical reference trajectory n: 01, for OMRs control system:
 extern void computeStatical01(Reference REF, enum Control_System consys);
 //---------------------------------------------------------------------------------------------------------------

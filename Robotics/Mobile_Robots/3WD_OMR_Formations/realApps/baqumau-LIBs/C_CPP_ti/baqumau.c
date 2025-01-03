@@ -187,10 +187,10 @@ void ftoa(float num, char *res, int afterpoint){
     int isNegative = 0;                                                                     // Flag indicator that float number is negative.
     // handling special cases:
     if(_isnan(num)){
-        strcpy(res,"nan");
+        strcpy(res,"nan");                                                                  // If number is undetermined.
     }
     else if(_isinf(num)){
-        strcpy(res,"inf");
+        strcpy(res,"inf");                                                                  // If number is assumed equals to the infinity.
     }
     else{
         // Handling negative numbers:
