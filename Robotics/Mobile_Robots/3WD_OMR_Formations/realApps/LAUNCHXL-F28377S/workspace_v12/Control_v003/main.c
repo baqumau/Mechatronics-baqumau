@@ -145,8 +145,8 @@ char *var10;                                                                    
 char *var11;                                                                            // Multi-purpose char variable 11.
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
-enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = MINGYUE_01;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01 at the moment).
+enum Control_System consys = ADRC_RS;                                                   // Declare the control system type (ADRC_RS or SMC_CS at the moment).
+enum Reference_Type reftype = INDEP_CIRCUMFERENCES_01;                                  // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01 at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -530,10 +530,28 @@ __interrupt void cpu_timer1_isr(void){
         computeCSVariables(FMR);                                                        // Compute the cluster space variables of FMR formation.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the desired reference tracking-trajectories:
-        // computeCircumference01(REF,consys,CpuTimer1.InterruptCount);                    // Compute desired reference profiles for OMRs synchronization.
-        computeInfinity01(REF,consys,CpuTimer1.InterruptCount);                         // Compute desired reference profiles for OMRs synchronization.
-        // computeInfinity02(REF,consys,CpuTimer1.InterruptCount);                         // Compute desired reference profiles for OMRs synchronization.
-        // computeStatical01(REF,consys);                                                  // Compute desired reference profiles for OMRs synchronization.
+        switch(reftype){
+            case CIRCUMFERENCE_01:{
+                computeCircumference01(REF,consys,CpuTimer1.InterruptCount);            // Compute desired reference profiles for OMRs synchronization.
+                break;
+            }
+            case MINGYUE_01:{
+                computeInfinity01(REF,consys,CpuTimer1.InterruptCount);                 // Compute desired reference profiles for OMRs synchronization.
+                break;
+            }
+            case MINGYUE_02:{
+                computeInfinity02(REF,consys,CpuTimer1.InterruptCount);                 // Compute desired reference profiles for OMRs synchronization.
+                break;
+            }
+            case STATIC_01:{
+                computeStatical01(REF,consys);                                          // Compute desired reference profiles for OMRs synchronization.
+                break;
+            }
+            case INDEP_CIRCUMFERENCES_01:{
+                computeIndepCircumferences01(REF,consys,CpuTimer1.InterruptCount);      // Compute independent circumferences by the involved vehicles.
+                break;
+            }
+        }
         //---------------------------------------------------------------------------------------------------------------
         // Computing the designed control strategy:
         switch(consys){
@@ -852,7 +870,7 @@ __interrupt void scia_rx_isr(void){
                     // Configuring initial parameters for first Mingyue's infinity-shape trajectory (check that Sc_0 and Wc_0 are equals to Sc and Wc placed in the infinity generation source code):
                     float Cx_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's x axis.
                     float Cy_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's y axis.
-                    float Sc_0 = 1200.0f;                                               // [mm], initial scope of infinity-shape trajectory on workspace.
+                    float Sc_0 = 900.0f;                                                // [mm], initial scope of infinity-shape trajectory on workspace.
                     float Wc_0 = 1.0f/25.0f;                                            // [rad/s], Desired angular velocity relationship gain for planned trajectory.
                     float Vcx_0 = Sc_0*Wc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Vcx_0;                                           // [mm/s], initial cluster's forward speed along y axis.
@@ -865,7 +883,7 @@ __interrupt void scia_rx_isr(void){
                     // Configuring initial parameters for second Mingyue's infinity-shape trajectory (check that Sc_0 and Kc_0 are equals to Sc and Kc placed in the infinity generation source code):
                     float Cx_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's x axis.
                     float Cy_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's y axis.
-                    float Sc_0 = 1200.0f;                                               // [mm], initial scope of infinity-shape trajectory on workspace.
+                    float Sc_0 = 900.0f;                                                // [mm], initial scope of infinity-shape trajectory on workspace.
                     float Wc_0 = 1.0f/25.0f;                                            // [rad/s], Desired angular velocity relationship gain for planned trajectory.
                     float Vcx_0 = Sc_0*Wc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Vcx_0;                                           // [mm/s], initial cluster's forward speed along y axis.
@@ -885,6 +903,23 @@ __interrupt void scia_rx_isr(void){
                     float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
                     float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
+                    break;
+                }
+                case INDEP_CIRCUMFERENCES_01:{
+                    // Configuring initial parameters for independent circumferences:
+                    float xc_0 = 1500.0f;                                               // [mm], initial position of whole cluster along workspace's x axis.
+                    float yc_0 = 1500.0f;                                               // [mm], initial position of whole cluster along workspace's y axis.
+                    float thc_0 = M_PI_2;                                               // [rad], initial orientation of whole cluster in the workspace.
+                    float dc_0 = 180.0f;                                                // [mm], initial distance between both OMRs.
+                    float ph1_0 = 0.0f;                                                 // [rad], initial orientation of robot 1.
+                    float ph2_0 = 0.0f;                                                 // [rad], initial orientation of robot 2.
+                    float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
+                    float RXc = 400.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along X axis.
+                    float RYc = 800.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
+                    float Wc = M_PI/20.0f;                                              // [rad/s], Angular velocity for tracing the independent ellipsoids.
+                    float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
