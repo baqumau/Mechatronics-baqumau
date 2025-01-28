@@ -612,7 +612,7 @@ void computeIndepCircumferences01(Reference REF, enum Control_System consys, uns
                 float d_ph2_k = 0.0f;                                                       // [rad/s], Desired angular velocity of robot 2.
                 float RXc = 400.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along X axis.
                 float RYc = 800.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
-                float Wc = M_PI/20.0f;                                                      // [rad/s], Angular velocity for tracing the independent ellipsoids.
+                float Wc = M_PI/10.0f;                                                      // [rad/s], Angular velocity for tracing the independent ellipsoids.
                 float WTc = (float)(iterations)*REF.Ts*Wc;                                  // Rate variation of sinusoidal functions.
                 float Wc_Wc = Wc*Wc;                                                        // Precomputing Wc^2.
                 //------------------------------Cluster Space--------------------------------

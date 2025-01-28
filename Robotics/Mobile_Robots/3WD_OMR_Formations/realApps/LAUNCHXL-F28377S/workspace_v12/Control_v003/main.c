@@ -34,7 +34,7 @@
 #define freq_hz_0 250                                                                   // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                                   // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 40                                                                    // Frequency in Hz for instructions execution of Timer 2.
-#define exe_minutes 5                                                                   // Run time minutes.
+#define exe_minutes 1                                                                   // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
 // #include <math.h>
@@ -145,13 +145,13 @@ char *var10;                                                                    
 char *var11;                                                                            // Multi-purpose char variable 11.
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
-enum Control_System consys = ADRC_RS;                                                   // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = INDEP_CIRCUMFERENCES_01;                                  // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01 at the moment).
+enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
+enum Reference_Type reftype = STATIC_01;                                                // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01 at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the ADRC_RS strategy:
-const float epsilon = .42f;                                                             // Small constant used in the RSO observer.
+const float epsilon = .22f;                                                             // Small constant used in the RSO observer.
 // Float parameters to define the observer gains of RSO, for RS ADRC:
 float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {18.4091f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
@@ -175,12 +175,12 @@ float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
 };
 // Float parameters to define the GPI controller gains of RS ADRC:
 float gpi_Gains[3*Robots_Qty][3] = {
-  {125.0f, 112.5f, 22.5f},
-  {125.0f, 112.5f, 22.5f},
+  {177.9785f, 142.3828f, 25.3125f},
+  {177.9785f, 142.3828f, 25.3125f},
   {729.0f, 364.5f, 40.5f},
-  {27.0f, 40.5f, 13.5f},
-  {27.0f, 40.5f, 13.5f},
-  {5359.375f, 1071.875f, 61.25f}                                                               // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
+  {177.9785f, 142.3828f, 25.3125f},
+  {177.9785f, 142.3828f, 25.3125f},
+  {11390.625f, 2278.125f, 101.25f}                                                      // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
 };
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
@@ -192,9 +192,9 @@ float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
-float sls_Gains[3*Robots_Qty+1] = {1.54f, 1.54f, 1.68f, 1.57f, 1.68f, 1.68f, 22.0f};
+float sls_Gains[3*Robots_Qty+1] = {1.54f, 1.54f, 1.68f, 1.57f, 1.68f, 1.68f, 28.0f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float sms_Gains[3*Robots_Qty] = {1.44f, 1.44f, 1.44f, 1.44f, 1.44f, 1.44f};
+float smc_Gains[3*Robots_Qty] = {1.44f, 1.44f, 1.44f, 1.44f, 1.44f, 1.44f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
 #define rho_1 (3.0f/4.0f)*mt_1*l_1*l_1/(r_1*r_1)                                        // Constant for bounding the input torque disturbances in robot 1.
 #define rho_2 (3.0f/4.0f)*mt_2*l_2*l_2/(r_2*r_2)                                        // Constant for bounding the input torque disturbances in robot 2.
@@ -203,7 +203,7 @@ float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                             
 // Defining the saturation values of sliding surfaces at the output:
 float sls_satVals[3*Robots_Qty] = {280.0f, 280.0f, 9.5f, 150.0f, 9.5f, 9.5f};
 float diff_fc = 45.0f;                                                                  // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
-float diff_pg[3] = {5.3f, 14.1f, 9.8f};                                                 // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
+float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                  // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
 float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
 //-----------------------------------------------------------------------------------------------------------------------
 // Declaration of data structure for SCIA peripheral:
@@ -434,7 +434,7 @@ void main(void){
     // Creating data structure for an ADRC controller in the robot space:
     ADRC = createADRC_Controller();
     // Creating data structure for a SMC technique in the cluster space:
-    SMC = createSMC_Controller(sms_Gains,unc_Values,dis_Values,sls_Gains,epsilon);
+    SMC = createSMC_Controller(smc_Gains,unc_Values,dis_Values,sls_Gains,epsilon);
     // Creating data structure for the reference builder system:
     REF = createReference(sampleTime,reftype);                                          // Create reference structure.
     // Creating a robot formation structure for arranging their relevant variables:
@@ -708,17 +708,17 @@ __interrupt void cpu_timer2_isr(void){
                     }
                     case SMC_CS:{
                         memset_fast(var06,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.z1_k[0]),var06,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[0]),var06,3);
                         memset_fast(var07,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[7]),var07,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[1]),var07,3);
                         memset_fast(var08,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[8]),var08,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[2]),var08,3);
                         memset_fast(var09,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[9]),var09,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[3]),var09,3);
                         memset_fast(var10,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[10]),var10,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[4]),var10,3);
                         memset_fast(var11,0,bufferSize_3);
-                        ftoa(roundToThreeDecimals(CSO.y_k[11]),var11,3);
+                        ftoa(roundToThreeDecimals(CSO.y_k[5]),var11,3);
                         break;
                     }
                 }
@@ -806,51 +806,6 @@ __interrupt void scia_rx_isr(void){
             }
             computeCSVariables(FMR);                                                    // Compute the cluster space variables of FMR formation.
             //---------------------------------------------------------------------------------------------------------
-            // Initializing the selected control system:
-            switch(consys){
-                case ADRC_RS:{
-                    //----------------------------------------ADRC_RS--------------------------------------------------
-                    // Float vector x_0 to define initial conditions for states of HGO observer in the robot space:
-                    float obs_x0[9*Robots_Qty] = {FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
-                    init_RS_Observer(RSO,obs_x0);                                       // Initialize the observer RSO.
-                    //-------------------------------------------------------------------------------------------------
-                    // Float vector x_0 to define initial conditions for states of GPI controller:
-                    float gpi_x0[6*Robots_Qty] = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
-                    initGPI_Controller(GPI,gpi_x0);                                     // Initialize GPI controller.
-                    //-------------------------------------------------------------------------------------------------
-                    // Initializing ADRC control law:
-                    initADRC_Controller(ADRC,RSO.X_0,RSO.X_0,GPI.X_0,FMR.params);       // Initialize ADRC controller.
-                    //-------------------------------------------------------------------------------------------------
-                    // Initializing input torque control as FMR.u_k and omni-wheel angular velocities as FMR.w_k:
-                    for(i = 0; i < 3*Robots_Qty; i++){
-                        FMR.u_k[i] = 0.0f;                                              // Initial torque control in the formation.
-                        FMR.v_k[i] = 0.0f;                                              // Initial voltage control in the formation.
-                        FMR.w_k[i] = 0.0f;                                              // Initial angular velocities in the formation.
-                    }
-                    break;
-                }
-                case SMC_CS:{
-                    //----------------------------------------------SMC_CS---------------------------------------------
-                    // Float vector z_0 to define initial conditions for states of HGO observer in the cluster space:
-                    float obs_z0[9*Robots_Qty] = {FMR.c_k[0],FMR.c_k[1],FMR.c_k[2],FMR.c_k[3],FMR.c_k[4],FMR.c_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
-                    init_CSx_Observer01(CSO,obs_z0);                                    // Initialize the observer CSO.
-                    //-------------------------------------------------------------------------------------------------
-                    // Initial conditions for previous observer is taken here:
-                    init_SlidingSurfaces(SLS,REF.Z_0,obs_z0);                           // Initialize sliding surfaces algorithm.
-                    //-------------------------------------------------------------------------------------------------
-                    // Initializing SMC strategy:
-                    initSMC_Controller(SMC,REF.Z_0,obs_z0,SLS.E_0,FMR.params);          // Initialize SMC strategy.
-                    //-------------------------------------------------------------------------------------------------
-                    // Initializing input torque control as FMR.u_k, PWM control signals as FMR.v_k and omni-wheel angular velocities as FMR.w_k:
-                    for(i = 0; i < 3*Robots_Qty; i++){
-                        FMR.u_k[i] = 0.0f;                                              // Initial torque control in the formation.
-                        FMR.v_k[i] = 0.0f;                                              // Initial voltage control in the formation.
-                        FMR.w_k[i] = 0.0f;                                              // Initial angular velocities in the formation.
-                    }
-                    break;
-                }
-            }
-            //---------------------------------------------------------------------------------------------------------
             // Initializing the selected reference trajectory profiles:
             switch(reftype){
                 case CIRCUMFERENCE_01:{
@@ -898,8 +853,8 @@ __interrupt void scia_rx_isr(void){
                     float yc_0 = FMR.c_k[1];                                            // [mm], initial position of whole cluster along workspace's y axis.
                     float thc_0 = FMR.c_k[2];                                           // [rad], initial orientation of whole cluster in the workspace.
                     float dc_0 = FMR.c_k[3];                                            // [mm], initial distance between both OMRs.
-                    float ph1_0 = FMR.c_k[4];                                           // [rad], initial orientation of robot 1.
-                    float ph2_0 = FMR.c_k[5];                                           // [rad], initial orientation of robot 2.
+                    float ph1_0 = FMR.q_k[2];                                           // [rad], initial orientation of robot 1.
+                    float ph2_0 = FMR.q_k[5];                                           // [rad], initial orientation of robot 2.
                     float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
                     float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -918,9 +873,54 @@ __interrupt void scia_rx_isr(void){
                     float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
                     float RXc = 400.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along X axis.
                     float RYc = 800.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
-                    float Wc = M_PI/20.0f;                                              // [rad/s], Angular velocity for tracing the independent ellipsoids.
+                    float Wc = M_PI/10.0f;                                              // [rad/s], Angular velocity for tracing the independent ellipsoids.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
+                    break;
+                }
+            }
+            //---------------------------------------------------------------------------------------------------------
+            // Initializing the selected control system:
+            switch(consys){
+                case ADRC_RS:{
+                    //----------------------------------------ADRC_RS--------------------------------------------------
+                    // Float vector x_0 to define initial conditions for states of HGO observer in the robot space:
+                    float obs_x0[9*Robots_Qty] = {FMR.q_k[0],FMR.q_k[1],FMR.q_k[2],FMR.q_k[3],FMR.q_k[4],FMR.q_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+                    init_RS_Observer(RSO,obs_x0);                                       // Initialize the observer RSO.
+                    //-------------------------------------------------------------------------------------------------
+                    // Float vector x_0 to define initial conditions for states of GPI controller:
+                    float gpi_x0[6*Robots_Qty] = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+                    initGPI_Controller(GPI,gpi_x0);                                     // Initialize GPI controller.
+                    //-------------------------------------------------------------------------------------------------
+                    // Initializing ADRC control law:
+                    initADRC_Controller(ADRC,RSO.X_0,RSO.X_0,GPI.X_0,FMR.params);       // Initialize ADRC controller.
+                    //-------------------------------------------------------------------------------------------------
+                    // Initializing input torque control as FMR.u_k and omni-wheel angular velocities as FMR.w_k:
+                    for(i = 0; i < 3*Robots_Qty; i++){
+                        FMR.u_k[i] = 0.0f;                                              // Initial torque control in the formation.
+                        FMR.v_k[i] = 0.0f;                                              // Initial voltage control in the formation.
+                        FMR.w_k[i] = 0.0f;                                              // Initial angular velocities in the formation.
+                    }
+                    break;
+                }
+                case SMC_CS:{
+                    //----------------------------------------------SMC_CS---------------------------------------------
+                    // Float vector z_0 to define initial conditions for states of HGO observer in the cluster space:
+                    float obs_z0[9*Robots_Qty] = {FMR.c_k[0],FMR.c_k[1],FMR.c_k[2],FMR.c_k[3],FMR.c_k[4],FMR.c_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+                    init_CSx_Observer01(CSO,obs_z0);                                    // Initialize the observer CSO.
+                    //-------------------------------------------------------------------------------------------------
+                    // Initial conditions for previous observer is taken here:
+                    init_SlidingSurfaces(SLS,REF.Z_0,obs_z0);                           // Initialize sliding surfaces algorithm.
+                    //-------------------------------------------------------------------------------------------------
+                    // Initializing SMC strategy:
+                    initSMC_Controller(SMC,REF.Z_0,obs_z0,SLS.E_0,FMR.params);          // Initialize SMC strategy.
+                    //-------------------------------------------------------------------------------------------------
+                    // Initializing input torque control as FMR.u_k, PWM control signals as FMR.v_k and omni-wheel angular velocities as FMR.w_k:
+                    for(i = 0; i < 3*Robots_Qty; i++){
+                        FMR.u_k[i] = 0.0f;                                              // Initial torque control in the formation.
+                        FMR.v_k[i] = 0.0f;                                              // Initial voltage control in the formation.
+                        FMR.w_k[i] = 0.0f;                                              // Initial angular velocities in the formation.
+                    }
                     break;
                 }
             }
@@ -929,7 +929,7 @@ __interrupt void scia_rx_isr(void){
             for(i = 0; i < 3*Robots_Qty; i++){
                 t_cl += fabsf(FMR.q_k[i] - REF.y_k[i])/(3.0f*Robots_Qty*1000.0f);       // Partial value of clutch interval time.
             }
-            t_cl += 8.0f;                                                               // Final value of clutch interval time.
+            t_cl += 18.0f;                                                              // Final value of clutch interval time.
             //-----------------------------------------------------------------------------------------------------------
             CpuTimer0.InterruptCount = 0;                                               // Reset CPU timer 0 counter.
             CpuTimer1.InterruptCount = 0;                                               // Reset CPU timer 1 counter (iterations).

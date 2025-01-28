@@ -519,7 +519,7 @@ void RS_Estimation(RS_Observer RSO, float fmr_u_k[], float fmr_q_k[], float fmr_
                     { 0.0f,   0.0f, 0.0f, w12_k,   0.0f, 0.0f},
                     { 0.0f,   0.0f, 0.0f,  0.0f,   0.0f, 0.0f}
                 };
-                // Computing the matrix W2(k) = 1000.0*inv(D)*B(k):
+                // Pre-computing the matrix W2(k) = inv(hat{D})*hat{B}(k):
                 float w21_k = delta_1 + RSO.x1_k[2];                                        // Precompute angular addition 1 in W2(k).
                 float w22_k = delta_1 - RSO.x1_k[2];                                        // Precompute angular subtraction 1 in W2(k).
                 float w23_k = delta_2 + RSO.x1_k[5];                                        // Precompute angular addition 2 in W2(k).
@@ -691,7 +691,7 @@ void initADRC_Controller(ADRC_Controller ADRC, float ref_x_0[], float rso_x_0[],
                 {          0.0f,           0.0f, 0.0f,  w112_k*w118_k, -w112_k*w117_k, 0.0f},
                 {          0.0f,           0.0f, 0.0f, -w110_k*w107_k,  w110_k*w108_k, 0.0f}
             };
-            // Computing the matrix W2(k) = -inv(B(k))*D:
+            // Computing the matrix W2(k) = -inv(hat{B}(k))*hat{D}:
             float W2_k[3*Robots_Qty][3*Robots_Qty] = {
                 { fmr_params[20]*w115_k, -fmr_params[20]*w116_k, -fmr_params[21],                   0.0f,                   0.0f,            0.0f},
                 { fmr_params[20]*w113_k,  fmr_params[20]*w114_k, -fmr_params[21],                   0.0f,                   0.0f,            0.0f},
@@ -901,7 +901,7 @@ void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fm
                                                                         0.0f
                     }
                 };
-                // Computing values of the matrix 1000.0*inv(D)*B(k):
+                // Computing values of the matrix inv(hat{D})*hat{B}(k):
                 float w20a_k = fmr_c_k[2] + fmr_c_k[4];                                     // Precompute angular addition 0a in W2(k).
                 float w20b_k = fmr_c_k[2] + fmr_c_k[5];                                     // Precompute angular addition 0b in W2(k).
                 float w21_k = delta_1 + w20a_k;                                             // Precompute angular addition 1 in W2(k).
@@ -1005,8 +1005,8 @@ CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)
     CSO.y_k = (float *)malloc(m * sizeof(float));                                           // Allocate memory for the output vector y(k).
     CSO.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as CSO (disable or enable observer).
     //-----------------------------------------------
-    CSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integrator structure within observer CSO global structure.
-    CSO.SMDIF = createHOSMDifferentiator(3*Robots_Qty,sampleTime,diff_pg,diff_lc);          // Create HOSM-based differentiator structure within observer CSO global structure.
+    CSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integration structure within observer CSO global structure.
+    CSO.SMDIF = createHOSMDifferentiator(3*Robots_Qty,sampleTime,diff_pg,diff_lc);          // Create HOSM-based differentiation structure within observer CSO global structure.
     //-----------------------------------------------
     CSO.flag[0] = false;                                                                    // Setting CSO flag to false.
     return CSO;
@@ -1159,7 +1159,7 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float satValu
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
     // Configuring the members of the SLS structure (sliding surfaces):
     Sl_Surfaces SLS;                                                                        // Creates sliding surfaces structure.
-    SLS.s_in = 5*s;                                                                         // Assign value of inputSize to the member s_in of the SLS structure.
+    SLS.s_in = 4*s;                                                                         // Assign value of inputSize to the member s_in of the SLS structure.
     SLS.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the SLS structure.
     SLS.s_state = s;                                                                        // Assign value of statetSize to the member s_state of the SLS structure.
     SLS.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the SLS structure.
@@ -1232,7 +1232,7 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
     // Configuring the members of the SMC structure (sliding mode control):
     SMC_Controller SMC;                                                                     // Creates sliding mode controller data structure.
-    SMC.s_in = 5*s;                                                                         // Assign value of inputSize to the member s_in of the SMC structure.
+    SMC.s_in = 7*s;                                                                         // Assign value of inputSize to the member s_in of the SMC structure.
     SMC.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the SMC structure.
     SMC.epsilon = epsilon;                                                                  // Small constant used in the SMC strategy.
     //-----------------------------------------------
@@ -1240,11 +1240,13 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
     SMC.omega = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the fixed control gains within SMC.
     SMC.rho = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the disturbances bounding values within SMC strategy.
     SMC.Delta = (float *)malloc(4 * sizeof(float));                                         // Allocate memory for the uncertainties bounding values within SMC strategy.
+    SMC.hat_Fc_k = (float *)malloc(s * sizeof(float));                                      // Allocate memory for nominal vector field.
+    SMC.til_Fc_k = (float *)malloc(s * sizeof(float));                                      // Allocate memory for vector field with uncertainty maximum values.
     SMC.aux_u_k = (float *)malloc(s * sizeof(float));                                       // Allocate memory for the auxiliary control law within SMC strategy.
     SMC.kappa_k = (float *)malloc(s * sizeof(float));                                       // Allocate memory for the whole variant control gains within SMC strategy.
     SMC.ast_u_k = (float *)malloc(s * sizeof(float));                                       // Allocate memory for the tracking error based control law, within auxiliary control law of SMC.
     SMC.y_k = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the output vector y(k) of sliding mode control strategy as SMC.
-    SMC.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the struct defined as SMC (disable or enable sliding mode control).
+    SMC.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as SMC (disable or enable sliding mode control).
     //-----------------------------------------------
     // Assigning values to the gains:
     for(i = 0; i < s; i++){
@@ -1266,7 +1268,7 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
             // Computing the matrix H(k):
             float H12_k = (cso_z_0[8] + cso_z_0[10])*(fmr_params[4] - mt_1);                // Precompute value in {1,2} position of H(k) matrix in the cluster space.
             float H45_k = (cso_z_0[8] + cso_z_0[11])*(fmr_params[6] - mt_2);                // Precompute value in {4,5} position of H(k) matrix in the cluster space.
-            // Computing the matrix W1(k) = inv(B(k))*H(k)*inv(J(k)) - inv(B(k))*D*inv(J(k))*d(J(k))/dt*inv(J(k)) = -inv(gc(k))*fc(k):
+            // Computing the matrix W1(k) = inv(hat{B}(k))*hat{H}(k)*inv(J(k)) - inv(hat{B}(k))*hat{D}*inv(J(k))*d(J(k))/dt*inv(J(k)) = -inv(hat{gc}(k))*hat{fc}(k):
             float w101_k = cso_z_0[2] + cso_z_0[4];                                         // Precompute angular addition 1 in W1(k).
             float w102_k = cso_z_0[2] + cso_z_0[5];                                         // Precompute angular subtraction 1 in W1(k).
             float w103_k = w101_k + delta_1;                                                // Precompute angular addition 1 in W1(k).
@@ -1346,7 +1348,7 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
                 { w114_k*w169_k, -w114_k*w168_k,                               -w148_k*w137_k - w153_k*w138_k,                     -w137_k*w155_k, 0.0f, 0.0f},
                 {-w112_k*w109_k,  w112_k*w110_k, cso_z_0[3]*w112_k*w127_k - cso_z_0[9]*w175_k + w139_k*w174_k, -w175_k*cso_z_0[8] - w128_k*w112_k, 0.0f, 0.0f}
             };
-            // Computing the matrix W2(k) = -inv(B(k))*D*inv(J(k)) = -inv(gc(k)):
+            // Computing the matrix W2(k) = -inv(hat{B}(k))*hat{D}*inv(J(k)) = -inv(hat{gc}(k)):
             float w207_k = cso_z_0[3]*fmr_params[20];                                       // Precompute multiplication 7 in W2(k).
             float w208_k = cso_z_0[3]*fmr_params[22];                                       // Precompute multiplication 8 in W2(k).
             float W2_k[3*Robots_Qty][3*Robots_Qty] = {
@@ -1362,7 +1364,9 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
             for(i = 0; i < SMC.s_out; i++){
                 SMC.kappa_k[i] = 0.0f;                                                      // Clear i^th value within gains vector kappa(k).
                 SMC.aux_u_k[i] = 0.0f;                                                      // Clear i^th value of auxiliary control law.
-                SMC.ast_u_k[i] = 0.0f;                                                      // Clear i^th values of complementary part of auxiliary control law.
+                SMC.ast_u_k[i] = 0.0f;                                                      // Clear i^th value of complementary part of auxiliary control law.
+                SMC.hat_Fc_k[i] = 0.0f;                                                     // Clear i^th value of vector field ^{\hat}f_c(k).
+                SMC.til_Fc_k[i] = 0.0f;                                                     // Clear i^th value of vector field ^{\tilde}f_c(k).
                 SMC.y_k[i] = 0.0f;                                                          // Clear SMC output.
                 // Initial computing of the tracking error based control law:
                 SMC.ast_u_k[i] = SMC.Gamma[i]*SMC.Gamma[i]*sls_e_0[i] + 2.0f*SMC.Gamma[i]*sls_e_0[i+SMC.s_out] - ref_z_0[i+2*SMC.s_out];
@@ -1389,8 +1393,6 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
 // SMC strategy computing function:
 void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]){
     int i, j;                                                                               // Declaration of i, and j as integer variables.
-    float *hat_Fc_k = (float *)malloc(SMC.s_out * sizeof(float));                           // Declaration of nominal vector field.
-    float *til_Fc_k = (float *)malloc(SMC.s_out * sizeof(float));                           // Declaration of vector field with uncertainty maximum values.
     // Execute SMC algorithm:
     if(SMC.flag[0]){
         switch(Robots_Qty){
@@ -1489,7 +1491,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                     { w168_k*fmr_params[22],  w169_k*fmr_params[22], -fmr_params[33] - w208_k*(w130_k - w127_k), -(w128_k + w129_k)*fmr_params[22],            0.0f, -fmr_params[23]},
                     {-w110_k*fmr_params[29], -w109_k*fmr_params[29],        -fmr_params[31] + fmr_c_k[3]*w175_k,                            w174_k,            0.0f, -fmr_params[31]}
                 };
-                // Computing the matrix W3(k) = J(k)*inv(D)*B(k)*inv(u_B(k))*u_D*inv(J(k)) = gc(k)*inv(u_gc(k)); and u_gc(k) is the version of gc(k) with maximum uncertainty values,
+                // Computing the matrix W3(k) = J(k)*inv(hat{D})*hat{B}(k)*inv(unc{B}(k))*unc{D}*inv(J(k)) = hat{gc}(k)*inv(unc{gc}(k)); and unc{gc}(k) is the version of hat{gc}(k) with maximum uncertainty values,
                 // according to the bounds Delta[0] = a1, Delta[1] = a2, Delta[2] = a3 and Delta[3] = a4:
                 float w301_k = SMC.Delta[0] + 1.0f;                                         // Precompute addition 1 in W3(k).
                 float w302_k = SMC.Delta[3] + 1.0f;                                         // Precompute addition 2 in W3(k).
@@ -1781,23 +1783,23 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                 for(i = 0; i < SMC.s_out; i++){
                     SMC.kappa_k[i] = 0.0f;                                                  // Clear i^th value within gains vector kappa(k).
                     SMC.aux_u_k[i] = 0.0f;                                                  // Clear i^th value of auxiliary control law.
-                    SMC.ast_u_k[i] = 0.0f;                                                  // Clear i^th values of complementary part of auxiliary control law.
-                    hat_Fc_k[i] = 0.0f;                                                     // Clear vector field ^{\hat}f_c(k).
-                    til_Fc_k[i] = 0.0f;                                                     // Clear vector field ^{\tilde}f_c(k).
+                    SMC.ast_u_k[i] = 0.0f;                                                  // Clear i^th value of complementary part of auxiliary control law u*(k).
+                    SMC.hat_Fc_k[i] = 0.0f;                                                 // Clear i^th value of vector field ^{\hat}f_c(k).
+                    SMC.til_Fc_k[i] = 0.0f;                                                 // Clear i^th value of vector field ^{\tilde}f_c(k).
                     SMC.y_k[i] = 0.0f;                                                      // Clear SMC output.
                     // Updating the initial tracking error based control law:
                     SMC.ast_u_k[i] = SMC.Gamma[i]*SMC.Gamma[i]*(fmr_c_k[i] - ref_y_k[i]) + 2.0f*SMC.Gamma[i]*(cso_y_k[i] - ref_y_k[i+SMC.s_out]) - ref_y_k[i+2*SMC.s_out];
                     // Updating the vector fields hat_Fc_k and til_Fc_k:
                     for(j = 0; j < SMC.s_out; j++){
-                        til_Fc_k[i] += fabsf(W4_k[i][j]*cso_y_k[j]);                        // Function fabsf(...) of math.h, gives the absolute value for single-precision floating-point numbers at its input argument.
-                        hat_Fc_k[i] += W5_k[i][j]*cso_y_k[j];
+                        SMC.til_Fc_k[i] += fabsf(W4_k[i][j]*cso_y_k[j]);                    // Function fabsf(...) of math.h, gives the absolute value for single-precision floating-point numbers at its input argument.
+                        SMC.hat_Fc_k[i] += W5_k[i][j]*cso_y_k[j];
                     }
                 }
                 for(i = 0; i < SMC.s_out; i++){
                     // Updating the variable control gains within the vector kappa(k):
                     for(j = 0; j < SMC.s_out; j++){
-                        if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*(til_Fc_k[j] + SMC.omega[j]) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
-                        else SMC.kappa_k[i] += fabsf(W3_k[i][j])*(til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
+                        if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j]) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
+                        else SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
                     }
                     // Updating the auxiliary control input:
                     SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
@@ -1823,7 +1825,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
 Formation createFormation(int qty){
     int i, j, s = 3*qty;                                                                    // Declaration of i, j and s as integer variables.
     // Configuring the members of the OMRs formation structure:
-    Formation FMR;                                                                          // Creates a formation struct (FMR).
+    Formation FMR;                                                                          // Creates a formation structure (FMR).
     FMR.qty = qty;                                                                          // OMRs quantity in the formation as FMR.
     //-----------------------------------------------
     FMR.q_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the robot space states vector q(k).
@@ -1831,7 +1833,7 @@ Formation createFormation(int qty){
     FMR.w_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the angular velocities vector w(k).
     FMR.u_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the control torques vector u(k).
     FMR.v_k = (float *)malloc(3*qty * sizeof(float));                                       // Allocate memory for the control voltages vector v(k).
-    FMR.params = (float *)malloc(25*qty * sizeof(float));                                   // Allocate memory for precomputation of several constant values required by the formation control systems.
+    FMR.params = (float *)malloc(25*qty * sizeof(float));                                   // Allocate memory for pre-computation of several constant values required by the formation control systems.
     FMR.flag = (bool *)malloc(2*qty * sizeof(bool));                                        // Allocate memory for the control voltages vector v(k).
     FMR.CORq = createAngleConverter(qty);                                                   // Creating the angle correction CORq structure within FMR.
     FMR.CORc = createAngleConverter(qty-1);                                                 // Creating the angle correction CORc structure within FMR.
@@ -1852,42 +1854,42 @@ Formation createFormation(int qty){
     //-----------------------------------------------
     switch(qty){
         case 2:
-        // Computing values of diagonal matrix D and its inverse inv(D):
-        FMR.params[0] = r_1*r_1;                                                            // Precompute r_1^2.
-        FMR.params[1] = r_2*r_2;                                                            // Precompute r_2^2.
-        FMR.params[2] = l_1*l_1;                                                            // Precompute l_1^2.
-        FMR.params[3] = l_2*l_2;                                                            // Precompute l_2^2.
-        FMR.params[4] = mt_1 + (1.5f*jw_1)/FMR.params[0];                                   // Precompute value in {1,1} position of D matrix.
-        FMR.params[5] = jr_1 + (3.0f*jw_1*FMR.params[2])/FMR.params[0];                     // Precompute value in {3,3} position of D matrix.
-        FMR.params[6] = mt_2 + (1.5f*jw_2)/FMR.params[1];                                   // Precompute value in {4,4} position of D matrix.
-        FMR.params[7] = jr_2 + (3.0f*jw_2*FMR.params[3])/FMR.params[1];                     // Precompute value in {6,6} position of D matrix.
-        FMR.params[8] = 1/FMR.params[4];                                                    // Precompute value in {1,1} position of D inverse matrix.
-        FMR.params[9] = 1/FMR.params[5];                                                    // Precompute value in {3,3} position of D inverse matrix.
-        FMR.params[10] = 1/FMR.params[6];                                                   // Precompute value in {4,4} position of D inverse matrix.
-        FMR.params[11] = 1/FMR.params[7];                                                   // Precompute value in {6,6} position of D inverse matrix.
-        // Computing another operations:
-        FMR.params[12] = r_1/(2000.0f*l_1*(sinf(delta_1) + 1.0f));                          // Precompute value in {1,3} position of inverse B(k) matrix.
-        FMR.params[13] = r_2/(2000.0f*l_2*(sinf(delta_2) + 1.0f));                          // Precompute value in {4,6} position of inverse B(k) matrix.
-        FMR.params[14] = r_1/(1000.0f*(sinf(2.0f*delta_1) + 2.0f*cosf(delta_1)));           // Precompute auxiliar value 1 of inverse B(k) matrix.
-        FMR.params[15] = r_2/(1000.0f*(sinf(2.0f*delta_2) + 2.0f*cosf(delta_2)));           // Precompute auxiliar value 1 of inverse B(k) matrix.
-        FMR.params[16] = 1000.0f*l_1/r_1;                                                   // Precompute value in {3,1} position of B(k) matrix.
-        FMR.params[17] = 1000.0f*l_2/r_2;                                                   // Precompute value in {3,1} position of B(k) matrix.
-        FMR.params[18] = 1000.0f*FMR.params[8]/r_1;                                         // Precompute division 1.
-        FMR.params[19] = 1000.0f*FMR.params[10]/r_2;                                        // Precompute division 2.
-        FMR.params[20] = FMR.params[4]*FMR.params[14];                                      // Precompute multiplication 1.
-        FMR.params[21] = FMR.params[5]*FMR.params[12];                                      // Precompute multiplication 2.
-        FMR.params[22] = FMR.params[6]*FMR.params[15];                                      // Precompute multiplication 3.
-        FMR.params[23] = FMR.params[7]*FMR.params[13];                                      // Precompute multiplication 4.
-        FMR.params[24] = FMR.params[9]*FMR.params[16];                                      // Precompute multiplication 5.
-        FMR.params[25] = FMR.params[11]*FMR.params[17];                                     // Precompute multiplication 6.
-        FMR.params[26] = 2.0f*l_1*FMR.params[12];                                           // Precompute multiplication 7.
-        FMR.params[27] = 2.0f*l_2*FMR.params[13];                                           // Precompute multiplication 8.
-        FMR.params[28] = FMR.params[4]*FMR.params[26];                                      // Precompute multiplication 9.
-        FMR.params[29] = FMR.params[6]*FMR.params[27];                                      // Precompute multiplication 10.
-        FMR.params[30] = 2.0f*FMR.params[21]*sinf(delta_1);                                 // Precompute multiplication 11.
-        FMR.params[31] = 2.0f*FMR.params[23]*sinf(delta_2);                                 // Precompute multiplication 12.
-        FMR.params[32] = FMR.params[5]*FMR.params[14]*cosf(delta_1)/l_1;                    // Precompute multiplication 13.
-        FMR.params[33] = FMR.params[7]*FMR.params[15]*cosf(delta_2)/l_2;                    // Precompute multiplication 14.
+        // Pre-computing values of diagonal matrix hat{D} and its inverse --> inv(hat{D}):
+        FMR.params[0] = r_1*r_1;                                                            // Pre-compute r_1^2.
+        FMR.params[1] = r_2*r_2;                                                            // Pre-compute r_2^2.
+        FMR.params[2] = l_1*l_1;                                                            // Pre-compute l_1^2.
+        FMR.params[3] = l_2*l_2;                                                            // Pre-compute l_2^2.
+        FMR.params[4] = mt_1 + (1.5f*jw_1)/FMR.params[0];                                   // Pre-compute value for hat{d1}_{11} and hat{d1}_{22} of hat{D}_1 matrix.
+        FMR.params[5] = jr_1 + (3.0f*jw_1*FMR.params[2])/FMR.params[0];                     // Pre-compute value for hat{d1}_{33} of hat{D}_1 matrix.
+        FMR.params[6] = mt_2 + (1.5f*jw_2)/FMR.params[1];                                   // Pre-compute value for hat{d2}_{11} and hat{d2}_{22} of hat{D}_2 matrix.
+        FMR.params[7] = jr_2 + (3.0f*jw_2*FMR.params[3])/FMR.params[1];                     // Pre-compute value for hat{d2}_{33} of hat{D}_2 matrix.
+        FMR.params[8] = 1/FMR.params[4];                                                    // Pre-compute value for inv(hat{d1}_{11}) and inv(hat{d1}_{22}) corresponding to inv(hat{D}_1) matrix.
+        FMR.params[9] = 1/FMR.params[5];                                                    // Pre-compute value for inv(hat{d1}_{33}) corresponding to inv(hat{D}_1) matrix.
+        FMR.params[10] = 1/FMR.params[6];                                                   // Pre-compute value for inv(hat{d2}_{11}) and inv(hat{d2}_{22}) corresponding to inv(hat{D}_2) matrix.
+        FMR.params[11] = 1/FMR.params[7];                                                   // Pre-compute value for inv(hat{d2}_{33}) corresponding to inv(hat{D}_2) matrix.
+        // Pre-computing other operations:
+        FMR.params[12] = r_1/(2.0f*kappa*l_1*(sinf(delta_1) + 1.0f));                       // Pre-compute value for hat{b_in}_{1,3} and hat{b_in}_{2,3} of inv(hat{B}(k)) matrix.
+        FMR.params[13] = r_2/(2.0f*kappa*l_2*(sinf(delta_2) + 1.0f));                       // Pre-compute value for hat{b_in}_{4,3} and hat{b_in}_{5,3} of inv(hat{B}(k)) matrix.
+        FMR.params[14] = r_1/(kappa*(sinf(2.0f*delta_1) + 2.0f*cosf(delta_1)));             // Pre-compute auxiliary value 1 of inv(hat{B}(k)) matrix.
+        FMR.params[15] = r_2/(kappa*(sinf(2.0f*delta_2) + 2.0f*cosf(delta_2)));             // Pre-compute auxiliary value 2 of inv(hat{B(k)}) matrix.
+        FMR.params[16] = kappa*l_1/r_1;                                                     // Pre-compute value for hat{b1}_{3s}, with s = 1,2,3 of hat{B}_1(k) matrix.
+        FMR.params[17] = kappa*l_2/r_2;                                                     // Pre-compute value for hat{b2}_{3s}, with s = 1,2,3 of hat{B}_2(k) matrix.
+        FMR.params[18] = kappa*FMR.params[8]/r_1;                                           // Pre-compute division 1 for inv(hat{D})*hat{B}(k).
+        FMR.params[19] = kappa*FMR.params[10]/r_2;                                          // Pre-compute division 2 for inv(hat{D})*hat{B}(k).
+        FMR.params[20] = FMR.params[4]*FMR.params[14];                                      // Pre-compute multiplication 1 for -inv(hat{B}(k))*hat{D}.
+        FMR.params[21] = FMR.params[5]*FMR.params[12];                                      // Pre-compute multiplication 2 for -inv(hat{B}(k))*hat{D}.
+        FMR.params[22] = FMR.params[6]*FMR.params[15];                                      // Pre-compute multiplication 3 -inv(hat{B}(k))*hat{D}.
+        FMR.params[23] = FMR.params[7]*FMR.params[13];                                      // Pre-compute multiplication 4 -inv(hat{B}(k))*hat{D}.
+        FMR.params[24] = FMR.params[9]*FMR.params[16];                                      // Pre-compute multiplication 5 for inv(hat{D})*hat{B}(k).
+        FMR.params[25] = FMR.params[11]*FMR.params[17];                                     // Pre-compute multiplication 6 for inv(hat{D})*hat{B}(k).
+        FMR.params[26] = 2.0f*l_1*FMR.params[12];                                           // Pre-compute multiplication 1 for inv(hat{B}(k))*hat{H}(k).
+        FMR.params[27] = 2.0f*l_2*FMR.params[13];                                           // Pre-compute multiplication 2 for inv(hat{B}(k))*hat{H}(k).
+        FMR.params[28] = FMR.params[4]*FMR.params[26];                                      // Pre-compute multiplication 3 for -inv(hat{B}(k))*hat{D}.
+        FMR.params[29] = FMR.params[6]*FMR.params[27];                                      // Pre-compute multiplication 4 for -inv(hat{B}(k))*hat{D}.
+        FMR.params[30] = 2.0f*FMR.params[21]*sinf(delta_1);                                 // Pre-compute multiplication 5 for -inv(hat{B}(k))*hat{D}.
+        FMR.params[31] = 2.0f*FMR.params[23]*sinf(delta_2);                                 // Pre-compute multiplication 6 for -inv(hat{B}(k))*hat{D}.
+        FMR.params[32] = FMR.params[5]*FMR.params[14]*cosf(delta_1)/l_1;                    // Pre-compute multiplication 1 for -inv(hat{B}(k))*hat{D}*inv(J(k)).
+        FMR.params[33] = FMR.params[7]*FMR.params[15]*cosf(delta_2)/l_2;                    // Pre-compute multiplication 2 for -inv(hat{B}(k))*hat{D}*inv(J(k)).
         FMR.params[34] = FMR.params[4]*FMR.params[6];                                       // Precompute multiplication 15.
         FMR.params[35] = 2.0f*FMR.params[4];                                                // Precompute multiplication 16.
         FMR.params[36] = 2.0f*FMR.params[6];                                                // Precompute multiplication 17.

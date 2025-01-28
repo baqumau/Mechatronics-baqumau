@@ -53,6 +53,7 @@ math constants. */
 #define d_phi2_max (r_2/(3.0f*l_2))*(d_th21_max + d_th22_max + d_th23_max)      // [rad/s], Maximum angular velocity of the robot.
 #define ke_2 0.65f                                                              // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 2.
 // Another constant parameters:
+#define kappa 1000.0f                                                           // [mm/m], Known constant for the units conversion of input signals.
 #define NOP __asm__(" NOP")                                                     // Nop instruction (asm).
 //---------------------------------------------------------------------------------------------------------------
 // Data structure to arrange floating-point number matrices:
@@ -303,6 +304,8 @@ typedef struct{
     float *omega;                                                               // Fixed control gains that force the tracking error trajectories to move towards the sliding surfaces.
     float *rho;                                                                 // Bound values for disturbances that previously and arbitrarily were selected.
     float *Delta;                                                               // Bound values for uncertiainties that previously and arbitrarily were selected.
+    float *hat_Fc_k;                                                            // Required nominal vector field ^{\hat}f_c(k).
+    float *til_Fc_k;                                                            // Required vector field with uncertainty maximum values ^{\tilde}f_c(k).
     float *aux_u_k;                                                             // Auxiliary control law.
     float *kappa_k;                                                             // Variant control gains of SMC CS auxilliary control law, that depends on model uncertainties.
     float *ast_u_k;                                                             // Tracking error based control that is part of auxilliary control law.

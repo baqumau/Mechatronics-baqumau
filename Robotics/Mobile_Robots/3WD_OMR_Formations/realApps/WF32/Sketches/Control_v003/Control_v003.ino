@@ -56,7 +56,7 @@ char character_4;                                                       // Varia
 char controlSignals[bufferSize];                                        // Variable to save control signals data and subsequently send via UART 4 module.
 char measurements[bufferSize];                                          // Variable to arrange the measured variables.
 enum Control_System consys = ADRC_RS;                                   // Declare the control system type.
-enum Reference_Type reftype = MINGYUE_01;                               // Declare the reference shape type.
+enum Reference_Type reftype = STATIC_01;                                // Declare the reference shape type.
 float errors_k[3*Robots_Qty] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};    // Declaration of this floating-point values vector for arranging error variables.
 //---------------------------------------------------------------------------------------------------------------
 // Configuring the ADRC_RS strategy:
@@ -85,12 +85,12 @@ float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
 };
 // Float parameters to define the GPI controller gains of RS ADRC:
 float gpi_Gains[3*Robots_Qty][3] = {
-  {41.4770f, 53.9201f, 15.5769f},
-  {41.4770f, 53.9201f, 15.5769f},
-  {68.4636f, 75.3099f, 18.4091f},
-  {41.4770f, 53.9201f, 15.5769f},
-  {41.4770f, 53.9201f, 15.5769f},
-  {68.4636f, 75.3099f, 18.4091f}                                        // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
+  {612.0825f, 324.4037f, 38.2075f},
+  {612.0825f, 324.4037f, 38.2075f},
+  {729.0f, 364.5f, 40.5f},
+  {612.0825f, 324.4037f, 38.2075f},
+  {612.0825f, 324.4037f, 38.2075f},
+  {729.0f, 364.5f, 40.5f}                                               // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
 };
 float t_cl = 0.0f;                                                      // Clutch interval time.
 //---------------------------------------------------------------------------------------------------------------
@@ -186,8 +186,8 @@ void __attribute__((interrupt)) Timer_4_Handler(){
     //-----------------------------------------------------------------------------------------------------------
     // Computing the desired reference tracking-trajectories:
     // computeCircumference01(REF,consys,iterations);                      // Compute desired reference profiles for OMRs synchronization.
-    computeInfinity01(REF,consys,iterations);                           // Compute desired reference profiles for OMRs synchronization.
-    // computeStatical01(REF,consys);                                      // Compute desired reference profiles for OMRs synchronization.
+    // computeInfinity01(REF,consys,iterations);                           // Compute desired reference profiles for OMRs synchronization.
+    computeStatical01(REF,consys);                                      // Compute desired reference profiles for OMRs synchronization.
     //-----------------------------------------------------------------------------------------------------------
     // Computing the designed control strategy:
     switch(consys){
@@ -409,8 +409,8 @@ void __attribute__((interrupt)) UART1_RX_Handler(){
           float dc_0 = FMR.c_k[3];                                      // [mm], initial distance between both OMRs.
           float ph1_0 = FMR.q_k[2];                                     // [rad], initial orientation of robot 1.
           float ph2_0 = FMR.q_k[5];                                     // [rad], initial orientation of robot 2.
-          float d_ph1_0 = 0.25f;                                        // [rad/s], desired initial angular velocity of robot 1.
-          float d_ph2_0 = -0.25f;                                       // [rad/s], desired initial angular velocity of robot 2.
+          float d_ph1_0 = 2.5f;                                         // [rad/s], desired initial angular velocity of robot 1.
+          float d_ph2_0 = -2.5f;                                        // [rad/s], desired initial angular velocity of robot 2.
           float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
           initReference(REF,consys,reftype,ref_z0);                     // Initialize reference builder.
           break;
@@ -483,7 +483,7 @@ void start_uart_4_module(){
   setIntVector(_UART_4_VECTOR,UART4_RX_Handler);                        // Setting interruption vector for UART 1 receiver.
   IPC12SET = 0x00001100;                                                // Set interrupt priority of UART 4 receiver to nivel 4, and sub-priority to nivel 1.
   IFS2CLR = 0x00000010;                                                 // Clear the UART 4 receiver interrupt status flag.
-  IEC2SET = 0x00000010;                                                 // Enable the UART 4 receiver interrupt.
+  // IEC2SET = 0x00000010;                                                 // Enable the UART 4 receiver interrupt.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Desabling UART 1 module:
