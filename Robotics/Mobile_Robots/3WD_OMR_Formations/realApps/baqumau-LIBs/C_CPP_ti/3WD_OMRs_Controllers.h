@@ -27,8 +27,8 @@ math constants. */
 #define mt_1 1.253f                                                             // [kg], Total mass of the robot.
 #define mw_1 .044f                                                              // [kg], Mass of each onmidirectional wheel.
 #define n_1 80.0f                                                               // [m/m], built-in gear ratio by each omni wheel.
-#define jr_1 1.0f*mt_1*l_1*l_1/2.0f                                             // [kg*mm^2], Mass moment of inertia of robot along the rotational center of the robot.
-#define jw_1 3.0f*mw_1*r_1*r_1/8.0f                                             // [kg*mm^2], Mass moment of inertia of each omnidirectional wheel.
+#define jr_1 1.0f*mt_1*l_1*l_1*0.5f                                             // [kg*mm^2], Mass moment of inertia of robot along the rotational center of the robot.
+#define jw_1 3.0f*mw_1*r_1*r_1*0.125f                                           // [kg*mm^2], Mass moment of inertia of each omnidirectional wheel.
 #define d_th11_max 15.0344f                                                     // [rad/s], Maximum angular velocity of wheel 1.
 #define d_th12_max 13.0382f                                                     // [rad/s], Maximum angular velocity of wheel 2.
 #define d_th13_max 15.2282f                                                     // [rad/s], Maximum angular velocity of wheel 3.
@@ -43,8 +43,8 @@ math constants. */
 #define mt_2 2.5f                                                               // [kg], Total mass of the robot.
 #define mw_2 .062f                                                              // [kg], Mass of each onmidirectional wheel.
 #define n_2 40.0f                                                               // [m/m], built-in gear ratio by each omni wheel.
-#define jr_2 1.0f*mt_2*l_2*l_2/2.0f                                             // [kg*mm^2], Mass moment of inertia of robot along the rotational center of the robot.
-#define jw_2 3.0f*mw_2*r_2*r_2/8.0f                                             // [kg*mm^2], Mass moment of inertia of each omnidirectional wheel.
+#define jr_2 1.0f*mt_2*l_2*l_2*0.5f                                             // [kg*mm^2], Mass moment of inertia of robot along the rotational center of the robot.
+#define jw_2 3.0f*mw_2*r_2*r_2*0.125f                                           // [kg*mm^2], Mass moment of inertia of each omnidirectional wheel.
 #define d_th21_max 16.2931f                                                     // [rad/s], Maximum angular velocity of wheel 1.
 #define d_th22_max 14.0691f                                                     // [rad/s], Maximum angular velocity of wheel 2.
 #define d_th23_max 14.9449f                                                     // [rad/s], Maximum angular velocity of wheel 3.
@@ -195,6 +195,7 @@ typedef struct{
     float *x2_kp1;                                                              // State variables used in this case to compute the derivative of x2(k) according to the model.
     float *x3_k;                                                                // State variables x3(k) that arrange the estimated disturbances of OMRs formation in the robot space.
     float *x3_kp1;                                                              // State variables used in this case to compute the derivative of x3(k) according to the model.
+    float *X_kp1;                                                               // Support variable to concatenate x1_kp1, x2_kp1 and x3_kp1 in only a vector.
     float *y_k;                                                                 // Output variables.
     bool *flag;                                                                 // Execution flag.
     Integrator INT;                                                             // Creates a Integrator needed for this RS_Observer structure.
@@ -221,6 +222,7 @@ typedef struct{
     float *z2_kp1;                                                              // State variables used in this case to compute the derivative of z2(k) according to the model.
     float *z3_k;                                                                // State variables z3(k) that arrange the estimated disturbances of OMRs formation in the cluster space.
     float *z3_kp1;                                                              // State variables used in this case to compute the derivative of z3(k) according to the model.
+    float *Z_kp1;                                                               // Support variable to concatenate z1_kp1, z2_kp1 and z3_kp1 in only a vector.
     float *y_k;                                                                 // Output variables.
     bool *flag;                                                                 // Execution flag.
     Integrator INT;                                                             // Creates a Integrator needed for this CS_Observer structure.
@@ -248,6 +250,7 @@ typedef struct{
     float *z2_kp1;                                                              // State variables used in this case to compute the derivative of z2(k) according to the model.
     float *z3_k;                                                                // State variables z3(k) that arrange the estimated disturbances of OMRs formation in the cluster space.
     float *z3_kp1;                                                              // State variables used in this case to compute the derivative of z3(k) according to the model.
+    float *Z_kp1;                                                               // Support variable to concatenate z1_kp1, z2_kp1 and z3_kp1 in only a vector.
     float *y_k;                                                                 // Output variables.
     bool *flag;                                                                 // Execution flag.
     Integrator INT;                                                             // Creates a Integrator needed for this CS_Observer structure.
