@@ -769,7 +769,7 @@ void computeADRC(ADRC_Controller ADRC, float ref_y_k[], float rso_y_k[], float g
                 //-----------------------------------------------
                 // Computing ADRC output y(k) from output values of REF, RSO and GPI structures:
                 for(i = 0; i < ADRC.s_out; i++){
-                    ADRC.y_k[i] = 0.0f;                                                     // Clear i^th value of output vector y(k).
+                    ADRC.y_k[i] = 0.0f;                                                     // Clear the i^th value of output vector y(k).
                     for(j = 0; j < ADRC.s_out; j++){
                         // Compute ADRC output y(k), through successive addition operations:
                         ADRC.y_k[i] += W1_k[i][j]*rso_y_k[j+ADRC.s_out] + W2_k[i][j]*(rso_y_k[j+2*ADRC.s_out] - ref_y_k[j+2*ADRC.s_out] + gpi_y_k[j]);
@@ -1915,6 +1915,7 @@ Formation createFormation(int qty){
         FMR.params[50] = 1.0f/FMR.params[37];                                               // Pre-compute division 3 for -J(k)*inv(hat{D})*hat{H}(k)*inv(J(k)) + d(J(k))/dt*inv(J(k)) matrix.
         FMR.params[51] = l_1/FMR.params[5];                                                 // Pre-compute division 1 for J(k)*inv(hat{D})*hat{B}(k) matrix.
         FMR.params[52] = l_2/FMR.params[7];                                                 // Pre-compute division 2 for J(k)*inv(hat{D})*hat{B}(k) matrix.
+        FMR.params[53] = 0.0f;                                                              // NULL.
         break;
         case 3:
         break;

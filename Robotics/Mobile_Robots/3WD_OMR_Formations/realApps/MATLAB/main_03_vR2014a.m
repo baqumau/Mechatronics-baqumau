@@ -31,7 +31,7 @@ if(model.RigidBodyCount < 1)
     return
 end
 % Poll for the rigid body data at low latency (~1 millisec):
-fprintf('\nPrinting rigid bodies frame data, approximately to a volatile frequency of 160 Hertz...\r\n')
+fprintf('\nPrinting rigid bodies frame data, approximately to a volatile frequency of 250 Hertz...\r\n')
 %--------------------------------------------------------------------------
 % Setting parameters:
 counter = 0;                                                                % Ticks counter of sine function.

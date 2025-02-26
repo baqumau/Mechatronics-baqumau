@@ -34,7 +34,7 @@
 #define freq_hz_0 250                                                                   // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                                   // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 40                                                                    // Frequency in Hz for instructions execution of Timer 2.
-#define exe_minutes 1                                                                   // Run time minutes.
+#define exe_minutes 4                                                                   // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
 // #include <math.h>
@@ -173,7 +173,7 @@ float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {    0.0f,     0.0f,     0.0f,     0.0f, 68.4636f,     0.0f},
   {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 11.3906f}                          // Setting alpha_3.
 };
-// Float parameters to define the GPI controller gains of RS ADRC:
+// Float parameters to define the GPI controller gains of ADRC_RS:
 float gpi_Gains[3*Robots_Qty][3] = {
   {177.9785f, 142.3828f, 25.3125f},
   {177.9785f, 142.3828f, 25.3125f},
@@ -929,7 +929,7 @@ __interrupt void scia_rx_isr(void){
             for(i = 0; i < 3*Robots_Qty; i++){
                 t_cl += fabsf(FMR.q_k[i] - REF.y_k[i])/(3.0f*Robots_Qty*1000.0f);       // Partial value of clutch interval time.
             }
-            t_cl += 18.0f;                                                              // Final value of clutch interval time.
+            t_cl += 15.0f;                                                              // Final value of clutch interval time.
             //-----------------------------------------------------------------------------------------------------------
             CpuTimer0.InterruptCount = 0;                                               // Reset CPU timer 0 counter.
             CpuTimer1.InterruptCount = 0;                                               // Reset CPU timer 1 counter (iterations).

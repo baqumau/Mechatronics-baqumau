@@ -24,7 +24,7 @@ math constants. */
 #define delta_1 (float)(M_PI_6)                                                 // [rad], Wheels 1 and 2 are placed at this angle, with respect to y_m axis.
 #define l_1 116.0f                                                              // [mm], Distance between the vehicle's center and the center of mass of each wheel.
 #define r_1 24.0f                                                               // [mm], Radius of each omnidirectional wheel.
-#define mt_1 1.253f                                                             // [kg], Total mass of the robot.
+#define mt_1 1.33f                                                              // [kg], Total mass of the robot.
 #define mw_1 .044f                                                              // [kg], Mass of each onmidirectional wheel.
 #define n_1 80.0f                                                               // [m/m], built-in gear ratio by each omni wheel.
 #define jr_1 1.0f*mt_1*l_1*l_1*0.5f                                             // [kg*mm^2], Mass moment of inertia of robot along the rotational center of the robot.
@@ -40,7 +40,7 @@ math constants. */
 #define delta_2 (float)(M_PI_6)                                                 // [rad], Wheels 1 and 2 are placed at this angle, with respect to y_m axis.
 #define l_2 110.0f                                                              // [mm], Distance between the vehicle's center and the center of mass of each wheel.
 #define r_2 28.0f                                                               // [mm], Radius of each omnidirectional wheel.
-#define mt_2 2.5f                                                               // [kg], Total mass of the robot.
+#define mt_2 1.55f                                                              // [kg], Total mass of the robot.
 #define mw_2 .062f                                                              // [kg], Mass of each onmidirectional wheel.
 #define n_2 40.0f                                                               // [m/m], built-in gear ratio by each omni wheel.
 #define jr_2 1.0f*mt_2*l_2*l_2*0.5f                                             // [kg*mm^2], Mass moment of inertia of robot along the rotational center of the robot.
