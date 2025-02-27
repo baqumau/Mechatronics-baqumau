@@ -1802,7 +1802,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                     SMC.til_Fc_k[i] = fabsf(SMC.til_Fc_k[i]);                               // Function fabsf(...) of math.h, gives the absolute value for single-precision floating-point numbers at its input argument.
                 }
                 for(i = 0; i < SMC.s_out; i++){
-                    // Updating the variable control gains within the vector kappa(k):
+                    // Updating the variable control gains within the vector Kappa(k):
                     for(j = 0; j < SMC.s_out; j++){
                         if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j]) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
                         else SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];

@@ -189,8 +189,8 @@ void computeCircumference01(Reference REF, enum Control_System consys, unsigned 
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
         // Computing equations for circumference profiles generation in the cluster space:
-        float Vc = 100.0f;                                                                  // [mm/s], linear velocity of cluster centroid.
-        float Rc = 800.0f;                                                                  // [mm], desired radius of planned trajectory.
+        float Vc = 200.0f;                                                                  // [mm/s], linear velocity of cluster centroid.
+        float Rc = 1200.0f;                                                                 // [mm], desired radius of planned trajectory.
         float Ac = Vc*Vc/Rc;                                                                // Precompute angular acceleration Vc^2/Rc.
         float WTc = Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2];                          // Rate variation of sinusoidal functions.
         switch(Robots_Qty){

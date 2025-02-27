@@ -769,7 +769,7 @@ void computeADRC(ADRC_Controller ADRC, float ref_y_k[], float rso_y_k[], float g
                 //-----------------------------------------------
                 // Computing ADRC output y(k) from output values of REF, RSO and GPI structures:
                 for(i = 0; i < ADRC.s_out; i++){
-                    ADRC.y_k[i] = 0.0f;                                                     // Clear i^th value of output vector y(k).
+                    ADRC.y_k[i] = 0.0f;                                                     // Clear the i^th value of output vector y(k).
                     for(j = 0; j < ADRC.s_out; j++){
                         // Compute ADRC output y(k), through successive addition operations:
                         ADRC.y_k[i] += W1_k[i][j]*rso_y_k[j+ADRC.s_out] + W2_k[i][j]*(rso_y_k[j+2*ADRC.s_out] - ref_y_k[j+2*ADRC.s_out] + gpi_y_k[j]);
@@ -1802,7 +1802,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                     SMC.til_Fc_k[i] = fabsf(SMC.til_Fc_k[i]);                               // Function fabsf(...) of math.h, gives the absolute value for single-precision floating-point numbers at its input argument.
                 }
                 for(i = 0; i < SMC.s_out; i++){
-                    // Updating the variable control gains within the vector kappa(k):
+                    // Updating the variable control gains within the vector Kappa(k):
                     for(j = 0; j < SMC.s_out; j++){
                         if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j]) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
                         else SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
@@ -1915,6 +1915,7 @@ Formation createFormation(int qty){
         FMR.params[50] = 1.0f/FMR.params[37];                                               // Pre-compute division 3 for -J(k)*inv(hat{D})*hat{H}(k)*inv(J(k)) + d(J(k))/dt*inv(J(k)) matrix.
         FMR.params[51] = l_1/FMR.params[5];                                                 // Pre-compute division 1 for J(k)*inv(hat{D})*hat{B}(k) matrix.
         FMR.params[52] = l_2/FMR.params[7];                                                 // Pre-compute division 2 for J(k)*inv(hat{D})*hat{B}(k) matrix.
+        FMR.params[53] = 0.0f;                                                              // NULL.
         break;
         case 3:
         break;
