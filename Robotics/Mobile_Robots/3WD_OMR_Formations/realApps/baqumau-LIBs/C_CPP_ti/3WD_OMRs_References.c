@@ -407,8 +407,8 @@ void computeInfinity02(Reference REF, enum Control_System consys, unsigned long 
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
         // Computing equations for infinity reference profiles generation in the cluster space:
-        float Sc = 900.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
-        float Wc = 1.0f/25.0f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
+        float Sc = 900.0f;                                                                  // [mm], scope of infinity-shape trajectory on workspace.
+        float Wc = 1.0f/12.5f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
         float Wc1 = Sc*Wc*Wc;                                                               // Precompute operation Sc*(Wc^2).
         float Wc2 = Wc1*Wc;                                                                 // Precompute operation Sc*(Wc^3).
         float WTc = (float)(iterations)*REF.Ts*Wc;                                          // Rate variation of sinusoidal functions.

@@ -1213,7 +1213,7 @@ void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], 
             // Getting output of SLS.INT integration structure:
             SLS.v2_k[i] = SLS.INT.y_k[i];                                                   // Updating data for v2(k) within SLS structure (integration function).
             //-----------------------------------------------
-            // Cumputing the current values for sliding surfaces as v1(k):
+            // Computing the current values for sliding surfaces as v1(k):
             float OP1 = 2.0f*SLS.Gamma[i];                                                  // Pre-compute operation 1.
             float OP2 = SLS.Gamma[i]*SLS.Gamma[i];                                          // Pre-compute operation 2.
             SLS.v1_k[i] = cso_y_k[i] - ref_y_k[i+SLS.s_out] + OP1*(fmr_c_k[i] - ref_y_k[i]) + OP2*SLS.v2_k[i] - SLS.E_0[i+SLS.s_out] - OP1*SLS.E_0[i];

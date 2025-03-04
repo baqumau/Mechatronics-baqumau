@@ -34,7 +34,7 @@
 #define freq_hz_0 250                                                                   // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                                   // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 40                                                                    // Frequency in Hz for instructions execution of Timer 2.
-#define exe_minutes 1                                                                   // Run time minutes.
+#define exe_minutes 3                                                                   // Run time minutes.
 //-----------------------------------------------------------------------------------------------------------------------
 // Including libraries to the main program:
 // #include <math.h>
@@ -145,8 +145,8 @@ char *var10;                                                                    
 char *var11;                                                                            // Multi-purpose char variable 11.
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
-enum Control_System consys = ADRC_RS;                                                   // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = CIRCUMFERENCE_01;                                         // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01 at the moment).
+enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
+enum Reference_Type reftype = MINGYUE_02;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01 at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -175,12 +175,12 @@ float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
 };
 // Float parameters to define the GPI controller gains of ADRC_RS:
 float gpi_Gains[3*Robots_Qty][3] = {
-  {177.9785f, 142.3828f, 25.3125f},
-  {177.9785f, 142.3828f, 25.3125f},
-  {729.0f, 364.5f, 40.5f},
-  {177.9785f, 142.3828f, 25.3125f},
-  {177.9785f, 142.3828f, 25.3125f},
-  {11390.625f, 2278.125f, 101.25f}                                                      // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
+  {438.9760f, 219.4880f, 28.8800f},
+  {438.9760f, 219.4880f, 28.8800f},
+  {1279.8134f, 447.9347f, 41.2571f},
+  {438.9760f, 219.4880f, 28.8800f},
+  {438.9760f, 219.4880f, 28.8800f},
+  {1279.8134f, 447.9347f, 41.2571f},                                                    // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
 };
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
@@ -192,16 +192,16 @@ float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
-float sls_Gains[3*Robots_Qty+1] = {1.68f, 1.68f, 6.88f, 0.84f, 6.88f, 10.58f, 27.0f};
+float sls_Gains[3*Robots_Qty+1] = {3.7225f, 3.7225f, 3.7225f, 3.7225f, 5.3137f, 5.3137f, 37.0f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float smc_Gains[3*Robots_Qty] = {1.84f, 1.84f, 1.84f, 1.84f, 1.84f, 1.84f};
+float smc_Gains[3*Robots_Qty] = {4.84f, 4.84f, 4.84f, 4.84f, 4.84f, 4.84f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
-#define rho_1 (1.0f/32.0f)*mt_1*l_1*l_1/(r_1*r_1)                                       // Constant for bounding the input torque disturbances in robot 1.
-#define rho_2 (1.0f/32.0f)*mt_2*l_2*l_2/(r_2*r_2)                                       // Constant for bounding the input torque disturbances in robot 2.
+#define rho_1 (1.0f/7.5f)*mt_1*l_1*l_1/(r_1*r_1)                                        // Constant for bounding the input torque disturbances in robot 1.
+#define rho_2 (1.0f/7.5f)*mt_2*l_2*l_2/(r_2*r_2)                                        // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
-float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                     // Define the constants for bounding the uncertainties in the model.
+float unc_Values[4] = {0.25f, 0.125f, 0.125f, 0.25f};                                   // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
-float sls_satVals[3*Robots_Qty] = {280.0f, 280.0f, 14.5f, 150.0f, 22.5f, 22.5f};
+float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 8.5f, 150.0f, 8.5f, 8.5f};
 float diff_fc = 45.0f;                                                                  // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
 float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                  // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
 float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
@@ -572,9 +572,9 @@ __interrupt void cpu_timer1_isr(void){
                 // Conditioning input torque control for OMRs formation:
                 for(i = 0; i < 3; i++){
                     FMR.u_k[i] = clutch(saturation(ADRC.y_k[i],-100.0f/ke_1,100.0f/ke_1),t_cl,sampleTime,CpuTimer1.InterruptCount);
-                    FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
+                    FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1 + (float)(signf(FMR.u_k[i]))*vzm_1);
                     FMR.u_k[i+3] = clutch(saturation(ADRC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
-                    FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
+                    FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2 + (float)(signf(FMR.u_k[i+3]))*vzm_2);
                     //---------------------------------------------------------------------------------------------------
                     // Saving OMRs formation control signals data in a string-format version:
                     memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);                // Clear char-type string vector where OMRs' PWMs control signals will be saved.
@@ -598,9 +598,9 @@ __interrupt void cpu_timer1_isr(void){
                 // Conditioning input torque control for OMRs formation:
                 for(i = 0; i < 3; i++){
                   FMR.u_k[i] = clutch(saturation(SMC.y_k[i],-100.0f/ke_1,100.0f/ke_1),t_cl,sampleTime,CpuTimer1.InterruptCount);
-                  FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1);
+                  FMR.v_k[i] = roundToThreeDecimals(FMR.u_k[i]*ke_1 + (float)(signf(FMR.u_k[i]))*vzm_1);
                   FMR.u_k[i+3] = clutch(saturation(SMC.y_k[i+3],-100.0f/ke_2,100.0f/ke_2),t_cl,sampleTime,CpuTimer1.InterruptCount);
-                  FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2);
+                  FMR.v_k[i+3] = roundToThreeDecimals(FMR.u_k[i+3]*ke_2 + (float)(signf(FMR.u_k[i+3]))*vzm_2);
                   //-----------------------------------------------------------------------------------------------------
                   // Saving OMRs formation control signals data in a string-format version:
                   memset_fast(FMR.vs_k.data[i],0,FMR.vs_k.bufferSize);                  // Clear char-type string vector where OMRs' PWMs control signals will be saved.
@@ -839,7 +839,7 @@ __interrupt void scia_rx_isr(void){
                     float Cx_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's x axis.
                     float Cy_0 = 1500.0f;                                               // [mm], initial reference's centre along workspace's y axis.
                     float Sc_0 = 900.0f;                                                // [mm], initial scope of infinity-shape trajectory on workspace.
-                    float Wc_0 = 1.0f/25.0f;                                            // [rad/s], Desired angular velocity relationship gain for planned trajectory.
+                    float Wc_0 = 1.0f/12.5f;                                            // [rad/s], Desired angular velocity relationship gain for planned trajectory.
                     float Vcx_0 = Sc_0*Wc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Vcx_0;                                           // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 180.0f;                                                // [mm], initial desired half distance between robots.
@@ -853,8 +853,8 @@ __interrupt void scia_rx_isr(void){
                     float yc_0 = FMR.c_k[1];                                            // [mm], initial position of whole cluster along workspace's y axis.
                     float thc_0 = FMR.c_k[2];                                           // [rad], initial orientation of whole cluster in the workspace.
                     float dc_0 = FMR.c_k[3];                                            // [mm], initial distance between both OMRs.
-                    float ph1_0 = FMR.q_k[2]*0.0f;                                           // [rad], initial orientation of robot 1.
-                    float ph2_0 = FMR.q_k[5]*0.0f;                                           // [rad], initial orientation of robot 2.
+                    float ph1_0 = FMR.q_k[2];                                           // [rad], initial orientation of robot 1.
+                    float ph2_0 = FMR.q_k[5];                                           // [rad], initial orientation of robot 2.
                     float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
                     float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
