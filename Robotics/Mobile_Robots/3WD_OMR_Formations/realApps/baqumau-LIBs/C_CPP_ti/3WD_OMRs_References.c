@@ -749,11 +749,14 @@ void computeIndepCircumferences02(Reference REF, enum Control_System consys, uns
                 float OP20_kp1 = 2.0f*OP19_kp1;                                             // Pre-compute operation OP20(k).
                 float OP21_kp1 = OP20_kp1*OP18_kp1;                                         // Pre-compute operation OP21(k).
                 float OP22_kp1 = 1.0f/sqrtf(OP15_kp1);                                      // Pre-compute operation OP22(k).
+                float OP23_kp1 = OP1_kp1*OP8_kp1*OP13_kp1;                                  // Pre-compute operation OP23(k).
+                float OP24_kp1 = OP2_kp1*OP3_kp1*OP14_kp1;                                  // Pre-compute operation OP24(k).
+                float OP25_kp1 = OP23_kp1 + OP24_kp1;                                       // Pre-compute operation OP25(k).
                 //------------------------------
                 REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
                 REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.
                 REF.z2_kp1[2] = OP14_kp1*(OP7_kp1 - dc_0*OP2_kp1)*OP17_kp1;                 // Computing d(thc)/dt.
-                REF.z2_kp1[3] = (OP1_kp1*OP8_kp1*OP13_kp1 + OP2_kp1*OP3_kp1*OP14_kp1)*OP22_kp1;// Computing d(dc)/dt.
+                REF.z2_kp1[3] = OP25_kp1*OP22_kp1;                                          // Computing d(dc)/dt.
                 REF.z2_kp1[4] = d_ph1_k - REF.z2_kp1[2];                                    // Computing d(psi_1)/dt.
                 REF.z2_kp1[5] = d_ph2_k - REF.z2_kp1[2];                                    // Computing d(psi_2)/dt.
                 //------------------------------
@@ -762,7 +765,7 @@ void computeIndepCircumferences02(Reference REF, enum Control_System consys, uns
                 // Computing d^2(thc)/dt^2:
                 REF.z3_kp1[2] = OP19_kp1*(OP4_kp1 + OP8_kp1)*OP17_kp1 + OP4_kp1*OP16_kp1*OP21_kp1 + OP8_kp1*(OP11_kp1 - OP10_kp1)*OP21_kp1;
                 // Computing d^2(dc)/dt^2:
-                REF.z3_kp1[3] = Wc_Wc*(OP10_kp1 + OP11_kp1)*OP22_kp1 + Wc_Wc*(OP8_kp1*OP4_kp1 - OP9_kp1)*OP22_kp1 + 0.0f;
+                REF.z3_kp1[3] = Wc_Wc*(OP10_kp1 + OP11_kp1)*OP22_kp1 + Wc_Wc*(OP8_kp1*OP4_kp1 - OP9_kp1)*OP22_kp1 + OP25_kp1*OP25_kp1*OP22_kp1*OP17_kp1;
                 REF.z3_kp1[4] = -REF.z3_kp1[2];                                             // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = -REF.z3_kp1[2];                                             // Computing d^2(psi_2)/dt^2.
                 //-------------------------------Robot Space---------------------------------

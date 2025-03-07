@@ -191,7 +191,7 @@ void computeCircumference01(Reference REF, enum Control_System consys, unsigned 
         // Computing equations for circumference profiles generation in the cluster space:
         float Vc = 200.0f;                                                                  // [mm/s], linear velocity of cluster centroid.
         float Rc = 1200.0f;                                                                 // [mm], desired radius of planned trajectory.
-        float Ac = Vc*Vc/Rc;                                                                // Precompute angular acceleration Vc^2/Rc.
+        float Ac = Vc*Vc/Rc;                                                                // Pre-compute angular acceleration Vc^2/Rc.
         float WTc = Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2];                          // Rate variation of sinusoidal functions.
         switch(Robots_Qty){
             case 2:{
@@ -291,8 +291,8 @@ void computeInfinity01(Reference REF, enum Control_System consys, unsigned long 
         // Computing equations for infinity reference profiles generation in the cluster space:
         float Sc = 900.0f;                                                                  // [mm], scope of infinity-shape trajectory on workspace.
         float Wc = 1.0f/25.0f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
-        float Wc1 = Sc*Wc*Wc;                                                               // Precompute operation Sc*(Wc^2).
-        float Wc2 = Wc1*Wc;                                                                 // Precompute operation Sc*(Wc^3).
+        float Wc1 = Sc*Wc*Wc;                                                               // Pre-compute operation Sc*(Wc^2).
+        float Wc2 = Wc1*Wc;                                                                 // Pre-compute operation Sc*(Wc^3).
         float WTc = (float)(iterations)*REF.Ts*Wc;                                          // Rate variation of sinusoidal functions.
         float ddd_xc_k = -Wc2*cosf(WTc);                                                    // Computing d^3(xc)/dt^3.
         float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*WTc);                                          // Computing d^3(yc)/dt^3.
@@ -302,38 +302,38 @@ void computeInfinity01(Reference REF, enum Control_System consys, unsigned long 
                 REF.z3_kp1[0] = -Wc1*sinf(WTc);                                             // Computing d^2(xc)/dt^2.
                 REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*WTc);                                   // Computing d^2(yc)/dt^2.
                 // Computing d^2(thc)/dt^2:
-                float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Precompute operation OP1(k).
-                float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Precompute operation OP2(k).
-                float OP3_kp1 = REF.z2_kp1[1]*REF.z2_kp1[1];                                // Precompute operation OP3(k).
-                float OP4_kp1 = OP1_kp1 + OP3_kp1;                                          // Precompute operation OP4(k).
-                float OP5_kp1 = OP1_kp1 - OP3_kp1;                                          // Precompute operation OP5(k).
-                float OP6_kp1 = OP4_kp1*OP4_kp1;                                            // Precompute operation OP6(k).
+                float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Pre-compute operation OP1(k).
+                float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Pre-compute operation OP2(k).
+                float OP3_kp1 = REF.z2_kp1[1]*REF.z2_kp1[1];                                // Pre-compute operation OP3(k).
+                float OP4_kp1 = OP1_kp1 + OP3_kp1;                                          // Pre-compute operation OP4(k).
+                float OP5_kp1 = OP1_kp1 - OP3_kp1;                                          // Pre-compute operation OP5(k).
+                float OP6_kp1 = OP4_kp1*OP4_kp1;                                            // Pre-compute operation OP6(k).
                 REF.z3_kp1[2] = -REF.z3_kp1[0]*(2.0f*REF.z3_kp1[0]*OP2_kp1 - REF.z3_kp1[1]*OP5_kp1)/OP6_kp1 + REF.z3_kp1[1]*(2.0f*REF.z3_kp1[1]*OP2_kp1 + REF.z3_kp1[0]*OP5_kp1)/OP6_kp1 + (ddd_xc_k*REF.z2_kp1[1] - ddd_yc_k*REF.z2_kp1[0])/OP4_kp1;
                 //------------------------------
                 REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
-                OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Precompute operation OP1(k).
-                OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Precompute operation OP2(k).
-                OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Precompute operation OP3(k).
-                OP4_kp1 = REF.z2_kp1[3]*CC2_kp1;                                            // Precompute operation OP4(k).
-                OP5_kp1 = REF.z3_kp1[2]*SC2_kp1;                                            // Precompute operation OP5(k).
-                OP6_kp1 = REF.z3_kp1[2]*CC2_kp1;                                            // Precompute operation OP6(k).
-                float OP7_kp1 = REF.z3_kp1[3]*SC2_kp1;                                      // Precompute operation OP7(k).
-                float OP8_kp1 = REF.z3_kp1[3]*CC2_kp1;                                      // Precompute operation OP8(k).
-                float OP9_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*SC2_kp1;                        // Precompute operation OP9(k).
-                float OP10_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*CC2_kp1;                       // Precompute operation OP10(k).
-                float OP11_kp1 = OP1_kp1*REF.z2_kp1[2];                                     // Precompute operation OP11(k).
-                float OP12_kp1 = OP2_kp1*REF.z2_kp1[2];                                     // Precompute operation OP12(k).
-                float OP13_kp1 = OP3_kp1*REF.z2_kp1[2];                                     // Precompute operation OP13(k).
-                float OP14_kp1 = OP4_kp1*REF.z2_kp1[2];                                     // Precompute operation OP14(k).
-                float OP15_kp1 = REF.z1_kp1[3]*(OP9_kp1 - OP6_kp1);                         // Precompute operation OP15(k).
-                float OP16_kp1 = REF.z1_kp1[3]*(OP10_kp1 + OP5_kp1);                        // Precompute operation OP16(k).
-                float OP17_kp1 = OP3_kp1 + OP12_kp1;                                        // Precompute operation OP17(k).
-                float OP18_kp1 = OP4_kp1 - OP11_kp1;                                        // Precompute operation OP18(k).
-                float OP19_kp1 = OP7_kp1 + 2.0f*OP14_kp1 - OP15_kp1;                        // Precompute operation OP19(k).
-                float OP20_kp1 = OP8_kp1 - 2.0f*OP13_kp1 - OP16_kp1;                        // Precompute operation OP20(k).
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Pre-compute sin(thc).
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Pre-compute cos(thc).
+                OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Pre-compute operation OP1(k).
+                OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Pre-compute operation OP2(k).
+                OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Pre-compute operation OP3(k).
+                OP4_kp1 = REF.z2_kp1[3]*CC2_kp1;                                            // Pre-compute operation OP4(k).
+                OP5_kp1 = REF.z3_kp1[2]*SC2_kp1;                                            // Pre-compute operation OP5(k).
+                OP6_kp1 = REF.z3_kp1[2]*CC2_kp1;                                            // Pre-compute operation OP6(k).
+                float OP7_kp1 = REF.z3_kp1[3]*SC2_kp1;                                      // Pre-compute operation OP7(k).
+                float OP8_kp1 = REF.z3_kp1[3]*CC2_kp1;                                      // Pre-compute operation OP8(k).
+                float OP9_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*SC2_kp1;                        // Pre-compute operation OP9(k).
+                float OP10_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*CC2_kp1;                       // Pre-compute operation OP10(k).
+                float OP11_kp1 = OP1_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP11(k).
+                float OP12_kp1 = OP2_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP12(k).
+                float OP13_kp1 = OP3_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP13(k).
+                float OP14_kp1 = OP4_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP14(k).
+                float OP15_kp1 = REF.z1_kp1[3]*(OP9_kp1 - OP6_kp1);                         // Pre-compute operation OP15(k).
+                float OP16_kp1 = REF.z1_kp1[3]*(OP10_kp1 + OP5_kp1);                        // Pre-compute operation OP16(k).
+                float OP17_kp1 = OP3_kp1 + OP12_kp1;                                        // Pre-compute operation OP17(k).
+                float OP18_kp1 = OP4_kp1 - OP11_kp1;                                        // Pre-compute operation OP18(k).
+                float OP19_kp1 = OP7_kp1 + 2.0f*OP14_kp1 - OP15_kp1;                        // Pre-compute operation OP19(k).
+                float OP20_kp1 = OP8_kp1 - 2.0f*OP13_kp1 - OP16_kp1;                        // Pre-compute operation OP20(k).
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
@@ -407,10 +407,10 @@ void computeInfinity02(Reference REF, enum Control_System consys, unsigned long 
             REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
         // Computing equations for infinity reference profiles generation in the cluster space:
-        float Sc = 900.0f;                                                                 // [mm], scope of infinity-shape trajectory on workspace.
-        float Wc = 1.0f/25.0f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
-        float Wc1 = Sc*Wc*Wc;                                                               // Precompute operation Sc*(Wc^2).
-        float Wc2 = Wc1*Wc;                                                                 // Precompute operation Sc*(Wc^3).
+        float Sc = 900.0f;                                                                  // [mm], scope of infinity-shape trajectory on workspace.
+        float Wc = 1.0f/12.5f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
+        float Wc1 = Sc*Wc*Wc;                                                               // Pre-compute operation Sc*(Wc^2).
+        float Wc2 = Wc1*Wc;                                                                 // Pre-compute operation Sc*(Wc^3).
         float WTc = (float)(iterations)*REF.Ts*Wc;                                          // Rate variation of sinusoidal functions.
         float ddd_xc_k = -Wc2*cosf(WTc);                                                    // Computing d^3(xc)/dt^3.
         float ddd_yc_k = -8.0f*Wc2*cosf(2.0f*WTc);                                          // Computing d^3(yc)/dt^3.
@@ -420,40 +420,40 @@ void computeInfinity02(Reference REF, enum Control_System consys, unsigned long 
                 REF.z3_kp1[0] = -Wc1*sinf(WTc);                                             // Computing d^2(xc)/dt^2.
                 REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*WTc);                                   // Computing d^2(yc)/dt^2.
                 // Computing d^2(thc)/dt^2:
-                float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Precompute operation OP1(k).
-                float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Precompute operation OP2(k).
-                float OP3_kp1 = REF.z2_kp1[1]*REF.z2_kp1[1];                                // Precompute operation OP3(k).
-                float OP4_kp1 = OP1_kp1 + OP3_kp1;                                          // Precompute operation OP4(k).
-                float OP5_kp1 = OP1_kp1 - OP3_kp1;                                          // Precompute operation OP5(k).
-                float OP6_kp1 = OP4_kp1*OP4_kp1;                                            // Precompute operation OP6(k).
+                float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Pre-compute operation OP1(k).
+                float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Pre-compute operation OP2(k).
+                float OP3_kp1 = REF.z2_kp1[1]*REF.z2_kp1[1];                                // Pre-compute operation OP3(k).
+                float OP4_kp1 = OP1_kp1 + OP3_kp1;                                          // Pre-compute operation OP4(k).
+                float OP5_kp1 = OP1_kp1 - OP3_kp1;                                          // Pre-compute operation OP5(k).
+                float OP6_kp1 = OP4_kp1*OP4_kp1;                                            // Pre-compute operation OP6(k).
                 REF.z3_kp1[2] = -REF.z3_kp1[0]*(2.0f*REF.z3_kp1[0]*OP2_kp1 - REF.z3_kp1[1]*OP5_kp1)/OP6_kp1 + REF.z3_kp1[1]*(2.0f*REF.z3_kp1[1]*OP2_kp1 + REF.z3_kp1[0]*OP5_kp1)/OP6_kp1 + (ddd_xc_k*REF.z2_kp1[1] - ddd_yc_k*REF.z2_kp1[0])/OP4_kp1;
                 //------------------------------
                 REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
                 REF.z3_kp1[4] = -REF.z3_kp1[2];                                             // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = -REF.z3_kp1[2];                                             // Computing d^2(psi_2)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
-                OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Precompute operation OP1(k).
-                OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Precompute operation OP2(k).
-                OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Precompute operation OP3(k).
-                OP4_kp1 = REF.z2_kp1[3]*CC2_kp1;                                            // Precompute operation OP4(k).
-                OP5_kp1 = REF.z3_kp1[2]*SC2_kp1;                                            // Precompute operation OP5(k).
-                OP6_kp1 = REF.z3_kp1[2]*CC2_kp1;                                            // Precompute operation OP6(k).
-                float OP7_kp1 = REF.z3_kp1[3]*SC2_kp1;                                      // Precompute operation OP7(k).
-                float OP8_kp1 = REF.z3_kp1[3]*CC2_kp1;                                      // Precompute operation OP8(k).
-                float OP9_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*SC2_kp1;                        // Precompute operation OP9(k).
-                float OP10_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*CC2_kp1;                       // Precompute operation OP10(k).
-                float OP11_kp1 = OP1_kp1*REF.z2_kp1[2];                                     // Precompute operation OP11(k).
-                float OP12_kp1 = OP2_kp1*REF.z2_kp1[2];                                     // Precompute operation OP12(k).
-                float OP13_kp1 = OP3_kp1*REF.z2_kp1[2];                                     // Precompute operation OP13(k).
-                float OP14_kp1 = OP4_kp1*REF.z2_kp1[2];                                     // Precompute operation OP14(k).
-                float OP15_kp1 = REF.z1_kp1[3]*(OP9_kp1 - OP6_kp1);                         // Precompute operation OP15(k).
-                float OP16_kp1 = REF.z1_kp1[3]*(OP10_kp1 + OP5_kp1);                        // Precompute operation OP16(k).
-                float OP17_kp1 = OP3_kp1 + OP12_kp1;                                        // Precompute operation OP17(k).
-                float OP18_kp1 = OP4_kp1 - OP11_kp1;                                        // Precompute operation OP18(k).
-                float OP19_kp1 = OP7_kp1 + 2.0f*OP14_kp1 - OP15_kp1;                        // Precompute operation OP19(k).
-                float OP20_kp1 = OP8_kp1 - 2.0f*OP13_kp1 - OP16_kp1;                        // Precompute operation OP20(k).
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Pre-compute sin(thc).
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Pre-compute cos(thc).
+                OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Pre-compute operation OP1(k).
+                OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Pre-compute operation OP2(k).
+                OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Pre-compute operation OP3(k).
+                OP4_kp1 = REF.z2_kp1[3]*CC2_kp1;                                            // Pre-compute operation OP4(k).
+                OP5_kp1 = REF.z3_kp1[2]*SC2_kp1;                                            // Pre-compute operation OP5(k).
+                OP6_kp1 = REF.z3_kp1[2]*CC2_kp1;                                            // Pre-compute operation OP6(k).
+                float OP7_kp1 = REF.z3_kp1[3]*SC2_kp1;                                      // Pre-compute operation OP7(k).
+                float OP8_kp1 = REF.z3_kp1[3]*CC2_kp1;                                      // Pre-compute operation OP8(k).
+                float OP9_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*SC2_kp1;                        // Pre-compute operation OP9(k).
+                float OP10_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*CC2_kp1;                       // Pre-compute operation OP10(k).
+                float OP11_kp1 = OP1_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP11(k).
+                float OP12_kp1 = OP2_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP12(k).
+                float OP13_kp1 = OP3_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP13(k).
+                float OP14_kp1 = OP4_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP14(k).
+                float OP15_kp1 = REF.z1_kp1[3]*(OP9_kp1 - OP6_kp1);                         // Pre-compute operation OP15(k).
+                float OP16_kp1 = REF.z1_kp1[3]*(OP10_kp1 + OP5_kp1);                        // Pre-compute operation OP16(k).
+                float OP17_kp1 = OP3_kp1 + OP12_kp1;                                        // Pre-compute operation OP17(k).
+                float OP18_kp1 = OP4_kp1 - OP11_kp1;                                        // Pre-compute operation OP18(k).
+                float OP19_kp1 = OP7_kp1 + 2.0f*OP14_kp1 - OP15_kp1;                        // Pre-compute operation OP19(k).
+                float OP20_kp1 = OP8_kp1 - 2.0f*OP13_kp1 - OP16_kp1;                        // Pre-compute operation OP20(k).
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
@@ -475,7 +475,7 @@ void computeInfinity02(Reference REF, enum Control_System consys, unsigned long 
                 REF.x3_kp1[3] = REF.z3_kp1[0] - OP19_kp1;
                 REF.x3_kp1[4] = REF.z3_kp1[1] - OP20_kp1;
                 REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
-                //------------------------------
+                //------------------------------Cluster Space--------------------------------
                 Integration(REF.INT_2,REF.z3_kp1);                                          // Compute second integration to c3(k + 1).
                 Integration(REF.INT_1,REF.INT_2.y_k);                                       // Compute first integration to second integration output.
                 break;
@@ -538,10 +538,10 @@ void computeStatical01(Reference REF, enum Control_System consys){
                 REF.z3_kp1[4] = 0.0f;                                                       // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = 0.0f;                                                       // Computing d^2(psi_2)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
-                float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                      // Precompute operation OP1(k).
-                float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                      // Precompute operation OP2(k).
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Pre-compute sin(thc).
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Pre-compute cos(thc).
+                float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                      // Pre-compute operation OP1(k).
+                float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                      // Pre-compute operation OP2(k).
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
@@ -563,7 +563,7 @@ void computeStatical01(Reference REF, enum Control_System consys){
                 REF.x3_kp1[3] = 0.0f;
                 REF.x3_kp1[4] = 0.0f;
                 REF.x3_kp1[5] = 0.0f;
-                //------------------------------
+                //------------------------------Cluster Space--------------------------------
                 Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
                 break;
             }
@@ -614,7 +614,7 @@ void computeIndepCircumferences01(Reference REF, enum Control_System consys, uns
                 float RYc = 800.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
                 float Wc = M_PI/10.0f;                                                      // [rad/s], Angular velocity for tracing the independent ellipsoids.
                 float WTc = (float)(iterations)*REF.Ts*Wc;                                  // Rate variation of sinusoidal functions.
-                float Wc_Wc = Wc*Wc;                                                        // Precomputing Wc^2.
+                float Wc_Wc = Wc*Wc;                                                        // Pre-computing Wc^2.
                 //------------------------------Cluster Space--------------------------------
                 REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
                 REF.z2_kp1[1] = RYc*Wc*cosf(WTc);                                           // Computing d(yc)/dt.
@@ -630,10 +630,28 @@ void computeIndepCircumferences01(Reference REF, enum Control_System consys, uns
                 REF.z3_kp1[4] = 0.0f;                                                       // Computing d^2(psi_1)/dt^2.
                 REF.z3_kp1[5] = 0.0f;                                                       // Computing d^2(psi_2)/dt^2.
                 //-------------------------------Robot Space---------------------------------
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Precompute sin(thc).
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Precompute cos(thc).
-                float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                      // Precompute operation OP1(k).
-                float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                      // Precompute operation OP2(k).
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Pre-compute sin(thc).
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Pre-compute cos(thc).
+                float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                      // Pre-compute operation OP1(k).
+                float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                      // Pre-compute operation OP2(k).
+                float OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                      // Pre-compute operation OP3(k).
+                float OP4_kp1 = REF.z2_kp1[3]*CC2_kp1;                                      // Pre-compute operation OP4(k).
+                float OP5_kp1 = REF.z3_kp1[2]*SC2_kp1;                                      // Pre-compute operation OP5(k).
+                float OP6_kp1 = REF.z3_kp1[2]*CC2_kp1;                                      // Pre-compute operation OP6(k).
+                float OP7_kp1 = REF.z3_kp1[3]*SC2_kp1;                                      // Pre-compute operation OP7(k).
+                float OP8_kp1 = REF.z3_kp1[3]*CC2_kp1;                                      // Pre-compute operation OP8(k).
+                float OP9_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*SC2_kp1;                        // Pre-compute operation OP9(k).
+                float OP10_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*CC2_kp1;                       // Pre-compute operation OP10(k).
+                float OP11_kp1 = OP1_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP11(k).
+                float OP12_kp1 = OP2_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP12(k).
+                float OP13_kp1 = OP3_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP13(k).
+                float OP14_kp1 = OP4_kp1*REF.z2_kp1[2];                                     // Pre-compute operation OP14(k).
+                float OP15_kp1 = REF.z1_kp1[3]*(OP9_kp1 - OP6_kp1);                         // Pre-compute operation OP15(k).
+                float OP16_kp1 = REF.z1_kp1[3]*(OP10_kp1 + OP5_kp1);                        // Pre-compute operation OP16(k).
+                float OP17_kp1 = OP3_kp1 + OP12_kp1;                                        // Pre-compute operation OP17(k).
+                float OP18_kp1 = OP4_kp1 - OP11_kp1;                                        // Pre-compute operation OP18(k).
+                float OP19_kp1 = OP7_kp1 + 2.0f*OP14_kp1 - OP15_kp1;                        // Pre-compute operation OP19(k).
+                float OP20_kp1 = OP8_kp1 - 2.0f*OP13_kp1 - OP16_kp1;                        // Pre-compute operation OP20(k).
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
@@ -642,20 +660,159 @@ void computeIndepCircumferences01(Reference REF, enum Control_System consys, uns
                 REF.x1_kp1[4] = REF.z1_kp1[1] - OP2_kp1;
                 REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
                 //------------------------------
-                REF.x2_kp1[0] = 0.0f;
-                REF.x2_kp1[1] = 0.0f;
+                REF.x2_kp1[0] = REF.z2_kp1[0] + OP17_kp1;
+                REF.x2_kp1[1] = REF.z2_kp1[1] + OP18_kp1;
                 REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
-                REF.x2_kp1[3] = 0.0f;
-                REF.x2_kp1[4] = 0.0f;
+                REF.x2_kp1[3] = REF.z2_kp1[0] - OP17_kp1;
+                REF.x2_kp1[4] = REF.z2_kp1[1] - OP18_kp1;
                 REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
                 //------------------------------
-                REF.x3_kp1[0] = 0.0f;
-                REF.x3_kp1[1] = 0.0f;
-                REF.x3_kp1[2] = 0.0f;
-                REF.x3_kp1[3] = 0.0f;
-                REF.x3_kp1[4] = 0.0f;
-                REF.x3_kp1[5] = 0.0f;
+                REF.x3_kp1[0] = REF.z3_kp1[0] + OP19_kp1;
+                REF.x3_kp1[1] = REF.z3_kp1[1] + OP20_kp1;
+                REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
+                REF.x3_kp1[3] = REF.z3_kp1[0] - OP19_kp1;
+                REF.x3_kp1[4] = REF.z3_kp1[1] - OP20_kp1;
+                REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
+                //------------------------------Cluster Space--------------------------------
+                Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
+                break;
+            }
+        }
+        switch(consys){
+            case ADRC_RS:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the robot space:
+                REF.y_k[i] = roundToThreeDecimals(REF.x1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.x2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.x3_k[i]);
+            }
+            break;
+            case SMC_CS:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the cluster space:
+                REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+            }
+            break;
+        }
+    }
+    else NOP;                                                                               // No operation.
+}
+//---------------------------------------------------------------------------------------------------------------
+// Compute the reference trajectory of independent circumferences (n: 02), for OMRs control system:
+void computeIndepCircumferences02(Reference REF, enum Control_System consys, unsigned long iterations){
+    int i;                                                                                  // Declaration of i as integer variable.
+    // Executing builder algorithm for static trajectory:
+    if(REF.flag[0]){
+        // Updating algorithm:
+        for(i = 0; i < 3*Robots_Qty; i++){
+            REF.x1_k[i] = REF.x1_kp1[i];                                                    // Updating data for x1(k) within REF structure.
+            REF.x2_k[i] = REF.x2_kp1[i];                                                    // Updating data for x2(k) within REF structure.
+            REF.x3_k[i] = REF.x3_kp1[i];                                                    // Updating data for x3(k) within REF structure.
+            REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
+            REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
+            REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
+            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
+        }
+        // Computing equations for generation of static reference profiles in the cluster space:
+        switch(Robots_Qty){
+            case 2:{
+                float d_ph1_k = 0.0f;                                                       // [rad/s], Desired angular velocity of robot 1.
+                float d_ph2_k = 0.0f;                                                       // [rad/s], Desired angular velocity of robot 2.
+                float dc_0 = 180.0f;                                                        // [mm], initial distance between both OMRs.
+                float RXc = 400.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along X axis.
+                float RYc = 800.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
+                float Wc = M_PI/10.0f;                                                      // [rad/s], Angular velocity for tracing the independent ellipsoids.
+                float WTc = (float)(iterations)*REF.Ts*Wc;                                  // Rate variation of sinusoidal functions.
+                float Wc_Wc = Wc*Wc;                                                        // Pre-computing Wc^2.
+                //------------------------------Cluster Space--------------------------------
+                float OP1_kp1 = sinf(WTc);                                                  // Pre-compute operation OP1(k).
+                float OP2_kp1 = cosf(WTc);                                                  // Pre-compute operation OP2(k).
+                float OP3_kp1 = RYc*OP1_kp1;                                                // Pre-compute operation OP3(k).
+                float OP4_kp1 = RXc*OP2_kp1;                                                // Pre-compute operation OP4(k).
+                float OP5_kp1 = RXc*OP1_kp1;                                                // Pre-compute operation OP5(k).
+                float OP6_kp1 = RYc*OP2_kp1;                                                // Pre-compute operation OP6(k).
+                float OP7_kp1 = RXc - OP4_kp1;                                              // Pre-compute operation OP7(k).
+                float OP8_kp1 = dc_0 + OP7_kp1;                                             // Pre-compute operation OP8(k).
+                float OP9_kp1 = OP3_kp1*OP3_kp1;                                            // Pre-compute operation OP9(k).
+                float OP10_kp1 = OP5_kp1*OP5_kp1;                                           // Pre-compute operation OP10(k).
+                float OP11_kp1 = OP6_kp1*OP6_kp1;                                           // Pre-compute operation OP11(k).
+                float OP12_kp1 = OP8_kp1*OP8_kp1;                                           // Pre-compute operation OP12(k).
+                float OP13_kp1 = Wc*RXc;                                                    // Pre-compute operation OP13(k).
+                float OP14_kp1 = Wc*RYc;                                                    // Pre-compute operation OP14(k).
+                float OP15_kp1 = OP9_kp1 + OP12_kp1;                                        // Pre-compute operation OP15(k).
+                float OP16_kp1 = OP9_kp1 - OP12_kp1;                                        // Pre-compute operation OP16(k).
+                float OP17_kp1 = 1.0f/OP15_kp1;                                             // Pre-compute operation OP17(k).
+                float OP18_kp1 = OP17_kp1*OP17_kp1;                                         // Pre-compute operation OP18(k).
+                float OP19_kp1 = Wc_Wc*OP3_kp1;                                             // Pre-compute operation OP19(k).
+                float OP20_kp1 = 2.0f*OP19_kp1;                                             // Pre-compute operation OP20(k).
+                float OP21_kp1 = OP20_kp1*OP18_kp1;                                         // Pre-compute operation OP21(k).
+                float OP22_kp1 = 1.0f/sqrtf(OP15_kp1);                                      // Pre-compute operation OP22(k).
+                float OP23_kp1 = OP1_kp1*OP8_kp1*OP13_kp1;                                  // Pre-compute operation OP23(k).
+                float OP24_kp1 = OP2_kp1*OP3_kp1*OP14_kp1;                                  // Pre-compute operation OP24(k).
+                float OP25_kp1 = OP23_kp1 + OP24_kp1;                                       // Pre-compute operation OP25(k).
                 //------------------------------
+                REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
+                REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.
+                REF.z2_kp1[2] = OP14_kp1*(OP7_kp1 - dc_0*OP2_kp1)*OP17_kp1;                 // Computing d(thc)/dt.
+                REF.z2_kp1[3] = OP25_kp1*OP22_kp1;                                          // Computing d(dc)/dt.
+                REF.z2_kp1[4] = d_ph1_k - REF.z2_kp1[2];                                    // Computing d(psi_1)/dt.
+                REF.z2_kp1[5] = d_ph2_k - REF.z2_kp1[2];                                    // Computing d(psi_2)/dt.
+                //------------------------------
+                REF.z3_kp1[0] = 0.0f;                                                       // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = 0.0f;                                                       // Computing d^2(yc)/dt^2.
+                // Computing d^2(thc)/dt^2:
+                REF.z3_kp1[2] = OP19_kp1*(OP4_kp1 + OP8_kp1)*OP17_kp1 + OP4_kp1*OP16_kp1*OP21_kp1 + OP8_kp1*(OP11_kp1 - OP10_kp1)*OP21_kp1;
+                // Computing d^2(dc)/dt^2:
+                REF.z3_kp1[3] = Wc_Wc*(OP10_kp1 + OP11_kp1)*OP22_kp1 + Wc_Wc*(OP8_kp1*OP4_kp1 - OP9_kp1)*OP22_kp1 + OP25_kp1*OP25_kp1*OP22_kp1*OP17_kp1;
+                REF.z3_kp1[4] = -REF.z3_kp1[2];                                             // Computing d^2(psi_1)/dt^2.
+                REF.z3_kp1[5] = -REF.z3_kp1[2];                                             // Computing d^2(psi_2)/dt^2.
+                //-------------------------------Robot Space---------------------------------
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Pre-compute sin(thc).
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Pre-compute cos(thc).
+                OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                            // Pre-compute operation OP1(k).
+                OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                            // Pre-compute operation OP2(k).
+                OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                            // Pre-compute operation OP3(k).
+                OP4_kp1 = REF.z2_kp1[3]*CC2_kp1;                                            // Pre-compute operation OP4(k).
+                OP5_kp1 = REF.z3_kp1[2]*SC2_kp1;                                            // Pre-compute operation OP5(k).
+                OP6_kp1 = REF.z3_kp1[2]*CC2_kp1;                                            // Pre-compute operation OP6(k).
+                OP7_kp1 = REF.z3_kp1[3]*SC2_kp1;                                            // Pre-compute operation OP7(k).
+                OP8_kp1 = REF.z3_kp1[3]*CC2_kp1;                                            // Pre-compute operation OP8(k).
+                OP9_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*SC2_kp1;                              // Pre-compute operation OP9(k).
+                OP10_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*CC2_kp1;                             // Pre-compute operation OP10(k).
+                OP11_kp1 = OP1_kp1*REF.z2_kp1[2];                                           // Pre-compute operation OP11(k).
+                OP12_kp1 = OP2_kp1*REF.z2_kp1[2];                                           // Pre-compute operation OP12(k).
+                OP13_kp1 = OP3_kp1*REF.z2_kp1[2];                                           // Pre-compute operation OP13(k).
+                OP14_kp1 = OP4_kp1*REF.z2_kp1[2];                                           // Pre-compute operation OP14(k).
+                OP15_kp1 = REF.z1_kp1[3]*(OP9_kp1 - OP6_kp1);                               // Pre-compute operation OP15(k).
+                OP16_kp1 = REF.z1_kp1[3]*(OP10_kp1 + OP5_kp1);                              // Pre-compute operation OP16(k).
+                OP17_kp1 = OP3_kp1 + OP12_kp1;                                              // Pre-compute operation OP17(k).
+                OP18_kp1 = OP4_kp1 - OP11_kp1;                                              // Pre-compute operation OP18(k).
+                OP19_kp1 = OP7_kp1 + 2.0f*OP14_kp1 - OP15_kp1;                              // Pre-compute operation OP19(k).
+                OP20_kp1 = OP8_kp1 - 2.0f*OP13_kp1 - OP16_kp1;                              // Pre-compute operation OP20(k).
+                //------------------------------
+                REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
+                REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
+                REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
+                REF.x1_kp1[3] = REF.z1_kp1[0] - OP1_kp1;
+                REF.x1_kp1[4] = REF.z1_kp1[1] - OP2_kp1;
+                REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
+                //------------------------------
+                REF.x2_kp1[0] = REF.z2_kp1[0] + OP17_kp1;
+                REF.x2_kp1[1] = REF.z2_kp1[1] + OP18_kp1;
+                REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
+                REF.x2_kp1[3] = REF.z2_kp1[0] - OP17_kp1;
+                REF.x2_kp1[4] = REF.z2_kp1[1] - OP18_kp1;
+                REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
+                //------------------------------
+                REF.x3_kp1[0] = REF.z3_kp1[0] + OP19_kp1;
+                REF.x3_kp1[1] = REF.z3_kp1[1] + OP20_kp1;
+                REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
+                REF.x3_kp1[3] = REF.z3_kp1[0] - OP19_kp1;
+                REF.x3_kp1[4] = REF.z3_kp1[1] - OP20_kp1;
+                REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
+                //------------------------------Cluster Space--------------------------------
                 Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
                 break;
             }

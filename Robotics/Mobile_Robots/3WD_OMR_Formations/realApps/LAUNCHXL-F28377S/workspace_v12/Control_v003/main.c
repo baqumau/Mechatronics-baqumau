@@ -146,7 +146,7 @@ char *var11;                                                                    
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
 enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = MINGYUE_02;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
+enum Reference_Type reftype = STATIC_01;                                                // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -866,6 +866,23 @@ __interrupt void scia_rx_isr(void){
                     break;
                 }
                 case INDEP_CIRCUMFERENCES_01:{
+                    // Configuring initial parameters for independent circumferences:
+                    float xc_0 = 1500.0f;                                               // [mm], initial position of whole cluster along workspace's x axis.
+                    float yc_0 = 1500.0f;                                               // [mm], initial position of whole cluster along workspace's y axis.
+                    float thc_0 = M_PI_2;                                               // [rad], initial orientation of whole cluster in the workspace.
+                    float dc_0 = 180.0f;                                                // [mm], initial distance between both OMRs.
+                    float ph1_0 = 0.0f;                                                 // [rad], initial orientation of robot 1.
+                    float ph2_0 = 0.0f;                                                 // [rad], initial orientation of robot 2.
+                    float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
+                    float RXc = 400.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along X axis.
+                    float RYc = 800.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
+                    float Wc = M_PI/10.0f;                                              // [rad/s], Angular velocity for tracing the independent ellipsoids.
+                    float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                    initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
+                    break;
+                }
+                case INDEP_CIRCUMFERENCES_02:{
                     // Configuring initial parameters for independent circumferences:
                     float xc_0 = 1500.0f;                                               // [mm], initial position of whole cluster along workspace's x axis.
                     float yc_0 = 1500.0f;                                               // [mm], initial position of whole cluster along workspace's y axis.
