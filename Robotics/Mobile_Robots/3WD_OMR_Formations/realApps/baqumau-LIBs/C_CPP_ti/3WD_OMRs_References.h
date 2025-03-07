@@ -49,7 +49,8 @@ enum Reference_Type{
     MINGYUE_01,                                                                 // Infinity-shape trajectory with OMRs orientation angles synchronized to the whole cluster orientation.
     MINGYUE_02,                                                                 // Infinity-shape trajectory with OMRs orientation angles fixed to a desired value.
     STATIC_01,                                                                  // Trivial static-formation trajectory 1, where robots are placed in a fixed position while turning on the normal axis to 1/4 rad/s.
-    INDEP_CIRCUMFERENCES_01                                                     // Independent ellipsoids are commanded to be traced by the involved vehicles.
+    INDEP_CIRCUMFERENCES_01,                                                    // Independent ellipsoids are commanded to be traced by the involved vehicles.
+    INDEP_CIRCUMFERENCES_02                                                     // Independent ellipsoids are commanded to be traced by the involved vehicles (version 2).
 };
 //---------------------------------------------------------------------------------------------------------------
 // Declaration of functions library:
@@ -68,6 +69,8 @@ extern void computeInfinity02(Reference REF, enum Control_System consys, unsigne
 extern void computeStatical01(Reference REF, enum Control_System consys);
 // Compute the reference trajectory of independent circumferences (n: 01), for OMRs control system:
 extern void computeIndepCircumferences01(Reference REF, enum Control_System consys, unsigned long iterations);
+// Compute the reference trajectory of independent circumferences (n: 02), for OMRs control system:
+extern void computeIndepCircumferences02(Reference REF, enum Control_System consys, unsigned long iterations);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _3WD_OMRs_REFERENCES_H_ */
 //---------------------------------------------------------------------------------------------------------------
