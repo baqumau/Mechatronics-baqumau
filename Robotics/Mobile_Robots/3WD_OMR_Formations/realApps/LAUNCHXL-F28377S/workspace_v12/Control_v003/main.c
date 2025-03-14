@@ -146,7 +146,7 @@ char *var11;                                                                    
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
 enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = STATIC_01;                                                // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
+enum Reference_Type reftype = MINGYUE_02;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -192,16 +192,16 @@ float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
-float sls_Gains[3*Robots_Qty+1] = {3.7225f, 3.7225f, 3.7225f, 3.7225f, 8.8175f, 8.8175f, 37.0f};
+float sls_Gains[3*Robots_Qty+1] = {1.8432f, 1.8432f, 1.8432f, 1.8432f, 6.825f, 6.825f, 37.0f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float smc_Gains[3*Robots_Qty] = {4.84f, 4.84f, 4.84f, 4.84f, 6.84f, 6.84f};
+float smc_Gains[3*Robots_Qty] = {7.84f, 7.84f, 7.84f, 7.84f, 12.84f, 12.84f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
-#define rho_1 (1.0f/7.5f)*mt_1*l_1*l_1/(r_1*r_1)                                        // Constant for bounding the input torque disturbances in robot 1.
-#define rho_2 (1.0f/7.5f)*mt_2*l_2*l_2/(r_2*r_2)                                        // Constant for bounding the input torque disturbances in robot 2.
+#define rho_1 (1.0f/20.5f)*mt_1*l_1*l_1/(r_1*r_1)                                       // Constant for bounding the input torque disturbances in robot 1.
+#define rho_2 (1.0f/20.5f)*mt_2*l_2*l_2/(r_2*r_2)                                       // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
-float unc_Values[4] = {0.25f, 0.125f, 0.125f, 0.25f};                                   // Define the constants for bounding the uncertainties in the model.
+float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                     // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
-float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 8.5f, 130.0f, 9.5f, 8.5f};
+float sls_satVals[3*Robots_Qty] = {195.0f, 195.0f, 25.5f, 110.0f, 38.5f, 38.5f};
 float diff_fc = 45.0f;                                                                  // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
 float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                  // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
 float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
