@@ -53,7 +53,7 @@ math constants. */
 #define V2_y_max (r_2/sqrtf(3.0f))*(d_th21_max + d_th22_max)                    // [mm/s], Maximum linear velocity along Y axis (wheels 1 and 2 are symmetrically oriented by the angle delta with respect to Y axis).
 #define d_phi2_max (r_2/(3.0f*l_2))*(d_th21_max + d_th22_max + d_th23_max)      // [rad/s], Maximum angular velocity of the robot.
 #define ke_2 0.79f                                                              // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 2.
-#define vzm_2 20.0f                                                             // [%PWM], Dead zone voltage limit for DC motors.
+#define vzm_2 15.0f                                                             // [%PWM], Dead zone voltage limit for DC motors.
 // Another constant parameters:
 #define kappa 1000.0f                                                           // [mm/m], Known constant for the units conversion of input signals.
 #define NOP __asm__(" NOP")                                                     // Nop instruction (asm).
