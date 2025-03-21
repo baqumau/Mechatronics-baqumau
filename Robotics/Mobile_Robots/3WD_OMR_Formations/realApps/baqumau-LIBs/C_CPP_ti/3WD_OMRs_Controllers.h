@@ -282,6 +282,7 @@ typedef struct{
     int s_state;                                                                // Size of the state.
     float Ts;                                                                   // Sample time.
     float *Gamma;                                                               // Gains vector for sliding surfaces. It is also the desired control bandwidth for each CS variable.
+    float *dampFacts;                                                           // Damping factors for a better closed-loop shaping via error's sliding surfaces.
     float *E_0;                                                                 // Initial tracking errors E(0) = [e1(0) e2(0)]'.
     float *v1_k;                                                                // State variables where sliding functions are computed.
     float *v2_k;                                                                // State variables to arrange the integral action of sliding function.
@@ -394,16 +395,22 @@ extern void computeADRC(ADRC_Controller ADRC, float ref_y_k[], float rso_y_k[], 
 extern CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][Robots_Qty-1], float epsilon, float diff_fc);
 // Creating the cluster space high-gain observer structure (type 01 - variant x):
 extern CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][Robots_Qty-1], float epsilon, float diff_pg[], float diff_lc[]);
+// Creating the cluster space high-gain observer structure (type 02 - variant x):
+extern CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(Robots_Qty+1)][Robots_Qty+1], float epsilon, float diff_pg[], float diff_lc[]);
 // Adding initial conditions to high-gain observer 01 structured as CSO:
 extern void init_CS_Observer01(CS_Observer CSO, float z_0[]);
-// Adding initial conditions to high-gain observer 01 structured as CSO (variant x):
+// Adding initial conditions to the cluster space high-gain observer structured as CSO (type 01 - variant x):
 extern void init_CSx_Observer01(CSx_Observer CSO, float z_0[]);
+// Adding initial conditions to the cluster space high-gain observer structured as CSO (type 02 - variant x):
+extern void init_CSx_Observer02(CSx_Observer CSO, float z_0[]);
 // Cluster space estimation function for CS observer 01:
 extern void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]);
-// Cluster space estimation function for CS observer 01 (variant x):
+// Cluster space estimation function for CS observer (type 01 - variant x):
 extern void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]);
+// Cluster space estimation function for CS observer (type 02 - variant x):
+extern void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]);
 // Creating the sliding surfaces:
-extern Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float satValues[]);
+extern Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float dampFacts[], float satValues[]);
 // Adding initial conditions to sliding surfaces structured within SLS:
 extern void init_SlidingSurfaces(Sl_Surfaces SLS, float ref_z_0[], float fmr_z_0[]);
 // Compute the sliding surfaces algorithm that updates structured variables within SLS:

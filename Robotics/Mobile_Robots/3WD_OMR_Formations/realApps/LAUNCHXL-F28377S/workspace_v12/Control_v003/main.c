@@ -160,42 +160,56 @@ float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {    0.0f,     0.0f, 10.2083f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f, 13.6111f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f,     0.0f, 13.6111f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 10.2083f},                         // Setting alpha_1.
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 10.2083f},                         // Setting alpha_1 for RSO.
   {52.9321f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
   {    0.0f, 52.9321f,     0.0f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f, 29.7743f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f, 52.9321f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f,     0.0f, 52.9321f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 29.7743f},                         // Setting alpha_2.
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 29.7743f},                         // Setting alpha_2 for RSO.
   {58.8134f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
   {    0.0f, 58.8134f,     0.0f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f, 24.8119f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f, 58.8134f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f,     0.0f, 58.8134f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 24.8119f}                          // Setting alpha_3.
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 24.8119f}                          // Setting alpha_3 for RSO.
 };
 // Float parameters to define the GPI controller gains of ADRC_RS:
 float gpi_Gains[3*Robots_Qty][3] = {
-  {69.8148f, 59.3426f, 14.4118f},
-  {69.8148f, 59.3426f, 14.4118f},
-  {1876.0370f, 562.8111f, 45.6333f},
-  {142.5541f, 95.5112f, 18.2836f},
-  {142.5541f, 95.5112f, 18.2836f},
-  {9205.6555f, 1537.3445f, 73.3533f},                                                   // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
+  {  69.8148f,   59.3426f, 14.4118f},
+  {  69.8148f,   59.3426f, 14.4118f},
+  {1876.0370f,  562.8111f, 45.6333f},
+  { 142.5541f,   95.5112f, 18.2836f},
+  { 142.5541f,   95.5112f, 18.2836f},
+  {9205.6555f, 1537.3445f, 73.3533f}                                                    // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
 };
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
-// Float parameters to define the observer gains of CSO, for SMC_CS:
-float cso_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
-  {18.4091f},                                                                           // Setting alpha_1.
-  {75.3099f},                                                                           // Setting alpha_2.
-  {68.4636f}                                                                            // Setting alpha_3.
+// Float parameters to define the observer gains of CSO_01, for SMC_CS:
+float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
+  {18.4091f},                                                                           // Setting alpha_1 for CSO_01.
+  {75.3099f},                                                                           // Setting alpha_2 for CSO_01.
+  {68.4636f}                                                                            // Setting alpha_3 for CSO_01.
+};
+// Float parameters to define the observer gains of CSO_02, for SMC_CS:
+float cso2_Gains[3*(Robots_Qty+1)][Robots_Qty+1] = {
+  {18.4091f,     0.0f,     0.0f},
+  {    0.0f, 13.6111f,     0.0f},
+  {    0.0f,     0.0f, 13.6111f},                                                       // Setting alpha_1 for CSO_02.
+  {75.3099f,     0.0f,     0.0f},
+  {    0.0f, 52.9321f,     0.0f},
+  {    0.0f,     0.0f, 52.9321f},                                                       // Setting alpha_2 for CSO_02.
+  {68.4636f,     0.0f,     0.0f},
+  {    0.0f, 58.8134f,     0.0f},
+  {    0.0f,     0.0f, 58.8134f}                                                        // Setting alpha_3 for CSO_02.
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
-float sls_Gains[3*Robots_Qty+1] = {1.8432f, 1.8432f, 1.8432f, 1.8432f, 3.825f, 8.025f, 37.0f};
+float sls_Gains[3*Robots_Qty+1] = {1.8432f, 1.8432f, 1.8432f, 1.8432f, 8.125f, 8.125f, 27.0f};
+// -- Setting damping factors to the sliding surfaces:
+float sls_dampFacts[3*Robots_Qty] = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float smc_Gains[3*Robots_Qty] = {4.84f, 4.84f, 4.84f, 4.84f, 6.84f, 8.44f};
+float smc_Gains[3*Robots_Qty] = {4.84f, 4.84f, 4.84f, 4.84f, 8.44f, 8.44f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
 #define rho_1 (1.0f/20.5f)*mt_1*l_1*l_1/(r_1*r_1)                                       // Constant for bounding the input torque disturbances in robot 1.
 #define rho_2 (1.0f/20.5f)*mt_2*l_2*l_2/(r_2*r_2)                                       // Constant for bounding the input torque disturbances in robot 2.
@@ -427,11 +441,11 @@ void main(void){
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
     // Creating data structure for a high-gain observer in the cluster space:
-    CSO = createCSx_Observer01(sampleTime,cso_Gains,epsilon,diff_pg,diff_lc);
+    CSO = createCSx_Observer01(sampleTime,cso1_Gains,epsilon,diff_pg,diff_lc);
     // Creating data structure for a GPI controller in the robot space:
     GPI = createGPI_Controller(sampleTime,gpi_Gains);
     // Creating data structure for the sliding surfaces in the cluster space:
-    SLS = createSlidingSurfaces(sampleTime,sls_Gains,sls_satVals);
+    SLS = createSlidingSurfaces(sampleTime,sls_Gains,sls_dampFacts,sls_satVals);
     // Creating data structure for an ADRC controller in the robot space:
     ADRC = createADRC_Controller();
     // Creating data structure for a SMC technique in the cluster space:
