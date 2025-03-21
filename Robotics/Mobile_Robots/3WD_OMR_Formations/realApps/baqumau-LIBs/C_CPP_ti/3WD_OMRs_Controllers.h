@@ -307,6 +307,7 @@ typedef struct{
     int s_out;                                                                  // Size of output.
     float epsilon;                                                              // Including a sufficiently small positive constant (0 < epsilon < 1).
     float *Gamma;                                                               // Gains vector for the desired control bandwidth of each CS variable or sliding surfaces gains.
+    float *dampFacts;                                                           // Damping factors for a better closed-loop shaping via error's sliding surfaces.
     float *omega;                                                               // Fixed control gains that force the tracking error trajectories to move towards the sliding surfaces.
     float *rho;                                                                 // Bound values for disturbances that previously and arbitrarily were selected.
     float *Delta;                                                               // Bound values for uncertiainties that previously and arbitrarily were selected.
@@ -416,7 +417,7 @@ extern void init_SlidingSurfaces(Sl_Surfaces SLS, float ref_z_0[], float fmr_z_0
 // Compute the sliding surfaces algorithm that updates structured variables within SLS:
 extern void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], float cso_y_k[]);
 // Creating the SMC controller data structure in the cluster space as SMC:
-extern SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float epsilon);
+extern SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon);
 // Initializing the sliding mode controller structured as SMC:
 extern void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]);
 // SMC strategy computing function:

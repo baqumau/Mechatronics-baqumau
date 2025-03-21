@@ -449,7 +449,7 @@ void main(void){
     // Creating data structure for an ADRC controller in the robot space:
     ADRC = createADRC_Controller();
     // Creating data structure for a SMC technique in the cluster space:
-    SMC = createSMC_Controller(smc_Gains,unc_Values,dis_Values,sls_Gains,upsilon);
+    SMC = createSMC_Controller(smc_Gains,unc_Values,dis_Values,sls_Gains,sls_dampFacts,upsilon);
     // Creating data structure for the reference builder system:
     REF = createReference(sampleTime,reftype);                                          // Create reference structure.
     // Creating a robot formation structure for arranging their relevant variables:

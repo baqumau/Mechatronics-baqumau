@@ -1363,6 +1363,7 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float dampFac
     SLS.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the SLS structure.
     //-----------------------------------------------
     SLS.Gamma = (float *)malloc(s+1 * sizeof(float));                                       // Allocate memory for the sliding gains within SLS.
+    SLS.dampFacts = (float *)malloc(s * sizeof(float));                                     // Allocate memory for the damping factors of sliding surfaces within SLS.
     SLS.E_0 = (float *)malloc(2*s * sizeof(float));                                         // Allocate memory for the initial tracking error state vector e(0) = [e1(0) e2(0)]'.
     SLS.v1_max = (float *)malloc(s * sizeof(float));                                        // Allocate memory for the saturation values for sliding functions on SLS.
     SLS.v1_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the state vector v1(k).
@@ -1374,7 +1375,7 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float dampFac
     // Creating vector array for Gamma:
     for(i = 0; i < s+1; i++){
         SLS.Gamma[i] = gains[i];                                                            // Assign values to the gains vector Gamma, of SLS.
-        SLS.dampFacts[i] = dampFacts[i];                                                    // Assign damping factors to the sliding surfaces.
+        SLS.dampFacts[i] = dampFacts[i];                                                    // Assign values to the damping factors of the sliding surfaces.
         if(i < s) SLS.v1_max[i] = satValues[i];                                             // Saving the previously assigned saturation values.
     }
     //-----------------------------------------------
@@ -1427,7 +1428,7 @@ void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], 
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating the SMC controller data structure in the cluster space as SMC:
-SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float epsilon){
+SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon){
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
     // Configuring the members of the SMC structure (sliding mode control):
     SMC_Controller SMC;                                                                     // Creates sliding mode controller data structure.
@@ -1436,6 +1437,7 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
     SMC.epsilon = epsilon;                                                                  // Small constant used in the SMC strategy.
     //-----------------------------------------------
     SMC.Gamma = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the sliding gains within SMC.
+    SMC.dampFacts = (float *)malloc(s * sizeof(float));                                     // Allocate memory for the damping factors of sliding surfaces within SMC.
     SMC.omega = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the fixed control gains within SMC.
     SMC.rho = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the disturbances bounding values within SMC strategy.
     SMC.Delta = (float *)malloc(4 * sizeof(float));                                         // Allocate memory for the uncertainties bounding values within SMC strategy.
@@ -1450,6 +1452,7 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
     // Assigning values to the gains:
     for(i = 0; i < s; i++){
         SMC.Gamma[i] = sls_gains[i];                                                        // Assigning values to the gains vector Gamma, of SMC.
+        SMC.dampFacts[i] = sls_dampfacts[i];                                                // Assign values to the damping factors of the sliding surfaces.
         SMC.omega[i] = gains[i];                                                            // Assigning values to fixed control gains vector omega, within SMC.
         SMC.rho[i] = dis_values[i];                                                         // Assigning values to the disturbances bounding vector rho, within SMC.
         if(i < 4) SMC.Delta[i] = unc_values[i];                                             // Assigning values to the uncertainties bounding vector delta, within SMC.
@@ -1570,7 +1573,7 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
                 SMC.til_Fc_k[i] = 0.0f;                                                     // Clear the i^th value of vector field ^{\tilde}f_c(k).
                 SMC.y_k[i] = 0.0f;                                                          // Clear the SMC output.
                 // Initial computing of the tracking error based control law:
-                SMC.ast_u_k[i] = SMC.Gamma[i]*SMC.Gamma[i]*sls_e_0[i] + 2.0f*SMC.Gamma[i]*sls_e_0[i+SMC.s_out] - ref_z_0[i+2*SMC.s_out];
+                SMC.ast_u_k[i] = SMC.Gamma[i]*SMC.Gamma[i]*sls_e_0[i] + 2.0f*SMC.dampFacts[i]*SMC.Gamma[i]*sls_e_0[i+SMC.s_out] - ref_z_0[i+2*SMC.s_out];
                 // Initial computing of the auxiliary control input:
                 SMC.aux_u_k[i] = SMC.ast_u_k[i];
             }
@@ -1992,7 +1995,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                     SMC.til_Fc_k[i] = 0.0f;                                                 // Clear the i^th value of vector field ^{\tilde}f_c(k).
                     SMC.y_k[i] = 0.0f;                                                      // Clear SMC output.
                     // Updating the initial tracking error based control law:
-                    SMC.ast_u_k[i] = SMC.Gamma[i]*SMC.Gamma[i]*(fmr_c_k[i] - ref_y_k[i]) + 2.0f*SMC.Gamma[i]*(cso_y_k[i] - ref_y_k[i+SMC.s_out]) - ref_y_k[i+2*SMC.s_out];
+                    SMC.ast_u_k[i] = SMC.Gamma[i]*SMC.Gamma[i]*(fmr_c_k[i] - ref_y_k[i]) + 2.0f*SMC.dampFacts[i]*SMC.Gamma[i]*(cso_y_k[i] - ref_y_k[i+SMC.s_out]) - ref_y_k[i+2*SMC.s_out];
                     // Updating the vector fields hat{fc}(k) and til{fc}(k):
                     for(j = 0; j < SMC.s_out; j++){
                         SMC.til_Fc_k[i] += W4_k[i][j]*cso_y_k[j];
