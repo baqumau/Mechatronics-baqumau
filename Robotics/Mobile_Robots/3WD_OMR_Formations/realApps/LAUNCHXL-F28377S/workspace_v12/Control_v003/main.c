@@ -205,7 +205,7 @@ float cso2_Gains[3*(Robots_Qty+1)][Robots_Qty+1] = {
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
-float sls_Gains[3*Robots_Qty+1] = {1.8432f, 1.8432f, 1.8432f, 1.8432f, 8.125f, 8.125f, 27.0f};
+float sls_Gains[3*Robots_Qty] = {1.8432f, 1.8432f, 1.8432f, 1.8432f, 8.125f, 8.125f};
 // -- Setting damping factors to the sliding surfaces:
 float sls_dampFacts[3*Robots_Qty] = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
@@ -216,7 +216,7 @@ float smc_Gains[3*Robots_Qty] = {4.84f, 4.84f, 4.84f, 4.84f, 8.44f, 8.44f};
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                     // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
-float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 18.5f, 180.0f, 19.5f, 19.5f};
+float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 19.5f, 180.0f, 19.5f, 19.5f};
 float diff_fc = 45.0f;                                                                  // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
 float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                  // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
 float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
