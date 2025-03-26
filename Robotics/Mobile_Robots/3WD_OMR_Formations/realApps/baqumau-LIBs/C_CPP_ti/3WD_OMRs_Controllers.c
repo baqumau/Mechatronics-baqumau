@@ -1362,8 +1362,9 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float dampFac
     SLS.s_state = s;                                                                        // Assign value of statetSize to the member s_state of the SLS structure.
     SLS.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the SLS structure.
     //-----------------------------------------------
-    SLS.Gamma = (float *)malloc(s+1 * sizeof(float));                                       // Allocate memory for the sliding gains within SLS.
+    SLS.Gamma = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the sliding gains within SLS.
     SLS.dampFacts = (float *)malloc(s * sizeof(float));                                     // Allocate memory for the damping factors of sliding surfaces within SLS.
+    SLS.awGains = (float *)malloc(s * sizeof(float));                                       // Allocate memory for the anti-windup gains of sliding surfaces within SLS.
     SLS.E_0 = (float *)malloc(2*s * sizeof(float));                                         // Allocate memory for the initial tracking error state vector e(0) = [e1(0) e2(0)]'.
     SLS.v1_max = (float *)malloc(s * sizeof(float));                                        // Allocate memory for the saturation values for sliding functions on SLS.
     SLS.v1_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the state vector v1(k).
@@ -1373,10 +1374,11 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float dampFac
     SLS.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined within SLS (disable or enable sliding surfaces generation).
     //-----------------------------------------------
     // Creating vector array for Gamma:
-    for(i = 0; i < s+1; i++){
+    for(i = 0; i < s; i++){
         SLS.Gamma[i] = gains[i];                                                            // Assign values to the gains vector Gamma, of SLS.
-        SLS.dampFacts[i] = dampFacts[i];                                                    // Assign values to the damping factors of the sliding surfaces.
-        if(i < s) SLS.v1_max[i] = satValues[i];                                             // Saving the previously assigned saturation values.
+        SLS.dampFacts[i] = dampFacts[i];                                                    // Assign values to the damping factors of sliding surfaces within SLS structure.
+        SLS.awGains[i] = 1.5f/sqrtf(SLS.Gamma[i]/(4*SLS.dampFacts[i]));                     // Assign values to the anti-windup gains of sliding surfaces within SLS structure.
+        SLS.v1_max[i] = satValues[i];                                                       // Saving the previously assigned saturation values.
     }
     //-----------------------------------------------
     SLS.INT = createIntegrator(s,sampleTime,1.0f);                                          // Create integrator structure within sliding surfaces structure as SLS.INT.
@@ -1420,7 +1422,7 @@ void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], 
             //-----------------------------------------------
             SLS.y_k[i] = saturation(SLS.v1_k[i],-SLS.v1_max[i],SLS.v1_max[i]);              // Updating output y(k) of SLS structure.
             // Updating d(v2(k))/dt:
-            SLS.v2_kp1[i] = fmr_c_k[i] - ref_y_k[i] + SLS.Gamma[SLS.s_out]*(SLS.y_k[i] - SLS.v1_k[i]);
+            SLS.v2_kp1[i] = fmr_c_k[i] - ref_y_k[i] + SLS.awGains[i]*(SLS.y_k[i] - SLS.v1_k[i]);
         }
         Integration(SLS.INT,SLS.v2_kp1);                                                    // Compute integration for d(v2(k))/dt as v2_kp1.
     }
@@ -2006,8 +2008,9 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                 for(i = 0; i < SMC.s_out; i++){
                     // Updating the variable control gains within the vector Kappa(k):
                     for(j = 0; j < SMC.s_out; j++){
-                        if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j]) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
-                        else SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
+                        float w701_k = SMC.Gamma[j]*SMC.Gamma[j]*(fmr_c_k[j] - ref_y_k[j]); // Pre-compute operation 1 in W7(k).
+                        if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*fabsf(SMC.til_Fc_k[j] + SMC.omega[j] - w701_k) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
+                        else SMC.kappa_k[i] += fabsf(W3_k[i][j])*fabsf(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j] - w701_k) + fabsf(W6_k[i][j])*SMC.rho[j];
                     }
                     // Updating the auxiliary control input:
                     SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);

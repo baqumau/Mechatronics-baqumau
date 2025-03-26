@@ -283,6 +283,7 @@ typedef struct{
     float Ts;                                                                   // Sample time.
     float *Gamma;                                                               // Gains vector for sliding surfaces. It is also the desired control bandwidth for each CS variable.
     float *dampFacts;                                                           // Damping factors for a better closed-loop shaping via error's sliding surfaces.
+    float *awGains;                                                             // Anti-windup gains to reaccommodate the integral term on the sliding surfaces.
     float *E_0;                                                                 // Initial tracking errors E(0) = [e1(0) e2(0)]'.
     float *v1_k;                                                                // State variables where sliding functions are computed.
     float *v2_k;                                                                // State variables to arrange the integral action of sliding function.

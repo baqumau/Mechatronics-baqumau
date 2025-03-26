@@ -105,33 +105,35 @@ Fz = c2d(tf(1,[.273 1]),Ts,'tustin');                                       % Di
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
 %--------------------------------------------------------------------------
-% desired_path = My_paths(37,Ts);
-% % Initial conditions for references builder:
-% xc_0 = 13e+03; yc_0 = 13e+03; thc_0 = atan2(1/25,1/12.5) + pi/2; d_0 = 200;
-% x1_0 = 13.1789e+03; y1_0 = 12.9106e+03; th1_0 = -atan2(1/25,1/12.5);
-% x2_0 = 12.8211e+03; y2_0 = 13.0894e+03; th2_0 = -atan2(1/25,1/12.5);
-% % With Cluster space references 2:
-% dxc_0 = 2000/25; dyc_0 = 2000/12.5; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
-% o1r_0 = pi/2 - thc_0; o2r_0 = pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
-% %-----------------------------------
-% dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
-% dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
-% dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
-% dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
-%--------------------------------------------------------------------------
-desired_path = My_paths(38,Ts);
+desired_path = My_paths(37,Ts);
 % Initial conditions for references builder:
-xc_0 = 10000; yc_0 = 10000; thc_0 = pi/2; d_0 = 750;
-x1_0 = 10750; y1_0 = 10000; th1_0 = pi;
-x2_0 = 9250; y2_0 = 10000; th2_0 = pi;
-% With Cluster space references 1:
-dxc_0 = 0; dyc_0 = 0; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
+xc_0 = 13e+03; yc_0 = 13e+03; thc_0 = atan2(1/25,1/12.5) + pi/2; d_0 = 200;
+x1_0 = 13.1789e+03; y1_0 = 12.9106e+03; th1_0 = -atan2(1/25,1/12.5);
+x2_0 = 12.8211e+03; y2_0 = 13.0894e+03; th2_0 = -atan2(1/25,1/12.5);
+% With Cluster space references 1 or Cluster space references 2:
+dxc_0 = 2000/25; dyc_0 = 2000/12.5; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
 o1r_0 = pi/2 - thc_0; o2r_0 = pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
 %-----------------------------------
 dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
 dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
+%--------------------------------------------------------------------------
+% desired_path = My_paths(38,Ts);
+% % Initial conditions for references builder:
+% xc_0 = 10000; yc_0 = 10000; thc_0 = pi/4;
+% d_0 = 750; ph1_0 = pi/2 - thc_0; ph2_0 = pi/2 - thc_0;
+% %-----------------------------------
+% x1_0 = xc_0 + d_0*sin(thc_0); y1_0 = yc_0 + d_0*cos(thc_0); th1_0 = ph1_0 + thc_0;
+% x2_0 = xc_0 - d_0*sin(thc_0); y2_0 = yc_0 - d_0*cos(thc_0); th2_0 = ph2_0 + thc_0;
+% % With Cluster space references 1:
+% dxc_0 = 0; dyc_0 = 0; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
+% o1r_0 = th1_0; o2r_0 = th2_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
+% %-----------------------------------
+% dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
+% dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
+% dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
+% dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
 %--------------------------------------------------------------------------
 par.x0_c_ref  = [xc_0 yc_0 thc_0 d_0 (th1_0-thc_0) (th2_0-thc_0) dxc_0 dyc_0 dthc_0 dd_0 dph1_0 dph2_0]';
 par.q0r_r1 = [x1_0 y1_0 th1_0]';
@@ -155,14 +157,15 @@ par.alpha_3 = diag([K1(1,4) K1(1,4) K2(1,4) K1(1,4) K2(1,4) K2(1,4)]);
 par.err = .42;
 %% Sliding mode control:
 % Tuning parameters:
-par.S_b = [280 280 9.5 150 9.5 9.5]';                                       % Constant for saturate sigma surface.
+par.S_b = [280 280 20 180 20 20]';                                          % Constant for saturate sigma surface.
 par.N = [55 55 35 55 35 35]';                                               % Constant of derivative filter.
 par.NTs = par.N*par.Ts;                                                     % Other constant of derivative filter.
-par.Eta = [1.44 1.44 1.44 1.44 1.44 1.44]';                                 % Constant for bounding the sliding surface dynamics.
-par.Delta = [1/5 1/20 1/25]';                                               % Constant for bounding the uncertainty model.
-par.Rho_1 = (3/4)*ones(3,1)*(par.m_1)*(par.l_1/par.r_1)^2;                  % Constant for bounding the input torque disturbnces in robot 1.
-par.Rho_2 = (3/4)*ones(3,1)*(par.m_2)*(par.l_2/par.r_2)^2;                  % Constant for bounding the input torque disturbnces in robot 2.
+par.Eta = [1.84 1.84 1.84 1.84 1.84 1.84]';                                 % Constant for bounding the sliding surface dynamics.
+par.Delta = [1/4 1/20 1/20]';                                               % Constant for bounding the uncertainty model.
+par.Rho_1 = (1/8)*ones(3,1)*(par.m_1)*(par.l_1/par.r_1)^2;                  % Constant for bounding the input torque disturbnces in robot 1.
+par.Rho_2 = (1/8)*ones(3,1)*(par.m_2)*(par.l_2/par.r_2)^2;                  % Constant for bounding the input torque disturbnces in robot 2.
 par.Lambda = diag([1.54 1.54 1.68 1.57 1.68 1.68]);                         % Coefficients for sliding surface.
+par.dampFacts = diag([1.0 1.0 1.0 1.0 1.0 1.0]);                            % Assign damping factor to the sliding surfaces.
 %% Extended Kalman Filters
 % EKF_1:
 par.b_1 = 87.5*0;                                                           % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).

@@ -166,8 +166,8 @@ function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(par)
 sizes = simsizes;
 
 sizes.NumContStates  = 0;
-sizes.NumDiscStates  = 36;
-sizes.NumOutputs     = 12;
+sizes.NumDiscStates  = 42;
+sizes.NumOutputs     = 18;
 sizes.NumInputs      = 36;
 sizes.DirFeedthrough = 0;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
@@ -178,7 +178,7 @@ sys = simsizes(sizes);
 % initialize the initial conditions
 %
 
-x0 = [par.x0_c' (par.x0_c(1:6,1)'-par.x0_c_ref(1:6,1)') zeros(1,6) zeros(1,6) zeros(1,6)]';
+x0 = [par.x0_c' (par.x0_c(1:6,1)'-par.x0_c_ref(1:6,1)') zeros(1,6) zeros(1,6) zeros(1,6) zeros(1,6)]';
 
 %
 % str is always an empty matrix
@@ -291,7 +291,7 @@ Beta = abs((Lambda_e_c\(Jin_c'*Be))/(Lambda_c\(Jin_c'*B)));
 F = abs(Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) - Lambda_c\(Jin_c'*H*Jin_c*u(7:12,1)));
 %--------------------------------------------------------------------------
 % Sliding surfaces:
-sigma = u(7:12,1) - u(19:24,1) + 2*par.Lambda*(u(1:6,1) - u(13:18,1)) + par.Lambda^2*x(19:24,1) + par.x0_c_ref(7:12,1) - 2*par.Lambda*(par.x0_c(1:6,1) - par.x0_c_ref(1:6,1));
+sigma = u(7:12,1) - u(19:24,1) + 2*par.dampFacts*par.Lambda*(u(1:6,1) - u(13:18,1)) + par.Lambda^2*x(19:24,1) + par.x0_c_ref(7:12,1) - 2*par.Lambda*(par.x0_c(1:6,1) - par.x0_c_ref(1:6,1));
 sigma_ = zeros(6,1);
 for i = 1:6
     if abs(sigma(i,1)) >= par.S_b(i,1)
@@ -300,14 +300,16 @@ for i = 1:6
         sigma_(i,1) = sigma(i,1);
     end
 end
-sys(25:30,1) = 22*(sigma_ - sigma);
+sys(25:30,1) = (((4*par.dampFacts*par.Lambda)\(par.Lambda^2)).^(.5))\(1.5*(sigma_ - sigma));
 %--------------------------------------------------------------------------
 % Controller gains:
-K = Beta*F + abs(Beta - eye(6))*abs(-u(25:30,1) + 2*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2] + Beta*par.Eta;
+K = Beta*abs(F - par.Lambda^2*(u(1:6,1) - u(13:18,1)) + par.Eta) + abs(Beta - eye(6))*abs(-u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2];
 % K = Beta*F + (eye(6) - inv(Beta))*abs(-u(19:24,1) + 2*par.Lambda*(x(7:12,1) - u(13:18,1)) + par.Lambda^2*(u(1:6,1) - u(7:12,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)) + dJ_dc_c*Jin_c*x(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2] + Beta*par.Eta;
 %--------------------------------------------------------------------------
 % Control laws:
-sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1) - u(25:30,1) + 2*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) + K.*tanh(par.err*sigma_) + diag([0 0 0 1 0 0])*u(31:36,1));
+sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1) - u(25:30,1) + 2*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) + K.*tanh(par.err*sigma_) + diag([1 1 1 1 1 1])*u(31:36,1));
+% Saturated sliding surfaces:
+sys(37:42,1) = sigma_;
 
 % end mdlUpdate
 
@@ -321,6 +323,7 @@ function sys=mdlOutputs(t,x,u,par)
 
 sys(1:6,1) = x(31:36,1);
 sys(7:12,1) = x(7:12,1);
+sys(13:18,1) = x(37:42,1);
 
 % end mdlOutputs
 
