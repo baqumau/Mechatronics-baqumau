@@ -157,15 +157,15 @@ par.alpha_3 = diag([K1(1,4) K1(1,4) K2(1,4) K1(1,4) K2(1,4) K2(1,4)]);
 par.err = .42;
 %% Sliding mode control:
 % Tuning parameters:
-par.S_b = [280 280 20 180 20 20]';                                          % Constant for saturate sigma surface.
+par.S_b = [280 280 10 180 12 12]';                                          % Constant for saturate sigma surface.
 par.N = [55 55 35 55 35 35]';                                               % Constant of derivative filter.
 par.NTs = par.N*par.Ts;                                                     % Other constant of derivative filter.
-par.Eta = [1.84 1.84 1.84 1.84 1.84 1.84]';                                 % Constant for bounding the sliding surface dynamics.
+par.Eta = [1.44 1.44 1.44 1.44 1.44 1.44]';                                 % Constant for bounding the sliding surface dynamics.
 par.Delta = [1/4 1/20 1/20]';                                               % Constant for bounding the uncertainty model.
 par.Rho_1 = (1/8)*ones(3,1)*(par.m_1)*(par.l_1/par.r_1)^2;                  % Constant for bounding the input torque disturbnces in robot 1.
 par.Rho_2 = (1/8)*ones(3,1)*(par.m_2)*(par.l_2/par.r_2)^2;                  % Constant for bounding the input torque disturbnces in robot 2.
 par.Lambda = diag([1.54 1.54 1.68 1.57 1.68 1.68]);                         % Coefficients for sliding surface.
-par.dampFacts = diag([1.0 1.0 1.0 1.0 1.0 1.0]);                            % Assign damping factor to the sliding surfaces.
+par.dampFacts = diag([1.1 1.1 1.1 1.1 1.1 1.1]);                            % Assign damping factor to the sliding surfaces.
 %% Extended Kalman Filters
 % EKF_1:
 par.b_1 = 87.5*0;                                                           % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).

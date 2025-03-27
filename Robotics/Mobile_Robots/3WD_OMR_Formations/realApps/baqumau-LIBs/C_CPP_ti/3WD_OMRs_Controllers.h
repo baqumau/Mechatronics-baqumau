@@ -398,7 +398,7 @@ extern CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Q
 // Creating the cluster space high-gain observer structure (type 01 - variant x):
 extern CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][Robots_Qty-1], float epsilon, float diff_pg[], float diff_lc[]);
 // Creating the cluster space high-gain observer structure (type 02 - variant x):
-extern CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(Robots_Qty+1)][Robots_Qty+1], float epsilon, float diff_pg[], float diff_lc[]);
+extern CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(3*Robots_Qty)][3*Robots_Qty], float epsilon, float diff_pg[], float diff_lc[]);
 // Adding initial conditions to high-gain observer 01 structured as CSO:
 extern void init_CS_Observer01(CS_Observer CSO, float z_0[]);
 // Adding initial conditions to the cluster space high-gain observer structured as CSO (type 01 - variant x):

@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.528"
+    ComputedModelVersion    "1.529"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Mar 26 14:33:07 2025"
+  LastModifiedDate	  "Thu Mar 27 00:06:48 2025"
   RTWModifiedTimeStamp	  664873533
-  ModelVersionFormat	  "1.%<AutoIncrement:528>"
+  ModelVersionFormat	  "1.%<AutoIncrement:529>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -11500,8 +11500,8 @@ Model {
 		MarkerStyles		"none|none|none|none|none|none"
 	      }
 	      ShowLegends	      off
-	      YMin		      "-0.45"
-	      YMax		      "0.47"
+	      YMin		      "-10"
+	      YMax		      "10"
 	      SaveName		      "ScopeData18"
 	      LimitDataPoints	      off
 	    }

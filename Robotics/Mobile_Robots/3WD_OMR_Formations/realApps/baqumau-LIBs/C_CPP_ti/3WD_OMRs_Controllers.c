@@ -1155,8 +1155,8 @@ void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating the cluster space high-gain observer structure (type 02 - variant x):
-CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(Robots_Qty+1)][Robots_Qty+1], float epsilon, float diff_pg[], float diff_lc[]){
-    int i, j, s = Robots_Qty+1, m = 6*Robots_Qty;                                           // Declaration of i, j, s and m as integer variables.
+CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(3*Robots_Qty)][3*Robots_Qty], float epsilon, float diff_pg[], float diff_lc[]){
+    int i, j, s = 3*Robots_Qty, m = 6*Robots_Qty;                                           // Declaration of i, j, s and m as integer variables.
     // Configuring the members of the CSx observer structure:
     CSx_Observer CSO;                                                                       // Creates the observer structure.
     CSO.s_in = m;                                                                           // Assign value of inputSize to the member s_in of the CSO structure.
@@ -1200,7 +1200,7 @@ CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(Robots_Qty+1)
 //---------------------------------------------------------------------------------------------------------------
 // Adding initial conditions to the cluster space high-gain observer structured as CSO (type 02 - variant x):
 void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
-    int i, j, s = 0, m = Robots_Qty+1, n = 3*Robots_Qty;                                    // Declaration of i, j, s, n and m as integer variables.
+    int i, j, m = 3*Robots_Qty, n = 3*Robots_Qty, r = 0, s = 0;                             // Declaration of i, j, r, s, n and m as integer variables.
     float *Xi_0 = (float *)malloc(6*m * sizeof(float));                                     // Variable to save initial conditions for CSO.INT integration structure.
     float *Xd_0 = (float *)malloc(3*n * sizeof(float));                                     // Variable to save initial conditions for CSO.SMDIF differentiation structure.
     for(i = 0; i < CSO.s_state; i++){
@@ -1208,8 +1208,8 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
     }
     for(i = 0; i < 3; i++){
         for(j = 0; j < m; j++){
-            CSO.Z_0[s] = z_0[6*i+3+j];                                                      // Saving initial conditions data for z(0) within CSO structure.
-            Xi_0[s+CSO.s_state] = z_0[6*i+3+j];                                             // Saving initial conditions for x2(0) within CSO.INT structure.
+            CSO.Z_0[s] = z_0[6*i+r+j];                                                      // Saving initial conditions data for z(0) within CSO structure.
+            Xi_0[s+CSO.s_state] = z_0[6*i+r+j];                                             // Saving initial conditions for x2(0) within CSO.INT structure.
             s++;                                                                            // Increasing s.
         }
     }
@@ -1223,9 +1223,9 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
     initHOSMDifferentiator(CSO.SMDIF,Xd_0);                                                 // Initialize HOSM-based differentiator of CSO high-gain observer.
     // Initiating variables z1(k), z2(k) and z3(k):
     for(i = 0; i < m; i++){
-        CSO.z1_k[i] = z_0[i+3];                                                             // Saving initial conditions data for z1(k) within CSO structure.
-        CSO.z2_k[i] = z_0[i+n+3];                                                           // Saving initial conditions data for z2(k) within CSO structure.
-        CSO.z3_k[i] = z_0[i+2*n+3];                                                         // Saving initial conditions data for z3(k) within CSO structure.
+        CSO.z1_k[i] = z_0[i+r];                                                             // Saving initial conditions data for z1(k) within CSO structure.
+        CSO.z2_k[i] = z_0[i+n+r];                                                           // Saving initial conditions data for z2(k) within CSO structure.
+        CSO.z3_k[i] = z_0[i+2*n+r];                                                         // Saving initial conditions data for z3(k) within CSO structure.
         CSO.z1_kp1[i] = 0.0f;                                                               // Computing initial values for state d(z1(k))/dt within CSO structure.
         CSO.z2_kp1[i] = 0.0f;                                                               // Computing initial values for state d(z2(k))/dt within CSO structure.
         CSO.z3_kp1[i] = 0.0f;                                                               // Computing initial values for state d(z3(k))/dt within CSO structure.
@@ -1236,7 +1236,7 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
         CSO.y_k[i+n] = 0.0f;                                                                // Saving initial conditions data for y(k) within CSO structure.
     }
     for (j = 0; j < m; j++){
-        CSO.y_k[j+3+n] = CSO.Z_0[j];                                                        // Saving initial conditions data for y(k) within CSO structure.
+        CSO.y_k[j+r+n] = CSO.Z_0[j];                                                        // Saving initial conditions data for y(k) within CSO structure.
     }
     // Updating the observer flag:
     CSO.flag[0] = true;                                                                     // Flag settled to true, which enables the estimation algorithm on CSO structure.
@@ -1244,7 +1244,7 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
 //---------------------------------------------------------------------------------------------------------------
 // Cluster space estimation function for CS observer (type 02 - variant x):
 void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]){
-    int i, j, m = Robots_Qty+1, n = 3*Robots_Qty;                                           // Declaration of i, j, m and n as integer variables.
+    int i, j, m = 3*Robots_Qty, n = 3*Robots_Qty, r = 0;                                    // Declaration of i, j, m, n and r as integer variables.
     // Getting output of CSO.INT integration structure:
     for(i = 0; i < m; i++){
         CSO.z1_k[i] = CSO.INT.y_k[i];                                                       // Updating data for z1(k) within CSO structure.
@@ -1262,20 +1262,26 @@ void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                 float w101_k = H12_k*fmr_params[8];                                         // Pre-compute value in {1,2} position of W1(k) matrix.
                 float w102_k = H45_k*fmr_params[10];                                        // Pre-compute value in {4,5} position of W1(k) matrix.
                 float w103_k = (w101_k - w102_k)*0.5f;                                      // Pre-compute operation 1 in W1(k).
-                float w104_k = 1.0f/fmr_c_k[3];                                             // Pre-compute division 1 in W1(k).
-                float w105_k = w103_k*w104_k;                                               // Pre-compute multiplication 1 in W1(k).
-                float w106_k = sinf(fmr_c_k[2]);                                            // Pre-compute operation 2 in W1(k).
-                float w107_k = cosf(fmr_c_k[2]);                                            // Pre-compute operation 3 in W1(k).
-                float w108_k = w106_k*w105_k;                                               // Pre-compute multiplication 2 in W1(k).
-                float w109_k = w107_k*w105_k;                                               // Pre-compute multiplication 3 in W1(k).
-                float w110_k = (w101_k + w102_k + 2.0f*CSO.SMDIF.y_k[8])*0.5f;              // Pre-compute operation 4 in W1(k).
-                float w111_k = CSO.SMDIF.y_k[9]*w104_k;                                     // Pre-compute multiplication 4 in W1(k).
-                float w112_k = w110_k*w104_k;                                               // Pre-compute multiplication 5 in W1(k).
-                // Computing W1_k as the fourth, fifth and sixth rows of -J(c)*inv(hat{D})*hat{H}(c)*inv(J(c)) + d(J(c))/dt*inv(J(c)):
-                float W1_k[Robots_Qty+1][3*Robots_Qty] = {
-                    {w107_k*w103_k, -w106_k*w103_k, fmr_c_k[3]*w110_k,   0.0f, 0.0f, 0.0f},
-                    {       w108_k,         w109_k,            w111_k, w112_k, 0.0f, 0.0f},
-                    {       w108_k,         w109_k,            w111_k, w112_k, 0.0f, 0.0f}
+                float w104_k = (w101_k + w102_k)*0.5f;                                      // Pre-compute operation 2 in W1(k).
+                float w105_k = 1.0f/fmr_c_k[3];                                             // Pre-compute division 1 in W1(k).
+                float w106_k = w103_k*w105_k;                                               // Pre-compute multiplication 1 in W1(k).
+                float w107_k = sinf(fmr_c_k[2]);                                            // Pre-compute operation 3 in W1(k).
+                float w108_k = cosf(fmr_c_k[2]);                                            // Pre-compute operation 4 in W1(k).
+                float w109_k = w103_k*w107_k;                                               // Pre-compute multiplication 2 in W1(k).
+                float w110_k = w103_k*w108_k;                                               // Pre-compute multiplication 3 in W1(k).
+                float w111_k = w106_k*w107_k;                                               // Pre-compute multiplication 4 in W1(k).
+                float w112_k = w106_k*w108_k;                                               // Pre-compute multiplication 5 in W1(k).
+                float w113_k = w104_k + CSO.SMDIF.y_k[8];                                   // Pre-compute operation 5 in W1(k).
+                float w114_k = CSO.SMDIF.y_k[9]*w105_k;                                     // Pre-compute multiplication 6 in W1(k).
+                float w115_k = w105_k*w113_k;                                               // Pre-compute multiplication 7 in W1(k).
+                // Computing W1_k = -J(c)*inv(hat{D})*hat{H}(c)*inv(J(c)) + d(J(c))/dt*inv(J(c)):
+                float W1_k[3*Robots_Qty][3*Robots_Qty] = {
+                    {   0.0f, -w104_k, fmr_c_k[3]*w109_k, -w110_k, 0.0f, 0.0f},
+                    { w104_k,    0.0f, fmr_c_k[3]*w110_k,  w109_k, 0.0f, 0.0f},
+                    {-w111_k, -w112_k,           -w114_k, -w115_k, 0.0f, 0.0f},
+                    { w110_k, -w109_k, fmr_c_k[3]*w113_k,    0.0f, 0.0f, 0.0f},
+                    { w111_k,  w112_k,            w114_k,  w115_k, 0.0f, 0.0f},
+                    { w111_k,  w112_k,            w114_k,  w115_k, 0.0f, 0.0f}
                 };
                 // Computing values of the matrix inv(hat{D})*hat{B}(k):
                 float w201_k = fmr_c_k[2] + fmr_c_k[4];                                     // Pre-compute angular addition 0a in W2(k).
@@ -1292,16 +1298,19 @@ void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                 float w212_k = fmr_c_k[2] - w204_k;                                         // Pre-compute angular subtraction 3 in W2(k).
                 float w213_k = w205_k + fmr_c_k[2];                                         // Pre-compute angular addition 6 in W2(k).
                 float w214_k = fmr_c_k[2] - w206_k;                                         // Pre-compute angular subtraction 4 in W2(k).
-                float w215_k = w207_k*w104_k;                                               // Pre-compute multiplication 3 in W2(k).
-                float w216_k = w208_k*w104_k;                                               // Pre-compute multiplication 4 in W2(k).
+                float w215_k = w207_k*w105_k;                                               // Pre-compute multiplication 3 in W2(k).
+                float w216_k = w208_k*w105_k;                                               // Pre-compute multiplication 4 in W2(k).
                 float w217_k = cosf(w209_k)*w215_k;                                         // Pre-compute multiplication 5 in W2(k).
                 float w218_k = sinf(w211_k)*w215_k;                                         // Pre-compute multiplication 7 in W2(k).
                 float w219_k = sinf(w212_k)*w215_k;                                         // Pre-compute multiplication 8 in W2(k).
                 float w220_k = cosf(w210_k)*w216_k;                                         // Pre-compute multiplication 9 in W2(k).
                 float w221_k = sinf(w213_k)*w216_k;                                         // Pre-compute multiplication 10 in W2(k).
                 float w222_k = sinf(w214_k)*w216_k;                                         // Pre-compute multiplication 11 in W2(k).
-                // Computing W2_k as the fourth, fifth and sixth rows of J(c)*inv(hat{D})*hat{B}(c):
-                float W2_k[Robots_Qty+1][3*Robots_Qty] = {
+                // Computing W2_k = J(c)*inv(hat{D})*hat{B}(c):
+                float W2_k[3*Robots_Qty][3*Robots_Qty] = {
+                    {   -w207_k*sinf(w203_k),    -w207_k*sinf(w204_k),     w207_k*cosf(w201_k),    -w208_k*sinf(w205_k),    -w208_k*sinf(w206_k),     w208_k*cosf(w202_k)},
+                    {    w207_k*cosf(w203_k),    -w207_k*cosf(w204_k),     w207_k*sinf(w201_k),     w208_k*cosf(w205_k),    -w208_k*cosf(w206_k),     w208_k*sinf(w202_k)},
+                    {                -w218_k,                  w219_k,                  w217_k,                  w221_k,                 -w222_k,                 -w220_k},
                     {    w207_k*cosf(w211_k),    -w207_k*cosf(w212_k),     w207_k*sinf(w209_k),    -w208_k*cosf(w213_k),     w208_k*cosf(w214_k),    -w208_k*sinf(w210_k)},
                     {fmr_params[24] + w218_k, fmr_params[24] - w219_k, fmr_params[24] - w217_k,                 -w221_k,                  w222_k,                  w220_k},
                     {                 w218_k,                 -w219_k,                 -w217_k, fmr_params[25] - w221_k, fmr_params[25] + w222_k, fmr_params[25] + w220_k}
@@ -1316,10 +1325,10 @@ void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                     CSO.z3_kp1[i] = 0.0f;                                                   // Clear the i^th value of z3(k + 1).
                     for(j = 0; j < m; j++){
                         // Compute state correction for z1(k + 1), z2(k + 1) and z3(k + 1):
-                        CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma);
-                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma);
+                        CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+r] - CSO.z1_k[j])/(CSO.gamma);
+                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+r] - CSO.z1_k[j])/(CSO.gamma_gamma);
                         // Final prediction result for z3(k + 1):
-                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+3] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
+                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+r] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
                     }
                     for(j = 0; j < n; j++){
                         // Updating vector fields F(k) and G(k):
@@ -1339,7 +1348,7 @@ void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                     CSO.y_k[i+n] = 0.0f;
                 }
                 for (j = 0; j < m; j++){
-                    CSO.y_k[j+3+n] = CSO.z3_k[j];                                           // Arranging disturbance estimations on output y(k), within CSO structure.
+                    CSO.y_k[j+r+n] = CSO.z3_k[j];                                           // Arranging disturbance estimations on output y(k), within CSO structure.
                 }
                 Integration(CSO.INT,CSO.Z_kp1);                                             // Compute integration for x1(k + 1), x2(k + 1) and x3(k + 1).
                 break;
