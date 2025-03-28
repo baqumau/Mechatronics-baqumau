@@ -1051,7 +1051,7 @@ void init_CSx_Observer01(CSx_Observer CSO, float z_0[]){
         CSO.y_k[i+n] = 0.0f;                                                                // Saving initial conditions data for y(k) within CSO structure.
     }
     for (j = 0; j < m; j++){
-        CSO.y_k[j+3+n] = CSO.Z_0[j];                                                        // Saving initial conditions data for y(k) within CSO structure.
+        CSO.y_k[j+3+n] = CSO.Z_0[j+2*m];                                                    // Saving initial conditions data for y(k) within CSO structure.
     }
     // Updating the observer flag:
     CSO.flag[0] = true;                                                                     // Flag settled to true, which enables the estimation algorithm on CSO structure.
@@ -1155,12 +1155,12 @@ void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating the cluster space high-gain observer structure (type 02 - variant x):
-CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(3*Robots_Qty)][3*Robots_Qty], float epsilon, float diff_pg[], float diff_lc[]){
-    int i, j, s = 3*Robots_Qty, m = 6*Robots_Qty;                                           // Declaration of i, j, s and m as integer variables.
+CSx_Observer createCSx_Observer02(float sampleTime, float gains[9*Robots_Qty][3*Robots_Qty], float epsilon, float diff_pg[], float diff_lc[]){
+    int i, j, s = Robots_Qty+1, n = 3*Robots_Qty, r = 3;                                    // Declaration of i, j, n, r and s as integer variables.
     // Configuring the members of the CSx observer structure:
     CSx_Observer CSO;                                                                       // Creates the observer structure.
-    CSO.s_in = m;                                                                           // Assign value of inputSize to the member s_in of the CSO structure.
-    CSO.s_out = m;                                                                          // Assign value of outputSize to the member s_out of the CSO structure.
+    CSO.s_in = 2*n;                                                                         // Assign value of inputSize to the member s_in of the CSO structure.
+    CSO.s_out = 2*n;                                                                        // Assign value of outputSize to the member s_out of the CSO structure.
     CSO.s_state = 3*s;                                                                      // Assign value of statetSize to the member s_state of the CSO structure.
     CSO.Ts = sampleTime;                                                                    // Assign value of sampleTime to the member TS of the CSO structure.
     CSO.gamma = epsilon;                                                                    // Small constant used in the CSO observer.
@@ -1171,9 +1171,9 @@ CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(3*Robots_Qty)
         // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
         for(i = 0; i < s; i++){
             for(j = 0; j < s; j++){
-                CSO.alpha_1.data[i][j] = gains[i][j];                                       // Assigning values to the matrix alpha_1 of CSO.
-                CSO.alpha_2.data[i][j] = gains[i+s][j];                                     // Assigning values to the matrix alpha_2 of CSO.
-                CSO.alpha_3.data[i][j] = gains[i+2*s][j];                                   // Assigning values to the matrix alpha_3 of CSO.
+                CSO.alpha_1.data[i][j] = gains[i+r][j+r];                                   // Assigning values to the matrix alpha_1 of CSO.
+                CSO.alpha_2.data[i][j] = gains[i+n+r][j+r];                                 // Assigning values to the matrix alpha_2 of CSO.
+                CSO.alpha_3.data[i][j] = gains[i+2*n+r][j+r];                               // Assigning values to the matrix alpha_3 of CSO.
             }
         }
     }
@@ -1188,11 +1188,11 @@ CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(3*Robots_Qty)
     CSO.z3_k = (float *)malloc(s * sizeof(float));                                          // Allocate memory for the state vector z3(k).
     CSO.z3_kp1 = (float *)malloc(s * sizeof(float));                                        // Allocate memory for the state vector d(z3(k))/dt.
     CSO.Z_kp1 = (float *)malloc(3*s * sizeof(float));                                       // Allocate memory for this supporting variable subsequently used as integration input.
-    CSO.y_k = (float *)malloc(m * sizeof(float));                                           // Allocate memory for the output vector y(k).
+    CSO.y_k = (float *)malloc(2*n * sizeof(float));                                         // Allocate memory for the output vector y(k).
     CSO.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as CSO (disable or enable observer).
     //-----------------------------------------------
     CSO.INT = createIntegrator(3*s,sampleTime,1.0f);                                        // Create integration structure within observer CSO global structure.
-    CSO.SMDIF = createHOSMDifferentiator(3*Robots_Qty,sampleTime,diff_pg,diff_lc);          // Create HOSM-based differentiation structure within observer CSO global structure.
+    CSO.SMDIF = createHOSMDifferentiator(n,sampleTime,diff_pg,diff_lc);                     // Create HOSM-based differentiation structure within observer CSO global structure.
     //-----------------------------------------------
     CSO.flag[0] = false;                                                                    // Setting CSO flag to false.
     return CSO;
@@ -1200,7 +1200,7 @@ CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(3*Robots_Qty)
 //---------------------------------------------------------------------------------------------------------------
 // Adding initial conditions to the cluster space high-gain observer structured as CSO (type 02 - variant x):
 void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
-    int i, j, m = 3*Robots_Qty, n = 3*Robots_Qty, r = 0, s = 0;                             // Declaration of i, j, r, s, n and m as integer variables.
+    int i, j, m = Robots_Qty+1, n = 3*Robots_Qty, r = 3, s = 0;                             // Declaration of i, j, r, s, n and m as integer variables.
     float *Xi_0 = (float *)malloc(6*m * sizeof(float));                                     // Variable to save initial conditions for CSO.INT integration structure.
     float *Xd_0 = (float *)malloc(3*n * sizeof(float));                                     // Variable to save initial conditions for CSO.SMDIF differentiation structure.
     for(i = 0; i < CSO.s_state; i++){
@@ -1208,8 +1208,8 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
     }
     for(i = 0; i < 3; i++){
         for(j = 0; j < m; j++){
-            CSO.Z_0[s] = z_0[6*i+r+j];                                                      // Saving initial conditions data for z(0) within CSO structure.
-            Xi_0[s+CSO.s_state] = z_0[6*i+r+j];                                             // Saving initial conditions for x2(0) within CSO.INT structure.
+            CSO.Z_0[s] = z_0[n*i+r+j];                                                      // Saving initial conditions data for z(0) within CSO structure.
+            Xi_0[s+CSO.s_state] = z_0[n*i+r+j];                                             // Saving initial conditions for x2(0) within CSO.INT structure.
             s++;                                                                            // Increasing s.
         }
     }
@@ -1219,8 +1219,8 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
         Xd_0[i+2*n] = 0.0f;                                                                 // Saving initial conditions for x3(0) within CSO.SMDIF structure (initial values for second derivatives of c(k) are assumed equal to zero).
     }
     // Initiating CSO.INT integration structure and CSO.DIF differentiation structure:
-    initIntegrator(CSO.INT,Xi_0);                                                           // Initialize integrator of CSO high-gain observer.
-    initHOSMDifferentiator(CSO.SMDIF,Xd_0);                                                 // Initialize HOSM-based differentiator of CSO high-gain observer.
+    initIntegrator(CSO.INT,Xi_0);                                                           // Initialize integrators of CSO high-gain observer.
+    initHOSMDifferentiator(CSO.SMDIF,Xd_0);                                                 // Initialize HOSM-based differentiators of CSO high-gain observer.
     // Initiating variables z1(k), z2(k) and z3(k):
     for(i = 0; i < m; i++){
         CSO.z1_k[i] = z_0[i+r];                                                             // Saving initial conditions data for z1(k) within CSO structure.
@@ -1233,10 +1233,10 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
     // Updating y(k):
     for(i = 0; i < n; i++){
         CSO.y_k[i] = CSO.SMDIF.y_k[i+n];                                                    // Saving initial conditions data for y(k) within CSO structure.
-        CSO.y_k[i+n] = 0.0f;                                                                // Saving initial conditions data for y(k) within CSO structure.
+        CSO.y_k[i+n] = 0.0f;                                                                // Saving initial conditions data for y(k) within CSO structure (initial values for disturbances).
     }
     for (j = 0; j < m; j++){
-        CSO.y_k[j+r+n] = CSO.Z_0[j];                                                        // Saving initial conditions data for y(k) within CSO structure.
+        CSO.y_k[j+r+n] = CSO.Z_0[j+2*m];                                                    // Saving initial conditions data for y(k) within CSO structure.
     }
     // Updating the observer flag:
     CSO.flag[0] = true;                                                                     // Flag settled to true, which enables the estimation algorithm on CSO structure.
@@ -1244,7 +1244,7 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
 //---------------------------------------------------------------------------------------------------------------
 // Cluster space estimation function for CS observer (type 02 - variant x):
 void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]){
-    int i, j, m = 3*Robots_Qty, n = 3*Robots_Qty, r = 0;                                    // Declaration of i, j, m, n and r as integer variables.
+    int i, j, m = Robots_Qty+1, n = 3*Robots_Qty, r = 3;                                    // Declaration of i, j, m, n and r as integer variables.
     // Getting output of CSO.INT integration structure:
     for(i = 0; i < m; i++){
         CSO.z1_k[i] = CSO.INT.y_k[i];                                                       // Updating data for z1(k) within CSO structure.
@@ -1332,8 +1332,8 @@ void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
                     }
                     for(j = 0; j < n; j++){
                         // Updating vector fields F(k) and G(k):
-                        CSO.F_k[i] += W1_k[i][j]*CSO.SMDIF.y_k[j+n];                        // Compute vector field F(k).
-                        CSO.G_k[i] += W2_k[i][j]*fmr_u_k[j];                                // Compute vector field G(k).
+                        CSO.F_k[i] += W1_k[i+r][j]*CSO.SMDIF.y_k[j+n];                      // Compute vector field F(k).
+                        CSO.G_k[i] += W2_k[i+r][j]*fmr_u_k[j];                              // Compute vector field G(k).
                     }
                     CSO.z1_kp1[i] += CSO.z2_k[i];                                           // Final prediction result for z1(k + 1).
                     CSO.z2_kp1[i] += CSO.z3_k[i] + CSO.F_k[i] + CSO.G_k[i];                 // Final prediction result for z2(k + 1).
@@ -1410,7 +1410,7 @@ void init_SlidingSurfaces(Sl_Surfaces SLS, float ref_z_0[], float fmr_z_0[]){
         SLS.v2_kp1[i] = Xi_0[i];                                                            // Saving initial conditions for d(v2(k))/dt functions within SLS structure.
         SLS.y_k[i] = 0.0f;                                                                  // Saving initial conditions for output y(k) within SLS structure.
     }
-    initIntegrator(SLS.INT,Xi_0);                                                           // Initialize internal integrator of sliding SLS structure.
+    initIntegrator(SLS.INT,Xi_0);                                                           // Initialize internal integration of sliding SLS structure.
     // Updating the sliding flag:
     SLS.flag[0] = true;                                                                     // Flag settled to true, which enables the generation of sliding surfaces on SLS structure.
 }

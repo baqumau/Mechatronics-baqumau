@@ -53,7 +53,7 @@ math constants. */
 #define V2_y_max (r_2/sqrtf(3.0f))*(d_th21_max + d_th22_max)                    // [mm/s], Maximum linear velocity along Y axis (wheels 1 and 2 are symmetrically oriented by the angle delta with respect to Y axis).
 #define d_phi2_max (r_2/(3.0f*l_2))*(d_th21_max + d_th22_max + d_th23_max)      // [rad/s], Maximum angular velocity of the robot.
 #define ke_2 0.79f                                                              // Approximated electrical constant for translating input torque control to voltage percentage (PWM signal from -100 to 100) on OMR 2.
-#define vzm_2 15.0f                                                             // [%PWM], Dead zone voltage limit for DC motors.
+#define vzm_2 20.0f                                                             // [%PWM], Dead zone voltage limit for DC motors.
 // Another constant parameters:
 #define kappa 1000.0f                                                           // [mm/m], Known constant for the units conversion of input signals.
 #define NOP __asm__(" NOP")                                                     // Nop instruction (asm).
@@ -398,7 +398,7 @@ extern CS_Observer createCS_Observer01(float sampleTime, float gains[3*(Robots_Q
 // Creating the cluster space high-gain observer structure (type 01 - variant x):
 extern CSx_Observer createCSx_Observer01(float sampleTime, float gains[3*(Robots_Qty-1)][Robots_Qty-1], float epsilon, float diff_pg[], float diff_lc[]);
 // Creating the cluster space high-gain observer structure (type 02 - variant x):
-extern CSx_Observer createCSx_Observer02(float sampleTime, float gains[3*(3*Robots_Qty)][3*Robots_Qty], float epsilon, float diff_pg[], float diff_lc[]);
+extern CSx_Observer createCSx_Observer02(float sampleTime, float gains[9*Robots_Qty][3*Robots_Qty], float epsilon, float diff_pg[], float diff_lc[]);
 // Adding initial conditions to high-gain observer 01 structured as CSO:
 extern void init_CS_Observer01(CS_Observer CSO, float z_0[]);
 // Adding initial conditions to the cluster space high-gain observer structured as CSO (type 01 - variant x):

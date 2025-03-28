@@ -88,7 +88,7 @@ SECTIONS
    /* Allocate program areas: */
    .cinit              : > FLASHB      PAGE = 0, ALIGN(4)
    .pinit              : > FLASHB,     PAGE = 0, ALIGN(4)
-   .text               : >> FLASHB | FLASHC | FLASHD | FLASHE      PAGE = 0, ALIGN(4)
+   .text               : >> FLASHB | FLASHC | FLASHD | FLASHE | FLASHF | FLASHG      PAGE = 0, ALIGN(4)
    codestart           : > BEGIN       PAGE = 0, ALIGN(4)
 
 #ifdef __TI_COMPILER_VERSION__

@@ -146,13 +146,12 @@ char *var11;                                                                    
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
 enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = STATIC_01;                                                // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
+enum Reference_Type reftype = INDEP_CIRCUMFERENCES_01;                                  // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the ADRC_RS strategy:
-const float epsilon = .42f;                                                             // Small constant used in the RSO observer.
-const float upsilon = .42f;                                                             // Small constant used in the SMC controller.
+const float epsilon = 0.42f;                                                            // Small constant used in the RSO observer.
 // Float parameters to define the observer gains of RSO, for RS ADRC:
 float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {13.6111f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
@@ -185,6 +184,8 @@ float gpi_Gains[3*Robots_Qty][3] = {
 };
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
+const float upsilon_1 = 0.42f;                                                          // Small constant used in the CSO observer.
+const float upsilon_2 = 0.42f;                                                          // Small constant used in the SMC controller.
 // Float parameters to define the observer gains of CSO_01, for SMC_CS:
 float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                                           // Setting alpha_1 for CSO_01.
@@ -192,31 +193,40 @@ float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {68.4636f}                                                                            // Setting alpha_3 for CSO_01.
 };
 // Float parameters to define the observer gains of CSO_02, for SMC_CS:
-float cso2_Gains[3*(Robots_Qty+1)][Robots_Qty+1] = {
-  {18.4091f,     0.0f,     0.0f},
-  {    0.0f, 13.6111f,     0.0f},
-  {    0.0f,     0.0f, 13.6111f},                                                       // Setting alpha_1 for CSO_02.
-  {75.3099f,     0.0f,     0.0f},
-  {    0.0f, 52.9321f,     0.0f},
-  {    0.0f,     0.0f, 52.9321f},                                                       // Setting alpha_2 for CSO_02.
-  {68.4636f,     0.0f,     0.0f},
-  {    0.0f, 58.8134f,     0.0f},
-  {    0.0f,     0.0f, 58.8134f}                                                        // Setting alpha_3 for CSO_02.
+float cso2_Gains[9*Robots_Qty][3*Robots_Qty] = {
+  {18.4091f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 18.4091f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 18.4091f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 18.4091f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 18.4091f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 18.4091f},                         // Setting alpha_1 for CSO-02.
+  {75.3099f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 75.3099f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 75.3099f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 75.3099f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 75.3099f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 75.3099f},                         // Setting alpha_2 for CSO-02.
+  {68.4636f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 68.4636f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 68.4636f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 68.4636f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 68.4636f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 68.4636f}                          // Setting alpha_3 for CSO-02.
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
-float sls_Gains[3*Robots_Qty] = {1.8432f, 1.8432f, 1.8432f, 1.8432f, 8.125f, 8.125f};
+float sls_Gains[3*Robots_Qty] = {1.5432f, 1.5432f, 1.5432f, 1.5432f, 1.5432f, 1.5432f};
 // -- Setting damping factors to the sliding surfaces:
-float sls_dampFacts[3*Robots_Qty] = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+float sls_dampFacts[3*Robots_Qty] = {1.1f, 1.1f, 1.1f, 1.1f, 1.1f, 1.1f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float smc_Gains[3*Robots_Qty] = {4.84f, 4.84f, 4.84f, 4.84f, 8.44f, 8.44f};
+float smc_Gains[3*Robots_Qty] = {6.44f, 6.44f, 6.44f, 6.44f, 6.44f, 6.44f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
 #define rho_1 (1.0f/20.5f)*mt_1*l_1*l_1/(r_1*r_1)                                       // Constant for bounding the input torque disturbances in robot 1.
 #define rho_2 (1.0f/20.5f)*mt_2*l_2*l_2/(r_2*r_2)                                       // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                     // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
-float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 19.5f, 180.0f, 19.5f, 19.5f};
+float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 20.0f, 180.0f, 20.0f, 20.0f};
 float diff_fc = 45.0f;                                                                  // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
 float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                  // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
 float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
@@ -441,7 +451,7 @@ void main(void){
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
     // Creating data structure for a high-gain observer in the cluster space:
-    CSO = createCSx_Observer01(sampleTime,cso1_Gains,epsilon,diff_pg,diff_lc);
+    CSO = createCSx_Observer01(sampleTime,cso1_Gains,upsilon_1,diff_pg,diff_lc);
     // Creating data structure for a GPI controller in the robot space:
     GPI = createGPI_Controller(sampleTime,gpi_Gains);
     // Creating data structure for the sliding surfaces in the cluster space:
@@ -449,7 +459,7 @@ void main(void){
     // Creating data structure for an ADRC controller in the robot space:
     ADRC = createADRC_Controller();
     // Creating data structure for a SMC technique in the cluster space:
-    SMC = createSMC_Controller(smc_Gains,unc_Values,dis_Values,sls_Gains,sls_dampFacts,upsilon);
+    SMC = createSMC_Controller(smc_Gains,unc_Values,dis_Values,sls_Gains,sls_dampFacts,upsilon_2);
     // Creating data structure for the reference builder system:
     REF = createReference(sampleTime,reftype);                                          // Create reference structure.
     // Creating a robot formation structure for arranging their relevant variables:
@@ -890,9 +900,9 @@ __interrupt void scia_rx_isr(void){
                     float ph2_0 = 0.0f;                                                 // [rad], initial orientation of robot 2.
                     float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
                     float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
-                    float RXc = 400.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along X axis.
+                    float RXc = 280.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along X axis.
                     float RYc = 800.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
-                    float Wc = M_PI/10.0f;                                              // [rad/s], Angular velocity for tracing the independent ellipsoids.
+                    float Wc = M_PI/12.0f;                                              // [rad/s], Angular velocity for tracing the independent ellipsoids.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
