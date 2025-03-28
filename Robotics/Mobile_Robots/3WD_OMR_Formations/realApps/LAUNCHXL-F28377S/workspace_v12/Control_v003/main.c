@@ -154,24 +154,24 @@ float *errors_k;                                                                
 const float epsilon = 0.42f;                                                            // Small constant used in the RSO observer.
 // Float parameters to define the observer gains of RSO, for RS ADRC:
 float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
-  {13.6111f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f, 13.6111f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f, 10.2083f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f, 13.6111f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f, 13.6111f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 10.2083f},                         // Setting alpha_1 for RSO.
-  {52.9321f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f, 52.9321f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f, 29.7743f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f, 52.9321f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f, 52.9321f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 29.7743f},                         // Setting alpha_2 for RSO.
-  {58.8134f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f, 58.8134f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f, 24.8119f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f, 58.8134f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f, 58.8134f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 24.8119f}                          // Setting alpha_3 for RSO.
+  {18.4091f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 18.4091f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 13.6111f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 18.4091f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 18.4091f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 13.6111f},                         // Setting alpha_1 for RSO.
+  {75.3099f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 75.3099f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 52.9321f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 75.3099f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 75.3099f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 52.9321f},                         // Setting alpha_2 for RSO.
+  {68.4636f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f, 68.4636f,     0.0f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 58.8134f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f, 68.4636f,     0.0f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 68.4636f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 58.8134f}                          // Setting alpha_3 for RSO.
 };
 // Float parameters to define the GPI controller gains of ADRC_RS:
 float gpi_Gains[3*Robots_Qty][3] = {
@@ -196,22 +196,22 @@ float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
 float cso2_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {18.4091f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
   {    0.0f, 18.4091f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f, 18.4091f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 13.6111f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f, 18.4091f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f, 18.4091f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 18.4091f},                         // Setting alpha_1 for CSO-02.
+  {    0.0f,     0.0f,     0.0f,     0.0f, 13.6111f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 13.6111f},                         // Setting alpha_1 for CSO-02.
   {75.3099f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
   {    0.0f, 75.3099f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f, 75.3099f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 52.9321f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f, 75.3099f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f, 75.3099f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 75.3099f},                         // Setting alpha_2 for CSO-02.
+  {    0.0f,     0.0f,     0.0f,     0.0f, 52.9321f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 52.9321f},                         // Setting alpha_2 for CSO-02.
   {68.4636f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
   {    0.0f, 68.4636f,     0.0f,     0.0f,     0.0f,     0.0f},
-  {    0.0f,     0.0f, 68.4636f,     0.0f,     0.0f,     0.0f},
+  {    0.0f,     0.0f, 58.8134f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f, 68.4636f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f,     0.0f, 68.4636f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 68.4636f}                          // Setting alpha_3 for CSO-02.
+  {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 58.8134f}                          // Setting alpha_3 for CSO-02.
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
