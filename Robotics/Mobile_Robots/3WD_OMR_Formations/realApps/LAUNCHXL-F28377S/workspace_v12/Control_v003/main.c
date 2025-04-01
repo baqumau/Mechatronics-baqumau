@@ -145,8 +145,8 @@ char *var10;                                                                    
 char *var11;                                                                            // Multi-purpose char variable 11.
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
-enum Control_System consys = SMC_CS;                                                    // Declare the control system type (ADRC_RS or SMC_CS at the moment).
-enum Reference_Type reftype = INDEP_CIRCUMFERENCES_01;                                  // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
+Control_System consys = SMC_CS;                                                         // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
+Reference_Type reftype = INDEP_CIRCUMFERENCES_01;                                       // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -552,7 +552,7 @@ __interrupt void cpu_timer1_isr(void){
         angleConversion(FMR.CORq,angles_k);                                             // Compute angle conversion to the absolute domain.
         FMR.q_k[2] = FMR.CORq.y_k[0];                                                   // Determines ph1(k).
         FMR.q_k[5] = FMR.CORq.y_k[1];                                                   // Determines ph2(k).
-        computeCSVariables(FMR);                                                        // Compute the cluster space variables of FMR formation.
+        computeCSVariables(FMR,consys);                                                 // Compute the cluster space variables of FMR formation.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the desired reference tracking-trajectories:
         switch(reftype){
@@ -833,7 +833,7 @@ __interrupt void scia_rx_isr(void){
             if(!FMR.CORq.flag[0]){
                 initAngleConverter(FMR.CORq,angles_k);                                  // Initialize angle conversion to absolute domain in the robot space.
             }
-            computeCSVariables(FMR);                                                    // Compute the cluster space variables of FMR formation.
+            computeCSVariables(FMR,consys);                                             // Compute the cluster space variables of FMR formation.
             //---------------------------------------------------------------------------------------------------------
             // Initializing the selected reference trajectory profiles:
             switch(reftype){
@@ -878,12 +878,12 @@ __interrupt void scia_rx_isr(void){
                 }
                 case STATIC_01:{
                     // Configuring initial parameters for first static trivial trajectory (vehicles must turn on a fixed position in the workspace):
-                    float xc_0 = FMR.c_k[0]*0.0f + 1500.0f;                                            // [mm], initial position of whole cluster along workspace's x axis.
-                    float yc_0 = FMR.c_k[1]*0.0f + 1500.0f;                                            // [mm], initial position of whole cluster along workspace's y axis.
-                    float thc_0 = FMR.c_k[2]*0.0f + 45.0f*M_PI/180.0f;                                           // [rad], initial orientation of whole cluster in the workspace.
-                    float dc_0 = FMR.c_k[3]*0.0f + 800.0f;                                            // [mm], initial distance between both OMRs.
-                    float ph1_0 = FMR.q_k[2]*0.0f + 0.0f;                                           // [rad], initial orientation of robot 1.
-                    float ph2_0 = FMR.q_k[5]*0.0f + 0.0f;                                           // [rad], initial orientation of robot 2.
+                    float xc_0 = FMR.c_k[0]*0.0f + 1500.0f;                             // [mm], initial position of whole cluster along workspace's x axis.
+                    float yc_0 = FMR.c_k[1]*0.0f + 1500.0f;                             // [mm], initial position of whole cluster along workspace's y axis.
+                    float thc_0 = FMR.c_k[2]*0.0f + 45.0f*M_PI/180.0f;                  // [rad], initial orientation of whole cluster in the workspace.
+                    float dc_0 = FMR.c_k[3]*0.0f + 800.0f;                              // [mm], initial distance between both OMRs.
+                    float ph1_0 = FMR.q_k[2]*0.0f + 0.0f;                               // [rad], initial orientation of robot 1.
+                    float ph2_0 = FMR.q_k[5]*0.0f + 0.0f;                               // [rad], initial orientation of robot 2.
                     float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
                     float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
                     float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};

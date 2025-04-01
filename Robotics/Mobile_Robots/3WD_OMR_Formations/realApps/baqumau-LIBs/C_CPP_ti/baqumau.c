@@ -110,7 +110,7 @@ void init_TX_charBuffer(Data_Struct *DAT){
 //---------------------------------------------------------------------------------------------------------------
 // Adding characters to buffer (receiving data):
 void add_2_RX_charBuffer(Data_Struct *DAT, char c){
-    if (DAT->RX_bufferIndex >= DAT->RX_bufferSize) return;
+    if(DAT->RX_bufferIndex >= DAT->RX_bufferSize) return;
     switch(c){
         case 0x0D:                                                                          // Line Feed 1 -> Enable flag.
         DAT->flag[1] = true;                                                                // Setting flag 1 to true.

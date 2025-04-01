@@ -1,4 +1,4 @@
-function [sys,x0,str,ts,simStateCompliance] = SMC_2_vR2014a(t,x,u,flag,par)
+function [sys,x0,str,ts,simStateCompliance] = HGO_3_vR2014a(t,x,u,flag,par)
 %SFUNTMPL General MATLAB S-Function Template
 %   With MATLAB S-functions, you can define you own ordinary differential
 %   equations (ODEs), discrete system equations, and/or just about
@@ -166,9 +166,9 @@ function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(par)
 sizes = simsizes;
 
 sizes.NumContStates  = 0;
-sizes.NumDiscStates  = 42;
+sizes.NumDiscStates  = 36;
 sizes.NumOutputs     = 18;
-sizes.NumInputs      = 36;
+sizes.NumInputs      = 12;
 sizes.DirFeedthrough = 0;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
 
@@ -177,8 +177,7 @@ sys = simsizes(sizes);
 %
 % initialize the initial conditions
 %
-
-x0 = [par.x0_c' (par.x0_c(1:6,1)'-par.x0_c_ref(1:6,1)') zeros(1,6) zeros(1,6) zeros(1,6) zeros(1,6)]';
+x0  = [[par.xc_0 par.yc_0 par.phc_0 par.d_0 par.th1_0 par.th2_0] [par.xc_0 par.yc_0 par.phc_0 par.d_0 par.th1_0 par.th2_0] zeros(1,6) zeros(1,6) zeros(1,6) zeros(1,6)]';
 
 %
 % str is always an empty matrix
@@ -220,96 +219,61 @@ sys = [];
 %
 function sys=mdlUpdate(t,x,u,par)
 
-sys(1:6,1) = u(1:6,1);                                                                                                        % x(1:6) = z^{-1}*c.
-sys(7:12,1) = (2*par.N.*(sys(1:6,1) - x(1:6,1)) + (2*ones(6,1) - par.NTs).*x(7:12,1))./(par.NTs + 2*ones(6,1));               % x(7:12) = dc/dt.
-sys(13:18,1) = u(1:6,1) - u(13:18,1) + x(25:30,1);                                                                            % x(13:18) = z^{-1}*(e_1 + x(25:30)).
-sys(19:24,1) = (par.Ts_2)*(sys(13:18,1) + x(13:18,1)) + x(19:24,1);                                                           % x(19:24) = int{e_1 + x(25:30)}.
-%--------------------------------Robot space-------------------------------
-De_1 = diag([par.HGOcons01, par.HGOcons01, par.HGOcons02]);
-De_2 = diag([par.HGOcons06, par.HGOcons06, par.HGOcons07]);
-De = [De_1 zeros(3,3);zeros(3,3) De_2];
-%-----------------------------------
-He_1 = (par.HGOcons03)*(u(9)+u(11))*[0 1 0;-1 0 0;0 0 0];
-He_2 = (par.HGOcons08)*(u(9)+u(12))*[0 1 0;-1 0 0;0 0 0];
-He = [He_1 zeros(3,3);zeros(3,3) He_2];
-%-----------------------------------
-be1_01 = u(3) + u(5);
-be1_02 = par.delta_1 + be1_01; be1_03 = par.delta_1 - be1_01;
-be1_04 = sin(be1_02); be1_05 = cos(be1_02); be1_06 = sin(be1_03); be1_07 = cos(be1_03);
-Be_1 = (1E3)*[-be1_04*par.HGOcons04, -be1_06*par.HGOcons04, cos(be1_01)*par.HGOcons04;...
-               be1_05*par.HGOcons04, -be1_07*par.HGOcons04, sin(be1_01)*par.HGOcons04;...
-                      par.HGOcons05,         par.HGOcons05,             par.HGOcons05];
-%-----------------------------------
-be2_01 = u(3) + u(6);
-be2_02 = par.delta_2 + be2_01; be2_03 = par.delta_2 - be2_01;
-be2_04 = sin(be2_02); be2_05 = cos(be2_02); be2_06 = sin(be2_03); be2_07 = cos(be2_03);
-Be_2 = (1E3)*[-be2_04*par.HGOcons09, -be2_06*par.HGOcons09, cos(be2_01)*par.HGOcons09;...
-               be2_05*par.HGOcons09, -be2_07*par.HGOcons09, sin(be2_01)*par.HGOcons09;...
-                      par.HGOcons10,         par.HGOcons10,             par.HGOcons10];
-Be = [Be_1 zeros(3,3);zeros(3,3) Be_2];
-%-----------------------------------
-d1_01 = 1 + par.Delta(1);
-D_1 = [De_1(1,1)*(d1_01),      par.Delta(2),      par.Delta(2);...
-            par.Delta(2), De_1(2,2)*(d1_01),      par.Delta(2);...
-            par.Delta(2),      par.Delta(2), De_1(3,3)*(d1_01)];
-D_2 = [De_2(1,1)*(d1_01),      par.Delta(2),      par.Delta(2);...
-            par.Delta(2), De_2(2,2)*(d1_01),      par.Delta(2);...
-            par.Delta(2),      par.Delta(2), De_2(3,3)*(d1_01)];
-D = [D_1 zeros(3,3);zeros(3,3) D_2];
-%-----------------------------------
-H_1 = [     par.Delta(3), He_1(1,2)*(d1_01), 0;...
-       He_1(2,1)*(d1_01),      par.Delta(3), 0;...
-            par.Delta(3),      par.Delta(3), 0];
-H_2 = [     par.Delta(3), He_2(1,2)*(d1_01), 0;...
-       He_2(2,1)*(d1_01),      par.Delta(3), 0;...
-            par.Delta(3),      par.Delta(3), 0];
-H = [H_1 zeros(3,3);zeros(3,3) H_2];
-%-----------------------------------
-B = (d1_01)*Be;
-%------------------------------Cluster space-------------------------------
-jin_01 = sin(u(3)); jin_02 = cos(u(3));
-jin_03 = u(4)*jin_01; jin_04 = u(4)*jin_02;
+sys(1:6,1) = x(19:24,1) + (par.HGOcons11)*(u(7:12,1) - x(7:12));
+sys(7:12,1) = (par.Ts_2)*(sys(1:6,1) + x(1:6,1)) + x(7:12,1);
+%--------------------------------------------------------------------------
+D1 = diag([par.HGOcons01, par.HGOcons01, par.HGOcons02]);
+D2 = diag([par.HGOcons06, par.HGOcons06, par.HGOcons07]);
+D = [D1 zeros(3,3);zeros(3,3) D2];
+%--------------------------------------------------------------------------
+jin_01 = sin(x(9)); jin_02 = cos(x(9));
+jin_03 = x(10)*jin_01; jin_04 = x(10)*jin_02;
 Jin_c = [1, 0,  jin_04,  jin_01, 0, 0;...
          0, 1, -jin_03,  jin_02, 0, 0;...
-         0, 0,       1,       0, 1, 0;...
+         0, 0,      -1,       0, 1, 0;...
          1, 0, -jin_04, -jin_01, 0, 0;...
          0, 1,  jin_03, -jin_02, 0, 0;...
-         0, 0,       1,       0, 0, 1];
-Lambda_e_c = Jin_c'*De*Jin_c; Lambda_c = Jin_c'*D*Jin_c;
+         0, 0,      -1,       0, 0, 1];
+%--------------------------------------------------------------------------
+Lambda_c = Jin_c'*D*Jin_c;
+%--------------------------------------------------------------------------
+H1_dc = (par.HGOcons03)*(x(23)-x(21))*[0 1 0;-1 0 0;0 0 0];
+H2_dc = (par.HGOcons08)*(x(24)-x(21))*[0 1 0;-1 0 0;0 0 0];
+H_dc = [H1_dc zeros(3,3);zeros(3,3) H2_dc];
+%--------------------------------------------------------------------------
+dj_01 = x(22)*jin_01; dj_02 = x(22)*jin_02;
+dj_03 = x(21)*jin_03; dj_04 = x(21)*jin_04;
+dj_05 = (1/2)*jin_01*x(21); dj_06 = (1/2)*jin_02*x(21);
+dj_07 = 2*x(10)^2;
+dj_08 = (dj_03 + dj_02)/(dj_07);
+dj_09 = (dj_04 - dj_01)/(dj_07);
+dJ_dc_c = [     0,      0, 0,      0,     0, 0;...
+                0,      0, 0,      0,     0, 0;...
+           -dj_08, -dj_09, 0,  dj_08, dj_09, 0;...
+            dj_06, -dj_05, 0, -dj_06, dj_05, 0;...
+           -dj_08, -dj_09, 0,  dj_08, dj_09, 0;...
+           -dj_08, -dj_09, 0,  dj_08, dj_09, 0];
+%--------------------------------------------------------------------------
+b1_01 = x(11) - x(9);
+b1_02 = par.delta_1 + b1_01; b1_03 = par.delta_1 - b1_01;
+b1_04 = sin(b1_02); b1_05 = cos(b1_02); b1_06 = sin(b1_03); b1_07 = cos(b1_03);
+B1 = 1e3*[-b1_04*par.HGOcons04, -b1_06*par.HGOcons04, cos(b1_01)*par.HGOcons04;...
+           b1_05*par.HGOcons04, -b1_07*par.HGOcons04, sin(b1_01)*par.HGOcons04;...
+                 par.HGOcons05,        par.HGOcons05,            par.HGOcons05];
 %-----------------------------------
-dj_01 = u(10)*jin_01; dj_02 = u(10)*jin_02;
-dj_03 = u(9)*jin_03; dj_04 = u(9)*jin_04;
-dj_05 = (1/2)*jin_01*u(9); dj_06 = (1/2)*jin_02*u(9);
-dj_07 = 2*u(4)^2;
-dJ_dc_c = [                       0,                        0, 0,                        0,                        0, 0;...
-                                  0,                        0, 0,                        0,                        0, 0;...
-           -(dj_03 + dj_02)/(dj_07), -(dj_04 - dj_01)/(dj_07), 0,  (dj_03 + dj_02)/(dj_07),  (dj_04 - dj_01)/(dj_07), 0;...
-                              dj_06,                   -dj_05, 0,                   -dj_06,                    dj_05, 0;...
-            (dj_03 + dj_02)/(dj_07),  (dj_04 - dj_01)/(dj_07), 0, -(dj_03 + dj_02)/(dj_07), -(dj_04 - dj_01)/(dj_07), 0;...
-            (dj_03 + dj_02)/(dj_07),  (dj_04 - dj_01)/(dj_07), 0, -(dj_03 + dj_02)/(dj_07), -(dj_04 - dj_01)/(dj_07), 0];
-Beta = abs((Lambda_e_c\(Jin_c'*Be))/(Lambda_c\(Jin_c'*B)));
-F = abs(Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) - Lambda_c\(Jin_c'*H*Jin_c*u(7:12,1)));
+b2_01 = x(12) - x(9);
+b2_02 = par.delta_2 + b2_01; b2_03 = par.delta_2 - b2_01;
+b2_04 = sin(b2_02); b2_05 = cos(b2_02); b2_06 = sin(b2_03); b2_07 = cos(b2_03);
+B2 = 1e3*[-b2_04*par.HGOcons09, -b2_06*par.HGOcons09, cos(b2_01)*par.HGOcons09;...
+           b2_05*par.HGOcons09, -b2_07*par.HGOcons09, sin(b2_01)*par.HGOcons09;...
+                 par.HGOcons10,        par.HGOcons10,            par.HGOcons10];
+B_c = [B1 zeros(3,3);zeros(3,3) B2];
 %--------------------------------------------------------------------------
-% Sliding surfaces:
-sigma = u(7:12,1) - u(19:24,1) + 2*par.dampFacts*par.Lambda*(u(1:6,1) - u(13:18,1)) + par.Lambda^2*x(19:24,1) + par.x0_c_ref(7:12,1) - 2*par.dampFacts*par.Lambda*(par.x0_c(1:6,1) - par.x0_c_ref(1:6,1));
-sigma_ = zeros(6,1);
-for i = 1:6
-    if abs(sigma(i,1)) >= par.S_b(i,1)
-        sigma_(i,1) = sign(sigma(i,1))*par.S_b(i,1);
-    else
-        sigma_(i,1) = sigma(i,1);
-    end
-end
-sys(25:30,1) = (((4*par.dampFacts*par.Lambda)\(par.Lambda^2)).^(.5))\(3.5*(sigma_ - sigma));
-%--------------------------------------------------------------------------
-% Controller gains:
-K = Beta*(F + par.Eta) + abs(Beta - eye(6))*abs(-u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2];
-%--------------------------------------------------------------------------
-% Control laws:
-sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1) - u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) + K.*tanh(par.err*sigma) + diag([1 1 1 1 1 1])*u(31:36,1));
-%--------------------------------------------------------------------------
-% Sliding surfaces:
-sys(37:42,1) = sigma;
+sys(13:18,1) = dJ_dc_c*Jin_c*x(19:24,1) - Lambda_c\Jin_c'*H_dc*Jin_c*x(19:24,1) + Lambda_c\Jin_c'*B_c*u(1:6) + (par.HGOcons12)*(u(7:12,1) - x(7:12)) + x(31:36);
+sys(19:24,1) = (par.Ts_2)*(sys(13:18,1) + x(13:18,1)) + x(19:24,1);
+sys(25:30,1) = (par.HGOcons13)*(u(7:12,1) - x(7:12));
+sys(31:36,1) = (par.Ts_2)*(sys(25:30,1) + x(25:30,1)) + x(31:36,1);
+
 % end mdlUpdate
 
 %
@@ -320,9 +284,9 @@ sys(37:42,1) = sigma;
 %
 function sys=mdlOutputs(t,x,u,par)
 
-sys(1:6,1) = x(31:36,1);
-sys(7:12,1) = x(7:12,1);
-sys(13:18,1) = x(37:42,1);
+sys(1:6,1) = x(7:12,1);
+sys(7:12,1) = x(19:24,1);
+sys(13:18,1) = x(31:36,1);
 
 % end mdlOutputs
 

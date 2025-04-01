@@ -322,10 +322,11 @@ typedef struct{
 } SMC_Controller;
 //---------------------------------------------------------------------------------------------------------------
 // Defining an enumeration to choose the different control strategy:
-enum Control_System{
+typedef enum{
     ADRC_RS,                                                                    // Active disturbance rejection control on robot space framework.
-    SMC_CS                                                                      // Sliding mode control on cluster space framework.
-};
+    SMC_CS,                                                                     // Sliding mode control on cluster space framework (traditional cluster specification).
+    SMC_CSa                                                                     // Sliding mode control on cluster space framework (alternative simplified cluster specification CSa).
+} Control_System;
 //---------------------------------------------------------------------------------------------------------------
 // Declaration of functions library:
 //---------------------------------------------------------------------------------------------------------------
@@ -426,7 +427,7 @@ extern void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr
 // Creating formation structure:
 extern Formation createFormation(int qty);
 // Compute the corresponding cluster space variables to OMRs formation as FMR:
-extern void computeCSVariables(Formation FMR);
+extern void computeCSVariables(Formation FMR, Control_System consys);
 // Create a correction structure for translating angles to an absolute format:
 extern Correction_Struct createAngleConverter(int inputSize);
 // Initialize the correction procedure for translating angles to an absolute format:

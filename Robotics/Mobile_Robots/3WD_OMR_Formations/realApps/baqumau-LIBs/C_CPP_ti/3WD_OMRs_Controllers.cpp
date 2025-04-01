@@ -2017,9 +2017,8 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                 for(i = 0; i < SMC.s_out; i++){
                     // Updating the variable control gains within the vector Kappa(k):
                     for(j = 0; j < SMC.s_out; j++){
-                        float w701_k = SMC.Gamma[j]*SMC.Gamma[j]*(fmr_c_k[j] - ref_y_k[j]); // Pre-compute operation 1 in W7(k).
-                        if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*fabsf(SMC.til_Fc_k[j] + SMC.omega[j] - w701_k) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
-                        else SMC.kappa_k[i] += fabsf(W3_k[i][j])*fabsf(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j] - w701_k) + fabsf(W6_k[i][j])*SMC.rho[j];
+                        if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j]) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
+                        else SMC.kappa_k[i] += fabsf(W3_k[i][j])*fabsf(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
                     }
                     // Updating the auxiliary control input:
                     SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
@@ -2139,24 +2138,34 @@ Formation createFormation(int qty){
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the corresponding cluster space variables to OMRs formation as FMR:
-void computeCSVariables(Formation FMR){
+void computeCSVariables(Formation FMR, Control_System consys){
     switch(FMR.qty){
         case 2:{
-            FMR.c_k[0] = (FMR.q_k[0] + FMR.q_k[3])*0.5f;                                    // Determines xc(k).
-            FMR.c_k[1] = (FMR.q_k[1] + FMR.q_k[4])*0.5f;                                    // Determines yc(k).
-            float subt1_k = FMR.q_k[0] - FMR.q_k[3];                                        // Pre-compute subtraction 1.
-            float subt2_k = FMR.q_k[1] - FMR.q_k[4];                                        // Pre-compute subtraction 2.
+            FMR.c_k[0] = (FMR.q_k[0] + FMR.q_k[3])*0.5f;                            // Determines xc(k).
+            FMR.c_k[1] = (FMR.q_k[1] + FMR.q_k[4])*0.5f;                            // Determines yc(k).
+            float subt1_k = FMR.q_k[0] - FMR.q_k[3];                                // Pre-compute subtraction 1.
+            float subt2_k = FMR.q_k[1] - FMR.q_k[4];                                // Pre-compute subtraction 2.
             //-----------------------------------------------
-            float angles_k[1] = {atan2f(subt1_k,subt2_k)};                                  // Compute partial cluster's orientation.
+            float angles_k[1] = {atan2f(subt1_k,subt2_k)};                          // Compute partial cluster's orientation.
             if(FMR.CORc.flag[0] == false){
-                initAngleConverter(FMR.CORc,angles_k);                                      // Initialize angle conversion to absolute domain.
+                initAngleConverter(FMR.CORc,angles_k);                              // Initialize angle conversion to absolute domain.
             }
-            else angleConversion(FMR.CORc,angles_k);                                        // Compute angle conversion to absolute domain.
+            else angleConversion(FMR.CORc,angles_k);                                // Compute angle conversion to absolute domain.
             //-----------------------------------------------
-            FMR.c_k[2] = FMR.CORc.y_k[0];                                                   // Determines thc(k).
-            FMR.c_k[3] = sqrtf(subt1_k*subt1_k + subt2_k*subt2_k)*0.5f;                     // Determines dc(k):
-            FMR.c_k[4] = FMR.q_k[2] - FMR.c_k[2];                                           // Determines psi1(k).
-            FMR.c_k[5] = FMR.q_k[5] - FMR.c_k[2];                                           // Determines psi2(k).
+            FMR.c_k[2] = FMR.CORc.y_k[0];                                           // Determines thc(k).
+            FMR.c_k[3] = sqrtf(subt1_k*subt1_k + subt2_k*subt2_k)*0.5f;             // Determines dc(k):
+            switch(consys){
+                case SMC_CSa:{                                                      // An alternative cluster space specification CSa.
+                    FMR.c_k[4] = FMR.q_k[2];                                        // Determines psi1(k).
+                    FMR.c_k[5] = FMR.q_k[5];                                        // Determines psi2(k).
+                    break;
+                }
+                default:{                                                           // Traditional cluster space specification.
+                    FMR.c_k[4] = FMR.q_k[2] - FMR.c_k[2];                           // Determines psi1(k).
+                    FMR.c_k[5] = FMR.q_k[5] - FMR.c_k[2];                           // Determines psi2(k).
+                    break;
+                }
+            }
             break;
         }
     }

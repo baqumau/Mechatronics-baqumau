@@ -1,5 +1,5 @@
 Model {
-  Name			  "conSys_2robots_3_vR2014a"
+  Name			  "conSys_2robots_4_vR2014a"
   Version		  8.3
   MdlSubVersion		  0
   SavedCharacterEncoding  "windows-1252"
@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.533"
+    ComputedModelVersion    "1.540"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -18,7 +18,7 @@ Model {
       Type		      "Cell"
       Dimension		      2
       Cell		      "HDLSubsystem"
-      Cell		      "conSys_2robots_3_vR2014a"
+      Cell		      "conSys_2robots_4_vR2014a"
       PropName		      "mdlProps"
     }
   }
@@ -63,11 +63,11 @@ Model {
 	$ObjectID		6
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	ViewObjType		"SimulinkTopLevel"
-	LoadSaveID		"0"
+	ViewObjType		"SimulinkSubsys"
+	LoadSaveID		"625"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, 22.0]
+	Offset			[-14.0, 246.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Mar 29 14:30:29 2025"
-  RTWModifiedTimeStamp	  664873533
-  ModelVersionFormat	  "1.%<AutoIncrement:533>"
+  LastModifiedDate	  "Mon Mar 31 01:43:42 2025"
+  RTWModifiedTimeStamp	  665223868
+  ModelVersionFormat	  "1.%<AutoIncrement:540>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -121,12 +121,12 @@ Model {
     $PropName		    "DataLoggingOverride"
     $ObjectID		    7
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
-    model_		    "conSys_2robots_3_vR2014a"
+    model_		    "conSys_2robots_4_vR2014a"
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
-      Cell		      "conSys_2robots_3_vR2014a"
+      Cell		      "conSys_2robots_4_vR2014a"
       PropName		      "logAsSpecifiedByModels_"
     }
     Array {
@@ -1142,9 +1142,9 @@ Model {
     }
   }
   System {
-    Name		    "conSys_2robots_3_vR2014a"
+    Name		    "conSys_2robots_4_vR2014a"
     Location		    [-8, -8, 1374, 736]
-    Open		    on
+    Open		    off
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1362,7 +1362,7 @@ Model {
       System {
 	Name			"Cluster Space Controller"
 	Location		[-8, -8, 1374, 736]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -2852,7 +2852,7 @@ Model {
 	      Position		      [255, 500, 285, 520]
 	      ZOrder		      3010
 	      ShowName		      off
-	      Expr		      "u(1)-u(2)"
+	      Expr		      "u(1)+u(2)"
 	    }
 	    Block {
 	      BlockType		      Fcn
@@ -2861,7 +2861,7 @@ Model {
 	      Position		      [255, 550, 285, 570]
 	      ZOrder		      3055
 	      ShowName		      off
-	      Expr		      "u(1)-u(2)"
+	      Expr		      "u(1)+u(2)"
 	    }
 	    Block {
 	      BlockType		      Fcn
@@ -5204,13 +5204,13 @@ Model {
 	}
 	Block {
 	  BlockType		  S-Function
-	  Name			  "High-gain Observer 2"
+	  Name			  "High-gain Observer 3"
 	  SID			  "1967"
 	  Ports			  [1, 1]
 	  Position		  [1035, 370, 1135, 400]
 	  ZOrder		  4445
 	  BackgroundColor	  "[0.419608, 0.588235, 0.239216]"
-	  FunctionName		  "HGO_2_vR2014a"
+	  FunctionName		  "HGO_3_vR2014a"
 	  Parameters		  "par"
 	  EnableBusSupport	  off
 	}
@@ -6186,13 +6186,13 @@ Model {
 	}
 	Block {
 	  BlockType		  S-Function
-	  Name			  "SMC 1"
+	  Name			  "SMC 3"
 	  SID			  "659"
 	  Ports			  [1, 1]
 	  Position		  [525, 432, 615, 458]
 	  ZOrder		  4080
 	  BackgroundColor	  "magenta"
-	  FunctionName		  "SMC_2_vR2014a"
+	  FunctionName		  "SMC_3_vR2014a"
 	  Parameters		  "par"
 	  EnableBusSupport	  off
 	}
@@ -6422,7 +6422,7 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-5000"
+	  YMin			  "-2000"
 	  YMax			  "1000"
 	  SaveName		  "ScopeData45"
 	  LimitDataPoints	  off
@@ -7674,7 +7674,7 @@ Model {
 	  ZOrder		  417
 	  SrcBlock		  "Mux2"
 	  SrcPort		  1
-	  DstBlock		  "SMC 1"
+	  DstBlock		  "SMC 3"
 	  DstPort		  1
 	}
 	Line {
@@ -7700,7 +7700,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  2802
-	  SrcBlock		  "SMC 1"
+	  SrcBlock		  "SMC 3"
 	  SrcPort		  1
 	  DstBlock		  "Demux5"
 	  DstPort		  1
@@ -8285,7 +8285,7 @@ Model {
 	  ZOrder		  1262
 	  SrcBlock		  "Mux17"
 	  SrcPort		  1
-	  DstBlock		  "High-gain Observer 2"
+	  DstBlock		  "High-gain Observer 3"
 	  DstPort		  1
 	}
 	Line {
@@ -8370,7 +8370,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  1263
-	  SrcBlock		  "High-gain Observer 2"
+	  SrcBlock		  "High-gain Observer 3"
 	  SrcPort		  1
 	  DstBlock		  "Demux3"
 	  DstPort		  1
@@ -9928,7 +9928,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "J^{-1}"
-	    Location		    [-8, 0, 1374, 744]
+	    Location		    [-8, -8, 1374, 736]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -10031,7 +10031,7 @@ Model {
 	      Name		      "Display"
 	      SID		      "841"
 	      Ports		      [1]
-	      Position		      [630, 237, 990, 313]
+	      Position		      [620, 237, 910, 313]
 	      ZOrder		      2640
 	      Decimation	      "1"
 	    }
@@ -12333,7 +12333,7 @@ Model {
 	  ZOrder		  3055
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -12347,7 +12347,7 @@ Model {
 	  ZOrder		  3061
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -12361,7 +12361,7 @@ Model {
 	  ZOrder		  3154
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -12375,7 +12375,7 @@ Model {
 	  ZOrder		  3008
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -12389,7 +12389,7 @@ Model {
 	  ZOrder		  3142
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -12403,7 +12403,7 @@ Model {
 	  ZOrder		  3016
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -17343,7 +17343,7 @@ Model {
 	  ZOrder		  3055
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -17357,7 +17357,7 @@ Model {
 	  ZOrder		  3061
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -17371,7 +17371,7 @@ Model {
 	  ZOrder		  3154
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -17385,7 +17385,7 @@ Model {
 	  ZOrder		  3008
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -17399,7 +17399,7 @@ Model {
 	  ZOrder		  3142
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -17413,7 +17413,7 @@ Model {
 	  ZOrder		  3016
 	  ShowName		  off
 	  IconShape		  "round"
-	  Inputs		  "|+-"
+	  Inputs		  "|++"
 	  InputSameDT		  off
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
@@ -26307,8 +26307,6 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-3"
-      YMax		      "3"
       SaveName		      "ScopeData1"
       LimitDataPoints	      off
     }
@@ -26339,8 +26337,6 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-3"
-      YMax		      "3"
       SaveName		      "ScopeData12"
       LimitDataPoints	      off
     }

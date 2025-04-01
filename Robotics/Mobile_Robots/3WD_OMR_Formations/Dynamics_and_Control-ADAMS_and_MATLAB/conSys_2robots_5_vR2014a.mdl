@@ -1,5 +1,5 @@
 Model {
-  Name			  "conSys_2robots_3_vR2014a"
+  Name			  "conSys_2robots_5_vR2014a"
   Version		  8.3
   MdlSubVersion		  0
   SavedCharacterEncoding  "windows-1252"
@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.533"
+    ComputedModelVersion    "1.547"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -18,7 +18,7 @@ Model {
       Type		      "Cell"
       Dimension		      2
       Cell		      "HDLSubsystem"
-      Cell		      "conSys_2robots_3_vR2014a"
+      Cell		      "conSys_2robots_5_vR2014a"
       PropName		      "mdlProps"
     }
   }
@@ -63,11 +63,11 @@ Model {
 	$ObjectID		6
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	ViewObjType		"SimulinkTopLevel"
-	LoadSaveID		"0"
+	ViewObjType		"SimulinkSubsys"
+	LoadSaveID		"625"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, 22.0]
+	Offset			[-14.0, 246.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Mar 29 14:30:29 2025"
-  RTWModifiedTimeStamp	  664873533
-  ModelVersionFormat	  "1.%<AutoIncrement:533>"
+  LastModifiedDate	  "Mon Mar 31 20:15:59 2025"
+  RTWModifiedTimeStamp	  665254123
+  ModelVersionFormat	  "1.%<AutoIncrement:547>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -121,12 +121,12 @@ Model {
     $PropName		    "DataLoggingOverride"
     $ObjectID		    7
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
-    model_		    "conSys_2robots_3_vR2014a"
+    model_		    "conSys_2robots_5_vR2014a"
     overrideMode_	    [0.0]
     Array {
       Type		      "Cell"
       Dimension		      1
-      Cell		      "conSys_2robots_3_vR2014a"
+      Cell		      "conSys_2robots_5_vR2014a"
       PropName		      "logAsSpecifiedByModels_"
     }
     Array {
@@ -1142,9 +1142,9 @@ Model {
     }
   }
   System {
-    Name		    "conSys_2robots_3_vR2014a"
+    Name		    "conSys_2robots_5_vR2014a"
     Location		    [-8, -8, 1374, 736]
-    Open		    on
+    Open		    off
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1362,7 +1362,7 @@ Model {
       System {
 	Name			"Cluster Space Controller"
 	Location		[-8, -8, 1374, 736]
-	Open			off
+	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1646,7 +1646,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Clutch 2"
-	    Location		    [-8, 0, 1374, 744]
+	    Location		    [-8, -8, 1374, 736]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2454,7 +2454,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "Clutch 6"
-	    Location		    [-8, 0, 1374, 744]
+	    Location		    [-8, -8, 1374, 736]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -2751,7 +2751,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "x_1"
 	      SID		      "3376"
-	      Position		      [40, 343, 70, 357]
+	      Position		      [55, 243, 85, 257]
 	      ZOrder		      2604
 	      IconDisplay	      "Port number"
 	    }
@@ -2759,7 +2759,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "y_1"
 	      SID		      "3377"
-	      Position		      [40, 373, 70, 387]
+	      Position		      [55, 273, 85, 287]
 	      ZOrder		      2605
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -2768,7 +2768,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "th_1"
 	      SID		      "3378"
-	      Position		      [40, 403, 70, 417]
+	      Position		      [55, 303, 85, 317]
 	      ZOrder		      2606
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -2777,7 +2777,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "x_2"
 	      SID		      "3379"
-	      Position		      [40, 433, 70, 447]
+	      Position		      [55, 333, 85, 347]
 	      ZOrder		      2607
 	      Port		      "4"
 	      IconDisplay	      "Port number"
@@ -2786,7 +2786,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "y_2"
 	      SID		      "3380"
-	      Position		      [40, 463, 70, 477]
+	      Position		      [55, 363, 85, 377]
 	      ZOrder		      2608
 	      Port		      "5"
 	      IconDisplay	      "Port number"
@@ -2795,7 +2795,7 @@ Model {
 	      BlockType		      Inport
 	      Name		      "th_2"
 	      SID		      "3381"
-	      Position		      [40, 493, 70, 507]
+	      Position		      [55, 393, 85, 407]
 	      ZOrder		      2650
 	      Port		      "6"
 	      IconDisplay	      "Port number"
@@ -2804,7 +2804,7 @@ Model {
 	      BlockType		      Fcn
 	      Name		      "Fcn 1"
 	      SID		      "3382"
-	      Position		      [255, 230, 285, 250]
+	      Position		      [260, 260, 290, 280]
 	      ZOrder		      3045
 	      ShowName		      off
 	      Expr		      "(u(1)+u(2))/2"
@@ -2813,7 +2813,7 @@ Model {
 	      BlockType		      Fcn
 	      Name		      "Fcn 2"
 	      SID		      "3383"
-	      Position		      [255, 275, 285, 295]
+	      Position		      [260, 305, 290, 325]
 	      ZOrder		      3050
 	      ShowName		      off
 	      Expr		      "(u(1)+u(2))/2"
@@ -2822,7 +2822,7 @@ Model {
 	      BlockType		      Fcn
 	      Name		      "Fcn 3"
 	      SID		      "3384"
-	      Position		      [255, 415, 285, 435]
+	      Position		      [260, 445, 290, 465]
 	      ZOrder		      2997
 	      ShowName		      off
 	      Expr		      "u(1)-u(2)"
@@ -2831,7 +2831,7 @@ Model {
 	      BlockType		      Fcn
 	      Name		      "Fcn 4"
 	      SID		      "3385"
-	      Position		      [255, 435, 285, 455]
+	      Position		      [260, 465, 290, 485]
 	      ZOrder		      2998
 	      ShowName		      off
 	      Expr		      "u(3)-u(4)"
@@ -2840,34 +2840,16 @@ Model {
 	      BlockType		      Fcn
 	      Name		      "Fcn 5"
 	      SID		      "3386"
-	      Position		      [255, 345, 285, 365]
+	      Position		      [260, 375, 290, 395]
 	      ZOrder		      3005
 	      ShowName		      off
 	      Expr		      "sqrt((u(1)-u(2))^2 + (u(3)-u(4))^2)/2"
 	    }
 	    Block {
 	      BlockType		      Fcn
-	      Name		      "Fcn 6"
-	      SID		      "3387"
-	      Position		      [255, 500, 285, 520]
-	      ZOrder		      3010
-	      ShowName		      off
-	      Expr		      "u(1)-u(2)"
-	    }
-	    Block {
-	      BlockType		      Fcn
-	      Name		      "Fcn 7"
-	      SID		      "3388"
-	      Position		      [255, 550, 285, 570]
-	      ZOrder		      3055
-	      ShowName		      off
-	      Expr		      "u(1)-u(2)"
-	    }
-	    Block {
-	      BlockType		      Fcn
 	      Name		      "Fcn 8"
 	      SID		      "3389"
-	      Position		      [255, 140, 285, 160]
+	      Position		      [260, 170, 290, 190]
 	      ZOrder		      3060
 	      ShowName		      off
 	      Expr		      "u(1) - u(2)"
@@ -2876,7 +2858,7 @@ Model {
 	      BlockType		      Fcn
 	      Name		      "Fcn 9"
 	      SID		      "3390"
-	      Position		      [255, 185, 285, 205]
+	      Position		      [260, 215, 290, 235]
 	      ZOrder		      3065
 	      ShowName		      off
 	      Expr		      "u(1) - u(2)"
@@ -2885,7 +2867,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto1"
 	      SID		      "3391"
-	      Position		      [315, 233, 345, 247]
+	      Position		      [320, 263, 350, 277]
 	      ZOrder		      3046
 	      ShowName		      off
 	      GotoTag		      "xc"
@@ -2894,7 +2876,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto10"
 	      SID		      "3392"
-	      Position		      [315, 188, 345, 202]
+	      Position		      [320, 218, 350, 232]
 	      ZOrder		      3066
 	      ShowName		      off
 	      GotoTag		      "d2"
@@ -2903,7 +2885,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto17"
 	      SID		      "3393"
-	      Position		      [95, 403, 125, 417]
+	      Position		      [110, 303, 140, 317]
 	      ZOrder		      2264
 	      ShowName		      off
 	      GotoTag		      "th1"
@@ -2912,7 +2894,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto18"
 	      SID		      "3394"
-	      Position		      [95, 433, 125, 447]
+	      Position		      [110, 333, 140, 347]
 	      ZOrder		      2265
 	      ShowName		      off
 	      GotoTag		      "x2"
@@ -2921,7 +2903,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto19"
 	      SID		      "3395"
-	      Position		      [95, 463, 125, 477]
+	      Position		      [110, 363, 140, 377]
 	      ZOrder		      2266
 	      ShowName		      off
 	      GotoTag		      "y2"
@@ -2930,7 +2912,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto2"
 	      SID		      "3396"
-	      Position		      [95, 373, 125, 387]
+	      Position		      [110, 273, 140, 287]
 	      ZOrder		      2263
 	      ShowName		      off
 	      GotoTag		      "y1"
@@ -2939,7 +2921,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto20"
 	      SID		      "3397"
-	      Position		      [95, 343, 125, 357]
+	      Position		      [110, 243, 140, 257]
 	      ZOrder		      2262
 	      ShowName		      off
 	      GotoTag		      "x1"
@@ -2948,7 +2930,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto3"
 	      SID		      "3398"
-	      Position		      [95, 493, 125, 507]
+	      Position		      [110, 393, 140, 407]
 	      ZOrder		      2649
 	      ShowName		      off
 	      GotoTag		      "th2"
@@ -2957,7 +2939,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto4"
 	      SID		      "3399"
-	      Position		      [315, 278, 345, 292]
+	      Position		      [320, 308, 350, 322]
 	      ZOrder		      3051
 	      ShowName		      off
 	      GotoTag		      "yc"
@@ -2966,7 +2948,7 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto5"
 	      SID		      "3400"
-	      Position		      [455, 428, 485, 442]
+	      Position		      [460, 458, 490, 472]
 	      ZOrder		      2993
 	      ShowName		      off
 	      GotoTag		      "thc"
@@ -2975,34 +2957,16 @@ Model {
 	      BlockType		      Goto
 	      Name		      "Goto6"
 	      SID		      "3401"
-	      Position		      [315, 348, 345, 362]
+	      Position		      [320, 378, 350, 392]
 	      ZOrder		      3006
 	      ShowName		      off
 	      GotoTag		      "d"
 	    }
 	    Block {
 	      BlockType		      Goto
-	      Name		      "Goto7"
-	      SID		      "3402"
-	      Position		      [315, 503, 345, 517]
-	      ZOrder		      3017
-	      ShowName		      off
-	      GotoTag		      "ph1"
-	    }
-	    Block {
-	      BlockType		      Goto
-	      Name		      "Goto8"
-	      SID		      "3403"
-	      Position		      [315, 553, 345, 567]
-	      ZOrder		      3056
-	      ShowName		      off
-	      GotoTag		      "ph2"
-	    }
-	    Block {
-	      BlockType		      Goto
 	      Name		      "Goto9"
 	      SID		      "3404"
-	      Position		      [315, 143, 345, 157]
+	      Position		      [320, 173, 350, 187]
 	      ZOrder		      3061
 	      ShowName		      off
 	      GotoTag		      "d1"
@@ -3012,7 +2976,7 @@ Model {
 	      Name		      "Interpreted MATLAB\nFunction 1"
 	      SID		      "3405"
 	      Ports		      [1, 1]
-	      Position		      [360, 420, 430, 450]
+	      Position		      [365, 450, 435, 480]
 	      ZOrder		      2992
 	      ShowName		      off
 	      MATLABFcn		      "absoluteAngle03_vR2014a(u)"
@@ -3020,18 +2984,9 @@ Model {
 	    }
 	    Block {
 	      BlockType		      From
-	      Name		      "Left Torque1"
-	      SID		      "3406"
-	      Position		      [170, 563, 200, 577]
-	      ZOrder		      3053
-	      ShowName		      off
-	      GotoTag		      "thc"
-	    }
-	    Block {
-	      BlockType		      From
 	      Name		      "Left Torque10"
 	      SID		      "3407"
-	      Position		      [170, 378, 200, 392]
+	      Position		      [175, 408, 205, 422]
 	      ZOrder		      3002
 	      ShowName		      off
 	      GotoTag		      "y2"
@@ -3040,34 +2995,16 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque11"
 	      SID		      "3408"
-	      Position		      [170, 358, 200, 372]
+	      Position		      [175, 388, 205, 402]
 	      ZOrder		      3001
 	      ShowName		      off
 	      GotoTag		      "y1"
 	    }
 	    Block {
 	      BlockType		      From
-	      Name		      "Left Torque12"
-	      SID		      "3409"
-	      Position		      [170, 513, 200, 527]
-	      ZOrder		      3008
-	      ShowName		      off
-	      GotoTag		      "thc"
-	    }
-	    Block {
-	      BlockType		      From
-	      Name		      "Left Torque13"
-	      SID		      "3410"
-	      Position		      [170, 493, 200, 507]
-	      ZOrder		      3007
-	      ShowName		      off
-	      GotoTag		      "th1"
-	    }
-	    Block {
-	      BlockType		      From
 	      Name		      "Left Torque14"
 	      SID		      "3411"
-	      Position		      [170, 288, 200, 302]
+	      Position		      [175, 318, 205, 332]
 	      ZOrder		      3048
 	      ShowName		      off
 	      GotoTag		      "y2"
@@ -3076,25 +3013,16 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque15"
 	      SID		      "3412"
-	      Position		      [170, 268, 200, 282]
+	      Position		      [175, 298, 205, 312]
 	      ZOrder		      3047
 	      ShowName		      off
 	      GotoTag		      "y1"
 	    }
 	    Block {
 	      BlockType		      From
-	      Name		      "Left Torque16"
-	      SID		      "3413"
-	      Position		      [170, 543, 200, 557]
-	      ZOrder		      3052
-	      ShowName		      off
-	      GotoTag		      "th2"
-	    }
-	    Block {
-	      BlockType		      From
 	      Name		      "Left Torque17"
 	      SID		      "3414"
-	      Position		      [535, 123, 565, 137]
+	      Position		      [535, 113, 565, 127]
 	      ZOrder		      3025
 	      ShowName		      off
 	      GotoTag		      "xc"
@@ -3103,7 +3031,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque18"
 	      SID		      "3415"
-	      Position		      [535, 188, 565, 202]
+	      Position		      [535, 178, 565, 192]
 	      ZOrder		      3026
 	      ShowName		      off
 	      GotoTag		      "yc"
@@ -3112,7 +3040,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque19"
 	      SID		      "3416"
-	      Position		      [535, 253, 565, 267]
+	      Position		      [535, 243, 565, 257]
 	      ZOrder		      3027
 	      ShowName		      off
 	      GotoTag		      "d1"
@@ -3121,7 +3049,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque2"
 	      SID		      "3417"
-	      Position		      [170, 243, 200, 257]
+	      Position		      [175, 273, 205, 287]
 	      ZOrder		      3043
 	      ShowName		      off
 	      GotoTag		      "x2"
@@ -3130,7 +3058,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque20"
 	      SID		      "3418"
-	      Position		      [535, 318, 565, 332]
+	      Position		      [535, 308, 565, 322]
 	      ZOrder		      3028
 	      ShowName		      off
 	      GotoTag		      "d2"
@@ -3139,25 +3067,25 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque21"
 	      SID		      "3419"
-	      Position		      [535, 383, 565, 397]
+	      Position		      [535, 373, 565, 387]
 	      ZOrder		      3029
 	      ShowName		      off
-	      GotoTag		      "ph1"
+	      GotoTag		      "th1"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "Left Torque22"
 	      SID		      "3420"
-	      Position		      [535, 448, 565, 462]
+	      Position		      [535, 438, 565, 452]
 	      ZOrder		      3030
 	      ShowName		      off
-	      GotoTag		      "ph2"
+	      GotoTag		      "th2"
 	    }
 	    Block {
 	      BlockType		      From
 	      Name		      "Left Torque23"
 	      SID		      "3421"
-	      Position		      [170, 153, 200, 167]
+	      Position		      [175, 183, 205, 197]
 	      ZOrder		      3058
 	      ShowName		      off
 	      GotoTag		      "x2"
@@ -3166,7 +3094,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque24"
 	      SID		      "3422"
-	      Position		      [170, 133, 200, 147]
+	      Position		      [175, 163, 205, 177]
 	      ZOrder		      3057
 	      ShowName		      off
 	      GotoTag		      "xc"
@@ -3175,7 +3103,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque25"
 	      SID		      "3423"
-	      Position		      [170, 198, 200, 212]
+	      Position		      [175, 228, 205, 242]
 	      ZOrder		      3063
 	      ShowName		      off
 	      GotoTag		      "y2"
@@ -3184,7 +3112,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque26"
 	      SID		      "3424"
-	      Position		      [170, 178, 200, 192]
+	      Position		      [175, 208, 205, 222]
 	      ZOrder		      3062
 	      ShowName		      off
 	      GotoTag		      "yc"
@@ -3193,7 +3121,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque27"
 	      SID		      "3425"
-	      Position		      [535, 513, 565, 527]
+	      Position		      [535, 503, 565, 517]
 	      ZOrder		      3068
 	      ShowName		      off
 	      GotoTag		      "thc"
@@ -3202,7 +3130,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque28"
 	      SID		      "3426"
-	      Position		      [535, 578, 565, 592]
+	      Position		      [535, 568, 565, 582]
 	      ZOrder		      3071
 	      ShowName		      off
 	      GotoTag		      "d"
@@ -3211,7 +3139,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque3"
 	      SID		      "3427"
-	      Position		      [170, 223, 200, 237]
+	      Position		      [175, 253, 205, 267]
 	      ZOrder		      3042
 	      ShowName		      off
 	      GotoTag		      "x1"
@@ -3220,7 +3148,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque4"
 	      SID		      "3428"
-	      Position		      [170, 428, 200, 442]
+	      Position		      [175, 458, 205, 472]
 	      ZOrder		      2988
 	      ShowName		      off
 	      GotoTag		      "x2"
@@ -3229,7 +3157,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque5"
 	      SID		      "3429"
-	      Position		      [170, 408, 200, 422]
+	      Position		      [175, 438, 205, 452]
 	      ZOrder		      2987
 	      ShowName		      off
 	      GotoTag		      "x1"
@@ -3238,7 +3166,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque6"
 	      SID		      "3430"
-	      Position		      [170, 468, 200, 482]
+	      Position		      [175, 498, 205, 512]
 	      ZOrder		      2990
 	      ShowName		      off
 	      GotoTag		      "y2"
@@ -3247,7 +3175,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque7"
 	      SID		      "3431"
-	      Position		      [170, 448, 200, 462]
+	      Position		      [175, 478, 205, 492]
 	      ZOrder		      2989
 	      ShowName		      off
 	      GotoTag		      "y1"
@@ -3256,7 +3184,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque8"
 	      SID		      "3432"
-	      Position		      [170, 338, 200, 352]
+	      Position		      [175, 368, 205, 382]
 	      ZOrder		      3000
 	      ShowName		      off
 	      GotoTag		      "x2"
@@ -3265,7 +3193,7 @@ Model {
 	      BlockType		      From
 	      Name		      "Left Torque9"
 	      SID		      "3433"
-	      Position		      [170, 318, 200, 332]
+	      Position		      [175, 348, 205, 362]
 	      ZOrder		      2999
 	      ShowName		      off
 	      GotoTag		      "x1"
@@ -3275,7 +3203,7 @@ Model {
 	      Name		      "Mux1"
 	      SID		      "3434"
 	      Ports		      [2, 1]
-	      Position		      [220, 221, 225, 259]
+	      Position		      [225, 251, 230, 289]
 	      ZOrder		      3044
 	      ShowName		      off
 	      Inputs		      "2"
@@ -3286,7 +3214,7 @@ Model {
 	      Name		      "Mux2"
 	      SID		      "3435"
 	      Ports		      [4, 1]
-	      Position		      [220, 407, 225, 483]
+	      Position		      [225, 437, 230, 513]
 	      ZOrder		      2995
 	      ShowName		      off
 	      DisplayOption	      "bar"
@@ -3296,7 +3224,7 @@ Model {
 	      Name		      "Mux3"
 	      SID		      "3436"
 	      Ports		      [2, 1]
-	      Position		      [220, 266, 225, 304]
+	      Position		      [225, 296, 230, 334]
 	      ZOrder		      3049
 	      ShowName		      off
 	      Inputs		      "2"
@@ -3307,31 +3235,9 @@ Model {
 	      Name		      "Mux4"
 	      SID		      "3437"
 	      Ports		      [4, 1]
-	      Position		      [220, 313, 225, 397]
+	      Position		      [225, 343, 230, 427]
 	      ZOrder		      3003
 	      ShowName		      off
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux5"
-	      SID		      "3438"
-	      Ports		      [2, 1]
-	      Position		      [220, 491, 225, 529]
-	      ZOrder		      3009
-	      ShowName		      off
-	      Inputs		      "2"
-	      DisplayOption	      "bar"
-	    }
-	    Block {
-	      BlockType		      Mux
-	      Name		      "Mux6"
-	      SID		      "3439"
-	      Ports		      [2, 1]
-	      Position		      [220, 541, 225, 579]
-	      ZOrder		      3054
-	      ShowName		      off
-	      Inputs		      "2"
 	      DisplayOption	      "bar"
 	    }
 	    Block {
@@ -3339,7 +3245,7 @@ Model {
 	      Name		      "Mux7"
 	      SID		      "3440"
 	      Ports		      [2, 1]
-	      Position		      [220, 131, 225, 169]
+	      Position		      [225, 161, 230, 199]
 	      ZOrder		      3059
 	      ShowName		      off
 	      Inputs		      "2"
@@ -3350,7 +3256,7 @@ Model {
 	      Name		      "Mux8"
 	      SID		      "3441"
 	      Ports		      [2, 1]
-	      Position		      [220, 176, 225, 214]
+	      Position		      [225, 206, 230, 244]
 	      ZOrder		      3064
 	      ShowName		      off
 	      Inputs		      "2"
@@ -3361,7 +3267,7 @@ Model {
 	      Name		      "Right Angular Velocity1"
 	      SID		      "3442"
 	      Ports		      [1]
-	      Position		      [615, 159, 630, 181]
+	      Position		      [615, 149, 630, 171]
 	      ZOrder		      3032
 	      ShowName		      off
 	      Floating		      off
@@ -3394,7 +3300,7 @@ Model {
 	      Name		      "Right Angular Velocity2"
 	      SID		      "3443"
 	      Ports		      [1]
-	      Position		      [615, 94, 630, 116]
+	      Position		      [615, 84, 630, 106]
 	      ZOrder		      3031
 	      ShowName		      off
 	      Floating		      off
@@ -3427,7 +3333,7 @@ Model {
 	      Name		      "Right Angular Velocity3"
 	      SID		      "3444"
 	      Ports		      [1]
-	      Position		      [615, 224, 630, 246]
+	      Position		      [615, 214, 630, 236]
 	      ZOrder		      3033
 	      ShowName		      off
 	      Floating		      off
@@ -3460,7 +3366,7 @@ Model {
 	      Name		      "Right Angular Velocity4"
 	      SID		      "3445"
 	      Ports		      [1]
-	      Position		      [615, 289, 630, 311]
+	      Position		      [615, 279, 630, 301]
 	      ZOrder		      3034
 	      ShowName		      off
 	      Floating		      off
@@ -3493,7 +3399,7 @@ Model {
 	      Name		      "Right Angular Velocity5"
 	      SID		      "3446"
 	      Ports		      [1]
-	      Position		      [615, 354, 630, 376]
+	      Position		      [615, 344, 630, 366]
 	      ZOrder		      3035
 	      ShowName		      off
 	      Floating		      off
@@ -3526,7 +3432,7 @@ Model {
 	      Name		      "Right Angular Velocity6"
 	      SID		      "3447"
 	      Ports		      [1]
-	      Position		      [615, 419, 630, 441]
+	      Position		      [615, 409, 630, 431]
 	      ZOrder		      3036
 	      ShowName		      off
 	      Floating		      off
@@ -3549,8 +3455,8 @@ Model {
 		MarkerStyles		"none|none|none|none|none|none"
 	      }
 	      ShowLegends	      off
-	      YMin		      "2400"
-	      YMax		      "2600"
+	      YMin		      "-10"
+	      YMax		      "10"
 	      SaveName		      "ScopeData51"
 	      LimitDataPoints	      off
 	    }
@@ -3559,7 +3465,7 @@ Model {
 	      Name		      "Right Angular Velocity7"
 	      SID		      "3448"
 	      Ports		      [1]
-	      Position		      [615, 484, 630, 506]
+	      Position		      [615, 474, 630, 496]
 	      ZOrder		      3069
 	      ShowName		      off
 	      Floating		      off
@@ -3592,7 +3498,7 @@ Model {
 	      Name		      "Right Angular Velocity8"
 	      SID		      "3449"
 	      Ports		      [1]
-	      Position		      [615, 549, 630, 571]
+	      Position		      [615, 539, 630, 561]
 	      ZOrder		      3072
 	      ShowName		      off
 	      Floating		      off
@@ -3625,7 +3531,7 @@ Model {
 	      Name		      "Trigonometric\nFunction 3"
 	      SID		      "3450"
 	      Ports		      [2, 1]
-	      Position		      [305, 417, 340, 453]
+	      Position		      [310, 447, 345, 483]
 	      ZOrder		      2994
 	      ShowName		      off
 	      Operator		      "atan2"
@@ -3634,7 +3540,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "X_c"
 	      SID		      "3451"
-	      Position		      [600, 123, 630, 137]
+	      Position		      [600, 113, 630, 127]
 	      ZOrder		      3019
 	      IconDisplay	      "Port number"
 	    }
@@ -3642,7 +3548,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Y_c"
 	      SID		      "3452"
-	      Position		      [600, 188, 630, 202]
+	      Position		      [600, 178, 630, 192]
 	      ZOrder		      3020
 	      Port		      "2"
 	      IconDisplay	      "Port number"
@@ -3651,7 +3557,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "D1"
 	      SID		      "3453"
-	      Position		      [600, 253, 630, 267]
+	      Position		      [600, 243, 630, 257]
 	      ZOrder		      3021
 	      Port		      "3"
 	      IconDisplay	      "Port number"
@@ -3660,7 +3566,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "D2"
 	      SID		      "3454"
-	      Position		      [600, 318, 630, 332]
+	      Position		      [600, 308, 630, 322]
 	      ZOrder		      3022
 	      Port		      "4"
 	      IconDisplay	      "Port number"
@@ -3669,7 +3575,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Phi_1"
 	      SID		      "3455"
-	      Position		      [600, 383, 630, 397]
+	      Position		      [600, 373, 630, 387]
 	      ZOrder		      3023
 	      Port		      "5"
 	      IconDisplay	      "Port number"
@@ -3678,7 +3584,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Phi_2"
 	      SID		      "3456"
-	      Position		      [600, 448, 630, 462]
+	      Position		      [600, 438, 630, 452]
 	      ZOrder		      3024
 	      Port		      "6"
 	      IconDisplay	      "Port number"
@@ -3687,7 +3593,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "Theta_c"
 	      SID		      "3457"
-	      Position		      [600, 513, 630, 527]
+	      Position		      [600, 503, 630, 517]
 	      ZOrder		      3067
 	      Port		      "7"
 	      IconDisplay	      "Port number"
@@ -3696,7 +3602,7 @@ Model {
 	      BlockType		      Outport
 	      Name		      "D"
 	      SID		      "3458"
-	      Position		      [600, 578, 630, 592]
+	      Position		      [600, 568, 630, 582]
 	      ZOrder		      3070
 	      Port		      "8"
 	      IconDisplay	      "Port number"
@@ -3789,34 +3695,6 @@ Model {
 	      SrcBlock		      "Left Torque24"
 	      SrcPort		      1
 	      DstBlock		      "Mux7"
-	      DstPort		      1
-	    }
-	    Line {
-	      ZOrder		      15
-	      SrcBlock		      "Fcn 7"
-	      SrcPort		      1
-	      DstBlock		      "Goto8"
-	      DstPort		      1
-	    }
-	    Line {
-	      ZOrder		      16
-	      SrcBlock		      "Mux6"
-	      SrcPort		      1
-	      DstBlock		      "Fcn 7"
-	      DstPort		      1
-	    }
-	    Line {
-	      ZOrder		      17
-	      SrcBlock		      "Left Torque1"
-	      SrcPort		      1
-	      DstBlock		      "Mux6"
-	      DstPort		      2
-	    }
-	    Line {
-	      ZOrder		      18
-	      SrcBlock		      "Left Torque16"
-	      SrcPort		      1
-	      DstBlock		      "Mux6"
 	      DstPort		      1
 	    }
 	    Line {
@@ -4004,34 +3882,6 @@ Model {
 		DstBlock		"Right Angular Velocity2"
 		DstPort			1
 	      }
-	    }
-	    Line {
-	      ZOrder		      49
-	      SrcBlock		      "Fcn 6"
-	      SrcPort		      1
-	      DstBlock		      "Goto7"
-	      DstPort		      1
-	    }
-	    Line {
-	      ZOrder		      50
-	      SrcBlock		      "Mux5"
-	      SrcPort		      1
-	      DstBlock		      "Fcn 6"
-	      DstPort		      1
-	    }
-	    Line {
-	      ZOrder		      51
-	      SrcBlock		      "Left Torque12"
-	      SrcPort		      1
-	      DstBlock		      "Mux5"
-	      DstPort		      2
-	    }
-	    Line {
-	      ZOrder		      52
-	      SrcBlock		      "Left Torque13"
-	      SrcPort		      1
-	      DstBlock		      "Mux5"
-	      DstPort		      1
 	    }
 	    Line {
 	      ZOrder		      53
@@ -5204,13 +5054,13 @@ Model {
 	}
 	Block {
 	  BlockType		  S-Function
-	  Name			  "High-gain Observer 2"
+	  Name			  "High-gain Observer 4"
 	  SID			  "1967"
 	  Ports			  [1, 1]
 	  Position		  [1035, 370, 1135, 400]
 	  ZOrder		  4445
 	  BackgroundColor	  "[0.419608, 0.588235, 0.239216]"
-	  FunctionName		  "HGO_2_vR2014a"
+	  FunctionName		  "HGO_4_vR2014a"
 	  Parameters		  "par"
 	  EnableBusSupport	  off
 	}
@@ -6186,13 +6036,13 @@ Model {
 	}
 	Block {
 	  BlockType		  S-Function
-	  Name			  "SMC 1"
+	  Name			  "SMC 4"
 	  SID			  "659"
 	  Ports			  [1, 1]
 	  Position		  [525, 432, 615, 458]
 	  ZOrder		  4080
 	  BackgroundColor	  "magenta"
-	  FunctionName		  "SMC_2_vR2014a"
+	  FunctionName		  "SMC_4_vR2014a"
 	  Parameters		  "par"
 	  EnableBusSupport	  off
 	}
@@ -6422,7 +6272,7 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-5000"
+	  YMin			  "-2000"
 	  YMax			  "1000"
 	  SaveName		  "ScopeData45"
 	  LimitDataPoints	  off
@@ -6505,7 +6355,7 @@ Model {
 	  BlockMirror		  on
 	  ShowName		  off
 	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
+	  Location		  [1, 49, 1367, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "xonly"
@@ -7029,7 +6879,7 @@ Model {
 	  ZOrder		  4427
 	  ShowName		  off
 	  Floating		  off
-	  Location		  [468, 56, 929, 275]
+	  Location		  [1, 49, 1367, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "yonly"
@@ -7049,7 +6899,7 @@ Model {
 	  }
 	  ShowLegends		  off
 	  YMin			  "-1000"
-	  YMax			  "500"
+	  YMax			  "1000"
 	  SaveName		  "ScopeData98"
 	  LimitDataPoints	  off
 	}
@@ -7343,8 +7193,8 @@ Model {
 	    MarkerStyles	    "none|none|none|none|none|none"
 	  }
 	  ShowLegends		  off
-	  YMin			  "-50"
-	  YMax			  "50"
+	  YMin			  "-15"
+	  YMax			  "15"
 	  SaveName		  "ScopeData47"
 	  LimitDataPoints	  off
 	}
@@ -7674,7 +7524,7 @@ Model {
 	  ZOrder		  417
 	  SrcBlock		  "Mux2"
 	  SrcPort		  1
-	  DstBlock		  "SMC 1"
+	  DstBlock		  "SMC 4"
 	  DstPort		  1
 	}
 	Line {
@@ -7700,7 +7550,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  2802
-	  SrcBlock		  "SMC 1"
+	  SrcBlock		  "SMC 4"
 	  SrcPort		  1
 	  DstBlock		  "Demux5"
 	  DstPort		  1
@@ -8285,7 +8135,7 @@ Model {
 	  ZOrder		  1262
 	  SrcBlock		  "Mux17"
 	  SrcPort		  1
-	  DstBlock		  "High-gain Observer 2"
+	  DstBlock		  "High-gain Observer 4"
 	  DstPort		  1
 	}
 	Line {
@@ -8370,7 +8220,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  1263
-	  SrcBlock		  "High-gain Observer 2"
+	  SrcBlock		  "High-gain Observer 4"
 	  SrcPort		  1
 	  DstBlock		  "Demux3"
 	  DstPort		  1
@@ -9646,24 +9496,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Goto
-	  Name			  "Goto11"
-	  SID			  "800"
-	  Position		  [510, 558, 565, 572]
-	  ZOrder		  3155
-	  ShowName		  off
-	  GotoTag		  "ddPh2r"
-	}
-	Block {
-	  BlockType		  Goto
-	  Name			  "Goto12"
-	  SID			  "801"
-	  Position		  [510, 483, 565, 497]
-	  ZOrder		  3143
-	  ShowName		  off
-	  GotoTag		  "ddPh1r"
-	}
-	Block {
-	  BlockType		  Goto
 	  Name			  "Goto13"
 	  SID			  "802"
 	  Position		  [220, 388, 270, 402]
@@ -9793,15 +9625,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Goto
-	  Name			  "Goto3"
-	  SID			  "816"
-	  Position		  [145, 558, 185, 572]
-	  ZOrder		  3056
-	  ShowName		  off
-	  GotoTag		  "Ph2r"
-	}
-	Block {
-	  BlockType		  Goto
 	  Name			  "Goto30"
 	  SID			  "817"
 	  Position		  [220, 298, 260, 312]
@@ -9838,39 +9661,12 @@ Model {
 	}
 	Block {
 	  BlockType		  Goto
-	  Name			  "Goto35"
-	  SID			  "821"
-	  Position		  [145, 483, 185, 497]
-	  ZOrder		  3009
-	  ShowName		  off
-	  GotoTag		  "Ph1r"
-	}
-	Block {
-	  BlockType		  Goto
-	  Name			  "Goto4"
-	  SID			  "822"
-	  Position		  [325, 558, 365, 572]
-	  ZOrder		  3062
-	  ShowName		  off
-	  GotoTag		  "dPh2r"
-	}
-	Block {
-	  BlockType		  Goto
 	  Name			  "Goto42"
 	  SID			  "823"
 	  Position		  [725, 183, 760, 197]
 	  ZOrder		  2610
 	  ShowName		  off
 	  GotoTag		  "X1r"
-	}
-	Block {
-	  BlockType		  Goto
-	  Name			  "Goto45"
-	  SID			  "824"
-	  Position		  [325, 483, 365, 497]
-	  ZOrder		  3017
-	  ShowName		  off
-	  GotoTag		  "dPh1r"
 	}
 	Block {
 	  BlockType		  Goto
@@ -9928,7 +9724,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  System {
 	    Name		    "J^{-1}"
-	    Location		    [-8, 0, 1374, 744]
+	    Location		    [-8, -8, 1374, 736]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -10031,7 +9827,7 @@ Model {
 	      Name		      "Display"
 	      SID		      "841"
 	      Ports		      [1]
-	      Position		      [630, 237, 990, 313]
+	      Position		      [620, 237, 910, 313]
 	      ZOrder		      2640
 	      Decimation	      "1"
 	    }
@@ -10837,15 +10633,6 @@ Model {
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "Left Torque10"
-	  SID			  "891"
-	  Position		  [45, 588, 80, 602]
-	  ZOrder		  3054
-	  ShowName		  off
-	  GotoTag		  "Thcr"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "Left Torque11"
 	  SID			  "892"
 	  Position		  [895, 203, 945, 217]
@@ -10860,16 +10647,7 @@ Model {
 	  Position		  [895, 228, 945, 242]
 	  ZOrder		  3026
 	  ShowName		  off
-	  GotoTag		  "Ph1r"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque13"
-	  SID			  "894"
-	  Position		  [220, 558, 260, 572]
-	  ZOrder		  3059
-	  ShowName		  off
-	  GotoTag		  "dO2r"
+	  GotoTag		  "O1r"
 	}
 	Block {
 	  BlockType		  From
@@ -10882,21 +10660,12 @@ Model {
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "Left Torque14"
-	  SID			  "896"
-	  Position		  [220, 483, 260, 497]
-	  ZOrder		  3014
-	  ShowName		  off
-	  GotoTag		  "dO1r"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "Left Torque15"
 	  SID			  "897"
 	  Position		  [895, 253, 945, 267]
 	  ZOrder		  3027
 	  ShowName		  off
-	  GotoTag		  "Ph2r"
+	  GotoTag		  "O2r"
 	}
 	Block {
 	  BlockType		  From
@@ -10914,7 +10683,7 @@ Model {
 	  Position		  [895, 383, 945, 397]
 	  ZOrder		  3032
 	  ShowName		  off
-	  GotoTag		  "dPh1r"
+	  GotoTag		  "dO1r"
 	}
 	Block {
 	  BlockType		  From
@@ -10923,7 +10692,7 @@ Model {
 	  Position		  [895, 408, 945, 422]
 	  ZOrder		  3033
 	  ShowName		  off
-	  GotoTag		  "dPh2r"
+	  GotoTag		  "dO2r"
 	}
 	Block {
 	  BlockType		  From
@@ -10981,60 +10750,6 @@ Model {
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "Left Torque24"
-	  SID			  "907"
-	  Position		  [220, 588, 260, 602]
-	  ZOrder		  3060
-	  ShowName		  off
-	  GotoTag		  "dThcr"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque25"
-	  SID			  "908"
-	  Position		  [220, 513, 260, 527]
-	  ZOrder		  3015
-	  ShowName		  off
-	  GotoTag		  "dThcr"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque26"
-	  SID			  "909"
-	  Position		  [390, 558, 445, 572]
-	  ZOrder		  3153
-	  ShowName		  off
-	  GotoTag		  "ddO2r"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque27"
-	  SID			  "910"
-	  Position		  [390, 483, 445, 497]
-	  ZOrder		  3140
-	  ShowName		  off
-	  GotoTag		  "ddO1r"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque28"
-	  SID			  "911"
-	  Position		  [390, 588, 445, 602]
-	  ZOrder		  3158
-	  ShowName		  off
-	  GotoTag		  "ddThcr"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque29"
-	  SID			  "912"
-	  Position		  [390, 513, 445, 527]
-	  ZOrder		  3152
-	  ShowName		  off
-	  GotoTag		  "ddThcr"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "Left Torque3"
 	  SID			  "913"
 	  Position		  [290, 353, 325, 367]
@@ -11080,21 +10795,12 @@ Model {
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "Left Torque4"
-	  SID			  "918"
-	  Position		  [45, 483, 80, 497]
-	  ZOrder		  3006
-	  ShowName		  off
-	  GotoTag		  "O1r"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "Left Torque44"
 	  SID			  "919"
 	  Position		  [890, 538, 940, 552]
 	  ZOrder		  3136
 	  ShowName		  off
-	  GotoTag		  "ddPh1r"
+	  GotoTag		  "ddO1r"
 	}
 	Block {
 	  BlockType		  From
@@ -11103,16 +10809,7 @@ Model {
 	  Position		  [890, 563, 940, 577]
 	  ZOrder		  3137
 	  ShowName		  off
-	  GotoTag		  "ddPh2r"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque5"
-	  SID			  "921"
-	  Position		  [45, 513, 80, 527]
-	  ZOrder		  3007
-	  ShowName		  off
-	  GotoTag		  "Thcr"
+	  GotoTag		  "ddO2r"
 	}
 	Block {
 	  BlockType		  From
@@ -11140,15 +10837,6 @@ Model {
 	  ZOrder		  3024
 	  ShowName		  off
 	  GotoTag		  "Thcr"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque9"
-	  SID			  "925"
-	  Position		  [45, 558, 80, 572]
-	  ZOrder		  3053
-	  ShowName		  off
-	  GotoTag		  "O2r"
 	}
 	Block {
 	  BlockType		  Mux
@@ -11789,185 +11477,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Scope
-	  Name			  "Scope 1"
-	  SID			  "985"
-	  Ports			  [1]
-	  Position		  [165, 499, 185, 521]
-	  ZOrder		  3038
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [692, 56, 1359, 719]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData52"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 10"
-	  SID			  "986"
-	  Ports			  [1]
-	  Position		  [545, 524, 565, 546]
-	  ZOrder		  3145
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData28"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 11"
-	  SID			  "987"
-	  Ports			  [1]
-	  Position		  [545, 499, 565, 521]
-	  ZOrder		  3144
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "xonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData42"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 12"
-	  SID			  "988"
-	  Ports			  [1]
-	  Position		  [545, 599, 565, 621]
-	  ZOrder		  3157
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData60"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 13"
-	  SID			  "989"
-	  Ports			  [1]
-	  Position		  [545, 574, 565, 596]
-	  ZOrder		  3156
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "xonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData66"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
 	  Name			  "Scope 14"
 	  SID			  "2908"
 	  Ports			  [1]
@@ -12041,255 +11550,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Scope
-	  Name			  "Scope 2"
-	  SID			  "990"
-	  Ports			  [1]
-	  Position		  [345, 524, 365, 546]
-	  ZOrder		  3052
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData53"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 3"
-	  SID			  "991"
-	  Ports			  [1]
-	  Position		  [345, 499, 365, 521]
-	  ZOrder		  3046
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "xonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData79"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 4"
-	  SID			  "992"
-	  Ports			  [1]
-	  Position		  [165, 574, 185, 596]
-	  ZOrder		  3057
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [692, 56, 1359, 719]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData62"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 5"
-	  SID			  "993"
-	  Ports			  [1]
-	  Position		  [165, 524, 185, 546]
-	  ZOrder		  3048
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [9, 56, 676, 719]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData81"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 6"
-	  SID			  "994"
-	  Ports			  [1]
-	  Position		  [165, 599, 185, 621]
-	  ZOrder		  3058
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [9, 56, 676, 719]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData63"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 7"
-	  SID			  "995"
-	  Ports			  [1]
-	  Position		  [345, 599, 365, 621]
-	  ZOrder		  3064
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData64"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 8"
-	  SID			  "996"
-	  Ports			  [1]
-	  Position		  [345, 574, 365, 596]
-	  ZOrder		  3063
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData65"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
 	  Name			  "Scope 9"
 	  SID			  "997"
 	  Ports			  [1]
@@ -12323,90 +11583,6 @@ Model {
 	  DataFormat		  "StructureWithTime"
 	  LimitDataPoints	  off
 	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum1"
-	  SID			  "998"
-	  Ports			  [2, 1]
-	  Position		  [100, 555, 120, 575]
-	  ZOrder		  3055
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum2"
-	  SID			  "999"
-	  Ports			  [2, 1]
-	  Position		  [280, 555, 300, 575]
-	  ZOrder		  3061
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum3"
-	  SID			  "1000"
-	  Ports			  [2, 1]
-	  Position		  [465, 555, 485, 575]
-	  ZOrder		  3154
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum4"
-	  SID			  "1001"
-	  Ports			  [2, 1]
-	  Position		  [100, 480, 120, 500]
-	  ZOrder		  3008
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum5"
-	  SID			  "1002"
-	  Ports			  [2, 1]
-	  Position		  [465, 480, 485, 500]
-	  ZOrder		  3142
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum6"
-	  SID			  "1003"
-	  Ports			  [2, 1]
-	  Position		  [280, 480, 300, 500]
-	  ZOrder		  3016
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
 	}
 	Block {
 	  BlockType		  ToWorkspace
@@ -12486,93 +11662,11 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  4
-	  SrcBlock		  "Left Torque5"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    5
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 5"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    6
-	    DstBlock		    "Sum4"
-	    DstPort		    2
-	  }
-	}
-	Line {
 	  ZOrder		  7
 	  SrcBlock		  "Demux4"
 	  SrcPort		  3
 	  DstBlock		  "Goto33"
 	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  8
-	  SrcBlock		  "Sum6"
-	  SrcPort		  1
-	  Points		  [3, 0]
-	  Branch {
-	    ZOrder		    9
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 3"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    10
-	    DstBlock		    "Goto45"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  11
-	  SrcBlock		  "Sum4"
-	  SrcPort		  1
-	  Points		  [5, 0]
-	  Branch {
-	    ZOrder		    12
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 1"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    13
-	    DstBlock		    "Goto35"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  14
-	  SrcBlock		  "Left Torque4"
-	  SrcPort		  1
-	  DstBlock		  "Sum4"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  15
-	  SrcBlock		  "Left Torque14"
-	  SrcPort		  1
-	  DstBlock		  "Sum6"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  16
-	  SrcBlock		  "Left Torque25"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    17
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 2"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    18
-	    DstBlock		    "Sum6"
-	    DstPort		    2
-	  }
 	}
 	Line {
 	  ZOrder		  19
@@ -12922,88 +12016,6 @@ Model {
 	  DstPort		  2
 	}
 	Line {
-	  ZOrder		  71
-	  SrcBlock		  "Left Torque10"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    72
-	    DstBlock		    "Sum1"
-	    DstPort		    2
-	  }
-	  Branch {
-	    ZOrder		    73
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 6"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  74
-	  SrcBlock		  "Sum1"
-	  SrcPort		  1
-	  Points		  [5, 0]
-	  Branch {
-	    ZOrder		    75
-	    DstBlock		    "Goto3"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    76
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 4"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  77
-	  SrcBlock		  "Left Torque9"
-	  SrcPort		  1
-	  DstBlock		  "Sum1"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  78
-	  SrcBlock		  "Sum2"
-	  SrcPort		  1
-	  Points		  [3, 0]
-	  Branch {
-	    ZOrder		    79
-	    DstBlock		    "Goto4"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    80
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 8"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  81
-	  SrcBlock		  "Left Torque13"
-	  SrcPort		  1
-	  DstBlock		  "Sum2"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  82
-	  SrcBlock		  "Left Torque24"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    83
-	    DstBlock		    "Sum2"
-	    DstPort		    2
-	  }
-	  Branch {
-	    ZOrder		    84
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 7"
-	    DstPort		    1
-	  }
-	}
-	Line {
 	  ZOrder		  85
 	  SrcBlock		  "Demux2"
 	  SrcPort		  1
@@ -13190,88 +12202,6 @@ Model {
 	  SrcPort		  6
 	  DstBlock		  "Goto6"
 	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  114
-	  SrcBlock		  "Sum5"
-	  SrcPort		  1
-	  Points		  [3, 0]
-	  Branch {
-	    ZOrder		    115
-	    DstBlock		    "Goto12"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    116
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 11"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  117
-	  SrcBlock		  "Left Torque27"
-	  SrcPort		  1
-	  DstBlock		  "Sum5"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  118
-	  SrcBlock		  "Left Torque29"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    119
-	    DstBlock		    "Sum5"
-	    DstPort		    2
-	  }
-	  Branch {
-	    ZOrder		    120
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 10"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  121
-	  SrcBlock		  "Sum3"
-	  SrcPort		  1
-	  Points		  [3, 0]
-	  Branch {
-	    ZOrder		    122
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 13"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    123
-	    DstBlock		    "Goto11"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  124
-	  SrcBlock		  "Left Torque26"
-	  SrcPort		  1
-	  DstBlock		  "Sum3"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  125
-	  SrcBlock		  "Left Torque28"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    126
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 12"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    127
-	    DstBlock		    "Sum3"
-	    DstPort		    2
-	  }
 	}
       }
     }
@@ -13468,24 +12398,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Goto
-	  Name			  "Goto11"
-	  SID			  "3490"
-	  Position		  [510, 558, 565, 572]
-	  ZOrder		  3155
-	  ShowName		  off
-	  GotoTag		  "ddPh2r"
-	}
-	Block {
-	  BlockType		  Goto
-	  Name			  "Goto12"
-	  SID			  "3491"
-	  Position		  [510, 483, 565, 497]
-	  ZOrder		  3143
-	  ShowName		  off
-	  GotoTag		  "ddPh1r"
-	}
-	Block {
-	  BlockType		  Goto
 	  Name			  "Goto13"
 	  SID			  "3492"
 	  Position		  [220, 388, 270, 402]
@@ -13651,15 +12563,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Goto
-	  Name			  "Goto3"
-	  SID			  "3510"
-	  Position		  [145, 558, 185, 572]
-	  ZOrder		  3056
-	  ShowName		  off
-	  GotoTag		  "Ph2r"
-	}
-	Block {
-	  BlockType		  Goto
 	  Name			  "Goto30"
 	  SID			  "3511"
 	  Position		  [220, 298, 260, 312]
@@ -13696,39 +12599,12 @@ Model {
 	}
 	Block {
 	  BlockType		  Goto
-	  Name			  "Goto35"
-	  SID			  "3515"
-	  Position		  [145, 483, 185, 497]
-	  ZOrder		  3009
-	  ShowName		  off
-	  GotoTag		  "Ph1r"
-	}
-	Block {
-	  BlockType		  Goto
-	  Name			  "Goto4"
-	  SID			  "3516"
-	  Position		  [325, 558, 365, 572]
-	  ZOrder		  3062
-	  ShowName		  off
-	  GotoTag		  "dPh2r"
-	}
-	Block {
-	  BlockType		  Goto
 	  Name			  "Goto42"
 	  SID			  "3517"
 	  Position		  [725, 183, 760, 197]
 	  ZOrder		  2610
 	  ShowName		  off
 	  GotoTag		  "X1r"
-	}
-	Block {
-	  BlockType		  Goto
-	  Name			  "Goto45"
-	  SID			  "3518"
-	  Position		  [325, 483, 365, 497]
-	  ZOrder		  3017
-	  ShowName		  off
-	  GotoTag		  "dPh1r"
 	}
 	Block {
 	  BlockType		  Goto
@@ -14695,18 +13571,9 @@ Model {
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "Left Torque10"
-	  SID			  "3585"
-	  Position		  [45, 588, 80, 602]
-	  ZOrder		  3054
-	  ShowName		  off
-	  GotoTag		  "Thcr"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "Left Torque11"
 	  SID			  "3586"
-	  Position		  [895, 203, 945, 217]
+	  Position		  [855, 118, 905, 132]
 	  ZOrder		  3025
 	  ShowName		  off
 	  GotoTag		  "Dr"
@@ -14715,19 +13582,10 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque12"
 	  SID			  "3587"
-	  Position		  [895, 228, 945, 242]
+	  Position		  [855, 143, 905, 157]
 	  ZOrder		  3026
 	  ShowName		  off
-	  GotoTag		  "Ph1r"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque13"
-	  SID			  "3588"
-	  Position		  [220, 558, 260, 572]
-	  ZOrder		  3059
-	  ShowName		  off
-	  GotoTag		  "dO2r"
+	  GotoTag		  "O1r"
 	}
 	Block {
 	  BlockType		  From
@@ -14740,27 +13598,18 @@ Model {
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "Left Torque14"
-	  SID			  "3590"
-	  Position		  [220, 483, 260, 497]
-	  ZOrder		  3014
-	  ShowName		  off
-	  GotoTag		  "dO1r"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "Left Torque15"
 	  SID			  "3591"
-	  Position		  [895, 253, 945, 267]
+	  Position		  [855, 168, 905, 182]
 	  ZOrder		  3027
 	  ShowName		  off
-	  GotoTag		  "Ph2r"
+	  GotoTag		  "O2r"
 	}
 	Block {
 	  BlockType		  From
 	  Name			  "Left Torque16"
 	  SID			  "3592"
-	  Position		  [895, 358, 945, 372]
+	  Position		  [855, 273, 905, 287]
 	  ZOrder		  3031
 	  ShowName		  off
 	  GotoTag		  "dDr"
@@ -14769,25 +13618,25 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque17"
 	  SID			  "3593"
-	  Position		  [895, 383, 945, 397]
+	  Position		  [855, 298, 905, 312]
 	  ZOrder		  3032
 	  ShowName		  off
-	  GotoTag		  "dPh1r"
+	  GotoTag		  "dO1r"
 	}
 	Block {
 	  BlockType		  From
 	  Name			  "Left Torque18"
 	  SID			  "3594"
-	  Position		  [895, 408, 945, 422]
+	  Position		  [855, 323, 905, 337]
 	  ZOrder		  3033
 	  ShowName		  off
-	  GotoTag		  "dPh2r"
+	  GotoTag		  "dO2r"
 	}
 	Block {
 	  BlockType		  From
 	  Name			  "Left Torque19"
 	  SID			  "3595"
-	  Position		  [895, 283, 945, 297]
+	  Position		  [855, 198, 905, 212]
 	  ZOrder		  3028
 	  ShowName		  off
 	  GotoTag		  "dXcr"
@@ -14805,7 +13654,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque20"
 	  SID			  "3597"
-	  Position		  [895, 308, 945, 322]
+	  Position		  [855, 223, 905, 237]
 	  ZOrder		  3029
 	  ShowName		  off
 	  GotoTag		  "dYcr"
@@ -14814,7 +13663,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque21"
 	  SID			  "3598"
-	  Position		  [895, 333, 945, 347]
+	  Position		  [855, 248, 905, 262]
 	  ZOrder		  3030
 	  ShowName		  off
 	  GotoTag		  "dThcr"
@@ -14839,60 +13688,6 @@ Model {
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "Left Torque24"
-	  SID			  "3601"
-	  Position		  [220, 588, 260, 602]
-	  ZOrder		  3060
-	  ShowName		  off
-	  GotoTag		  "dThcr"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque25"
-	  SID			  "3602"
-	  Position		  [220, 513, 260, 527]
-	  ZOrder		  3015
-	  ShowName		  off
-	  GotoTag		  "dThcr"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque26"
-	  SID			  "3603"
-	  Position		  [390, 558, 445, 572]
-	  ZOrder		  3153
-	  ShowName		  off
-	  GotoTag		  "ddO2r"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque27"
-	  SID			  "3604"
-	  Position		  [390, 483, 445, 497]
-	  ZOrder		  3140
-	  ShowName		  off
-	  GotoTag		  "ddO1r"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque28"
-	  SID			  "3605"
-	  Position		  [390, 588, 445, 602]
-	  ZOrder		  3158
-	  ShowName		  off
-	  GotoTag		  "ddThcr"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque29"
-	  SID			  "3606"
-	  Position		  [390, 513, 445, 527]
-	  ZOrder		  3152
-	  ShowName		  off
-	  GotoTag		  "ddThcr"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "Left Torque3"
 	  SID			  "3607"
 	  Position		  [290, 353, 325, 367]
@@ -14904,7 +13699,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque34"
 	  SID			  "3608"
-	  Position		  [890, 513, 940, 527]
+	  Position		  [850, 428, 900, 442]
 	  ZOrder		  3116
 	  ShowName		  off
 	  GotoTag		  "ddDr"
@@ -14913,7 +13708,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque35"
 	  SID			  "3609"
-	  Position		  [890, 438, 940, 452]
+	  Position		  [850, 353, 900, 367]
 	  ZOrder		  3113
 	  ShowName		  off
 	  GotoTag		  "ddXcr"
@@ -14922,7 +13717,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque36"
 	  SID			  "3610"
-	  Position		  [890, 463, 940, 477]
+	  Position		  [850, 378, 900, 392]
 	  ZOrder		  3114
 	  ShowName		  off
 	  GotoTag		  "ddYcr"
@@ -14931,52 +13726,34 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque37"
 	  SID			  "3611"
-	  Position		  [890, 488, 940, 502]
+	  Position		  [850, 403, 900, 417]
 	  ZOrder		  3115
 	  ShowName		  off
 	  GotoTag		  "ddThcr"
 	}
 	Block {
 	  BlockType		  From
-	  Name			  "Left Torque4"
-	  SID			  "3612"
-	  Position		  [45, 483, 80, 497]
-	  ZOrder		  3006
-	  ShowName		  off
-	  GotoTag		  "O1r"
-	}
-	Block {
-	  BlockType		  From
 	  Name			  "Left Torque44"
 	  SID			  "3613"
-	  Position		  [890, 538, 940, 552]
+	  Position		  [850, 453, 900, 467]
 	  ZOrder		  3136
 	  ShowName		  off
-	  GotoTag		  "ddPh1r"
+	  GotoTag		  "ddO1r"
 	}
 	Block {
 	  BlockType		  From
 	  Name			  "Left Torque45"
 	  SID			  "3614"
-	  Position		  [890, 563, 940, 577]
+	  Position		  [850, 478, 900, 492]
 	  ZOrder		  3137
 	  ShowName		  off
-	  GotoTag		  "ddPh2r"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque5"
-	  SID			  "3615"
-	  Position		  [45, 513, 80, 527]
-	  ZOrder		  3007
-	  ShowName		  off
-	  GotoTag		  "Thcr"
+	  GotoTag		  "ddO2r"
 	}
 	Block {
 	  BlockType		  From
 	  Name			  "Left Torque6"
 	  SID			  "3616"
-	  Position		  [895, 128, 945, 142]
+	  Position		  [855, 43, 905, 57]
 	  ZOrder		  3022
 	  ShowName		  off
 	  GotoTag		  "Xcr"
@@ -14985,7 +13762,7 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque7"
 	  SID			  "3617"
-	  Position		  [895, 153, 945, 167]
+	  Position		  [855, 68, 905, 82]
 	  ZOrder		  3023
 	  ShowName		  off
 	  GotoTag		  "Ycr"
@@ -14994,26 +13771,17 @@ Model {
 	  BlockType		  From
 	  Name			  "Left Torque8"
 	  SID			  "3618"
-	  Position		  [895, 178, 945, 192]
+	  Position		  [855, 93, 905, 107]
 	  ZOrder		  3024
 	  ShowName		  off
 	  GotoTag		  "Thcr"
-	}
-	Block {
-	  BlockType		  From
-	  Name			  "Left Torque9"
-	  SID			  "3619"
-	  Position		  [45, 558, 80, 572]
-	  ZOrder		  3053
-	  ShowName		  off
-	  GotoTag		  "O2r"
 	}
 	Block {
 	  BlockType		  Mux
 	  Name			  "Mux"
 	  SID			  "3620"
 	  Ports			  [6, 1]
-	  Position		  [970, 125, 975, 270]
+	  Position		  [930, 40, 935, 185]
 	  ZOrder		  3034
 	  ShowName		  off
 	  Inputs		  "6"
@@ -15024,7 +13792,7 @@ Model {
 	  Name			  "Mux1"
 	  SID			  "3621"
 	  Ports			  [6, 1]
-	  Position		  [970, 280, 975, 425]
+	  Position		  [930, 195, 935, 340]
 	  ZOrder		  3035
 	  ShowName		  off
 	  Inputs		  "6"
@@ -15035,7 +13803,7 @@ Model {
 	  Name			  "Mux2"
 	  SID			  "3622"
 	  Ports			  [6, 1]
-	  Position		  [970, 435, 975, 580]
+	  Position		  [930, 350, 935, 495]
 	  ZOrder		  3095
 	  ShowName		  off
 	  Inputs		  "6"
@@ -16799,189 +15567,10 @@ Model {
 	}
 	Block {
 	  BlockType		  Scope
-	  Name			  "Scope 1"
-	  SID			  "3707"
-	  Ports			  [1]
-	  Position		  [165, 499, 185, 521]
-	  ZOrder		  3038
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [692, 56, 1359, 719]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData52"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 10"
-	  SID			  "3708"
-	  Ports			  [1]
-	  Position		  [545, 524, 565, 546]
-	  ZOrder		  3145
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData28"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 11"
-	  SID			  "3709"
-	  Ports			  [1]
-	  Position		  [545, 499, 565, 521]
-	  ZOrder		  3144
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "xonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData42"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 12"
-	  SID			  "3710"
-	  Ports			  [1]
-	  Position		  [545, 599, 565, 621]
-	  ZOrder		  3157
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData60"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 13"
-	  SID			  "3711"
-	  Ports			  [1]
-	  Position		  [545, 574, 565, 596]
-	  ZOrder		  3156
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "xonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData66"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
 	  Name			  "Scope 14"
 	  SID			  "3712"
 	  Ports			  [1]
-	  Position		  [1020, 164, 1040, 186]
+	  Position		  [980, 79, 1000, 101]
 	  ZOrder		  3163
 	  ShowName		  off
 	  Floating		  off
@@ -17018,7 +15607,7 @@ Model {
 	  Name			  "Scope 15"
 	  SID			  "3713"
 	  Ports			  [1]
-	  Position		  [1020, 319, 1040, 341]
+	  Position		  [980, 234, 1000, 256]
 	  ZOrder		  3164
 	  ShowName		  off
 	  Floating		  off
@@ -17051,259 +15640,10 @@ Model {
 	}
 	Block {
 	  BlockType		  Scope
-	  Name			  "Scope 2"
-	  SID			  "3714"
-	  Ports			  [1]
-	  Position		  [345, 524, 365, 546]
-	  ZOrder		  3052
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData53"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 3"
-	  SID			  "3715"
-	  Ports			  [1]
-	  Position		  [345, 499, 365, 521]
-	  ZOrder		  3046
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "xonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData79"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 4"
-	  SID			  "3716"
-	  Ports			  [1]
-	  Position		  [165, 574, 185, 596]
-	  ZOrder		  3057
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [692, 56, 1359, 719]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData62"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 5"
-	  SID			  "3717"
-	  Ports			  [1]
-	  Position		  [165, 524, 185, 546]
-	  ZOrder		  3048
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [9, 56, 676, 719]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData81"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 6"
-	  SID			  "3718"
-	  Ports			  [1]
-	  Position		  [165, 599, 185, 621]
-	  ZOrder		  3058
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [9, 56, 676, 719]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  ZoomMode		  "yonly"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData63"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 7"
-	  SID			  "3719"
-	  Ports			  [1]
-	  Position		  [345, 599, 365, 621]
-	  ZOrder		  3064
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData64"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
-	  Name			  "Scope 8"
-	  SID			  "3720"
-	  Ports			  [1]
-	  Position		  [345, 574, 365, 596]
-	  ZOrder		  3063
-	  ShowName		  off
-	  Floating		  off
-	  Location		  [5, 48, 1371, 727]
-	  Open			  off
-	  NumInputPorts		  "1"
-	  List {
-	    ListType		    AxesTitles
-	    axes1		    "%<SignalLabel>"
-	  }
-	  List {
-	    ListType		    ScopeGraphics
-	    FigureColor		    "[0.5 0.5 0.5]"
-	    AxesColor		    "[0 0 0]"
-	    AxesTickColor	    "[1 1 1]"
-	    LineColors		    "[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	    LineStyles		    "-|-|-|-|-|-"
-	    LineWidths		    "[0.5 0.5 0.5 0.5 0.5 0.5]"
-	    MarkerStyles	    "none|none|none|none|none|none"
-	  }
-	  ShowLegends		  off
-	  TimeRange		  "500"
-	  YMin			  "-15"
-	  YMax			  "15"
-	  SaveName		  "ScopeData65"
-	  DataFormat		  "StructureWithTime"
-	  LimitDataPoints	  off
-	  SampleTime		  "0"
-	}
-	Block {
-	  BlockType		  Scope
 	  Name			  "Scope 9"
 	  SID			  "3721"
 	  Ports			  [1]
-	  Position		  [1020, 474, 1040, 496]
+	  Position		  [980, 389, 1000, 411]
 	  ZOrder		  3098
 	  ShowName		  off
 	  Floating		  off
@@ -17335,90 +15675,6 @@ Model {
 	  SampleTime		  "0"
 	}
 	Block {
-	  BlockType		  Sum
-	  Name			  "Sum1"
-	  SID			  "3722"
-	  Ports			  [2, 1]
-	  Position		  [100, 555, 120, 575]
-	  ZOrder		  3055
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum2"
-	  SID			  "3723"
-	  Ports			  [2, 1]
-	  Position		  [280, 555, 300, 575]
-	  ZOrder		  3061
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum3"
-	  SID			  "3724"
-	  Ports			  [2, 1]
-	  Position		  [465, 555, 485, 575]
-	  ZOrder		  3154
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum4"
-	  SID			  "3725"
-	  Ports			  [2, 1]
-	  Position		  [100, 480, 120, 500]
-	  ZOrder		  3008
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum5"
-	  SID			  "3726"
-	  Ports			  [2, 1]
-	  Position		  [465, 480, 485, 500]
-	  ZOrder		  3142
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
-	  BlockType		  Sum
-	  Name			  "Sum6"
-	  SID			  "3727"
-	  Ports			  [2, 1]
-	  Position		  [280, 480, 300, 500]
-	  ZOrder		  3016
-	  ShowName		  off
-	  IconShape		  "round"
-	  Inputs		  "|+-"
-	  InputSameDT		  off
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	}
-	Block {
 	  BlockType		  ToWorkspace
 	  Name			  "To Workspace 1"
 	  SID			  "3728"
@@ -17438,7 +15694,7 @@ Model {
 	  Name			  "To Workspace 3"
 	  SID			  "3729"
 	  Ports			  [1]
-	  Position		  [1020, 140, 1110, 160]
+	  Position		  [980, 55, 1070, 75]
 	  ZOrder		  2802
 	  ShowName		  off
 	  VariableName		  "reference_cluster"
@@ -17452,7 +15708,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "C*"
 	  SID			  "3730"
-	  Position		  [1015, 193, 1045, 207]
+	  Position		  [975, 108, 1005, 122]
 	  ZOrder		  3036
 	  IconDisplay		  "Port number"
 	}
@@ -17460,7 +15716,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "dC*"
 	  SID			  "3731"
-	  Position		  [1015, 348, 1045, 362]
+	  Position		  [975, 263, 1005, 277]
 	  ZOrder		  3037
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -17469,7 +15725,7 @@ Model {
 	  BlockType		  Outport
 	  Name			  "ddC*"
 	  SID			  "3732"
-	  Position		  [1015, 503, 1045, 517]
+	  Position		  [975, 418, 1005, 432]
 	  ZOrder		  3096
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -17501,88 +15757,6 @@ Model {
 	  SrcPort		  7
 	  DstBlock		  "Goto25"
 	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  5
-	  SrcBlock		  "Left Torque28"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    6
-	    DstBlock		    "Sum3"
-	    DstPort		    2
-	  }
-	  Branch {
-	    ZOrder		    7
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 12"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  8
-	  SrcBlock		  "Left Torque26"
-	  SrcPort		  1
-	  DstBlock		  "Sum3"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  9
-	  SrcBlock		  "Sum3"
-	  SrcPort		  1
-	  Points		  [3, 0]
-	  Branch {
-	    ZOrder		    10
-	    DstBlock		    "Goto11"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    11
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 13"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  12
-	  SrcBlock		  "Left Torque29"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    13
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 10"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    14
-	    DstBlock		    "Sum5"
-	    DstPort		    2
-	  }
-	}
-	Line {
-	  ZOrder		  15
-	  SrcBlock		  "Left Torque27"
-	  SrcPort		  1
-	  DstBlock		  "Sum5"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  16
-	  SrcBlock		  "Sum5"
-	  SrcPort		  1
-	  Points		  [3, 0]
-	  Branch {
-	    ZOrder		    17
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 11"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    18
-	    DstBlock		    "Goto12"
-	    DstPort		    1
-	  }
 	}
 	Line {
 	  ZOrder		  19
@@ -17771,88 +15945,6 @@ Model {
 	  SrcPort		  1
 	  DstBlock		  "Goto10"
 	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  48
-	  SrcBlock		  "Left Torque24"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    49
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 7"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    50
-	    DstBlock		    "Sum2"
-	    DstPort		    2
-	  }
-	}
-	Line {
-	  ZOrder		  51
-	  SrcBlock		  "Left Torque13"
-	  SrcPort		  1
-	  DstBlock		  "Sum2"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  52
-	  SrcBlock		  "Sum2"
-	  SrcPort		  1
-	  Points		  [3, 0]
-	  Branch {
-	    ZOrder		    53
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 8"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    54
-	    DstBlock		    "Goto4"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  55
-	  SrcBlock		  "Left Torque9"
-	  SrcPort		  1
-	  DstBlock		  "Sum1"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  56
-	  SrcBlock		  "Sum1"
-	  SrcPort		  1
-	  Points		  [5, 0]
-	  Branch {
-	    ZOrder		    57
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 4"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    58
-	    DstBlock		    "Goto3"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  59
-	  SrcBlock		  "Left Torque10"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    60
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 6"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    61
-	    DstBlock		    "Sum1"
-	    DstPort		    2
-	  }
 	}
 	Line {
 	  ZOrder		  62
@@ -18200,93 +16292,11 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  118
-	  SrcBlock		  "Left Torque25"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    119
-	    DstBlock		    "Sum6"
-	    DstPort		    2
-	  }
-	  Branch {
-	    ZOrder		    120
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 2"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  121
-	  SrcBlock		  "Left Torque14"
-	  SrcPort		  1
-	  DstBlock		  "Sum6"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  122
-	  SrcBlock		  "Left Torque4"
-	  SrcPort		  1
-	  DstBlock		  "Sum4"
-	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  123
-	  SrcBlock		  "Sum4"
-	  SrcPort		  1
-	  Points		  [5, 0]
-	  Branch {
-	    ZOrder		    124
-	    DstBlock		    "Goto35"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    125
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 1"
-	    DstPort		    1
-	  }
-	}
-	Line {
-	  ZOrder		  126
-	  SrcBlock		  "Sum6"
-	  SrcPort		  1
-	  Points		  [3, 0]
-	  Branch {
-	    ZOrder		    127
-	    DstBlock		    "Goto45"
-	    DstPort		    1
-	  }
-	  Branch {
-	    ZOrder		    128
-	    Points		    [0, 20]
-	    DstBlock		    "Scope 3"
-	    DstPort		    1
-	  }
-	}
-	Line {
 	  ZOrder		  129
 	  SrcBlock		  "Demux4"
 	  SrcPort		  3
 	  DstBlock		  "Goto33"
 	  DstPort		  1
-	}
-	Line {
-	  ZOrder		  130
-	  SrcBlock		  "Left Torque5"
-	  SrcPort		  1
-	  Points		  [25, 0]
-	  Branch {
-	    ZOrder		    131
-	    DstBlock		    "Sum4"
-	    DstPort		    2
-	  }
-	  Branch {
-	    ZOrder		    132
-	    Points		    [0, 15]
-	    DstBlock		    "Scope 5"
-	    DstPort		    1
-	  }
 	}
 	Line {
 	  ZOrder		  133
@@ -26307,8 +24317,6 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      YMin		      "-3"
-      YMax		      "3"
       SaveName		      "ScopeData1"
       LimitDataPoints	      off
     }

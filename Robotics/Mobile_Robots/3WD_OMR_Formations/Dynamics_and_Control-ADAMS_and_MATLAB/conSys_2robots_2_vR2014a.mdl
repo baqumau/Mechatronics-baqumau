@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.490"
+    ComputedModelVersion    "1.491"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -41,7 +41,7 @@ Model {
       $ObjectID		      3
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1382.0, 744.0]
+      Location		      [-8.0, 0.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		4
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Fri Nov 08 23:50:45 2024"
-  RTWModifiedTimeStamp	  652627275
-  ModelVersionFormat	  "1.%<AutoIncrement:490>"
+  LastModifiedDate	  "Sun Mar 30 16:04:32 2025"
+  RTWModifiedTimeStamp	  665251469
+  ModelVersionFormat	  "1.%<AutoIncrement:491>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1352,7 +1352,7 @@ Model {
       RequestExecContextInheritance off
       System {
 	Name			"Cluster Space Controller"
-	Location		[-8, -8, 1374, 736]
+	Location		[-8, 0, 1374, 744]
 	Open			on
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -5006,7 +5006,7 @@ Model {
 	}
 	Block {
 	  BlockType		  S-Function
-	  Name			  "High-gain Observer 1"
+	  Name			  "High-gain Observer 2"
 	  SID			  "1967"
 	  Ports			  [1, 1]
 	  Position		  [1035, 370, 1135, 400]
@@ -7442,7 +7442,7 @@ Model {
 	  ZOrder		  1262
 	  SrcBlock		  "Mux17"
 	  SrcPort		  1
-	  DstBlock		  "High-gain Observer 1"
+	  DstBlock		  "High-gain Observer 2"
 	  DstPort		  1
 	}
 	Line {
@@ -7527,7 +7527,7 @@ Model {
 	}
 	Line {
 	  ZOrder		  1263
-	  SrcBlock		  "High-gain Observer 1"
+	  SrcBlock		  "High-gain Observer 2"
 	  SrcPort		  1
 	  DstBlock		  "Demux3"
 	  DstPort		  1
@@ -19722,7 +19722,6 @@ Model {
 		Prompt			"Direct feedthrough "
 		Value			"no"
 		Evaluate		"off"
-		Visible			"off"
 	      }
 	      Object {
 		$ObjectID		37

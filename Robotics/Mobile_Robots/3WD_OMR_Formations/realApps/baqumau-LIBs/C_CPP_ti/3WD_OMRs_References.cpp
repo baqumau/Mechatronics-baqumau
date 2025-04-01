@@ -10,8 +10,8 @@
 //---------------------------------------------------------------------------------------------------------------
 // Developing references builder functions:
 //---------------------------------------------------------------------------------------------------------------
-// Configuring the corresponding reference trajectory for OMRs control system:
-Reference createReference(float sampleTime, enum Reference_Type reftype){
+// Configuring the corresponding reference trajectory for OMRs control system (using CS framework):
+Reference createReference(float sampleTime, Reference_Type reftype){
     // Configuring the members of the desired circumference trajectory structure:
     Reference REF;                                                                          // Creates a reference trajectory structure as REF.
     REF.s_out = 9*Robots_Qty;                                                               // Assign value of output size to the member s_out for the REF structure.
@@ -37,106 +37,168 @@ Reference createReference(float sampleTime, enum Reference_Type reftype){
     REF.y_k = (float *)malloc(9*Robots_Qty * sizeof(float));                                // Allocate memory for the output vector y(k).
     REF.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for flag of the structure defined as REF (disable or enable reference builder).
     //-----------------------------------------------
-    REF.INT_1 = createIntegrator(3*Robots_Qty,sampleTime,1.0f);                             // Create first integrator structure within reference builder REF structure.
-    REF.INT_2 = createIntegrator(3*Robots_Qty,sampleTime,1.0f);                             // Create second integrator structure within reference builder REF structure.
     switch(reftype){
         case MINGYUE_01:{
             REF.COR = createAngleConverter(Robots_Qty);                                     // Create a conversion angle structure.
             REF.DIF_1 = createDifferentiator(Robots_Qty,sampleTime,1.0f,100.0f);            // Create first differentiator structure within reference builder REF structure.
             REF.DIF_2 = createDifferentiator(Robots_Qty,sampleTime,1.0f,100.0f);            // Create second differentiator structure within reference builder REF structure.
+            REF.INT_1 = createIntegrator((2+Robots_Qty),sampleTime,1.0f);                   // Create first integrator structure within reference builder REF structure.
+            REF.INT_2 = createIntegrator(1,sampleTime,1.0f);                                // Create second integrator structure within reference builder REF structure.
+            REF.INT_3 = createIntegrator((Robots_Qty+1),sampleTime,1.0f);                   // Create third integrator structure within reference builder REF structure.
             break;
         }
+        default:{
+            REF.INT_1 = createIntegrator(3*Robots_Qty,sampleTime,1.0f);                     // Create first integrator structure within reference builder REF structure.
+            REF.INT_2 = createIntegrator(3*Robots_Qty,sampleTime,1.0f);                     // Create second integrator structure within reference builder REF structure.
+        }
     }
+    //-----------------------------------------------
     REF.flag[0] = false;                                                                    // Setting REF flag to false.
     return REF;
 }
 //---------------------------------------------------------------------------------------------------------------
-// Initialize the circumference-shape reference trajectory for OMRs control system:
-void initReference(Reference REF, enum Control_System consys, enum Reference_Type reftype, float z_0[]){
-    int i;                                                                                  // Declaration of i as integer variable.
-    float *Ci1_0 = (float *)malloc(6*Robots_Qty * sizeof(float));                           // Vector to place the initial conditions of associated INT_1 integrator within REF structure.
-    float *Ci2_0 = (float *)malloc(6*Robots_Qty * sizeof(float));                           // Vector to place the initial conditions of associated INT_2 integrator within REF structure.
-    for(i = 0; i < 3*Robots_Qty; i++){
+// Initialize the circumference-shape reference trajectory for OMRs control system (using CS framework):
+void initReference(Reference REF, Control_System consys, Reference_Type reftype, float z_0[]){
+    int i, s = 3*Robots_Qty, r = 2*s;                                                       // Declaration of i, r and s as integer variables.
+    float *Ci1_0 = (float *)malloc(r * sizeof(float));                                      // Allocate temporal memory for a vector to place the initial conditions of associated INT_1 integrator within REF structure.
+    float *Ci2_0 = (float *)malloc(r * sizeof(float));                                      // Allocate temporal memory for a vector to place the initial conditions of associated INT_2 integrator within REF structure.
+    for(i = 0; i < s; i++){
         // Initial conditions Z_0 of desired cluster reference trajectories:
         REF.Z_0[i] = z_0[i];                                                                // Saving cluster initial conditions data for c(0) within REF structure.
-        REF.Z_0[i+3*Robots_Qty] = z_0[i+3*Robots_Qty];                                      // Saving cluster initial conditions data for c(0) within REF structure.
-        REF.Z_0[i+6*Robots_Qty] = z_0[i+6*Robots_Qty];                                      // Saving cluster initial conditions data for c(0) within REF structure.
+        REF.Z_0[i+s] = z_0[i+s];                                                            // Saving cluster initial conditions data for c(0) within REF structure.
+        REF.Z_0[i+r] = z_0[i+r];                                                            // Saving cluster initial conditions data for c(0) within REF structure.
         // Initial conditions for cluster space variables:
         REF.z1_k[i] = z_0[i];                                                               // Saving initial cluster's pose c1(k = 0) for OMRs formation.
-        REF.z1_kp1[i] = REF.Ts*z_0[i+3*Robots_Qty] + z_0[i];                                // Saving cluster's pose prediction c1(k + 1) within REF structure.
-        REF.z2_k[i] = z_0[i+3*Robots_Qty];                                                  // Saving initial cluster's velocity c2(k = 0) for OMRs formation.
-        REF.z2_kp1[i] = REF.Ts*z_0[i+6*Robots_Qty] + z_0[i+3*Robots_Qty];                   // Saving cluster's velocity prediction c2(k + 1) within REF structure.
-        REF.z3_k[i] = z_0[i+6*Robots_Qty];                                                  // Saving initial cluster's acceleration c3(k = 0) for OMRs formation.
-        REF.z3_kp1[i] = (1.0/REF.Ts)*(REF.z2_kp1[i] - REF.z2_k[i]);                         // Differentiation operator to obtain prediction c3(k + 1).
+        REF.z1_kp1[i] = REF.Ts*z_0[i+s] + z_0[i];                                           // Saving cluster's pose prediction c1(k + 1) within REF structure.
+        REF.z2_k[i] = z_0[i+s];                                                             // Saving initial cluster's velocity c2(k = 0) for OMRs formation.
+        REF.z2_kp1[i] = REF.Ts*z_0[i+r] + z_0[i+s];                                         // Saving cluster's velocity prediction c2(k + 1) within REF structure.
+        REF.z3_k[i] = z_0[i+r];                                                             // Saving initial cluster's acceleration c3(k = 0) for OMRs formation.
+        REF.z3_kp1[i] = (1.0/REF.Ts)*(REF.z2_kp1[i] - REF.z2_k[i]);                         // Simple differentiation operator to obtain the prediction c3(k + 1).
         // Adding initial conditions to associated INT_1 and INT_2 integration structures, within REF structure:
         Ci1_0[i] = REF.z2_k[i];
-        Ci1_0[i+3*Robots_Qty] = REF.z1_k[i];
+        Ci1_0[i+s] = REF.z1_k[i];
         Ci2_0[i] = REF.z3_k[i];
-        Ci2_0[i+3*Robots_Qty] = REF.z2_k[i];
+        Ci2_0[i+s] = REF.z2_k[i];
     }
     // Initial conditions X_0 of desired robot pose trajectories:
     switch(Robots_Qty){
         case 2:{
-            float SC2_0 = sinf(REF.Z_0[2]);
-            float CC2_0 = cosf(REF.Z_0[2]);
-            float OP1_0 = REF.Z_0[3]*SC2_0;
-            float OP2_0 = REF.Z_0[3]*CC2_0;
-            float OP3_0 = REF.Z_0[9]*SC2_0;
-            float OP4_0 = REF.Z_0[9]*CC2_0;
-            float OP5_0 = REF.Z_0[15]*SC2_0;
-            float OP6_0 = REF.Z_0[15]*CC2_0;
-            float OP7_0 = OP2_0*REF.Z_0[8];
-            float OP8_0 = OP1_0*REF.Z_0[8];
-            float OP9_0 = 2.0f*OP4_0*REF.Z_0[8];
-            float OP10_0 = 2.0f*OP3_0*REF.Z_0[8];
-            float OP11_0 = REF.Z_0[8]*REF.Z_0[8];
-            float OP12_0 = (SC2_0*OP11_0 - CC2_0*REF.Z_0[14]);
-            float OP13_0 = (CC2_0*OP11_0 + SC2_0*REF.Z_0[14]);
-            float OP14_0 = REF.Z_0[3]*OP12_0;
-            float OP15_0 = REF.Z_0[3]*OP13_0;
-            float OP16_0 = OP3_0 + OP7_0;
-            float OP17_0 = OP4_0 - OP8_0;
-            float OP18_0 = OP5_0 + OP9_0 - OP14_0;
-            float OP19_0 = OP6_0 - OP10_0 - OP15_0;
-            //------------------------------
-            REF.X_0[0] = REF.Z_0[0] + OP1_0;
-            REF.X_0[1] = REF.Z_0[1] + OP2_0;
-            REF.X_0[2] = REF.Z_0[2] + REF.Z_0[4];
-            REF.X_0[3] = REF.Z_0[0] - OP1_0;
-            REF.X_0[4] = REF.Z_0[1] - OP2_0;
-            REF.X_0[5] = REF.Z_0[2] + REF.Z_0[5];
-            REF.X_0[6] = REF.Z_0[6] + OP16_0;
-            REF.X_0[7] = REF.Z_0[7] + OP17_0;
-            REF.X_0[8] = REF.Z_0[8] + REF.Z_0[10];
-            REF.X_0[9] = REF.Z_0[6] - OP16_0;
-            REF.X_0[10] = REF.Z_0[7] - OP17_0;
-            REF.X_0[11] = REF.Z_0[8] + REF.Z_0[11];
-            REF.X_0[12] = REF.Z_0[12] + OP18_0;
-            REF.X_0[13] = REF.Z_0[13] + OP19_0;
-            REF.X_0[14] = REF.Z_0[14] + REF.Z_0[16];
-            REF.X_0[15] = REF.Z_0[12] - OP18_0;
-            REF.X_0[16] = REF.Z_0[13] - OP19_0;
-            REF.X_0[17] = REF.Z_0[14] + REF.Z_0[17];
+            switch(consys){
+                case SMC_CSa:{
+                    float SC2_0 = sinf(REF.Z_0[2]);                                         // Pre-compute sin(thc);
+                    float CC2_0 = cosf(REF.Z_0[2]);                                         // Pre-compute cos(thc);
+                    float OP1_0 = REF.Z_0[3]*SC2_0;                                         // Pre-compute operation 1;
+                    float OP2_0 = REF.Z_0[3]*CC2_0;                                         // Pre-compute operation 2;
+                    float OP3_0 = REF.Z_0[9]*SC2_0;                                         // Pre-compute operation 3;
+                    float OP4_0 = REF.Z_0[9]*CC2_0;                                         // Pre-compute operation 4;
+                    float OP5_0 = REF.Z_0[15]*SC2_0;                                        // Pre-compute operation 5;
+                    float OP6_0 = REF.Z_0[15]*CC2_0;                                        // Pre-compute operation 6;
+                    float OP7_0 = OP2_0*REF.Z_0[8];                                         // Pre-compute operation 7;
+                    float OP8_0 = OP1_0*REF.Z_0[8];                                         // Pre-compute operation 8;
+                    float OP9_0 = 2.0f*OP4_0*REF.Z_0[8];                                    // Pre-compute operation 9;
+                    float OP10_0 = 2.0f*OP3_0*REF.Z_0[8];                                   // Pre-compute operation 10;
+                    float OP11_0 = REF.Z_0[8]*REF.Z_0[8];                                   // Pre-compute operation 11;
+                    float OP12_0 = (SC2_0*OP11_0 - CC2_0*REF.Z_0[14]);                      // Pre-compute operation 12;
+                    float OP13_0 = (CC2_0*OP11_0 + SC2_0*REF.Z_0[14]);                      // Pre-compute operation 13;
+                    float OP14_0 = REF.Z_0[3]*OP12_0;                                       // Pre-compute operation 14;
+                    float OP15_0 = REF.Z_0[3]*OP13_0;                                       // Pre-compute operation 15;
+                    float OP16_0 = OP3_0 + OP7_0;                                           // Pre-compute operation 16;
+                    float OP17_0 = OP4_0 - OP8_0;                                           // Pre-compute operation 17;
+                    float OP18_0 = OP5_0 + OP9_0 - OP14_0;                                  // Pre-compute operation 18;
+                    float OP19_0 = OP6_0 - OP10_0 - OP15_0;                                 // Pre-compute operation 19;
+                    //------------------------------
+                    // Computing the initial conditions for the state variables in the robot space:
+                    REF.X_0[0] = REF.Z_0[0] + OP1_0;
+                    REF.X_0[1] = REF.Z_0[1] + OP2_0;
+                    REF.X_0[2] = REF.Z_0[4];
+                    REF.X_0[3] = REF.Z_0[0] - OP1_0;
+                    REF.X_0[4] = REF.Z_0[1] - OP2_0;
+                    REF.X_0[5] = REF.Z_0[5];
+                    REF.X_0[6] = REF.Z_0[6] + OP16_0;
+                    REF.X_0[7] = REF.Z_0[7] + OP17_0;
+                    REF.X_0[8] = REF.Z_0[10];
+                    REF.X_0[9] = REF.Z_0[6] - OP16_0;
+                    REF.X_0[10] = REF.Z_0[7] - OP17_0;
+                    REF.X_0[11] = REF.Z_0[11];
+                    REF.X_0[12] = REF.Z_0[12] + OP18_0;
+                    REF.X_0[13] = REF.Z_0[13] + OP19_0;
+                    REF.X_0[14] = REF.Z_0[16];
+                    REF.X_0[15] = REF.Z_0[12] - OP18_0;
+                    REF.X_0[16] = REF.Z_0[13] - OP19_0;
+                    REF.X_0[17] = REF.Z_0[17];
+                    break;
+                }
+                default:{
+                    float SC2_0 = sinf(REF.Z_0[2]);                                         // Pre-compute sin(thc(0));
+                    float CC2_0 = cosf(REF.Z_0[2]);                                         // Pre-compute cos(thc(0));
+                    float OP1_0 = REF.Z_0[3]*SC2_0;                                         // Pre-compute operation 1;
+                    float OP2_0 = REF.Z_0[3]*CC2_0;                                         // Pre-compute operation 2;
+                    float OP3_0 = REF.Z_0[9]*SC2_0;                                         // Pre-compute operation 3;
+                    float OP4_0 = REF.Z_0[9]*CC2_0;                                         // Pre-compute operation 4;
+                    float OP5_0 = REF.Z_0[15]*SC2_0;                                        // Pre-compute operation 5;
+                    float OP6_0 = REF.Z_0[15]*CC2_0;                                        // Pre-compute operation 6;
+                    float OP7_0 = OP2_0*REF.Z_0[8];                                         // Pre-compute operation 7;
+                    float OP8_0 = OP1_0*REF.Z_0[8];                                         // Pre-compute operation 8;
+                    float OP9_0 = 2.0f*OP4_0*REF.Z_0[8];                                    // Pre-compute operation 9;
+                    float OP10_0 = 2.0f*OP3_0*REF.Z_0[8];                                   // Pre-compute operation 10;
+                    float OP11_0 = REF.Z_0[8]*REF.Z_0[8];                                   // Pre-compute operation 11;
+                    float OP12_0 = (SC2_0*OP11_0 - CC2_0*REF.Z_0[14]);                      // Pre-compute operation 12;
+                    float OP13_0 = (CC2_0*OP11_0 + SC2_0*REF.Z_0[14]);                      // Pre-compute operation 13;
+                    float OP14_0 = REF.Z_0[3]*OP12_0;                                       // Pre-compute operation 14;
+                    float OP15_0 = REF.Z_0[3]*OP13_0;                                       // Pre-compute operation 15;
+                    float OP16_0 = OP3_0 + OP7_0;                                           // Pre-compute operation 16;
+                    float OP17_0 = OP4_0 - OP8_0;                                           // Pre-compute operation 17;
+                    float OP18_0 = OP5_0 + OP9_0 - OP14_0;                                  // Pre-compute operation 18;
+                    float OP19_0 = OP6_0 - OP10_0 - OP15_0;                                 // Pre-compute operation 19;
+                    //------------------------------
+                    // Computing the initial conditions for the state variables in the robot space:
+                    REF.X_0[0] = REF.Z_0[0] + OP1_0;
+                    REF.X_0[1] = REF.Z_0[1] + OP2_0;
+                    REF.X_0[2] = REF.Z_0[2] + REF.Z_0[4];
+                    REF.X_0[3] = REF.Z_0[0] - OP1_0;
+                    REF.X_0[4] = REF.Z_0[1] - OP2_0;
+                    REF.X_0[5] = REF.Z_0[2] + REF.Z_0[5];
+                    REF.X_0[6] = REF.Z_0[6] + OP16_0;
+                    REF.X_0[7] = REF.Z_0[7] + OP17_0;
+                    REF.X_0[8] = REF.Z_0[8] + REF.Z_0[10];
+                    REF.X_0[9] = REF.Z_0[6] - OP16_0;
+                    REF.X_0[10] = REF.Z_0[7] - OP17_0;
+                    REF.X_0[11] = REF.Z_0[8] + REF.Z_0[11];
+                    REF.X_0[12] = REF.Z_0[12] + OP18_0;
+                    REF.X_0[13] = REF.Z_0[13] + OP19_0;
+                    REF.X_0[14] = REF.Z_0[14] + REF.Z_0[16];
+                    REF.X_0[15] = REF.Z_0[12] - OP18_0;
+                    REF.X_0[16] = REF.Z_0[13] - OP19_0;
+                    REF.X_0[17] = REF.Z_0[14] + REF.Z_0[17];
+                    break;
+                }
+            }
             break;
         }
     }
+    //------------------------------
     // Initial conditions for robot space variables:
-    for(i = 0; i < 3*Robots_Qty; i++){
+    for(i = 0; i < s; i++){
         REF.x1_k[i] = REF.X_0[i];                                                           // Saving initial robots' pose x1(k = 0) for OMRs formation.
-        REF.x1_kp1[i] = REF.Ts*REF.X_0[i+3*Robots_Qty] + REF.X_0[i];                        // Saving robots' pose prediction x1(k + 1) within REF structure.
-        REF.x2_k[i] = REF.X_0[i+3*Robots_Qty];                                              // Saving initial robots' velocity x2(k = 0) for OMRs formation.
-        REF.x2_kp1[i] = REF.Ts*REF.X_0[i+6*Robots_Qty] + REF.X_0[i+3*Robots_Qty];           // Saving robots' velocity prediction x2(k + 1) within REF structure.
-        REF.x3_k[i] = REF.X_0[i+6*Robots_Qty];                                              // Saving initial robots' acceleration x3(k = 0) for OMRs formation.
+        REF.x1_kp1[i] = REF.Ts*REF.X_0[i+s] + REF.X_0[i];                                   // Saving robots' pose prediction x1(k + 1) within REF structure.
+        REF.x2_k[i] = REF.X_0[i+s];                                                         // Saving initial robots' velocity x2(k = 0) for OMRs formation.
+        REF.x2_kp1[i] = REF.Ts*REF.X_0[i+r] + REF.X_0[i+s];                                 // Saving robots' velocity prediction x2(k + 1) within REF structure.
+        REF.x3_k[i] = REF.X_0[i+r];                                                         // Saving initial robots' acceleration x3(k = 0) for OMRs formation.
         REF.x3_kp1[i] = (1.0f/REF.Ts)*(REF.x2_kp1[i] - REF.x2_k[i]);                        // Differentiation operator to obtain prediction x3(k + 1).
     }
-    // Initiating REF.INT_1 and REF.INT_2 integration structures:
-    initIntegrator(REF.INT_1,Ci1_0);                                                        // Initialize first common integrator of REF references builder.
-    initIntegrator(REF.INT_2,Ci2_0);                                                        // Initialize second common integrator of REF references builder.
+    //------------------------------
     switch(reftype){
         case MINGYUE_01:{
-            float *Xco_0 = (float *)malloc(Robots_Qty * sizeof(float));                     // Vector to place the initial conditions for associated converter COR within REF reference structure.
-            float *Xd1_0 = (float *)malloc(2*Robots_Qty * sizeof(float));                   // Vector to place the initial conditions for associated differentiator DIF_1 within REF reference structure.
-            float *Xd2_0 = (float *)malloc(2*Robots_Qty * sizeof(float));                   // Vector to place the initial conditions for associated differentiator DIF_2 within REF reference structure.
+            free(Ci1_0);                                                                    // Release the allocated memory for Ci1_0.
+            free(Ci2_0);                                                                    // Release the allocated memory for Ci2_0.
+            float *Xco_0 = (float *)malloc(Robots_Qty * sizeof(float));                     // Allocate temporal memory for a vector to place the initial conditions for associated converter COR within REF reference structure.
+            float *Xd1_0 = (float *)malloc(2*Robots_Qty * sizeof(float));                   // Allocate temporal memory for a vector to place the initial conditions for associated differentiator DIF_1 within REF reference structure.
+            float *Xd2_0 = (float *)malloc(2*Robots_Qty * sizeof(float));                   // Allocate temporal memory for a vector to place the initial conditions for associated differentiator DIF_2 within REF reference structure.
+            float *Ci1_0 = (float *)malloc(2*(Robots_Qty+2) * sizeof(float));               // Allocate temporal memory for a vector to place the initial conditions of associated INT_3 integrator within REF structure.
+            float *Ci2_0 = (float *)malloc(2 * sizeof(float));                              // Allocate temporal memory for a vector to place the initial conditions of associated INT_3 integrator within REF structure.
+            float *Ci3_0 = (float *)malloc(2*(Robots_Qty+1) * sizeof(float));               // Allocate temporal memory for a vector to place the initial conditions of associated INT_3 integrator within REF structure.
+            //-----------------------------------------------
+            // Configuring initiation vectors:
             for(i = 0; i < Robots_Qty; i++){
                 Xco_0[i] = REF.X_0[2+3*i];                                                  // Initial condition for angle conversion function.
                 // Adding initial conditions to associated differentiators DIF_1 and DIF_2 within REF structure:
@@ -144,11 +206,40 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
                 Xd1_0[i+Robots_Qty] = REF.x2_k[2+3*i];
                 Xd2_0[i] = REF.x2_k[2+3*i];
                 Xd2_0[i+Robots_Qty] = REF.x3_k[2+3*i];
-            }                                    
+            }
+            // Adding initial conditions to associated integrator INT_1, within REF structure:
+            for(i = 0; i < Robots_Qty+2; i++){
+                Ci1_0[i] = REF.z2_k[i];
+                Ci1_0[i+Robots_Qty+2] = REF.z1_k[i];
+            }
+            // Adding initial conditions to associated integrator INT_2, within REF structure:
+            Ci2_0[0] = REF.z3_k[2];
+            Ci2_0[1] = REF.z2_k[2];
+            // Adding initial conditions to associated integrator INT_3, within REF structure:
+            for(i = 0; i < Robots_Qty+1; i++){
+                if(i < 2){
+                    Ci3_0[i] = REF.z3_k[i];
+                    Ci3_0[i+Robots_Qty+1] = REF.z2_k[i];
+                }
+                else{
+                    Ci3_0[i] = REF.z3_k[i+1];
+                    Ci3_0[i+Robots_Qty+1] = REF.z2_k[i+1];
+                }
+            }
+            //-----------------------------------------------
             initAngleConverter(REF.COR,Xco_0);                                              // Initialize angle conversion function to obtained angles after atan2(.) function.
             initDifferentiator(REF.DIF_1,Xd1_0);                                            // Initialize first differentiation structure within reference builder REF structure.
             initDifferentiator(REF.DIF_2,Xd2_0);                                            // Initialize second differentiation structure within reference builder REF structure.
+            // Initiating REF.INT_1, REF.INT_2 and REF.INT_3 integration structures:
+            initIntegrator(REF.INT_1,Ci1_0);                                                // Initialize first common integrator of REF references builder.
+            initIntegrator(REF.INT_2,Ci2_0);                                                // Initialize second common integrator of REF references builder.
+            initIntegrator(REF.INT_3,Ci3_0);                                                // Initialize third common integrator of REF references builder.
             break;
+        }
+        default:{
+            // Initiating REF.INT_1 and REF.INT_2 integration structures:
+            initIntegrator(REF.INT_1,Ci1_0);                                                // Initialize first common integrator of REF references builder.
+            initIntegrator(REF.INT_2,Ci2_0);                                                // Initialize second common integrator of REF references builder.
         }
     }
     switch(consys){
@@ -168,14 +259,23 @@ void initReference(Reference REF, enum Control_System consys, enum Reference_Typ
             REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
         }
         break;
+        case SMC_CSa:
+        for(i = 0; i < 3*Robots_Qty; i++){
+            // Arranging output of REF structure in the cluster space and robot space:
+            REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+            REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+            REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+        }
+        break;
     }
+    //-----------------------------------------------
     REF.flag[0] = true;                                                                     // Flag settled to true, which enables the reference builder within REF structure.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Compute the instantaneous circumference-shape reference trajectory n: 01, for OMRs control system:
-void computeCircumference01(Reference REF, enum Control_System consys, unsigned long iterations){
+// Compute the instantaneous circumference-shape reference trajectory n: 01, for OMRs control system (using CS framework):
+void computeCircumference01(Reference REF, Control_System consys, unsigned long iterations){
     int i;                                                                                  // Declaration of i as integer variable.
-    // Executing circumference builder algorithm:
+    // Executing circumference references builder algorithm (using CS framework):
     if(REF.flag[0]){
         // Updating algorithm:
         for(i = 0; i < 3*Robots_Qty; i++){
@@ -185,8 +285,6 @@ void computeCircumference01(Reference REF, enum Control_System consys, unsigned 
             REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
             REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
             REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
-            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
         // Computing equations for circumference profiles generation in the cluster space:
         float Vc = 200.0f;                                                                  // [mm/s], linear velocity of cluster centroid.
@@ -195,6 +293,7 @@ void computeCircumference01(Reference REF, enum Control_System consys, unsigned 
         float WTc = Vc*(float)(iterations)*REF.Ts/Rc + REF.Z_0[2];                          // Rate variation of sinusoidal functions.
         switch(Robots_Qty){
             case 2:{
+                //------------------------------Cluster Space--------------------------------
                 REF.z3_kp1[0] = Ac*sinf(WTc);                                               // Computing d^2(xc)/dt^2.
                 REF.z3_kp1[1] = Ac*cosf(WTc);                                               // Computing d^2(yc)/dt^2.
                 REF.z3_kp1[2] = 0.0f;                                                       // Computing d^2(thc)/dt^2.
@@ -203,53 +302,73 @@ void computeCircumference01(Reference REF, enum Control_System consys, unsigned 
                 REF.z3_kp1[5] = 0.0f;                                                       // Computing d^2(psi_2)/dt^2.
                 Integration(REF.INT_2,REF.z3_kp1);                                          // Compute second integration to c3(k + 1).
                 Integration(REF.INT_1,REF.INT_2.y_k);                                       // Compute first integration to second integration output.
-                // Computing equations for circumference profiles generation in the robot space:
-                float SC2_kp1 = sinf(REF.z1_kp1[2]);
-                float CC2_kp1 = cosf(REF.z1_kp1[2]);
-                float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;
-                float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;
-                float OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;
-                float OP4_kp1 = REF.z2_kp1[3]*CC2_kp1;
-                float OP5_kp1 = REF.z3_kp1[2]*SC2_kp1;
-                float OP6_kp1 = REF.z3_kp1[2]*CC2_kp1;
-                float OP7_kp1 = REF.z3_kp1[3]*SC2_kp1;
-                float OP8_kp1 = REF.z3_kp1[3]*CC2_kp1;
-                float OP9_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*SC2_kp1;
-                float OP10_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*CC2_kp1;
-                float OP11_kp1 = OP1_kp1*REF.z2_kp1[2];
-                float OP12_kp1 = OP2_kp1*REF.z2_kp1[2];
-                float OP13_kp1 = OP3_kp1*REF.z2_kp1[2];
-                float OP14_kp1 = OP4_kp1*REF.z2_kp1[2];
-                float OP15_kp1 = REF.z1_kp1[3]*(OP9_kp1 - OP6_kp1);
-                float OP16_kp1 = REF.z1_kp1[3]*(OP10_kp1 + OP5_kp1);
-                float OP17_kp1 = OP3_kp1 + OP12_kp1;
-                float OP18_kp1 = OP4_kp1 - OP11_kp1;
-                float OP19_kp1 = OP7_kp1 + 2.0f*OP14_kp1 - OP15_kp1;
-                float OP20_kp1 = OP8_kp1 - 2.0f*OP13_kp1 - OP16_kp1;
+                for(i = 0; i < 3*Robots_Qty; i++){
+                    REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                    // Updating data for c1(k + 1) within REF structure.
+                    REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                    // Updating data for c2(k + 1) within REF structure.
+                }
+                //-------------------------------Robot Space---------------------------------
+                float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Pre-compute sin(thc);
+                float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Pre-compute cos(thc);
+                float OP1_kp1 = REF.z1_kp1[3]*SC2_kp1;                                      // Pre-compute operation 1;
+                float OP2_kp1 = REF.z1_kp1[3]*CC2_kp1;                                      // Pre-compute operation 2;
+                float OP3_kp1 = REF.z2_kp1[3]*SC2_kp1;                                      // Pre-compute operation 3;
+                float OP4_kp1 = REF.z2_kp1[3]*CC2_kp1;                                      // Pre-compute operation 4;
+                float OP5_kp1 = REF.z3_kp1[2]*SC2_kp1;                                      // Pre-compute operation 5;
+                float OP6_kp1 = REF.z3_kp1[2]*CC2_kp1;                                      // Pre-compute operation 6;
+                float OP7_kp1 = REF.z3_kp1[3]*SC2_kp1;                                      // Pre-compute operation 7;
+                float OP8_kp1 = REF.z3_kp1[3]*CC2_kp1;                                      // Pre-compute operation 8;
+                float OP9_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*SC2_kp1;                        // Pre-compute operation 9;
+                float OP10_kp1 = REF.z2_kp1[2]*REF.z2_kp1[2]*CC2_kp1;                       // Pre-compute operation 10;
+                float OP11_kp1 = OP1_kp1*REF.z2_kp1[2];                                     // Pre-compute operation 11;
+                float OP12_kp1 = OP2_kp1*REF.z2_kp1[2];                                     // Pre-compute operation 12;
+                float OP13_kp1 = OP3_kp1*REF.z2_kp1[2];                                     // Pre-compute operation 13;
+                float OP14_kp1 = OP4_kp1*REF.z2_kp1[2];                                     // Pre-compute operation 14;
+                float OP15_kp1 = REF.z1_kp1[3]*(OP9_kp1 - OP6_kp1);                         // Pre-compute operation 15;
+                float OP16_kp1 = REF.z1_kp1[3]*(OP10_kp1 + OP5_kp1);                        // Pre-compute operation 16;
+                float OP17_kp1 = OP3_kp1 + OP12_kp1;                                        // Pre-compute operation 17;
+                float OP18_kp1 = OP4_kp1 - OP11_kp1;                                        // Pre-compute operation 18;
+                float OP19_kp1 = OP7_kp1 + 2.0f*OP14_kp1 - OP15_kp1;                        // Pre-compute operation 19;
+                float OP20_kp1 = OP8_kp1 - 2.0f*OP13_kp1 - OP16_kp1;                        // Pre-compute operation 20;
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
-                REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
                 REF.x1_kp1[3] = REF.z1_kp1[0] - OP1_kp1;
                 REF.x1_kp1[4] = REF.z1_kp1[1] - OP2_kp1;
-                REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
                 //------------------------------
                 REF.x2_kp1[0] = REF.z2_kp1[0] + OP17_kp1;
                 REF.x2_kp1[1] = REF.z2_kp1[1] + OP18_kp1;
-                REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
                 REF.x2_kp1[3] = REF.z2_kp1[0] - OP17_kp1;
                 REF.x2_kp1[4] = REF.z2_kp1[1] - OP18_kp1;
-                REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
                 //------------------------------
                 REF.x3_kp1[0] = REF.z3_kp1[0] + OP19_kp1;
                 REF.x3_kp1[1] = REF.z3_kp1[1] + OP20_kp1;
-                REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
                 REF.x3_kp1[3] = REF.z3_kp1[0] - OP19_kp1;
                 REF.x3_kp1[4] = REF.z3_kp1[1] - OP20_kp1;
-                REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
+                //------------------------------
+                switch(consys){
+                    case SMC_CSa:{
+                        REF.x1_kp1[2] = REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[5];
+                        REF.x3_kp1[2] = REF.z3_kp1[4];
+                        REF.x3_kp1[5] = REF.z3_kp1[5];
+                        break;
+                    }
+                    default:{
+                        REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
+                        REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
+                        REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
+                        break;
+                    }
+                }
                 break;
             }
         }
+        //------------------------------
         switch(consys){
             case ADRC_RS:
             for(i = 0; i < 3*Robots_Qty; i++){
@@ -267,13 +386,21 @@ void computeCircumference01(Reference REF, enum Control_System consys, unsigned 
                 REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
             }
             break;
+            case SMC_CSa:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the cluster space:
+                REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+            }
+            break;
         }
     }
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Compute the instantaneous mingyue's infinity-shape reference trajectory n: 01, for OMRs control system:
-void computeInfinity01(Reference REF, enum Control_System consys, unsigned long iterations){
+// Compute the instantaneous mingyue's infinity-shape reference trajectory n: 01, for OMRs control system (using CS framework):
+void computeInfinity01(Reference REF, Control_System consys, unsigned long iterations){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing circumference builder algorithm:
     if(REF.flag[0]){
@@ -285,13 +412,12 @@ void computeInfinity01(Reference REF, enum Control_System consys, unsigned long 
             REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
             REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
             REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
-            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
         // Computing equations for infinity reference profiles generation in the cluster space:
         float Sc = 900.0f;                                                                  // [mm], scope of infinity-shape trajectory on workspace.
-        float Wc = 1.0f/25.0f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
-        float Wc1 = Sc*Wc*Wc;                                                               // Pre-compute operation Sc*(Wc^2).
+        float Wc = 0.04f;                                                                   // [1.0f/25.0f rad/s], Desired angular velocity relationship gain of planned trajectory.
+        float Wc0 = Sc*Wc;                                                                  // Pre-compute operation Sc*Wc.
+        float Wc1 = Wc0*Wc;                                                                 // Pre-compute operation Sc*(Wc^2).
         float Wc2 = Wc1*Wc;                                                                 // Pre-compute operation Sc*(Wc^3).
         float WTc = (float)(iterations)*REF.Ts*Wc;                                          // Rate variation of sinusoidal functions.
         float ddd_xc_k = -Wc2*cosf(WTc);                                                    // Computing d^3(xc)/dt^3.
@@ -299,8 +425,15 @@ void computeInfinity01(Reference REF, enum Control_System consys, unsigned long 
         switch(Robots_Qty){
             case 2:{
                 //------------------------------Cluster Space--------------------------------
-                REF.z3_kp1[0] = -Wc1*sinf(WTc);                                             // Computing d^2(xc)/dt^2.
-                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*WTc);                                   // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[0] = -Wc1*sinf(WTc) + REF.Z_0[12];                               // Computing d^2(xc)/dt^2.
+                REF.z3_kp1[1] = -4.0f*Wc1*sinf(2.0f*WTc) + REF.Z_0[13];                     // Computing d^2(yc)/dt^2.
+                REF.z3_kp1[3] = 0.0f + REF.Z_0[15];                                         // Computing d^2(dc)/dt^2.
+                float Z3_1_k[3] = {REF.z3_kp1[0], REF.z3_kp1[1], REF.z3_kp1[3]};            // First vector of z3(k + 1) = d^2([xc,yc])/dt^2.
+                Integration(REF.INT_3,Z3_1_k);                                              // Compute second integration to c3(k + 1).
+                REF.z2_kp1[0] = REF.INT_3.x2_kp1[0];
+                REF.z2_kp1[1] = REF.INT_3.x2_kp1[1];
+                REF.z2_kp1[3] = REF.INT_3.x2_kp1[2];
+                //------------------------------
                 // Computing d^2(thc)/dt^2:
                 float OP1_kp1 = REF.z2_kp1[0]*REF.z2_kp1[0];                                // Pre-compute operation OP1(k).
                 float OP2_kp1 = REF.z2_kp1[0]*REF.z2_kp1[1];                                // Pre-compute operation OP2(k).
@@ -309,8 +442,16 @@ void computeInfinity01(Reference REF, enum Control_System consys, unsigned long 
                 float OP5_kp1 = OP1_kp1 - OP3_kp1;                                          // Pre-compute operation OP5(k).
                 float OP6_kp1 = OP4_kp1*OP4_kp1;                                            // Pre-compute operation OP6(k).
                 REF.z3_kp1[2] = -REF.z3_kp1[0]*(2.0f*REF.z3_kp1[0]*OP2_kp1 - REF.z3_kp1[1]*OP5_kp1)/OP6_kp1 + REF.z3_kp1[1]*(2.0f*REF.z3_kp1[1]*OP2_kp1 + REF.z3_kp1[0]*OP5_kp1)/OP6_kp1 + (ddd_xc_k*REF.z2_kp1[1] - ddd_yc_k*REF.z2_kp1[0])/OP4_kp1;
+                Integration(REF.INT_2,REF.z3_kp1[2]);                                       // Compute second integration to c3(k + 1).
+                REF.z2_kp1[2] = REF.INT_2.x2_kp1[0];
                 //------------------------------
-                REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
+                // First vector of z2(k + 1) = d([xc,yc,thc,dc])/dt:
+                float Z2_1_k[4] = {REF.z2_kp1[0], REF.z2_kp1[1], REF.z2_kp1[2], REF.z2_kp1[3]};
+                Integration(REF.INT_1,Z2_1_k);                                              // Compute second integration to c3(k + 1).
+                REF.z1_kp1[0] = REF.INT_1.x2_kp1[0];
+                REF.z1_kp1[1] = REF.INT_1.x2_kp1[1];
+                REF.z1_kp1[2] = REF.INT_1.x2_kp1[2];
+                REF.z1_kp1[3] = REF.INT_1.x2_kp1[3];
                 //-------------------------------Robot Space---------------------------------
                 float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Pre-compute sin(thc).
                 float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Pre-compute cos(thc).
@@ -361,10 +502,26 @@ void computeInfinity01(Reference REF, enum Control_System consys, unsigned long 
                 REF.x3_kp1[4] = REF.z3_kp1[1] - OP20_kp1;
                 REF.x3_kp1[5] = REF.DIF_2.y_k[1];
                 //------------------------------Cluster Space--------------------------------
-                REF.z3_kp1[4] = REF.x3_kp1[2] - REF.z3_kp1[2];                              // Computing d^2(psi_1)/dt^2.
-                REF.z3_kp1[5] = REF.x3_kp1[5] - REF.z3_kp1[2];                              // Computing d^2(psi_2)/dt^2.
-                Integration(REF.INT_2,REF.z3_kp1);                                          // Compute second integration to c3(k + 1).
-                Integration(REF.INT_1,REF.INT_2.y_k);                                       // Compute first integration to second integration output.
+                switch(consys){
+                    case SMC_CSa:{
+                        REF.z3_kp1[4] = REF.x3_kp1[2];                                      // Computing d^2(psi_1)/dt^2.
+                        REF.z3_kp1[5] = REF.x3_kp1[5];                                      // Computing d^2(psi_2)/dt^2.
+                        REF.z2_kp1[4] = REF.x2_kp1[2];                                      // Computing d(psi_1)/dt.
+                        REF.z2_kp1[5] = REF.x2_kp1[5];                                      // Computing d(psi_2)/dt.
+                        REF.z1_kp1[4] = REF.x1_kp1[2];                                      // Computing psi_1.
+                        REF.z1_kp1[5] = REF.x1_kp1[5];                                      // Computing psi_2.
+                        break;
+                    }
+                    default:{
+                        REF.z3_kp1[4] = REF.x3_kp1[2] - REF.z3_kp1[2];                      // Computing d^2(psi_1)/dt^2.
+                        REF.z3_kp1[5] = REF.x3_kp1[5] - REF.z3_kp1[2];                      // Computing d^2(psi_2)/dt^2.
+                        REF.z2_kp1[4] = REF.x2_kp1[2] - REF.z2_kp1[2];                      // Computing d(psi_1)/dt.
+                        REF.z2_kp1[5] = REF.x2_kp1[5] - REF.z2_kp1[2];                      // Computing d(psi_2)/dt.
+                        REF.z1_kp1[4] = REF.x1_kp1[2] - REF.z1_kp1[2];                      // Computing psi_1.
+                        REF.z1_kp1[5] = REF.x1_kp1[5] - REF.z1_kp1[2];                      // Computing psi_2.
+                        break;
+                    }
+                }
                 break;
             }
         }
@@ -385,13 +542,21 @@ void computeInfinity01(Reference REF, enum Control_System consys, unsigned long 
                 REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
             }
             break;
+            case SMC_CSa:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the cluster space:
+                REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+            }
+            break;
         }
     }
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Compute the instantaneous mingyue's infinity-shape reference trajectory n: 02, for OMRs control system:
-void computeInfinity02(Reference REF, enum Control_System consys, unsigned long iterations){
+// Compute the instantaneous mingyue's infinity-shape reference trajectory n: 02, for OMRs control system (using CS framework):
+void computeInfinity02(Reference REF, Control_System consys, unsigned long iterations){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing circumference builder algorithm:
     if(REF.flag[0]){
@@ -403,12 +568,10 @@ void computeInfinity02(Reference REF, enum Control_System consys, unsigned long 
             REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
             REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
             REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
-            REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                            // Updating data for c2(k + 1) within REF structure.
         }
         // Computing equations for infinity reference profiles generation in the cluster space:
         float Sc = 900.0f;                                                                  // [mm], scope of infinity-shape trajectory on workspace.
-        float Wc = 1.0f/12.5f;                                                              // [rad/s], Desired angular velocity relationship gain of planned trajectory.
+        float Wc = 0.08f;                                                                   // [1.0f/12.5f rad/s], Desired angular velocity relationship gain of planned trajectory.
         float Wc1 = Sc*Wc*Wc;                                                               // Pre-compute operation Sc*(Wc^2).
         float Wc2 = Wc1*Wc;                                                                 // Pre-compute operation Sc*(Wc^3).
         float WTc = (float)(iterations)*REF.Ts*Wc;                                          // Rate variation of sinusoidal functions.
@@ -429,8 +592,24 @@ void computeInfinity02(Reference REF, enum Control_System consys, unsigned long 
                 REF.z3_kp1[2] = -REF.z3_kp1[0]*(2.0f*REF.z3_kp1[0]*OP2_kp1 - REF.z3_kp1[1]*OP5_kp1)/OP6_kp1 + REF.z3_kp1[1]*(2.0f*REF.z3_kp1[1]*OP2_kp1 + REF.z3_kp1[0]*OP5_kp1)/OP6_kp1 + (ddd_xc_k*REF.z2_kp1[1] - ddd_yc_k*REF.z2_kp1[0])/OP4_kp1;
                 //------------------------------
                 REF.z3_kp1[3] = 0.0f;                                                       // Computing d^2(dc)/dt^2.
-                REF.z3_kp1[4] = -REF.z3_kp1[2];                                             // Computing d^2(psi_1)/dt^2.
-                REF.z3_kp1[5] = -REF.z3_kp1[2];                                             // Computing d^2(psi_2)/dt^2.
+                switch(consys){
+                    case SMC_CSa:{
+                        REF.z3_kp1[4] = 0.0f;                                               // Computing d^2(psi_1)/dt^2.
+                        REF.z3_kp1[5] = 0.0f;                                               // Computing d^2(psi_2)/dt^2.
+                        break;
+                    }
+                    default:{
+                        REF.z3_kp1[4] = -REF.z3_kp1[2];                                     // Computing d^2(psi_1)/dt^2.
+                        REF.z3_kp1[5] = -REF.z3_kp1[2];                                     // Computing d^2(psi_2)/dt^2.
+                        break;
+                    }
+                }
+                Integration(REF.INT_2,REF.z3_kp1);                                          // Compute second integration to c3(k + 1).
+                Integration(REF.INT_1,REF.INT_2.y_k);                                       // Compute first integration to second integration output.
+                for(i = 0; i < 3*Robots_Qty; i++){
+                    REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                    // Updating data for c1(k + 1) within REF structure.
+                    REF.z2_kp1[i] = REF.INT_2.x2_kp1[i];                                    // Updating data for c2(k + 1) within REF structure.
+                }
                 //-------------------------------Robot Space---------------------------------
                 float SC2_kp1 = sinf(REF.z1_kp1[2]);                                        // Pre-compute sin(thc).
                 float CC2_kp1 = cosf(REF.z1_kp1[2]);                                        // Pre-compute cos(thc).
@@ -457,27 +636,39 @@ void computeInfinity02(Reference REF, enum Control_System consys, unsigned long 
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
-                REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
                 REF.x1_kp1[3] = REF.z1_kp1[0] - OP1_kp1;
                 REF.x1_kp1[4] = REF.z1_kp1[1] - OP2_kp1;
-                REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
                 //------------------------------
                 REF.x2_kp1[0] = REF.z2_kp1[0] + OP17_kp1;
                 REF.x2_kp1[1] = REF.z2_kp1[1] + OP18_kp1;
-                REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
                 REF.x2_kp1[3] = REF.z2_kp1[0] - OP17_kp1;
                 REF.x2_kp1[4] = REF.z2_kp1[1] - OP18_kp1;
-                REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
                 //------------------------------
                 REF.x3_kp1[0] = REF.z3_kp1[0] + OP19_kp1;
                 REF.x3_kp1[1] = REF.z3_kp1[1] + OP20_kp1;
-                REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
                 REF.x3_kp1[3] = REF.z3_kp1[0] - OP19_kp1;
                 REF.x3_kp1[4] = REF.z3_kp1[1] - OP20_kp1;
-                REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
-                //------------------------------Cluster Space--------------------------------
-                Integration(REF.INT_2,REF.z3_kp1);                                          // Compute second integration to c3(k + 1).
-                Integration(REF.INT_1,REF.INT_2.y_k);                                       // Compute first integration to second integration output.
+                //------------------------------
+                switch(consys){
+                    case SMC_CSa:{
+                        REF.x1_kp1[2] = REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[5];
+                        REF.x3_kp1[2] = REF.z3_kp1[4];
+                        REF.x3_kp1[5] = REF.z3_kp1[5];
+                        break;
+                    }
+                    default:{
+                        REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
+                        REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
+                        REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
+                        break;
+                    }
+                }
                 break;
             }
         }
@@ -498,13 +689,21 @@ void computeInfinity02(Reference REF, enum Control_System consys, unsigned long 
                 REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
             }
             break;
+            case SMC_CSa:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the cluster space:
+                REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+            }
+            break;
         }
     }
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the static reference trajectory n: 01, for OMRs control system:
-void computeStatical01(Reference REF, enum Control_System consys){
+void computeStatical01(Reference REF, Control_System consys){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing builder algorithm for static trajectory:
     if(REF.flag[0]){
@@ -516,13 +715,12 @@ void computeStatical01(Reference REF, enum Control_System consys){
             REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
             REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
             REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
         }
         // Computing equations for generation of static reference profiles in the cluster space:
         switch(Robots_Qty){
             case 2:{
-                float d_ph1_k = 0.0f;                                                       // [rad/s], Desired angular velocity of robot 1.
-                float d_ph2_k = 0.0f;                                                       // [rad/s], Desired angular velocity of robot 2.
+                float d_ph1_k = 0.0f;                                                       // [rad/s], desired angular velocity of robot 1.
+                float d_ph2_k = 0.0f;                                                       // [rad/s], desired angular velocity of robot 2.
                 //------------------------------Cluster Space--------------------------------
                 REF.z2_kp1[0] = 0.0f;                                                       // Computing d(xc)/dt.
                 REF.z2_kp1[1] = 0.0f;                                                       // Computing d(yc)/dt.
@@ -530,6 +728,10 @@ void computeStatical01(Reference REF, enum Control_System consys){
                 REF.z2_kp1[3] = 0.0f;                                                       // Computing d(dc)/dt.
                 REF.z2_kp1[4] = d_ph1_k;                                                    // Computing d(psi_1)/dt.
                 REF.z2_kp1[5] = d_ph2_k;                                                    // Computing d(psi_2)/dt.
+                Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
+                for(i = 0; i < 3*Robots_Qty; i++){
+                    REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                    // Updating data for c1(k + 1) within REF structure.
+                }
                 //------------------------------
                 REF.z3_kp1[0] = 0.0f;                                                       // Computing d^2(xc)/dt^2.
                 REF.z3_kp1[1] = 0.0f;                                                       // Computing d^2(yc)/dt^2.
@@ -545,17 +747,13 @@ void computeStatical01(Reference REF, enum Control_System consys){
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
-                REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
                 REF.x1_kp1[3] = REF.z1_kp1[0] - OP1_kp1;
                 REF.x1_kp1[4] = REF.z1_kp1[1] - OP2_kp1;
-                REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
                 //------------------------------
                 REF.x2_kp1[0] = 0.0f;
                 REF.x2_kp1[1] = 0.0f;
-                REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
                 REF.x2_kp1[3] = 0.0f;
                 REF.x2_kp1[4] = 0.0f;
-                REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
                 //------------------------------
                 REF.x3_kp1[0] = 0.0f;
                 REF.x3_kp1[1] = 0.0f;
@@ -563,8 +761,23 @@ void computeStatical01(Reference REF, enum Control_System consys){
                 REF.x3_kp1[3] = 0.0f;
                 REF.x3_kp1[4] = 0.0f;
                 REF.x3_kp1[5] = 0.0f;
-                //------------------------------Cluster Space--------------------------------
-                Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
+                //------------------------------
+                switch(consys){
+                    case SMC_CSa:{
+                        REF.x1_kp1[2] = REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[5];
+                        break;
+                    }
+                    default:{
+                        REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
+                        break;
+                    }
+                }
                 break;
             }
         }
@@ -585,13 +798,21 @@ void computeStatical01(Reference REF, enum Control_System consys){
                 REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
             }
             break;
+            case SMC_CSa
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the cluster space:
+                REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+            }
+            break;
         }
     }
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the reference trajectory of independent circumferences (n: 01), for OMRs control system:
-void computeIndepCircumferences01(Reference REF, enum Control_System consys, unsigned long iterations){
+void computeIndepCircumferences01(Reference REF, Control_System consys, unsigned long iterations){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing builder algorithm for static trajectory:
     if(REF.flag[0]){
@@ -603,7 +824,6 @@ void computeIndepCircumferences01(Reference REF, enum Control_System consys, uns
             REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
             REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
             REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
         }
         // Computing equations for generation of static reference profiles in the cluster space:
         switch(Robots_Qty){
@@ -622,6 +842,10 @@ void computeIndepCircumferences01(Reference REF, enum Control_System consys, uns
                 REF.z2_kp1[3] = RXc*Wc*sinf(WTc);                                           // Computing d(dc)/dt.
                 REF.z2_kp1[4] = d_ph1_k;                                                    // Computing d(psi_1)/dt.
                 REF.z2_kp1[5] = d_ph2_k;                                                    // Computing d(psi_2)/dt.
+                Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
+                for(i = 0; i < 3*Robots_Qty; i++){
+                    REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                    // Updating data for c1(k + 1) within REF structure.
+                }
                 //------------------------------
                 REF.z3_kp1[0] = 0.0f;                                                       // Computing d^2(xc)/dt^2.
                 REF.z3_kp1[1] = -RYc*Wc_Wc*sinf(WTc);                                       // Computing d^2(yc)/dt^2.
@@ -655,26 +879,39 @@ void computeIndepCircumferences01(Reference REF, enum Control_System consys, uns
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
-                REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
                 REF.x1_kp1[3] = REF.z1_kp1[0] - OP1_kp1;
                 REF.x1_kp1[4] = REF.z1_kp1[1] - OP2_kp1;
-                REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
                 //------------------------------
                 REF.x2_kp1[0] = REF.z2_kp1[0] + OP17_kp1;
                 REF.x2_kp1[1] = REF.z2_kp1[1] + OP18_kp1;
-                REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
                 REF.x2_kp1[3] = REF.z2_kp1[0] - OP17_kp1;
                 REF.x2_kp1[4] = REF.z2_kp1[1] - OP18_kp1;
-                REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
                 //------------------------------
                 REF.x3_kp1[0] = REF.z3_kp1[0] + OP19_kp1;
                 REF.x3_kp1[1] = REF.z3_kp1[1] + OP20_kp1;
-                REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
                 REF.x3_kp1[3] = REF.z3_kp1[0] - OP19_kp1;
                 REF.x3_kp1[4] = REF.z3_kp1[1] - OP20_kp1;
-                REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
-                //------------------------------Cluster Space--------------------------------
-                Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
+                //------------------------------
+                switch(consys){
+                    case SMC_CSa:{
+                        REF.x1_kp1[2] = REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[5];
+                        REF.x3_kp1[2] = REF.z3_kp1[4];
+                        REF.x3_kp1[5] = REF.z3_kp1[5];
+                        break;
+                    }
+                    default:{
+                        REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
+                        REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
+                        REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
+                        break;
+                    }
+                }
                 break;
             }
         }
@@ -695,13 +932,21 @@ void computeIndepCircumferences01(Reference REF, enum Control_System consys, uns
                 REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
             }
             break;
+            case SMC_CSa:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the cluster space:
+                REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+            }
+            break;
         }
     }
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Compute the reference trajectory of independent circumferences (n: 02), for OMRs control system:
-void computeIndepCircumferences02(Reference REF, enum Control_System consys, unsigned long iterations){
+void computeIndepCircumferences02(Reference REF, Control_System consys, unsigned long iterations){
     int i;                                                                                  // Declaration of i as integer variable.
     // Executing builder algorithm for static trajectory:
     if(REF.flag[0]){
@@ -713,7 +958,6 @@ void computeIndepCircumferences02(Reference REF, enum Control_System consys, uns
             REF.z1_k[i] = REF.z1_kp1[i];                                                    // Updating data for c1(k) within REF structure.
             REF.z2_k[i] = REF.z2_kp1[i];                                                    // Updating data for c2(k) within REF structure.
             REF.z3_k[i] = REF.z3_kp1[i];                                                    // Updating data for c3(k) within REF structure.
-            REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                            // Updating data for c1(k + 1) within REF structure.
         }
         // Computing equations for generation of static reference profiles in the cluster space:
         switch(Robots_Qty){
@@ -759,6 +1003,10 @@ void computeIndepCircumferences02(Reference REF, enum Control_System consys, uns
                 REF.z2_kp1[3] = OP25_kp1*OP22_kp1;                                          // Computing d(dc)/dt.
                 REF.z2_kp1[4] = d_ph1_k - REF.z2_kp1[2];                                    // Computing d(psi_1)/dt.
                 REF.z2_kp1[5] = d_ph2_k - REF.z2_kp1[2];                                    // Computing d(psi_2)/dt.
+                Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
+                for(i = 0; i < 3*Robots_Qty; i++){
+                    REF.z1_kp1[i] = REF.INT_1.x2_kp1[i];                                    // Updating data for c1(k + 1) within REF structure.
+                }
                 //------------------------------
                 REF.z3_kp1[0] = 0.0f;                                                       // Computing d^2(xc)/dt^2.
                 REF.z3_kp1[1] = 0.0f;                                                       // Computing d^2(yc)/dt^2.
@@ -794,26 +1042,39 @@ void computeIndepCircumferences02(Reference REF, enum Control_System consys, uns
                 //------------------------------
                 REF.x1_kp1[0] = REF.z1_kp1[0] + OP1_kp1;
                 REF.x1_kp1[1] = REF.z1_kp1[1] + OP2_kp1;
-                REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
                 REF.x1_kp1[3] = REF.z1_kp1[0] - OP1_kp1;
                 REF.x1_kp1[4] = REF.z1_kp1[1] - OP2_kp1;
-                REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
                 //------------------------------
                 REF.x2_kp1[0] = REF.z2_kp1[0] + OP17_kp1;
                 REF.x2_kp1[1] = REF.z2_kp1[1] + OP18_kp1;
-                REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
                 REF.x2_kp1[3] = REF.z2_kp1[0] - OP17_kp1;
                 REF.x2_kp1[4] = REF.z2_kp1[1] - OP18_kp1;
-                REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
                 //------------------------------
                 REF.x3_kp1[0] = REF.z3_kp1[0] + OP19_kp1;
                 REF.x3_kp1[1] = REF.z3_kp1[1] + OP20_kp1;
-                REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
                 REF.x3_kp1[3] = REF.z3_kp1[0] - OP19_kp1;
                 REF.x3_kp1[4] = REF.z3_kp1[1] - OP20_kp1;
-                REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
-                //------------------------------Cluster Space--------------------------------
-                Integration(REF.INT_1,REF.z2_kp1);                                          // Compute only first integration to c2(k + 1).
+                //------------------------------
+                switch(consys){
+                    case SMC_CSa:{
+                        REF.x1_kp1[2] = REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[5];
+                        REF.x3_kp1[2] = REF.z3_kp1[4];
+                        REF.x3_kp1[5] = REF.z3_kp1[5];
+                        break;
+                    }
+                    default:{
+                        REF.x1_kp1[2] = REF.z1_kp1[2] + REF.z1_kp1[4];
+                        REF.x1_kp1[5] = REF.z1_kp1[2] + REF.z1_kp1[5];
+                        REF.x2_kp1[2] = REF.z2_kp1[2] + REF.z2_kp1[4];
+                        REF.x2_kp1[5] = REF.z2_kp1[2] + REF.z2_kp1[5];
+                        REF.x3_kp1[2] = REF.z3_kp1[2] + REF.z3_kp1[4];
+                        REF.x3_kp1[5] = REF.z3_kp1[2] + REF.z3_kp1[5];
+                        break;
+                    }
+                }
                 break;
             }
         }
@@ -827,6 +1088,14 @@ void computeIndepCircumferences02(Reference REF, enum Control_System consys, uns
             }
             break;
             case SMC_CS:
+            for(i = 0; i < 3*Robots_Qty; i++){
+                // Arranging output of REF structure in the cluster space:
+                REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
+                REF.y_k[i+3*Robots_Qty] = roundToThreeDecimals(REF.z2_k[i]);
+                REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
+            }
+            break;
+            case SMC_CSa:
             for(i = 0; i < 3*Robots_Qty; i++){
                 // Arranging output of REF structure in the cluster space:
                 REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);

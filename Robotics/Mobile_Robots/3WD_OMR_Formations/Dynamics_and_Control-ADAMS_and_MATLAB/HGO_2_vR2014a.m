@@ -255,19 +255,19 @@ dJ_dc_c = [                       0,                        0, 0,               
 b1_01 = x(9) + x(11);
 b1_02 = par.delta_1 + b1_01; b1_03 = par.delta_1 - b1_01;
 b1_04 = sin(b1_02); b1_05 = cos(b1_02); b1_06 = sin(b1_03); b1_07 = cos(b1_03);
-B1 = [-b1_04*par.HGOcons04, -b1_06*par.HGOcons04, cos(b1_01)*par.HGOcons04;...
-       b1_05*par.HGOcons04, -b1_07*par.HGOcons04, sin(b1_01)*par.HGOcons04;...
-             par.HGOcons05,        par.HGOcons05,            par.HGOcons05];
+B1 = 1e3*[-b1_04*par.HGOcons04, -b1_06*par.HGOcons04, cos(b1_01)*par.HGOcons04;...
+           b1_05*par.HGOcons04, -b1_07*par.HGOcons04, sin(b1_01)*par.HGOcons04;...
+                 par.HGOcons05,        par.HGOcons05,            par.HGOcons05];
 %-----------------------------------
 b2_01 = x(9) + x(12);
 b2_02 = par.delta_2 + b2_01; b2_03 = par.delta_2 - b2_01;
 b2_04 = sin(b2_02); b2_05 = cos(b2_02); b2_06 = sin(b2_03); b2_07 = cos(b2_03);
-B2 = [-b2_04*par.HGOcons09, -b2_06*par.HGOcons09, cos(b2_01)*par.HGOcons09;...
-       b2_05*par.HGOcons09, -b2_07*par.HGOcons09, sin(b2_01)*par.HGOcons09;...
-             par.HGOcons10,        par.HGOcons10,            par.HGOcons10];
+B2 = 1e3*[-b2_04*par.HGOcons09, -b2_06*par.HGOcons09, cos(b2_01)*par.HGOcons09;...
+           b2_05*par.HGOcons09, -b2_07*par.HGOcons09, sin(b2_01)*par.HGOcons09;...
+                 par.HGOcons10,        par.HGOcons10,            par.HGOcons10];
 B_c = [B1 zeros(3,3);zeros(3,3) B2];
 %--------------------------------------------------------------------------
-sys(13:18,1) = dJ_dc_c*Jin_c*x(19:24,1) - Lambda_c\Jin_c'*H_dc*Jin_c*x(19:24,1) + Lambda_c\Jin_c'*B_c*(1e3*u(1:6)) + (par.HGOcons12)*(u(7:12,1) - x(7:12)) + x(31:36);
+sys(13:18,1) = dJ_dc_c*Jin_c*x(19:24,1) - Lambda_c\Jin_c'*H_dc*Jin_c*x(19:24,1) + Lambda_c\Jin_c'*B_c*u(1:6) + (par.HGOcons12)*(u(7:12,1) - x(7:12)) + x(31:36);
 sys(19:24,1) = (par.Ts_2)*(sys(13:18,1) + x(13:18,1)) + x(19:24,1);
 sys(25:30,1) = (par.HGOcons13)*(u(7:12,1) - x(7:12));
 sys(31:36,1) = (par.Ts_2)*(sys(25:30,1) + x(25:30,1)) + x(31:36,1);
