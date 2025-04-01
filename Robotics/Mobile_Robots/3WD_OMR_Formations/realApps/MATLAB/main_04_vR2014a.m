@@ -1,6 +1,6 @@
-function dataRate = main_03_vR2014a()
+function dataRate = main_04_vR2014a()
 clc, clear
-disp('Executing main_03');
+disp('Executing main_04');
 positions = zeros(2,3);                                                     % Preallocating memory for angles state vector.
 angles = zeros(2,3);                                                        % Preallocating memory for angles state vector.
 time_x = []';                                                               % Variable to save tic toc working time.
@@ -37,6 +37,7 @@ counter = 0;                                                                % Ti
 flag_1 = 0;                                                                 % Streaming flag.
 t_sleep = 8;                                                                % Java sleeping time.
 iter_stop = (2000/t_sleep)*2.5*120;                                         % Iteration stop.
+X = zeros(6,6);                                                             % Variable to save data.
 %--------------------------------------------------------------------------
 % A serial port object is constructed:
 BaudRate = 2000000;                                                         % Specify baud rate for UART communication.
@@ -75,7 +76,24 @@ while true
                 angles(i,:) = euler(q,'XYZ','frame');
             end
             % Getting and arraying data from NatNet SDK:
-            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',(1600 + positions(2,1)),(1600 - positions(2,3)),angleCorrection_1(angles(2,2),angles(2,1)),(1600 + positions(1,1)),(1600 - positions(1,3)),angleCorrection_1(angles(1,2),angles(1,1)));
+            if counter > 0
+                X(6,:) = X(5,:);
+                X(5,:) = X(4,:);
+                X(4,:) = X(3,:);
+                X(3,:) = X(2,:);
+                X(2,:) = X(1,:);
+                X(1,:) = [(1600 + positions(2,1)),(1600 - positions(2,3)),angleCorrection_1(angles(2,2),angles(2,1)),(1600 + positions(1,1)),(1600 - positions(1,3)),angleCorrection_1(angles(1,2),angles(1,1))];
+                for i = 1:length(X(1,:))
+                    if((X(1,i) > X(2,i)*1.25) && (X(1,i) < X(2,i)*.75))
+                        X(1,i) = mean(X((2:6),i));
+                    end
+                end
+            else
+                for i = 1:length(X(:,1))
+                    X(i,:) = [(1600 + positions(2,1)),(1600 - positions(2,3)),angleCorrection_1(angles(2,2),angles(2,1)),(1600 + positions(1,1)),(1600 - positions(1,3)),angleCorrection_1(angles(1,2),angles(1,1))];
+                end
+            end
+            data_s = sprintf(':0,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f,%1.4f;',X(1,1),X(1,2),X(1,3),X(1,4),X(1,5),X(1,6));
             % Sending data via UART communication:
             fprintf(S1,data_s);                                             % Write data to serial peripheral.
             % flushoutput(S1);                                                % Clear buffer output.

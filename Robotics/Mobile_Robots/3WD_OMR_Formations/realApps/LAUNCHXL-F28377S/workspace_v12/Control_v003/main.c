@@ -146,7 +146,7 @@ char *var11;                                                                    
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
 Control_System consys = SMC_CS;                                                         // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
-Reference_Type reftype = INDEP_CIRCUMFERENCES_01;                                       // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
+Reference_Type reftype = MINGYUE_02;                                                    // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
 float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
 //-----------------------------------------------------------------------------------------------------------------------
@@ -217,16 +217,16 @@ float cso2_Gains[9*Robots_Qty][3*Robots_Qty] = {
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
 float sls_Gains[3*Robots_Qty] = {1.5432f, 1.5432f, 1.5432f, 1.5432f, 1.5432f, 1.5432f};
 // -- Setting damping factors to the sliding surfaces:
-float sls_dampFacts[3*Robots_Qty] = {1.1f, 1.1f, 1.1f, 1.1f, 1.1f, 1.1f};
+float sls_dampFacts[3*Robots_Qty] = {1.05f, 1.05f, 1.05f, 1.05f, 1.05f, 1.05f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float smc_Gains[3*Robots_Qty] = {6.44f, 6.44f, 6.44f, 6.44f, 6.44f, 6.44f};
+float smc_Gains[3*Robots_Qty] = {1.44f, 1.44f, 1.44f, 1.44f, 1.44f, 1.44f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
 #define rho_1 (1.0f/20.5f)*mt_1*l_1*l_1/(r_1*r_1)                                       // Constant for bounding the input torque disturbances in robot 1.
 #define rho_2 (1.0f/20.5f)*mt_2*l_2*l_2/(r_2*r_2)                                       // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                     // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
-float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 20.0f, 180.0f, 20.0f, 20.0f};
+float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 9.5f, 180.0f, 6.5f, 6.5f};
 float diff_fc = 45.0f;                                                                  // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
 float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                  // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
 float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
@@ -451,7 +451,7 @@ void main(void){
     // Creating data structure for a high-gain observer in the robot space:
     RSO = createRS_Observer(sampleTime,rso_Gains,epsilon);
     // Creating data structure for a high-gain observer in the cluster space:
-    CSO = createCSx_Observer01(sampleTime,cso1_Gains,upsilon_1,diff_pg,diff_lc);
+    CSO = createCSx_Observer02(sampleTime,cso2_Gains,upsilon_1,diff_pg,diff_lc);
     // Creating data structure for a GPI controller in the robot space:
     GPI = createGPI_Controller(sampleTime,gpi_Gains);
     // Creating data structure for the sliding surfaces in the cluster space:
@@ -616,7 +616,7 @@ __interrupt void cpu_timer1_isr(void){
             case SMC_CS:{
                 //---------------------------------------------SMC_CS----------------------------------------------------
                 // Computing the estimation via High-gain Observer:
-                CSx_Estimation01(CSO,FMR.u_k,FMR.c_k,FMR.params);                       // Estimates the OMRs formation output c(k), first derivative and disturbances.
+                CSx_Estimation02(CSO,FMR.u_k,FMR.c_k,FMR.params);                       // Estimates the OMRs formation output c(k), first derivative and disturbances.
                 //-------------------------------------------------------------------------------------------------------
                 // Computing the sliding surfaces required by SMC CS:
                 compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);                   // Update to current values for sliding surfaces.
@@ -854,14 +854,15 @@ __interrupt void scia_rx_isr(void){
                     switch(consys){
                         case SMC_CSa:{
                             float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(thc_0), Cy_0-Rc_0*cosf(thc_0), thc_0, Dr_0, ph1_0, ph2_0, -Vc_0*cosf(thc_0), Vc_0*sinf(thc_0), d_thc_0, 0.0f, d_ph1_0, d_ph2_0, Vc_0*Vc_0*sinf(thc_0)/Rc_0, Vc_0*Vc_0*cosf(thc_0)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                         default:{
                             float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(thc_0), Cy_0-Rc_0*cosf(thc_0), thc_0, Dr_0, ph1_0-thc_0, ph2_0-thc_0, -Vc_0*cosf(thc_0), Vc_0*sinf(thc_0), d_thc_0, 0.0f, d_ph1_0-d_thc_0, d_ph2_0-d_thc_0, Vc_0*Vc_0*sinf(thc_0)/Rc_0, Vc_0*Vc_0*cosf(thc_0)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                     }
-                    initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
                 case MINGYUE_01:{
@@ -880,14 +881,15 @@ __interrupt void scia_rx_isr(void){
                     switch(consys){
                         case SMC_CSa:{
                             float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, thc_0, Dr_0, ph1_0, ph2_0, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                         default:{
                             float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, thc_0, Dr_0, ph1_0-thc_0, ph2_0-thc_0, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                     }
-                    initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
                 case MINGYUE_02:{
@@ -906,14 +908,15 @@ __interrupt void scia_rx_isr(void){
                     switch(consys){
                         case SMC_CSa:{
                             float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, thc_0, Dr_0, ph1_0, ph2_0, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                         default:{
                             float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, thc_0, Dr_0, ph1_0-thc_0, ph2_0-thc_0, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                     }
-                    initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
                 case STATIC_01:{
@@ -922,22 +925,23 @@ __interrupt void scia_rx_isr(void){
                     float yc_0 = FMR.c_k[1]*0.0f + 1500.0f;                             // [mm], initial position of whole cluster along workspace's y axis.
                     float thc_0 = FMR.c_k[2]*0.0f + M_PI_4;                             // [rad], initial orientation of whole cluster in the workspace.
                     float dc_0 = FMR.c_k[3]*0.0f + 800.0f;                              // [mm], initial distance between both OMRs.
-                    float ph1_0 = FMR.q_k[2]*0.0f + 0.0f;                               // [rad], initial orientation of robot 1.
-                    float ph2_0 = FMR.q_k[5]*0.0f + 0.0f;                               // [rad], initial orientation of robot 2.
+                    float ph1_0 = FMR.q_k[2]*0.0f + M_PI;                               // [rad], initial orientation of robot 1.
+                    float ph2_0 = FMR.q_k[5]*0.0f + M_PI;                               // [rad], initial orientation of robot 2.
                     float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
                     float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
                     // Arraying initial conditions for this profile:
                     switch(consys){
                         case SMC_CSa:{
                             float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0, ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                         default:{
                             float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                     }
-                    initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
                 case INDEP_CIRCUMFERENCES_01:{
@@ -957,14 +961,15 @@ __interrupt void scia_rx_isr(void){
                     switch(consys){
                         case SMC_CSa:{
                             float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0, ph2_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                         default:{
                             float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                     }
-                    initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
                 case INDEP_CIRCUMFERENCES_02:{
@@ -984,14 +989,15 @@ __interrupt void scia_rx_isr(void){
                     switch(consys){
                         case SMC_CSa:{
                             float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0, ph2_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                         default:{
                             float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                   // Initialize reference builder.
                             break;
                         }
                     }
-                    initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
             }
@@ -1023,7 +1029,7 @@ __interrupt void scia_rx_isr(void){
                     //----------------------------------------------SMC_CS---------------------------------------------
                     // Float vector z_0 to define initial conditions for states of HGO observer in the cluster space:
                     float obs_z0[9*Robots_Qty] = {FMR.c_k[0],FMR.c_k[1],FMR.c_k[2],FMR.c_k[3],FMR.c_k[4],FMR.c_k[5],0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
-                    init_CSx_Observer01(CSO,obs_z0);                                    // Initialize the observer CSO.
+                    init_CSx_Observer02(CSO,obs_z0);                                    // Initialize the observer CSO.
                     //-------------------------------------------------------------------------------------------------
                     // Initial conditions for previous observer is taken here:
                     init_SlidingSurfaces(SLS,REF.Z_0,obs_z0);                           // Initialize sliding surfaces algorithm.

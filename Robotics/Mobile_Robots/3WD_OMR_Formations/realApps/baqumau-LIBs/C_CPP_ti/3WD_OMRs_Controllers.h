@@ -419,7 +419,7 @@ extern void init_SlidingSurfaces(Sl_Surfaces SLS, float ref_z_0[], float fmr_z_0
 // Compute the sliding surfaces algorithm that updates structured variables within SLS:
 extern void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], float cso_y_k[]);
 // Creating the SMC controller data structure in the cluster space as SMC:
-extern SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon[]);
+extern SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], const float epsilon[]);
 // Initializing the sliding mode controller structured as SMC:
 extern void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]);
 // SMC strategy computing function:

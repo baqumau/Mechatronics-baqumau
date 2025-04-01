@@ -442,7 +442,8 @@ void computeInfinity01(Reference REF, Control_System consys, unsigned long itera
                 float OP5_kp1 = OP1_kp1 - OP3_kp1;                                          // Pre-compute operation OP5(k).
                 float OP6_kp1 = OP4_kp1*OP4_kp1;                                            // Pre-compute operation OP6(k).
                 REF.z3_kp1[2] = -REF.z3_kp1[0]*(2.0f*REF.z3_kp1[0]*OP2_kp1 - REF.z3_kp1[1]*OP5_kp1)/OP6_kp1 + REF.z3_kp1[1]*(2.0f*REF.z3_kp1[1]*OP2_kp1 + REF.z3_kp1[0]*OP5_kp1)/OP6_kp1 + (ddd_xc_k*REF.z2_kp1[1] - ddd_yc_k*REF.z2_kp1[0])/OP4_kp1;
-                Integration(REF.INT_2,REF.z3_kp1[2]);                                       // Compute second integration to c3(k + 1).
+                float Z3_2_k[1] = {REF.z3_kp1[2]};                                          // Second vector of z3(k + 1) = d^2([xc,yc])/dt^2.
+                Integration(REF.INT_2,Z3_2_k);                                              // Compute second integration to c3(k + 1).
                 REF.z2_kp1[2] = REF.INT_2.x2_kp1[0];
                 //------------------------------
                 // First vector of z2(k + 1) = d([xc,yc,thc,dc])/dt:
@@ -798,7 +799,7 @@ void computeStatical01(Reference REF, Control_System consys){
                 REF.y_k[i+6*Robots_Qty] = roundToThreeDecimals(REF.z3_k[i]);
             }
             break;
-            case SMC_CSa
+            case SMC_CSa:
             for(i = 0; i < 3*Robots_Qty; i++){
                 // Arranging output of REF structure in the cluster space:
                 REF.y_k[i] = roundToThreeDecimals(REF.z1_k[i]);
