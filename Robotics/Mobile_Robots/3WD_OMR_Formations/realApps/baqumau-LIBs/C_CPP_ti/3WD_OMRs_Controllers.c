@@ -1439,15 +1439,15 @@ void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], 
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating the SMC controller data structure in the cluster space as SMC:
-SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon){
+SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon[]){
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
     // Configuring the members of the SMC structure (sliding mode control):
     SMC_Controller SMC;                                                                     // Creates sliding mode controller data structure.
     SMC.s_in = 7*s;                                                                         // Assign value of inputSize to the member s_in of the SMC structure.
     SMC.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the SMC structure.
-    SMC.epsilon = epsilon;                                                                  // Small constant used in the SMC strategy.
     //-----------------------------------------------
     SMC.Gamma = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the sliding gains within SMC.
+    SMC.epsilon = (float *)malloc(s * sizeof(float));                                       // Allocate memory for small constants used in the SMC strategy.
     SMC.dampFacts = (float *)malloc(s * sizeof(float));                                     // Allocate memory for the damping factors of sliding surfaces within SMC.
     SMC.omega = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the fixed control gains within SMC.
     SMC.rho = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the disturbances bounding values within SMC strategy.
@@ -1463,6 +1463,7 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
     // Assigning values to the gains:
     for(i = 0; i < s; i++){
         SMC.Gamma[i] = sls_gains[i];                                                        // Assigning values to the gains vector Gamma, of SMC.
+        SMC.epsilon[i] = epsilon[i];                                                        // Assigning values to the small constants used in the SMC structure.
         SMC.dampFacts[i] = sls_dampfacts[i];                                                // Assign values to the damping factors of the sliding surfaces.
         SMC.omega[i] = gains[i];                                                            // Assigning values to fixed control gains vector omega, within SMC.
         SMC.rho[i] = dis_values[i];                                                         // Assigning values to the disturbances bounding vector rho, within SMC.
@@ -2021,8 +2022,8 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                         else SMC.kappa_k[i] += fabsf(W3_k[i][j])*fabsf(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
                     }
                     // Updating the auxiliary control input:
-                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon*sls_y_k[i]);
-                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon*sls_y_k[i]);
+                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf_custom(SMC.epsilon[i]*sls_y_k[i]);
+                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon[i]*sls_y_k[i]);
                 }
                 for(i = 0; i < SMC.s_out; i++){
                     // Updating the output of SMC strategy --> y(k):

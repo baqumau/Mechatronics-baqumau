@@ -185,7 +185,7 @@ float gpi_Gains[3*Robots_Qty][3] = {
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
 const float upsilon_1 = 0.42f;                                                          // Small constant used in the CSO observer.
-const float upsilon_2 = 0.42f;                                                          // Small constant used in the SMC controller.
+const float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.42f, 0.42f};       // Vector with the Small constants used in the SMC controller.
 // Float parameters to define the observer gains of CSO_01, for SMC_CS:
 float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                                           // Setting alpha_1 for CSO_01.
@@ -844,9 +844,23 @@ __interrupt void scia_rx_isr(void){
                     float Rc_0 = 1200.0f;                                               // [mm], initial desired radius of planned circumference-shape trajectory.
                     float Vc_0 = 200.0f;                                                // [mm/s], initial linear velocity of cluster centroid for circumference-shape trajectory.
                     float Dr_0 = 180.0f;                                                // [mm], initial desired half distance between robots.
+                    float thc_0 = M_PI_4;                                               // [rad], initial orientation of whole cluster in the workspace.
+                    float ph1_0 = M_PI_4*0.0f;                                          // [rad], initial orientation of robot 1.
+                    float ph2_0 = M_PI_4*0.0f;                                          // [rad], initial orientation of robot 2.
+                    float d_thc_0 = Vc_0/Rc_0;                                          // [rad/s], desired initial angular velocity of whole cluster in the workspace.
+                    float d_ph1_0 = -0.0f*Vc_0/Rc_0;                                    // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = -0.0f*Vc_0/Rc_0;                                    // [rad/s], desired initial angular velocity of robot 2.
                     // Arraying initial conditions for circumference-shape reference trajectory profiles:
-                    // float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, M_PI_2, M_PI_2, -Vc_0*cosf(M_PI_4), Vc_0*cosf(M_PI_4), Vc_0/Rc_0, 0.0f, -2.0f*Vc_0/Rc_0, -2.0f*Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
-                    float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(M_PI_4), Cy_0-Rc_0*cosf(M_PI_4), M_PI_4, Dr_0, -M_PI_4, -M_PI_4, -Vc_0*cosf(M_PI_4), Vc_0*sinf(M_PI_4), Vc_0/Rc_0, 0.0f, -Vc_0/Rc_0, -Vc_0/Rc_0, Vc_0*Vc_0*sinf(M_PI_4)/Rc_0, Vc_0*Vc_0*cosf(M_PI_4)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                    switch(consys){
+                        case SMC_CSa:{
+                            float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(thc_0), Cy_0-Rc_0*cosf(thc_0), thc_0, Dr_0, ph1_0, ph2_0, -Vc_0*cosf(thc_0), Vc_0*sinf(thc_0), d_thc_0, 0.0f, d_ph1_0, d_ph2_0, Vc_0*Vc_0*sinf(thc_0)/Rc_0, Vc_0*Vc_0*cosf(thc_0)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                            break;
+                        }
+                        default:{
+                            float ref_z0[9*Robots_Qty] = {Cx_0-Rc_0*sinf(thc_0), Cy_0-Rc_0*cosf(thc_0), thc_0, Dr_0, ph1_0-thc_0, ph2_0-thc_0, -Vc_0*cosf(thc_0), Vc_0*sinf(thc_0), d_thc_0, 0.0f, d_ph1_0-d_thc_0, d_ph2_0-d_thc_0, Vc_0*Vc_0*sinf(thc_0)/Rc_0, Vc_0*Vc_0*cosf(thc_0)/Rc_0, 0.0f, 0.0f, 0.0f, 0.0f};
+                            break;
+                        }
+                    }
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -859,7 +873,20 @@ __interrupt void scia_rx_isr(void){
                     float Vcx_0 = Sc_0*Wc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Vcx_0;                                           // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 150.0f;                                                // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -2.0f*atan2f(Vcx_0,Vcy_0)-M_PI_2, -2.0f*atan2f(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float thc_0 = atan2f(Vcx_0,Vcy_0)+M_PI_2;                           // [rad], initial orientation of whole cluster in the workspace.
+                    float ph1_0 = -atan2f(Vcx_0,Vcy_0);                                 // [rad], initial orientation of robot 1.
+                    float ph2_0 = -atan2f(Vcx_0,Vcy_0);                                 // [rad], initial orientation of robot 2.
+                    // Arraying initial conditions for this profile:
+                    switch(consys){
+                        case SMC_CSa:{
+                            float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, thc_0, Dr_0, ph1_0, ph2_0, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            break;
+                        }
+                        default:{
+                            float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, thc_0, Dr_0, ph1_0-thc_0, ph2_0-thc_0, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            break;
+                        }
+                    }
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -872,7 +899,20 @@ __interrupt void scia_rx_isr(void){
                     float Vcx_0 = Sc_0*Wc_0;                                            // [mm/s], initial cluster's forward speed along x axis.
                     float Vcy_0 = 2.0f*Vcx_0;                                           // [mm/s], initial cluster's forward speed along y axis.
                     float Dr_0 = 180.0f;                                                // [mm], initial desired half distance between robots.
-                    float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, atan2f(Vcx_0,Vcy_0)+M_PI_2, Dr_0, -atan2f(Vcx_0,Vcy_0)-M_PI_2, -atan2f(Vcx_0,Vcy_0)-M_PI_2, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    float thc_0 = atan2f(Vcx_0,Vcy_0)+M_PI_2;                           // [rad], initial orientation of whole cluster in the workspace.
+                    float ph1_0 = 0.0f;                                                 // [rad], initial orientation of robot 1.
+                    float ph2_0 = 0.0f;                                                 // [rad], initial orientation of robot 2.
+                    // Arraying initial conditions for this profile:
+                    switch(consys){
+                        case SMC_CSa:{
+                            float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, thc_0, Dr_0, ph1_0, ph2_0, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            break;
+                        }
+                        default:{
+                            float ref_z0[9*Robots_Qty] = {Cx_0, Cy_0, thc_0, Dr_0, ph1_0-thc_0, ph2_0-thc_0, Vcx_0, Vcy_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            break;
+                        }
+                    }
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -880,13 +920,23 @@ __interrupt void scia_rx_isr(void){
                     // Configuring initial parameters for first static trivial trajectory (vehicles must turn on a fixed position in the workspace):
                     float xc_0 = FMR.c_k[0]*0.0f + 1500.0f;                             // [mm], initial position of whole cluster along workspace's x axis.
                     float yc_0 = FMR.c_k[1]*0.0f + 1500.0f;                             // [mm], initial position of whole cluster along workspace's y axis.
-                    float thc_0 = FMR.c_k[2]*0.0f + 45.0f*M_PI/180.0f;                  // [rad], initial orientation of whole cluster in the workspace.
+                    float thc_0 = FMR.c_k[2]*0.0f + M_PI_4;                             // [rad], initial orientation of whole cluster in the workspace.
                     float dc_0 = FMR.c_k[3]*0.0f + 800.0f;                              // [mm], initial distance between both OMRs.
                     float ph1_0 = FMR.q_k[2]*0.0f + 0.0f;                               // [rad], initial orientation of robot 1.
                     float ph2_0 = FMR.q_k[5]*0.0f + 0.0f;                               // [rad], initial orientation of robot 2.
                     float d_ph1_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 1.
                     float d_ph2_0 = 0.0f;                                               // [rad/s], desired initial angular velocity of robot 2.
-                    float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                    // Arraying initial conditions for this profile:
+                    switch(consys){
+                        case SMC_CSa:{
+                            float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0, ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            break;
+                        }
+                        default:{
+                            float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, 0.0f, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                            break;
+                        }
+                    }
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -903,7 +953,17 @@ __interrupt void scia_rx_isr(void){
                     float RXc = 280.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along X axis.
                     float RYc = 800.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
                     float Wc = M_PI/12.0f;                                              // [rad/s], Angular velocity for tracing the independent ellipsoids.
-                    float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                    // Arraying initial conditions for this profile:
+                    switch(consys){
+                        case SMC_CSa:{
+                            float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0, ph2_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            break;
+                        }
+                        default:{
+                            float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            break;
+                        }
+                    }
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
@@ -920,7 +980,17 @@ __interrupt void scia_rx_isr(void){
                     float RXc = 400.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along X axis.
                     float RYc = 800.0f;                                                 // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
                     float Wc = M_PI/10.0f;                                              // [rad/s], Angular velocity for tracing the independent ellipsoids.
-                    float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                    // Arraying initial conditions for this profile:
+                    switch(consys){
+                        case SMC_CSa:{
+                            float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0, ph2_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            break;
+                        }
+                        default:{
+                            float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            break;
+                        }
+                    }
                     initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                     break;
                 }
