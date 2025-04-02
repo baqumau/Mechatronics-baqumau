@@ -185,7 +185,8 @@ float gpi_Gains[3*Robots_Qty][3] = {
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
 const float upsilon_1 = 0.42f;                                                          // Small constant used in the CSO observer.
-const float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.42f, 0.42f};       // Vector with the Small constants used in the SMC controller.
+const float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.42f, 0.42f};       // Vector with the small constants used in the SMC control structure.
+const float kapWeigths[3*Robots_Qty] = {1.0f, 1.0f, 1.8f, 1.0f, 1.8f, 1.8f};            // Constants that accompanies Kappa gains within SMC control structure.
 // Float parameters to define the observer gains of CSO_01, for SMC_CS:
 float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                                           // Setting alpha_1 for CSO_01.
@@ -459,7 +460,7 @@ void main(void){
     // Creating data structure for an ADRC controller in the robot space:
     ADRC = createADRC_Controller();
     // Creating data structure for a SMC technique in the cluster space:
-    SMC = createSMC_Controller(smc_Gains,unc_Values,dis_Values,sls_Gains,sls_dampFacts,upsilon_2);
+    SMC = createSMC_Controller(smc_Gains,unc_Values,dis_Values,sls_Gains,sls_dampFacts,upsilon_2,kapWeigths);
     // Creating data structure for the reference builder system:
     REF = createReference(sampleTime,reftype);                                          // Create reference structure.
     // Creating a robot formation structure for arranging their relevant variables:

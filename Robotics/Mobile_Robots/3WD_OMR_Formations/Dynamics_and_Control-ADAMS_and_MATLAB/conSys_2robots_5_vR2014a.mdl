@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.547"
+    ComputedModelVersion    "1.548"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -63,11 +63,11 @@ Model {
 	$ObjectID		6
 	$ClassName		"Simulink.EditorInfo"
 	IsActive		[1]
-	ViewObjType		"SimulinkSubsys"
-	LoadSaveID		"625"
+	ViewObjType		"SimulinkTopLevel"
+	LoadSaveID		"0"
 	Extents			[1332.0, 569.0]
 	ZoomFactor		[1.0]
-	Offset			[-14.0, 246.0]
+	Offset			[0.0, 0.0]
       }
     }
   }
@@ -77,9 +77,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Mar 31 20:15:59 2025"
+  LastModifiedDate	  "Tue Apr 01 23:57:54 2025"
   RTWModifiedTimeStamp	  665254123
-  ModelVersionFormat	  "1.%<AutoIncrement:547>"
+  ModelVersionFormat	  "1.%<AutoIncrement:548>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -1144,7 +1144,7 @@ Model {
   System {
     Name		    "conSys_2robots_5_vR2014a"
     Location		    [-8, -8, 1374, 736]
-    Open		    off
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -1362,7 +1362,7 @@ Model {
       System {
 	Name			"Cluster Space Controller"
 	Location		[-8, -8, 1374, 736]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -6307,7 +6307,7 @@ Model {
 	  }
 	  ShowLegends		  off
 	  YMin			  "-5000"
-	  YMax			  "3000"
+	  YMax			  "1000"
 	  SaveName		  "ScopeData77"
 	  LimitDataPoints	  off
 	}
@@ -6355,7 +6355,7 @@ Model {
 	  BlockMirror		  on
 	  ShowName		  off
 	  Floating		  off
-	  Location		  [1, 49, 1367, 727]
+	  Location		  [5, 49, 1371, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "xonly"

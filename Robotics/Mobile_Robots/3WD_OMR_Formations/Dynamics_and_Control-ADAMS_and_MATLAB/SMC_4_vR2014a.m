@@ -308,7 +308,7 @@ sys(25:30,1) = (((4*par.dampFacts*par.Lambda)\(par.Lambda^2)).^(.5))\(3.5*(sigma
 K = Beta*(F + par.Eta) + abs(Beta - eye(6))*abs(-u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2];
 %--------------------------------------------------------------------------
 % Control laws:
-sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1) - u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) + diag([1 1 2 1 2 2])*K.*tanh(par.err*sigma) + diag([1 1 1 1 1 1])*u(31:36,1));
+sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1) - u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) + diag([1 1 1.8 1 1.8 1.8])*K.*tanh([par.err par.err 1.1*par.err par.err 1.41*par.err 1.41*par.err]'.*sigma) + diag([1 1 1 1 1 1])*u(31:36,1));
 %--------------------------------------------------------------------------
 % Sliding surfaces:
 sys(37:42,1) = sigma;
