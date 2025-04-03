@@ -36,6 +36,17 @@ typedef struct{
     bool *flag;                                                                 // Execution flag.
 } Data_Struct;
 //---------------------------------------------------------------------------------------------------------------
+// Averaging window to mitigate numerical errors in data adquisition:
+typedef struct{
+    int ySize;                                                                  // First dimension [*]* of data matrix.
+    int zSize;                                                                  // Second dimension *[*] of data matrix.
+    Matrix X_k;                                                                 // Matrix arrangment from dataset.
+    float *limFactor;                                                           // Activation limit values of averaging window, which conditionate numerical errors.
+    float *y_k;                                                                 // Output variables.
+    //-----------------------------------------------
+    bool *flag;                                                                 // Execution flag.
+} Aver_Window;
+//---------------------------------------------------------------------------------------------------------------
 // Declaration of functions library:
 //---------------------------------------------------------------------------------------------------------------
 // Creating 3d matrix structure:
@@ -66,6 +77,12 @@ extern void removeCharacters(char *str, size_t start, size_t count);
 extern bool _isinf(float x);
 // Function to check if a floating-point value is considered NaN (Not a Number) when it does not compare equal to itself:
 extern bool _isnan(float value);
+// Creating an averaging window structure to mitigate numerical errors in a streaming dataset:
+extern Aver_Window createAverWindow(int input_size, int window_size, float lim_factor[]);
+// Initiating the averaging window structure to mitigate numerical errors in a streaming dataset:
+extern void initAverWindow(Aver_Window AVW, float dataset_0[]);
+// Computing the averaging window structure to mitigate numerical errors in a streaming dataset:
+extern void computeAverWindow(Aver_Window AVW, float dataset[]);
 //---------------------------------------------------------------------------------------------------------------
 #endif /* _baqumau_H_ */
 //---------------------------------------------------------------------------------------------------------------

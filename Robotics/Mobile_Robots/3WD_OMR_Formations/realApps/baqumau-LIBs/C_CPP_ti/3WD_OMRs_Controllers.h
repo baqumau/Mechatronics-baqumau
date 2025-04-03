@@ -316,7 +316,7 @@ typedef struct{
     float *til_Fc_k;                                                            // Required vector field with uncertainty maximum values ^{\tilde}f_c(k).
     float *aux_u_k;                                                             // Auxiliary control law.
     float *kappa_k;                                                             // Variant control gains of SMC CS auxilliary control law, that depends on model uncertainties.
-    const float *kapWeights;                                                    // Constant vector with the weigths that accompanies to Kappa(k), within SMC control structure.
+    float *kapWeights;                                                          // Constant vector with the weigths that accompanies to Kappa(k), within SMC control structure.
     float *ast_u_k;                                                             // Tracking error based control that is part of auxilliary control law.
     float *y_k;                                                                 // Output variables.
     bool *flag;                                                                 // Execution flag.
@@ -420,7 +420,7 @@ extern void init_SlidingSurfaces(Sl_Surfaces SLS, float ref_z_0[], float fmr_z_0
 // Compute the sliding surfaces algorithm that updates structured variables within SLS:
 extern void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], float cso_y_k[]);
 // Creating the SMC controller data structure in the cluster space as SMC:
-extern SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], const float epsilon[], const float kap_weights[]);
+extern SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon[], float kap_weights[]);
 // Initializing the sliding mode controller structured as SMC:
 extern void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]);
 // SMC strategy computing function:

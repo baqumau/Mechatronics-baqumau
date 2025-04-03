@@ -274,3 +274,82 @@ bool _isnan(float value){
     return (value != value);                                                                // NaN is the only value that does not equal itself.
 }
 //---------------------------------------------------------------------------------------------------------------
+// Creating an averaging window structure to mitigate numerical errors in a streaming dataset:
+Aver_Window createAverWindow(int input_size, int window_size, float lim_factor[]){
+    int i, j;                                                                               // Declaration of i and j as integer variables.
+    // Configuring the members of the averaging window structure:
+    Aver_Window AVW;                                                                        // Create the averaging window structure.
+    AVW.ySize = window_size;                                                                // Define the length of the dataset or data vector.
+    AVW.zSize = input_size;                                                                 // Define the length of the window dataset or row numbers of the matrix.
+    AVW.limFactor = lim_factor;                                                             // Define the limits factor that conditionate the numerical errors.
+    //-----------------------------------------------
+    // Preallocating memory:
+    AVW.limFactor = (float *)malloc(input_size * sizeof(float));                            // Allocate memory for the output vector y(k).
+    AVW.y_k = (float *)malloc(input_size * sizeof(float));                                  // Allocate memory for the output vector y(k).
+    AVW.flag = (bool *)malloc(sizeof(bool));                                                // Allocate memory for the flag of AVW structure (disable or enable the averaging window).
+    //-----------------------------------------------
+    if(allocateMatrix(&AVW.X_k, window_size, input_size)){
+        // Creating matrix arrays for alpha_1, alpha_2 and alpha_3:
+        for(i = 0; i < window_size; i++){
+            for(j = 0; j < input_size; j++){
+                AVW.X_k.data[i][j] = 0.0f;                                                  // Clearing values of the matrix X_k within AVW.
+            }
+        }
+    }
+    for(i = 0; i < input_size; i++){
+        AVW.limFactor[i] = lim_factor[i];                                                   // Clearing values of the matrix X_k within AVW.
+    }
+    //-----------------------------------------------
+    AVW.flag[0] = false;                                                                    // Setting AVW flag to false.
+    return AVW;
+}
+//---------------------------------------------------------------------------------------------------------------
+// Initiating the averaging window structure to mitigate numerical errors in a streaming dataset:
+void initAverWindow(Aver_Window AVW, float dataset_0[]){
+    int i, j;                                                                               // Declaration of i and j as integer variables.
+    // Initiating X_k matrix:
+    for(i = 0; i < AVW.ySize; i++){
+        for(j = 0; j < AVW.zSize; j++){
+            AVW.X_k.data[i][j] = dataset_0[j];                                              // Update the initial values in the X_k matrix.
+        }
+    }
+    // Updating output of the averaging window:
+    for(i = 0; i < AVW.zSize; i++){
+        AVW.y_k[i] = AVW.X_k.data[0][i];                                                    // Update the output of this averaging window.
+    }
+    // Updating the averaging window flag:
+    AVW.flag[0] = true;                                                                     // Flag settled to true, which enables the averaging window on AVW structure.
+}
+//---------------------------------------------------------------------------------------------------------------
+// Computing the averaging window structure to mitigate numerical errors in a streaming dataset:
+extern void computeAverWindow(Aver_Window AVW, float dataset[]){
+    int i, j;                                                                               // Declaration of i and j as integer variables.
+    float avg;                                                                              // Auxliary float variable.
+    // Execute averaging window algorithm:
+    if(AVW.flag[0]){
+        // Updating the averaging matrix X(k):
+        for(i = AVW.ySize-1; i > 0; i--){
+            for(j = 0; j < AVW.zSize; j++){
+                AVW.X_k.data[i][j] = AVW.X_k.data[i-1][j];                                  // Update in a descendent way.
+            }
+        }
+        // Updating input on the averaging matrix X(k):
+        for(i = 0; i < AVW.zSize; i++){
+            if(dataset[i] > AVW.X_k.data[0][i]+AVW.limFactor[i] || dataset[i] < AVW.X_k.data[0][i]-AVW.limFactor[i]){
+                avg = 0.0f;                                                                 // Clear average auxiliary variable.
+                for(j = 0; j < AVW.ySize; j++){
+                    avg += AVW.X_k.data[j][i]/AVW.ySize;                                    // Computing the mean computation.
+                }
+                AVW.X_k.data[0][i] = AVW.X_k.data[1][i] + (float)(signf(AVW.X_k.data[0][i] - AVW.X_k.data[1][i]))*fabsf(fabsf(AVW.X_k.data[0][i]) - fabsf(avg));
+            }
+            else AVW.X_k.data[0][i] = dataset[i];
+        }
+        //-----------------------------------------------
+        // Updating output of the averaging window:
+        for(i = 0; i < AVW.zSize; i++){
+            AVW.y_k[i] = AVW.X_k.data[0][i];                                                // Update the output of this averaging window.
+        }
+    }
+    else NOP;                                                                               // No operation.
+}
+//---------------------------------------------------------------------------------------------------------------

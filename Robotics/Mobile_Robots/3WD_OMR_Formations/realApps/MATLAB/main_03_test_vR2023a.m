@@ -19,7 +19,7 @@ x7_t = zeros(iter_stop,1);                                                  % Pr
 %--------------------------------------------------------------------------
 % A serial port object is constructed:
 BaudRate = 2000000;                                                         % Specify baud rate for UART communication.
-S1 = serialport("COM6",BaudRate,"FlowControl","none");
+S1 = serialport("COM16",BaudRate,"FlowControl","none");
 configureTerminator(S1,"CR/LF","LF");
 %--------------------------------------------------------------------------
 tic
@@ -35,17 +35,41 @@ while true
         if (isempty(command) == 0) && (command == 9) && (flag_1 == 0)
             % Sinusiodal test signals:
             % Time function 1:
-            x1_t(counter+1) = 3000*sin(2*pi*.002.*counter);
+            if (counter == 1110) || (counter == 1130) || (counter == 1145) || (counter == 4110) || (counter == 4130) || (counter == 4145)
+                x1_t(counter+1) = 3000*sin(2*pi*.002.*counter) + 10000;
+            else
+                x1_t(counter+1) = 3000*sin(2*pi*.002.*counter);
+            end
             % Time function 2:
-            x2_t(counter+1) = 1500*sin(2*pi*.002.*counter) + 1500*cos(2*pi*.008.*counter);
+            if (counter == 1105) || (counter == 1132) || (counter == 1143) || (counter == 4112) || (counter == 4133) || (counter == 4149)
+                x2_t(counter+1) = 1500*sin(2*pi*.002.*counter) + 1500*cos(2*pi*.008.*counter) + 10000;
+            else
+                x2_t(counter+1) = 1500*sin(2*pi*.002.*counter) + 1500*cos(2*pi*.008.*counter);
+            end
             % Time function 3:
-            x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2;
+            if (counter == 1101) || (counter == 1128) || (counter == 1139) || (counter == 4109) || (counter == 4138) || (counter == 4145)
+                x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2 + 10000;
+            else
+                x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2;
+            end
             % Time function 4:
-            x4_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x3_t(counter+1)/3000;
+            if (counter == 1107) || (counter == 1129) || (counter == 1147) || (counter == 4107) || (counter == 4140) || (counter == 4151)
+                x4_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x3_t(counter+1)/3000 + 10000;
+            else
+                x4_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x3_t(counter+1)/3000;
+            end
             % Time function 5:
-            x5_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1) + x3_t(counter+1) - x4_t(counter+1))/3;
+            if (counter == 1101) || (counter == 1135) || (counter == 1137)
+                x5_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1) + x3_t(counter+1) - x4_t(counter+1))/3 + 10000;
+            else
+                x5_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1) + x3_t(counter+1) - x4_t(counter+1))/3;
+            end
             % Time function 6:
-            x6_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x4_t(counter+1)/3000 + x5_t(counter+1)/3000;
+            if (counter == 1106) || (counter == 1133) || (counter == 1141)
+                x6_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x4_t(counter+1)/3000 + x5_t(counter+1)/3000 + 10000;
+            else
+                x6_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x4_t(counter+1)/3000 + x5_t(counter+1)/3000;
+            end
             % Time function 7:
             % x_7(counter+1) = atan2(sin(2*pi*.002.*t),cos(2*pi*.002.*t));
             % Getting and arraying sinusoidal signals:

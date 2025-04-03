@@ -145,13 +145,14 @@ char *var10;                                                                    
 char *var11;                                                                            // Multi-purpose char variable 11.
 char *var12;                                                                            // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
-Control_System consys = SMC_CS;                                                         // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
+Control_System consys = ADRC_RS;                                                        // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
 Reference_Type reftype = MINGYUE_02;                                                    // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
-float t_cl = 0.0f;                                                                      // Defines a clutch interval time implemented in the control strategies.
+float t_cl = 0.0f;                                                                      // Define a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                        // Declaration of this floating-point values vector for arranging error variables.
+float limFactor[3*Robots_Qty] = {1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f}; // Define the limit factor for the averaging window.
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the ADRC_RS strategy:
-const float epsilon = 0.42f;                                                            // Small constant used in the RSO observer.
+float epsilon = 0.42f;                                                                  // Small constant used in the RSO observer.
 // Float parameters to define the observer gains of RSO, for RS ADRC:
 float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {18.4091f,     0.0f,     0.0f,     0.0f,     0.0f,     0.0f},
@@ -184,9 +185,9 @@ float gpi_Gains[3*Robots_Qty][3] = {
 };
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
-const float upsilon_1 = 0.42f;                                                          // Small constant used in the CSO observer.
-const float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.42f, 0.42f};       // Vector with the small constants used in the SMC control structure.
-const float kapWeigths[3*Robots_Qty] = {1.0f, 1.0f, 1.8f, 1.0f, 1.8f, 1.8f};            // Constants that accompanies Kappa gains within SMC control structure.
+float upsilon_1 = 0.42f;                                                                // Small constant used in the CSO observer.
+float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.462f, 0.42f, 0.588f, 0.588f};          // Vector with the small constants used in the SMC control structure.
+float kapWeigths[3*Robots_Qty] = {1.0f, 1.0f, 1.8f, 1.0f, 1.8f, 1.8f};                  // Constants that accompanies Kappa gains within SMC control structure.
 // Float parameters to define the observer gains of CSO_01, for SMC_CS:
 float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                                           // Setting alpha_1 for CSO_01.
@@ -228,6 +229,7 @@ float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                     // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
 float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 9.5f, 180.0f, 6.5f, 6.5f};
+// Defining the tuning parameters for the internal differentiators, required in SMC controller:
 float diff_fc = 45.0f;                                                                  // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
 float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                  // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
 float diff_lc[6] = {30.0f, 30.0f, 0.15f, 60.0f, 0.15f, 0.15f};                          // Values assigned as the Lipschitz design constants of HOSM-based differentiator within CSO structure (variant x).
@@ -254,6 +256,8 @@ SMC_Controller SMC;
 Reference REF;
 // Declaration of a robot formation structure for arranging their relevant variables:
 Formation FMR;                                                                          // Declaration of OMRs formation structure.
+// Declaration of an averaging window structure to mitigate numerical errors:
+Aver_Window AVW;
 //-----------------------------------------------------------------------------------------------------------------------
 void main(void){
     // Step 1. Initialize System Control:
@@ -463,6 +467,8 @@ void main(void){
     SMC = createSMC_Controller(smc_Gains,unc_Values,dis_Values,sls_Gains,sls_dampFacts,upsilon_2,kapWeigths);
     // Creating data structure for the reference builder system:
     REF = createReference(sampleTime,reftype);                                          // Create reference structure.
+    // Creating an averaging window to mitigate numerical errors in the measured data:
+    AVW = createAverWindow(3*Robots_Qty,6,limFactor);
     // Creating a robot formation structure for arranging their relevant variables:
     FMR = createFormation(Robots_Qty);                                                  // Create the OMRs formation structure.
     while(!FMR.flag[0]) FMR = createFormation(Robots_Qty);                              // Create the OMRs formation structure.
@@ -553,6 +559,8 @@ __interrupt void cpu_timer1_isr(void){
         angleConversion(FMR.CORq,angles_k);                                             // Compute angle conversion to the absolute domain.
         FMR.q_k[2] = FMR.CORq.y_k[0];                                                   // Determines ph1(k).
         FMR.q_k[5] = FMR.CORq.y_k[1];                                                   // Determines ph2(k).
+        computeAverWindow(AVW,FMR.q_k);                                                 // Compute the averaging window.
+        FMR.q_k = AVW.y_k;                                                              // Filtered measured data in the robot space.
         computeCSVariables(FMR,consys);                                                 // Compute the cluster space variables of FMR formation.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the desired reference tracking-trajectories:
@@ -835,6 +843,8 @@ __interrupt void scia_rx_isr(void){
                 initAngleConverter(FMR.CORq,angles_k);                                  // Initialize angle conversion to absolute domain in the robot space.
             }
             computeCSVariables(FMR,consys);                                             // Compute the cluster space variables of FMR formation.
+            //---------------------------------------------------------------------------------------------------------
+            initAverWindow(AVW,FMR.q_k);                                                // Initialize the averaging window.
             //---------------------------------------------------------------------------------------------------------
             // Initializing the selected reference trajectory profiles:
             switch(reftype){

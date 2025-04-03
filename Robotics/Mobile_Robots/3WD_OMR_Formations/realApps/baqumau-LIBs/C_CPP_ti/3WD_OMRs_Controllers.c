@@ -1361,6 +1361,125 @@ void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
+// Cluster space estimation function for CS observer (type 02 - variant x - CSa):
+void CSx_Estimation02a(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]){
+    int i, j, m = Robots_Qty*3, n = 3*Robots_Qty, r = 0;                                    // Declaration of i, j, m, n and r as integer variables.
+    // Getting output of CSO.INT integration structure:
+    for(i = 0; i < m; i++){
+        CSO.z1_k[i] = CSO.INT.y_k[i];                                                       // Updating data for z1(k) within CSO structure.
+        CSO.z2_k[i] = CSO.INT.y_k[i+m];                                                     // Updating data for z2(k) within CSO structure.
+        CSO.z3_k[i] = CSO.INT.y_k[i+2*m];                                                   // Updating data for z3(k) within CSO structure.
+    }
+    // Execute estimation algorithm:
+    if(CSO.flag[0]){
+        HOSMDifferentiation(CSO.SMDIF,fmr_c_k);                                             // Compute differentiation of input[], entered in this estimation function.
+        switch(Robots_Qty){
+            case 2:{
+                // Computing values of the matrix -inv(hat{D})*hat{H}(k), in the cluster space:
+                float H12_k = (CSO.SMDIF.y_k[8] + CSO.SMDIF.y_k[10])*fmr_params[46];        // Pre-compute value in {1,2} position of H(k) matrix.
+                float H45_k = (CSO.SMDIF.y_k[8] + CSO.SMDIF.y_k[11])*fmr_params[47];        // Pre-compute value in {4,5} position of H(k) matrix.
+                float w101_k = H12_k*fmr_params[8];                                         // Pre-compute value in {1,2} position of W1(k) matrix.
+                float w102_k = H45_k*fmr_params[10];                                        // Pre-compute value in {4,5} position of W1(k) matrix.
+                float w103_k = (w101_k - w102_k)*0.5f;                                      // Pre-compute operation 1 in W1(k).
+                float w104_k = (w101_k + w102_k)*0.5f;                                      // Pre-compute operation 2 in W1(k).
+                float w105_k = 1.0f/fmr_c_k[3];                                             // Pre-compute division 1 in W1(k).
+                float w106_k = w103_k*w105_k;                                               // Pre-compute multiplication 1 in W1(k).
+                float w107_k = sinf(fmr_c_k[2]);                                            // Pre-compute operation 3 in W1(k).
+                float w108_k = cosf(fmr_c_k[2]);                                            // Pre-compute operation 4 in W1(k).
+                float w109_k = w103_k*w107_k;                                               // Pre-compute multiplication 2 in W1(k).
+                float w110_k = w103_k*w108_k;                                               // Pre-compute multiplication 3 in W1(k).
+                float w111_k = w106_k*w107_k;                                               // Pre-compute multiplication 4 in W1(k).
+                float w112_k = w106_k*w108_k;                                               // Pre-compute multiplication 5 in W1(k).
+                float w113_k = w104_k + CSO.SMDIF.y_k[8];                                   // Pre-compute operation 5 in W1(k).
+                float w114_k = CSO.SMDIF.y_k[9]*w105_k;                                     // Pre-compute multiplication 6 in W1(k).
+                float w115_k = w105_k*w113_k;                                               // Pre-compute multiplication 7 in W1(k).
+                // Computing W1_k = -J(c)*inv(hat{D})*hat{H}(c)*inv(J(c)) + d(J(c))/dt*inv(J(c)):
+                float W1_k[3*Robots_Qty][3*Robots_Qty] = {
+                    {   0.0f, -w104_k, fmr_c_k[3]*w109_k, -w110_k, 0.0f, 0.0f},
+                    { w104_k,    0.0f, fmr_c_k[3]*w110_k,  w109_k, 0.0f, 0.0f},
+                    {-w111_k, -w112_k,           -w114_k, -w115_k, 0.0f, 0.0f},
+                    { w110_k, -w109_k, fmr_c_k[3]*w113_k,    0.0f, 0.0f, 0.0f},
+                    { w111_k,  w112_k,            w114_k,  w115_k, 0.0f, 0.0f},
+                    { w111_k,  w112_k,            w114_k,  w115_k, 0.0f, 0.0f}
+                };
+                // Computing values of the matrix inv(hat{D})*hat{B}(k):
+                float w201_k = fmr_c_k[2] + fmr_c_k[4];                                     // Pre-compute angular addition 0a in W2(k).
+                float w202_k = fmr_c_k[2] + fmr_c_k[5];                                     // Pre-compute angular addition 0b in W2(k).
+                float w203_k = delta_1 + w201_k;                                            // Pre-compute angular addition 1 in W2(k).
+                float w204_k = delta_1 - w201_k;                                            // Pre-compute angular subtraction 1 in W2(k).
+                float w205_k = delta_2 + w202_k;                                            // Pre-compute angular addition 2 in W2(k).
+                float w206_k = delta_2 - w202_k;                                            // Pre-compute angular subtraction 2 in W2(k).
+                float w207_k = fmr_params[18]*0.5f;                                         // Pre-compute multiplication 1 in W2(k).
+                float w208_k = fmr_params[19]*0.5f;                                         // Pre-compute multiplication 2 in W2(k).
+                float w209_k = w201_k + fmr_c_k[2];                                         // Pre-compute angular addition 3 in W2(k).
+                float w210_k = w202_k + fmr_c_k[2];                                         // Pre-compute angular addition 4 in W2(k).
+                float w211_k = w203_k + fmr_c_k[2];                                         // Pre-compute angular addition 5 in W2(k).
+                float w212_k = fmr_c_k[2] - w204_k;                                         // Pre-compute angular subtraction 3 in W2(k).
+                float w213_k = w205_k + fmr_c_k[2];                                         // Pre-compute angular addition 6 in W2(k).
+                float w214_k = fmr_c_k[2] - w206_k;                                         // Pre-compute angular subtraction 4 in W2(k).
+                float w215_k = w207_k*w105_k;                                               // Pre-compute multiplication 3 in W2(k).
+                float w216_k = w208_k*w105_k;                                               // Pre-compute multiplication 4 in W2(k).
+                float w217_k = cosf(w209_k)*w215_k;                                         // Pre-compute multiplication 5 in W2(k).
+                float w218_k = sinf(w211_k)*w215_k;                                         // Pre-compute multiplication 7 in W2(k).
+                float w219_k = sinf(w212_k)*w215_k;                                         // Pre-compute multiplication 8 in W2(k).
+                float w220_k = cosf(w210_k)*w216_k;                                         // Pre-compute multiplication 9 in W2(k).
+                float w221_k = sinf(w213_k)*w216_k;                                         // Pre-compute multiplication 10 in W2(k).
+                float w222_k = sinf(w214_k)*w216_k;                                         // Pre-compute multiplication 11 in W2(k).
+                // Computing W2_k = J(c)*inv(hat{D})*hat{B}(c):
+                float W2_k[3*Robots_Qty][3*Robots_Qty] = {
+                    {   -w207_k*sinf(w203_k),    -w207_k*sinf(w204_k),     w207_k*cosf(w201_k),    -w208_k*sinf(w205_k),    -w208_k*sinf(w206_k),     w208_k*cosf(w202_k)},
+                    {    w207_k*cosf(w203_k),    -w207_k*cosf(w204_k),     w207_k*sinf(w201_k),     w208_k*cosf(w205_k),    -w208_k*cosf(w206_k),     w208_k*sinf(w202_k)},
+                    {                -w218_k,                  w219_k,                  w217_k,                  w221_k,                 -w222_k,                 -w220_k},
+                    {    w207_k*cosf(w211_k),    -w207_k*cosf(w212_k),     w207_k*sinf(w209_k),    -w208_k*cosf(w213_k),     w208_k*cosf(w214_k),    -w208_k*sinf(w210_k)},
+                    {fmr_params[24] + w218_k, fmr_params[24] - w219_k, fmr_params[24] - w217_k,                 -w221_k,                  w222_k,                  w220_k},
+                    {                 w218_k,                 -w219_k,                 -w217_k, fmr_params[25] - w221_k, fmr_params[25] + w222_k, fmr_params[25] + w220_k}
+                };
+                //-----------------------------------------------
+                // Updating vector fields F(k) and G(k), together with variables z1(k + 1), z2(k + 1) and z3(k + 1) where derivative of estimated signals were defined in this algorithm:
+                for(i = 0; i < m; i++){
+                    CSO.F_k[i] = 0.0f;                                                      // Clear the i^th value of vector field F(k).
+                    CSO.G_k[i] = 0.0f;                                                      // Clear the i^th value of vector field G(k).
+                    CSO.z1_kp1[i] = 0.0f;                                                   // Clear the i^th value of z1(k + 1).
+                    CSO.z2_kp1[i] = 0.0f;                                                   // Clear the i^th value of z2(k + 1).
+                    CSO.z3_kp1[i] = 0.0f;                                                   // Clear the i^th value of z3(k + 1).
+                    for(j = 0; j < m; j++){
+                        // Compute state correction for z1(k + 1), z2(k + 1) and z3(k + 1):
+                        CSO.z1_kp1[i] += CSO.alpha_1.data[i][j]*(fmr_c_k[j+r] - CSO.z1_k[j])/(CSO.gamma);
+                        CSO.z2_kp1[i] += CSO.alpha_2.data[i][j]*(fmr_c_k[j+r] - CSO.z1_k[j])/(CSO.gamma_gamma);
+                        // Final prediction result for z3(k + 1):
+                        CSO.z3_kp1[i] += CSO.alpha_3.data[i][j]*(fmr_c_k[j+r] - CSO.z1_k[j])/(CSO.gamma_gamma_gamma);
+                    }
+                    for(j = 0; j < n; j++){
+                        // Updating vector fields F(k) and G(k):
+                        CSO.F_k[i] += W1_k[i+r][j]*CSO.SMDIF.y_k[j+n];                      // Compute vector field F(k).
+                        CSO.G_k[i] += W2_k[i+r][j]*fmr_u_k[j];                              // Compute vector field G(k).
+                    }
+                    CSO.z1_kp1[i] += CSO.z2_k[i];                                           // Final prediction result for z1(k + 1).
+                    CSO.z2_kp1[i] += CSO.z3_k[i] + CSO.F_k[i] + CSO.G_k[i];                 // Final prediction result for z2(k + 1).
+                    // Concatenation of z1(k + 1), z2(k + 1) and z3(k + 1) within z(k + 1):
+                    CSO.Z_kp1[i] = CSO.z1_kp1[i];
+                    CSO.Z_kp1[i+m] = CSO.z2_kp1[i];
+                    CSO.Z_kp1[i+2*m] = CSO.z3_kp1[i];
+                }
+                for(i = 0; i < n; i++){
+                    // Output of high-gain observer CSO:
+                    CSO.y_k[i] = CSO.SMDIF.y_k[i+n];                                        // Saving internal differentiation of CSO structure within its output y(k).
+                    CSO.y_k[i+n] = 0.0f;
+                }
+                for (j = 0; j < m; j++){
+                    CSO.y_k[j+r+n] = CSO.z3_k[j];                                           // Arranging disturbance estimations on output y(k), within CSO structure.
+                }
+                Integration(CSO.INT,CSO.Z_kp1);                                             // Compute integration for x1(k + 1), x2(k + 1) and x3(k + 1).
+                break;
+            }
+            case 3:{
+                break;
+            }
+        }
+    }
+    else NOP;                                                                               // No operation.
+}
+//---------------------------------------------------------------------------------------------------------------
 // Creating the sliding surfaces:
 Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float dampFacts[], float satValues[]){
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
@@ -1439,17 +1558,18 @@ void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], 
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating the SMC controller data structure in the cluster space as SMC:
-SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], const float epsilon[], const float kap_weights[]){
+SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon[], float kap_weights[]){
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
     // Configuring the members of the SMC structure (sliding mode control):
     SMC_Controller SMC;                                                                     // Creates sliding mode controller data structure.
     SMC.s_in = 7*s;                                                                         // Assign value of inputSize to the member s_in of the SMC structure.
     SMC.s_out = s;                                                                          // Assign value of outputSize to the member s_out of the SMC structure.
-    SMC.kapWeights = kap_weights;                                                           // Assign values to the constant vector weighting to Kappa(k), within SMC control structure.
     //-----------------------------------------------
+    // Pre-allocating memory:
     SMC.Gamma = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the sliding gains within SMC.
     SMC.epsilon = (float *)malloc(s * sizeof(float));                                       // Allocate memory for small constants used in the SMC strategy.
     SMC.dampFacts = (float *)malloc(s * sizeof(float));                                     // Allocate memory for the damping factors of sliding surfaces within SMC.
+    SMC.kapWeights = (float *)malloc(s * sizeof(float));                                    // Allocate memory for the constant vector weighting to Kappa(k), within SMC control structure.
     SMC.omega = (float *)malloc(s * sizeof(float));                                         // Allocate memory for the fixed control gains within SMC.
     SMC.rho = (float *)malloc(s * sizeof(float));                                           // Allocate memory for the disturbances bounding values within SMC strategy.
     SMC.Delta = (float *)malloc(4 * sizeof(float));                                         // Allocate memory for the uncertainties bounding values within SMC strategy.
@@ -1466,6 +1586,7 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
         SMC.Gamma[i] = sls_gains[i];                                                        // Assigning values to the gains vector Gamma, of SMC.
         SMC.epsilon[i] = epsilon[i];                                                        // Assigning values to the small constants used in the SMC structure.
         SMC.dampFacts[i] = sls_dampfacts[i];                                                // Assign values to the damping factors of the sliding surfaces.
+        SMC.kapWeights[i] = kap_weights[i];                                                 // Assign values to the constant vector weighting to Kappa(k), within SMC control structure.
         SMC.omega[i] = gains[i];                                                            // Assigning values to fixed control gains vector omega, within SMC.
         SMC.rho[i] = dis_values[i];                                                         // Assigning values to the disturbances bounding vector rho, within SMC.
         if(i < 4) SMC.Delta[i] = unc_values[i];                                             // Assigning values to the uncertainties bounding vector delta, within SMC.
