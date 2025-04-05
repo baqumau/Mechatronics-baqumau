@@ -413,18 +413,24 @@ extern void CS_Estimation01(CS_Observer CSO, float fmr_u_k[], float fmr_c_k[], f
 extern void CSx_Estimation01(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]);
 // Cluster space estimation function for CS observer (type 02 - variant x):
 extern void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]);
+// Cluster space estimation function for CS observer (type 02 - variant x - CSa):
+extern void CSx_Estimation02a(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]);
 // Creating the sliding surfaces:
 extern Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float dampFacts[], float satValues[]);
 // Adding initial conditions to sliding surfaces structured within SLS:
 extern void init_SlidingSurfaces(Sl_Surfaces SLS, float ref_z_0[], float fmr_z_0[]);
 // Compute the sliding surfaces algorithm that updates structured variables within SLS:
 extern void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], float cso_y_k[]);
-// Creating the SMC controller data structure in the cluster space as SMC:
-extern SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon[], float kap_weights[]);
-// Initializing the sliding mode controller structured as SMC:
-extern void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]);
-// SMC strategy computing function:
-extern void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]);
+// Creating the SMC controller data structure in the cluster space as SMC (type 01):
+extern SMC_Controller createSMC_Controller01(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon[], float kap_weights[]);
+// Initializing the sliding mode controller structured as SMC (type 01):
+extern void initSMC_Controller01(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]);
+// Initializing the sliding mode controller structured as SMC (type 01 - CSa):
+extern void initSMC_Controller01a(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]);
+// SMC strategy computing function (type 01):
+extern void computeSMC_Controller01(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]);
+// SMC strategy computing function (type 01 - CSa):
+extern void computeSMC_Controller01a(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]);
 // Creating formation structure:
 extern Formation createFormation(int qty);
 // Compute the corresponding cluster space variables to OMRs formation as FMR:

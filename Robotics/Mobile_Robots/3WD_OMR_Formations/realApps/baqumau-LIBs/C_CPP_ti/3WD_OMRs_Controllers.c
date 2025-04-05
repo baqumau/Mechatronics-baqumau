@@ -1376,8 +1376,8 @@ void CSx_Estimation02a(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float
         switch(Robots_Qty){
             case 2:{
                 // Computing values of the matrix -inv(hat{D})*hat{H}(k), in the cluster space:
-                float H12_k = (CSO.SMDIF.y_k[8] + CSO.SMDIF.y_k[10])*fmr_params[46];        // Pre-compute value in {1,2} position of H(k) matrix.
-                float H45_k = (CSO.SMDIF.y_k[8] + CSO.SMDIF.y_k[11])*fmr_params[47];        // Pre-compute value in {4,5} position of H(k) matrix.
+                float H12_k = CSO.SMDIF.y_k[10]*fmr_params[46];                             // Pre-compute value in {1,2} position of H(k) matrix.
+                float H45_k = CSO.SMDIF.y_k[11]*fmr_params[47];                             // Pre-compute value in {4,5} position of H(k) matrix.
                 float w101_k = H12_k*fmr_params[8];                                         // Pre-compute value in {1,2} position of W1(k) matrix.
                 float w102_k = H45_k*fmr_params[10];                                        // Pre-compute value in {4,5} position of W1(k) matrix.
                 float w103_k = (w101_k - w102_k)*0.5f;                                      // Pre-compute operation 1 in W1(k).
@@ -1399,12 +1399,12 @@ void CSx_Estimation02a(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float
                     { w104_k,    0.0f, fmr_c_k[3]*w110_k,  w109_k, 0.0f, 0.0f},
                     {-w111_k, -w112_k,           -w114_k, -w115_k, 0.0f, 0.0f},
                     { w110_k, -w109_k, fmr_c_k[3]*w113_k,    0.0f, 0.0f, 0.0f},
-                    { w111_k,  w112_k,            w114_k,  w115_k, 0.0f, 0.0f},
-                    { w111_k,  w112_k,            w114_k,  w115_k, 0.0f, 0.0f}
+                    {   0.0f,    0.0f,              0.0f,    0.0f, 0.0f, 0.0f},
+                    {   0.0f,    0.0f,              0.0f,    0.0f, 0.0f, 0.0f}
                 };
                 // Computing values of the matrix inv(hat{D})*hat{B}(k):
-                float w201_k = fmr_c_k[2] + fmr_c_k[4];                                     // Pre-compute angular addition 0a in W2(k).
-                float w202_k = fmr_c_k[2] + fmr_c_k[5];                                     // Pre-compute angular addition 0b in W2(k).
+                float w201_k = fmr_c_k[4];                                                  // Pre-compute angular addition 0a in W2(k).
+                float w202_k = fmr_c_k[5];                                                  // Pre-compute angular addition 0b in W2(k).
                 float w203_k = delta_1 + w201_k;                                            // Pre-compute angular addition 1 in W2(k).
                 float w204_k = delta_1 - w201_k;                                            // Pre-compute angular subtraction 1 in W2(k).
                 float w205_k = delta_2 + w202_k;                                            // Pre-compute angular addition 2 in W2(k).
@@ -1427,12 +1427,12 @@ void CSx_Estimation02a(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float
                 float w222_k = sinf(w214_k)*w216_k;                                         // Pre-compute multiplication 11 in W2(k).
                 // Computing W2_k = J(c)*inv(hat{D})*hat{B}(c):
                 float W2_k[3*Robots_Qty][3*Robots_Qty] = {
-                    {   -w207_k*sinf(w203_k),    -w207_k*sinf(w204_k),     w207_k*cosf(w201_k),    -w208_k*sinf(w205_k),    -w208_k*sinf(w206_k),     w208_k*cosf(w202_k)},
-                    {    w207_k*cosf(w203_k),    -w207_k*cosf(w204_k),     w207_k*sinf(w201_k),     w208_k*cosf(w205_k),    -w208_k*cosf(w206_k),     w208_k*sinf(w202_k)},
-                    {                -w218_k,                  w219_k,                  w217_k,                  w221_k,                 -w222_k,                 -w220_k},
-                    {    w207_k*cosf(w211_k),    -w207_k*cosf(w212_k),     w207_k*sinf(w209_k),    -w208_k*cosf(w213_k),     w208_k*cosf(w214_k),    -w208_k*sinf(w210_k)},
-                    {fmr_params[24] + w218_k, fmr_params[24] - w219_k, fmr_params[24] - w217_k,                 -w221_k,                  w222_k,                  w220_k},
-                    {                 w218_k,                 -w219_k,                 -w217_k, fmr_params[25] - w221_k, fmr_params[25] + w222_k, fmr_params[25] + w220_k}
+                    {-w207_k*sinf(w203_k), -w207_k*sinf(w204_k), w207_k*cosf(w201_k), -w208_k*sinf(w205_k), -w208_k*sinf(w206_k),  w208_k*cosf(w202_k)},
+                    { w207_k*cosf(w203_k), -w207_k*cosf(w204_k), w207_k*sinf(w201_k),  w208_k*cosf(w205_k), -w208_k*cosf(w206_k),  w208_k*sinf(w202_k)},
+                    {             -w218_k,               w219_k,              w217_k,               w221_k,              -w222_k,              -w220_k},
+                    { w207_k*cosf(w211_k), -w207_k*cosf(w212_k), w207_k*sinf(w209_k), -w208_k*cosf(w213_k),  w208_k*cosf(w214_k), -w208_k*sinf(w210_k)},
+                    {      fmr_params[24],       fmr_params[24],      fmr_params[24],                 0.0f,                 0.0f,                 0.0f},
+                    {                0.0f,                 0.0f,                0.0f,       fmr_params[25],       fmr_params[25],       fmr_params[25]}
                 };
                 //-----------------------------------------------
                 // Updating vector fields F(k) and G(k), together with variables z1(k + 1), z2(k + 1) and z3(k + 1) where derivative of estimated signals were defined in this algorithm:
@@ -1557,8 +1557,8 @@ void compute_SlidingSurfaces(Sl_Surfaces SLS, float ref_y_k[], float fmr_c_k[], 
     else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Creating the SMC controller data structure in the cluster space as SMC:
-SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon[], float kap_weights[]){
+// Creating the SMC controller data structure in the cluster space as SMC (type 01):
+SMC_Controller createSMC_Controller01(float gains[], float unc_values[], float dis_values[], float sls_gains[], float sls_dampfacts[], float epsilon[], float kap_weights[]){
     int i, s = 3*Robots_Qty;                                                                // Declaration of i, and s as integer variables.
     // Configuring the members of the SMC structure (sliding mode control):
     SMC_Controller SMC;                                                                     // Creates sliding mode controller data structure.
@@ -1596,8 +1596,8 @@ SMC_Controller createSMC_Controller(float gains[], float unc_values[], float dis
     return SMC;
 }
 //---------------------------------------------------------------------------------------------------------------
-// Initializing the sliding mode controller structured as SMC:
-void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]){
+// Initializing the sliding mode controller structured as SMC (type 01):
+void initSMC_Controller01(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]){
     int i, j;                                                                               // Declaration of i, and j as integer variables.
     switch(Robots_Qty){
         case 2:{
@@ -1728,8 +1728,140 @@ void initSMC_Controller(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], fl
     SMC.flag[0] = true;                                                                     // Flag settled to true, which enables the control law algorithm on SMC structure.
 }
 //---------------------------------------------------------------------------------------------------------------
-// SMC strategy computing function:
-void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]){
+// Initializing the sliding mode controller structured as SMC (type 01 - CSa):
+void initSMC_Controller01a(SMC_Controller SMC, float ref_z_0[], float cso_z_0[], float sls_e_0[], float fmr_params[]){
+    int i, j;                                                                               // Declaration of i, and j as integer variables.
+    switch(Robots_Qty){
+        case 2:{
+            // Computing the matrix hat{H}(k):
+            float H12_k = cso_z_0[10]*fmr_params[46];                                       // Pre-compute value in {1,2} position of hat{H}(k) matrix in the cluster space.
+            float H45_k = cso_z_0[11]*fmr_params[47];                                       // Pre-compute value in {4,5} position of hat{H}(k) matrix in the cluster space.
+            // Computing the matrix W1(k) = inv(hat{B}(k))*hat{H}(k)*inv(J(k)) - inv(hat{B}(k))*hat{D}*inv(J(k))*d(J(k))/dt*inv(J(k)) = -inv(hat{gc}(k))*hat{fc}(k):
+            float w101_k = cso_z_0[4];                                                      // Pre-compute angular addition 1 in W1(k).
+            float w102_k = cso_z_0[5];                                                      // Pre-compute angular subtraction 1 in W1(k).
+            float w103_k = w101_k + delta_1;                                                // Pre-compute angular addition 1 in W1(k).
+            float w104_k = w101_k - delta_1;                                                // Pre-compute angular subtraction 1 in W1(k).
+            float w105_k = w102_k + delta_2;                                                // Pre-compute angular addition 2 in W1(k).
+            float w106_k = w102_k - delta_2;                                                // Pre-compute angular subtraction 2 in W1(k).
+            float w107_k = sinf(w101_k);                                                    // Pre-compute sin(ph1_k) in W1(k).
+            float w108_k = cosf(w101_k);                                                    // Pre-compute cos(ph1_k) in W1(k).
+            float w109_k = sinf(w102_k);                                                    // Pre-compute sin(ph2_k) in W1(k).
+            float w110_k = cosf(w102_k);                                                    // Pre-compute cos(ph2_k) in W1(k).
+            float w111_k = fmr_params[26]*H12_k;                                            // Pre-compute multiplication 1 in W1(k).
+            float w112_k = fmr_params[27]*H45_k;                                            // Pre-compute multiplication 2 in W1(k).
+            float w113_k = fmr_params[14]*H12_k;                                            // Pre-compute multiplication 3 in W1(k).
+            float w114_k = fmr_params[15]*H45_k;                                            // Pre-compute multiplication 4 in W1(k).
+            float w115_k = w101_k + cso_z_0[2];                                             // Pre-compute angular addition 3 in W1(k).
+            float w116_k = w102_k + cso_z_0[2];                                             // Pre-compute angular addition 4 in W1(k).
+            float w117_k = w115_k + delta_1;                                                // Pre-compute angular addition 5 in W1(k).
+            float w118_k = w115_k - delta_1;                                                // Pre-compute angular addition 6 in W1(k).
+            float w119_k = w116_k + delta_2;                                                // Pre-compute angular addition 7 in W1(k).
+            float w120_k = w116_k - delta_2;                                                // Pre-compute angular addition 8 in W1(k).
+            float w121_k = sinf(w115_k);                                                    // Pre-compute sin(w115(k)) in W1(k).
+            float w122_k = cosf(w115_k);                                                    // Pre-compute cos(w115(k)) in W1(k).
+            float w123_k = sinf(w117_k);                                                    // Pre-compute sin(w117(k)) in W1(k).
+            float w124_k = cosf(w117_k);                                                    // Pre-compute cos(w117(k)) in W1(k).
+            float w125_k = sinf(w118_k);                                                    // Pre-compute sin(w118(k)) in W1(k).
+            float w126_k = cosf(w118_k);                                                    // Pre-compute cos(w118(k)) in W1(k).
+            float w127_k = sinf(w116_k);                                                    // Pre-compute sin(w116(k)) in W1(k).
+            float w128_k = cosf(w116_k);                                                    // Pre-compute cos(w116(k)) in W1(k).
+            float w129_k = sinf(w119_k);                                                    // Pre-compute sin(w119(k)) in W1(k).
+            float w130_k = cosf(w119_k);                                                    // Pre-compute cos(w119(k)) in W1(k).
+            float w131_k = sinf(w120_k);                                                    // Pre-compute sin(w120(k)) in W1(k).
+            float w132_k = cosf(w120_k);                                                    // Pre-compute cos(w120(k)) in W1(k).
+            float w133_k = w121_k + w126_k;                                                 // Pre-compute addition 1 in W1(k).
+            float w134_k = w121_k - w124_k;                                                 // Pre-compute subtraction 1 in W1(k).
+            float w135_k = w122_k + w123_k;                                                 // Pre-compute addition 2 in W1(k).
+            float w136_k = w127_k + w132_k;                                                 // Pre-compute addition 3 in W1(k).
+            float w137_k = w127_k - w130_k;                                                 // Pre-compute subtraction 2 in W1(k).
+            float w138_k = w128_k + w129_k;                                                 // Pre-compute addition 4 in W1(k).
+            float w139_k = cso_z_0[3]*cso_z_0[8];                                           // Pre-compute multiplication 7 in W1(k).
+            float w140_k = cso_z_0[3]*w113_k;                                               // Pre-compute multiplication 8 in W1(k).
+            float w141_k = cso_z_0[3]*w114_k;                                               // Pre-compute multiplication 9 in W1(k).
+            float w142_k = w122_k - w125_k;                                                 // Pre-compute subtraction 3 in W1(k).
+            float w143_k = fmr_params[20]*cso_z_0[8];                                       // Pre-compute multiplication 11 in W1(k).
+            float w144_k = fmr_params[20]*cso_z_0[9];                                       // Pre-compute multiplication 12 in W1(k).
+            float w145_k = fmr_params[20]*w139_k;                                           // Pre-compute multiplication 13 in W1(k).
+            float w146_k = w128_k - w131_k;                                                 // Pre-compute subtraction 4 in W1(k).
+            float w147_k = fmr_params[22]*cso_z_0[8];                                       // Pre-compute multiplication 15 in W1(k).
+            float w148_k = fmr_params[22]*cso_z_0[9];                                       // Pre-compute multiplication 16 in W1(k).
+            float w149_k = fmr_params[22]*w139_k;                                           // Pre-compute multiplication 17 in W1(k).
+            float w152_k = w145_k + w140_k;                                                 // Pre-compute addition 5 in W1(k).
+            float w153_k = w149_k + w141_k;                                                 // Pre-compute addition 6 in W1(k).
+            float w154_k = w143_k + w113_k;                                                 // Pre-compute addition 7 in W1(k).
+            float w155_k = w147_k + w114_k;                                                 // Pre-compute addition 8 in W1(k).
+            float w156_k = cosf(w103_k);                                                    // Pre-compute cos(w103(k)) in W1(k).
+            float w157_k = sinf(w103_k);                                                    // Pre-compute sin(w103(k)) in W1(k).
+            float w158_k = cosf(w104_k);                                                    // Pre-compute cos(w104(k)) in W1(k).
+            float w159_k = sinf(w104_k);                                                    // Pre-compute sin(w104(k)) in W1(k).
+            float w160_k = cosf(w105_k);                                                    // Pre-compute cos(w105(k)) in W1(k).
+            float w161_k = sinf(w105_k);                                                    // Pre-compute sin(w105(k)) in W1(k).
+            float w162_k = cosf(w106_k);                                                    // Pre-compute cos(w106(k)) in W1(k).
+            float w163_k = sinf(w106_k);                                                    // Pre-compute sin(w106(k)) in W1(k).
+            float w164_k = w156_k - w107_k;                                                 // Pre-compute subtraction 5 in W1(k).
+            float w165_k = w157_k + w108_k;                                                 // Pre-compute addition 9 in W1(k).
+            float w166_k = w158_k + w107_k;                                                 // Pre-compute addition 10 in W1(k).
+            float w167_k = w159_k - w108_k;                                                 // Pre-compute subtraction 6 in W1(k).
+            float w168_k = w160_k - w109_k;                                                 // Pre-compute subtraction 7 in W1(k).
+            float w169_k = w161_k + w110_k;                                                 // Pre-compute addition 11 in W1(k).
+            float w170_k = w162_k + w109_k;                                                 // Pre-compute addition 12 in W1(k).
+            float w171_k = w163_k - w110_k;                                                 // Pre-compute subtraction 8 in W1(k).
+            float w172_k = w121_k*fmr_params[28];                                           // Pre-compute multiplication 20 in W1(k).
+            float w173_k = w122_k*fmr_params[28];                                           // Pre-compute multiplication 21 in W1(k).
+            float w174_k = w127_k*fmr_params[29];                                           // Pre-compute multiplication 22 in W1(k).
+            float w175_k = w128_k*fmr_params[29];                                           // Pre-compute multiplication 23 in W1(k).
+            float W1_k[3*Robots_Qty][3*Robots_Qty] = {
+                { w113_k*w167_k, -w113_k*w166_k,                               -w144_k*w133_k - w152_k*w142_k,                     -w133_k*w154_k, 0.0f, 0.0f},
+                { w113_k*w165_k, -w113_k*w164_k,                                w144_k*w134_k + w152_k*w135_k,                      w134_k*w154_k, 0.0f, 0.0f},
+                {-w111_k*w107_k,  w111_k*w108_k, cso_z_0[9]*w173_k - w139_k*w172_k - cso_z_0[3]*w111_k*w121_k,  w173_k*cso_z_0[8] + w122_k*w111_k, 0.0f, 0.0f},
+                { w114_k*w171_k, -w114_k*w170_k,                                w148_k*w136_k + w153_k*w146_k,                      w136_k*w155_k, 0.0f, 0.0f},
+                { w114_k*w169_k, -w114_k*w168_k,                               -w148_k*w137_k - w153_k*w138_k,                     -w137_k*w155_k, 0.0f, 0.0f},
+                {-w112_k*w109_k,  w112_k*w110_k, cso_z_0[3]*w112_k*w127_k - cso_z_0[9]*w175_k + w139_k*w174_k, -w175_k*cso_z_0[8] - w128_k*w112_k, 0.0f, 0.0f}
+            };
+            // Computing the matrix W2(k) = -inv(hat{B}(k))*hat{D}*inv(J(k)) = -inv(hat{gc}(k)):
+            float w207_k = cso_z_0[3]*fmr_params[20];                                       // Pre-compute multiplication 7 in W2(k).
+            float w208_k = cso_z_0[3]*fmr_params[22];                                       // Pre-compute multiplication 8 in W2(k).
+            float W2_k[3*Robots_Qty][3*Robots_Qty] = {
+                { w166_k*fmr_params[20],  w167_k*fmr_params[20],      w207_k*w133_k, -w142_k*fmr_params[20], -fmr_params[21],            0.0f},
+                { w164_k*fmr_params[20],  w165_k*fmr_params[20],     -w207_k*w134_k,  w135_k*fmr_params[20], -fmr_params[21],            0.0f},
+                {-w108_k*fmr_params[28], -w107_k*fmr_params[28], -cso_z_0[3]*w173_k,                -w172_k, -fmr_params[30],            0.0f},
+                { w170_k*fmr_params[22],  w171_k*fmr_params[22],     -w208_k*w136_k,  w146_k*fmr_params[22],            0.0f, -fmr_params[23]},
+                { w168_k*fmr_params[22],  w169_k*fmr_params[22],      w208_k*w137_k, -w138_k*fmr_params[22],            0.0f, -fmr_params[23]},
+                {-w110_k*fmr_params[29], -w109_k*fmr_params[29],  cso_z_0[3]*w175_k,                 w174_k,            0.0f, -fmr_params[31]}
+            };
+            //-----------------------------------------------
+            // Computing SMC output y(k) from initial values of REF, CSO and SLS structures:
+            for(i = 0; i < SMC.s_out; i++){
+                SMC.kappa_k[i] = 0.0f;                                                      // Clear the i^th value within gains vector kappa(k).
+                SMC.aux_u_k[i] = 0.0f;                                                      // Clear the i^th value of auxiliary control law.
+                SMC.ast_u_k[i] = 0.0f;                                                      // Clear the i^th value of complementary part of auxiliary control law.
+                SMC.hat_Fc_k[i] = 0.0f;                                                     // Clear the i^th value of vector field ^{\hat}f_c(k).
+                SMC.til_Fc_k[i] = 0.0f;                                                     // Clear the i^th value of vector field ^{\tilde}f_c(k).
+                SMC.y_k[i] = 0.0f;                                                          // Clear the SMC output.
+                // Initial computing of the tracking error based control law:
+                SMC.ast_u_k[i] = SMC.Gamma[i]*SMC.Gamma[i]*sls_e_0[i] + 2.0f*SMC.dampFacts[i]*SMC.Gamma[i]*sls_e_0[i+SMC.s_out] - ref_z_0[i+2*SMC.s_out];
+                // Initial computing of the auxiliary control input:
+                SMC.aux_u_k[i] = SMC.ast_u_k[i];
+            }
+            // Initial computing of the variable control gains within the vector kappa(k):
+            for(i = 0; i < SMC.s_out; i++){
+                for(j = 0; j < SMC.s_out; j++){
+                    // Initial computing of SMC strategy output y(k):
+                    SMC.y_k[i] += W1_k[i][j]*cso_z_0[j+SMC.s_out] + W2_k[i][j]*SMC.aux_u_k[j];
+                }
+            }
+            break;
+        }
+        case 3:{
+            break;
+        }
+    }
+    // Updating the sliding mode controller flag:
+    SMC.flag[0] = true;                                                                     // Flag settled to true, which enables the control law algorithm on SMC structure.
+}
+//---------------------------------------------------------------------------------------------------------------
+// SMC strategy computing function (type 01):
+void computeSMC_Controller01(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]){
     int i, j;                                                                               // Declaration of i, and j as integer variables.
     // Execute SMC algorithm:
     if(SMC.flag[0]){
@@ -1905,7 +2037,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                     {w361_k - w321_k*w363_k, w361_k + w322_k*w363_k, (w334_k*fmr_params[40] + w351_k)*w363_k + w354_k/w345_k, -w350_k*w363_k + w353_k/w345_k, (w337_k*fmr_params[4] - w334_k)/w325_k,                                 w357_k},
                     {w362_k - w321_k*w364_k, w362_k + w322_k*w364_k,                (w349_k + w351_k)*w364_k - w354_k/w346_k, -w350_k*w364_k - w353_k/w346_k,                                -w356_k, (w337_k*fmr_params[6] + w334_k)/w326_k}
                 };
-                // Computing the matrix W4(k) = J(k)*(inv(hat{D})*hat{H}(k) - inv(unc{D})*unc{H}(k))*inv(J(k)), needed to subsequently compute [unc{fc}(k) - hat{fc}(k)] = W4(k)*d(c(k))/dt.
+                // Computing the matrix W4(k) = J(k)*(inv(hat{D})*hat{H}(k) - inv(unc{D})*unc{H}(k))*inv(J(k), needed to subsequently compute [unc{fc}(k) - hat{fc}(k)] = W4(k)*d(c(k))/dt.
                 // And unc{fc}(k) is the version of hat{fc}(k) with maximum uncertainty values, according to Delta[0] = a1, Delta[1] = a2, Delta[2] = a3 and Delta[3] = a4:
                 float w4001_k = 2.0f*SMC.Delta[1];                                          // Pre-compute multiplication 1 in W4(k).
                 float w4002_k = w4001_k*SMC.Delta[1];                                       // Pre-compute multiplication 2 in W4(k).
@@ -2073,7 +2205,7 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                     {SMC.Delta[1]*(w4130_k + w4132_k),      -w301_k*(w4127_k + w4129_k),                                                                             w4019_k*(w4127_k - w4129_k) + w4028_k*w4154_k,                                                           w4157_k + w4091_k/w4124_k - w4092_k/w4125_k, 0, 0},
                     {                        -w4158_k,                         -w4159_k,                                                                                                      -(w4160_k + w4161_k),                                                                                  -(w4162_k + w4163_k), 0, 0},
                     {       w4156_k + w4026_k*w4154_k,        w4157_k + w4025_k*w4155_k, w4008_k*(w4035_k*w4103_k/w4124_k + w4037_k*w4105_k/w4125_k) - w4007_k*(w4036_k*w4107_k/w4124_k + w4038_k*w4101_k/w4125_k), w4051_k*w4107_k/w4124_k + w4053_k*w4101_k/w4125_k + w4045_k*w4103_k/w4124_k + w4047_k*w4105_k/w4125_k, 0, 0},
-                    {w4158_k - w301_k*w4035_k/w4095_k, w4159_k - w301_k*w4036_k/w4095_k,                                                                     (w4050_k*w4097_k + w4046_k*w4098_k)/w4124_k + w4161_k,                                                 w4163_k - (w4051_k*w4098_k - w4045_k*w4097_k)*w4122_k, 0, 0},
+                    {w4158_k - w301_k*w4035_k/w4095_k, w4159_k - w301_k*w4036_k/w4095_k,                                                                     (w4050_k*w4097_k + w4046_k*w4098_k)/w4124_k + w4161_k,                                                 w4163_k - (w4051_k*w4098_k - w4045_k*w4097_k)/w4122_k, 0, 0},
                     {w4158_k - w301_k*w4037_k/w4096_k, w4159_k - w301_k*w4038_k/w4096_k,                                                                     (w4052_k*w4100_k + w4048_k*w4099_k)/w4125_k + w4160_k,                                                 w4162_k - (w4053_k*w4099_k - w4047_k*w4100_k)/w4123_k, 0, 0},
                 };
                 // Computing the matrix W5(k) = -J(k)*inv(hat{D})*hat{H}(k)*inv(J(k)) + d(J(k))/dt*inv(J(k)), needed for SMC structure.
@@ -2118,6 +2250,442 @@ void computeSMC_Controller(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[],
                     { fmr_params[44]*w124_k, -fmr_params[44]*w126_k, fmr_params[44]*w121_k, -fmr_params[45]*w130_k,  fmr_params[45]*w132_k, -fmr_params[45]*w127_k},
                     {       w604_k + w609_k,       -w605_k + w609_k,      -w603_k + w609_k,                -w607_k,                 w608_k,                 w606_k},
                     {                w604_k,                -w605_k,               -w603_k,       -w607_k + w610_k,        w608_k + w610_k,        w606_k + w610_k}
+                };
+                //-----------------------------------------------
+                // Computing the SMC output y(k) from corresponding values of REF, CSO and SLS structures:
+                for(i = 0; i < SMC.s_out; i++){
+                    SMC.kappa_k[i] = 0.0f;                                                  // Clear the i^th value within gains vector kappa(k).
+                    SMC.aux_u_k[i] = 0.0f;                                                  // Clear the i^th value of auxiliary control law.
+                    SMC.ast_u_k[i] = 0.0f;                                                  // Clear the i^th value of complementary part of auxiliary control law u*(k).
+                    SMC.hat_Fc_k[i] = 0.0f;                                                 // Clear the i^th value of vector field ^{\hat}f_c(k).
+                    SMC.til_Fc_k[i] = 0.0f;                                                 // Clear the i^th value of vector field ^{\tilde}f_c(k).
+                    SMC.y_k[i] = 0.0f;                                                      // Clear SMC output.
+                    // Updating the initial tracking error based control law:
+                    SMC.ast_u_k[i] = SMC.Gamma[i]*SMC.Gamma[i]*(fmr_c_k[i] - ref_y_k[i]) + 2.0f*SMC.dampFacts[i]*SMC.Gamma[i]*(cso_y_k[i] - ref_y_k[i+SMC.s_out]) - ref_y_k[i+2*SMC.s_out];
+                    // Updating the vector fields hat{fc}(k) and til{fc}(k):
+                    for(j = 0; j < SMC.s_out; j++){
+                        SMC.til_Fc_k[i] += W4_k[i][j]*cso_y_k[j];
+                        SMC.hat_Fc_k[i] += W5_k[i][j]*cso_y_k[j];
+                    }
+                    SMC.til_Fc_k[i] = fabsf(SMC.til_Fc_k[i]);                               // Function fabsf(...) of math.h, gives the absolute value for single-precision floating-point numbers at its input argument.
+                }
+                for(i = 0; i < SMC.s_out; i++){
+                    // Updating the variable control gains within the vector Kappa(k):
+                    for(j = 0; j < SMC.s_out; j++){
+                        if(i == j) SMC.kappa_k[i] += fabsf(W3_k[i][j])*(SMC.til_Fc_k[j] + SMC.omega[j]) + fabsf(fabsf(W3_k[i][j]) - 1.0f)*fabsf(SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
+                        else SMC.kappa_k[i] += fabsf(W3_k[i][j])*fabsf(SMC.til_Fc_k[j] + SMC.omega[j] + SMC.ast_u_k[j] + SMC.hat_Fc_k[j]) + fabsf(W6_k[i][j])*SMC.rho[j];
+                    }
+                    // Updating the auxiliary control input:
+                    SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kapWeights[i]*SMC.kappa_k[i]*tanhf_custom(SMC.epsilon[i]*sls_y_k[i]);
+                    // SMC.aux_u_k[i] = SMC.ast_u_k[i] + SMC.kappa_k[i]*tanhf(SMC.epsilon[i]*sls_y_k[i]);
+                }
+                for(i = 0; i < SMC.s_out; i++){
+                    // Updating the output of SMC strategy --> y(k):
+                    for(j = 0; j < SMC.s_out; j++){
+                        SMC.y_k[i] += W1_k[i][j]*cso_y_k[j] + W2_k[i][j]*(SMC.aux_u_k[j] + cso_y_k[j+SMC.s_out]);
+                    }
+                }
+                break;
+            }
+            case 3:{
+                break;
+            }
+        }
+    }
+    else NOP;                                                                               // No operation.
+}
+//---------------------------------------------------------------------------------------------------------------
+// SMC strategy computing function (type 01 - CSa):
+void computeSMC_Controller01a(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]){
+    int i, j;                                                                               // Declaration of i, and j as integer variables.
+    // Execute SMC algorithm:
+    if(SMC.flag[0]){
+        switch(Robots_Qty){
+            case 2:{
+                // Computing the matrix hat{H}(k):
+                float H12_k = cso_y_k[4]*fmr_params[46];                                    // Pre-compute value in {1,2} position of hat{H}(k) matrix in the cluster space.
+                float H45_k = cso_y_k[5]*fmr_params[47];                                    // Pre-compute value in {4,5} position of hat{H}(k) matrix in the cluster space.
+                // Computing the matrix W1(k) = inv(hat{B}(k))*hat{H}(k)*inv(J(k)) - inv(hat{B}(k))*hat{D}*inv(J(k))*d(J(k))/dt*inv(J(k)) = -inv(hat{gc}(k))*hat{fc}(k) (without post multiplying by d(c)/dt):
+                float w101_k = fmr_c_k[4];                                                  // Pre-compute angular addition 1 in W1(k).
+                float w102_k = fmr_c_k[5];                                                  // Pre-compute angular subtraction 1 in W1(k).
+                float w103_k = w101_k + delta_1;                                            // Pre-compute angular addition 1 in W1(k).
+                float w104_k = w101_k - delta_1;                                            // Pre-compute angular subtraction 1 in W1(k).
+                float w105_k = w102_k + delta_2;                                            // Pre-compute angular addition 2 in W1(k).
+                float w106_k = w102_k - delta_2;                                            // Pre-compute angular subtraction 2 in W1(k).
+                float w107_k = sinf(w101_k);                                                // Pre-compute sin(ph1_k) in W1(k).
+                float w108_k = cosf(w101_k);                                                // Pre-compute cos(ph1_k) in W1(k).
+                float w109_k = sinf(w102_k);                                                // Pre-compute sin(ph2_k) in W1(k).
+                float w110_k = cosf(w102_k);                                                // Pre-compute cos(ph2_k) in W1(k).
+                float w111_k = fmr_params[26]*H12_k;                                        // Pre-compute multiplication 2 in W1(k).
+                float w112_k = fmr_params[27]*H45_k;                                        // Pre-compute multiplication 4 in W1(k).
+                float w113_k = fmr_params[14]*H12_k;                                        // Pre-compute multiplication 5 in W1(k).
+                float w114_k = fmr_params[15]*H45_k;                                        // Pre-compute multiplication 6 in W1(k).
+                float w115_k = w101_k + fmr_c_k[2];                                         // Pre-compute angular addition 3 in W1(k).
+                float w116_k = w102_k + fmr_c_k[2];                                         // Pre-compute angular addition 4 in W1(k).
+                float w117_k = w115_k + delta_1;                                            // Pre-compute angular addition 5 in W1(k).
+                float w118_k = w115_k - delta_1;                                            // Pre-compute angular addition 6 in W1(k).
+                float w119_k = w116_k + delta_2;                                            // Pre-compute angular addition 7 in W1(k).
+                float w120_k = w116_k - delta_2;                                            // Pre-compute angular addition 8 in W1(k).
+                float w121_k = sinf(w115_k);                                                // Pre-compute sin(w115(k)) in W1(k).
+                float w122_k = cosf(w115_k);                                                // Pre-compute cos(w115(k)) in W1(k).
+                float w123_k = sinf(w117_k);                                                // Pre-compute sin(w117(k)) in W1(k).
+                float w124_k = cosf(w117_k);                                                // Pre-compute cos(w117(k)) in W1(k).
+                float w125_k = sinf(w118_k);                                                // Pre-compute sin(w118(k)) in W1(k).
+                float w126_k = cosf(w118_k);                                                // Pre-compute cos(w118(k)) in W1(k).
+                float w127_k = sinf(w116_k);                                                // Pre-compute sin(w116(k)) in W1(k).
+                float w128_k = cosf(w116_k);                                                // Pre-compute cos(w116(k)) in W1(k).
+                float w129_k = sinf(w119_k);                                                // Pre-compute sin(w119(k)) in W1(k).
+                float w130_k = cosf(w119_k);                                                // Pre-compute cos(w119(k)) in W1(k).
+                float w131_k = sinf(w120_k);                                                // Pre-compute sin(w120(k)) in W1(k).
+                float w132_k = cosf(w120_k);                                                // Pre-compute cos(w120(k)) in W1(k).
+                float w133_k = w121_k + w126_k;                                             // Pre-compute addition 1 in W1(k).
+                float w134_k = w121_k - w124_k;                                             // Pre-compute subtraction 1 in W1(k).
+                float w135_k = w122_k + w123_k;                                             // Pre-compute addition 2 in W1(k).
+                float w136_k = w127_k + w132_k;                                             // Pre-compute addition 3 in W1(k).
+                float w137_k = w127_k - w130_k;                                             // Pre-compute subtraction 2 in W1(k).
+                float w138_k = w128_k + w129_k;                                             // Pre-compute addition 4 in W1(k).
+                float w139_k = fmr_c_k[3]*cso_y_k[2];                                       // Pre-compute multiplication 7 in W1(k).
+                float w140_k = fmr_c_k[3]*w113_k;                                           // Pre-compute multiplication 8 in W1(k).
+                float w141_k = fmr_c_k[3]*w114_k;                                           // Pre-compute multiplication 9 in W1(k).
+                float w142_k = w122_k - w125_k;                                             // Pre-compute subtraction 3 in W1(k).
+                float w143_k = fmr_params[20]*cso_y_k[2];                                   // Pre-compute multiplication 11 in W1(k).
+                float w144_k = fmr_params[20]*cso_y_k[3];                                   // Pre-compute multiplication 12 in W1(k).
+                float w145_k = fmr_params[20]*w139_k;                                       // Pre-compute multiplication 13 in W1(k).
+                float w146_k = w128_k - w131_k;                                             // Pre-compute subtraction 4 in W1(k).
+                float w147_k = fmr_params[22]*cso_y_k[2];                                   // Pre-compute multiplication 15 in W1(k).
+                float w148_k = fmr_params[22]*cso_y_k[3];                                   // Pre-compute multiplication 16 in W1(k).
+                float w149_k = fmr_params[22]*w139_k;                                       // Pre-compute multiplication 17 in W1(k).
+                float w152_k = w145_k + w140_k;                                             // Pre-compute addition 5 in W1(k).
+                float w153_k = w149_k + w141_k;                                             // Pre-compute addition 6 in W1(k).
+                float w154_k = w143_k + w113_k;                                             // Pre-compute addition 7 in W1(k).
+                float w155_k = w147_k + w114_k;                                             // Pre-compute addition 8 in W1(k).
+                float w156_k = cosf(w103_k);                                                // Pre-compute cos(w103(k)) in W1(k).
+                float w157_k = sinf(w103_k);                                                // Pre-compute sin(w103(k)) in W1(k).
+                float w158_k = cosf(w104_k);                                                // Pre-compute cos(w104(k)) in W1(k).
+                float w159_k = sinf(w104_k);                                                // Pre-compute sin(w104(k)) in W1(k).
+                float w160_k = cosf(w105_k);                                                // Pre-compute cos(w105(k)) in W1(k).
+                float w161_k = sinf(w105_k);                                                // Pre-compute sin(w105(k)) in W1(k).
+                float w162_k = cosf(w106_k);                                                // Pre-compute cos(w106(k)) in W1(k).
+                float w163_k = sinf(w106_k);                                                // Pre-compute sin(w106(k)) in W1(k).
+                float w164_k = w156_k - w107_k;                                             // Pre-compute subtraction 5 in W1(k).
+                float w165_k = w157_k + w108_k;                                             // Pre-compute addition 9 in W1(k).
+                float w166_k = w158_k + w107_k;                                             // Pre-compute addition 10 in W1(k).
+                float w167_k = w159_k - w108_k;                                             // Pre-compute subtraction 6 in W1(k).
+                float w168_k = w160_k - w109_k;                                             // Pre-compute subtraction 7 in W1(k).
+                float w169_k = w161_k + w110_k;                                             // Pre-compute addition 11 in W1(k).
+                float w170_k = w162_k + w109_k;                                             // Pre-compute addition 12 in W1(k).
+                float w171_k = w163_k - w110_k;                                             // Pre-compute subtraction 8 in W1(k).
+                float w172_k = w121_k*fmr_params[28];                                       // Pre-compute multiplication 20 in W1(k).
+                float w173_k = w122_k*fmr_params[28];                                       // Pre-compute multiplication 21 in W1(k).
+                float w174_k = w127_k*fmr_params[29];                                       // Pre-compute multiplication 22 in W1(k).
+                float w175_k = w128_k*fmr_params[29];                                       // Pre-compute multiplication 23 in W1(k).
+                float W1_k[3*Robots_Qty][3*Robots_Qty] = {
+                    { w113_k*w167_k, -w113_k*w166_k,                               -w144_k*w133_k - w152_k*w142_k,                     -w133_k*w154_k, 0.0f, 0.0f},
+                    { w113_k*w165_k, -w113_k*w164_k,                                w144_k*w134_k + w152_k*w135_k,                      w134_k*w154_k, 0.0f, 0.0f},
+                    {-w111_k*w107_k,  w111_k*w108_k, cso_y_k[3]*w173_k - w139_k*w172_k - fmr_c_k[3]*w111_k*w121_k,  w173_k*cso_y_k[2] + w122_k*w111_k, 0.0f, 0.0f},
+                    { w114_k*w171_k, -w114_k*w170_k,                                w148_k*w136_k + w153_k*w146_k,                      w136_k*w155_k, 0.0f, 0.0f},
+                    { w114_k*w169_k, -w114_k*w168_k,                               -w148_k*w137_k - w153_k*w138_k,                     -w137_k*w155_k, 0.0f, 0.0f},
+                    {-w112_k*w109_k,  w112_k*w110_k, fmr_c_k[3]*w112_k*w127_k - cso_y_k[3]*w175_k + w139_k*w174_k, -w175_k*cso_y_k[2] - w128_k*w112_k, 0.0f, 0.0f}
+                };
+                // Computing the matrix W2(k) = -inv(hat{B}(k))*hat{D}*inv(J(k)) = -inv(hat{gc}(k)):
+                float w207_k = fmr_c_k[3]*fmr_params[20];                                   // Pre-compute multiplication 7 in W2(k).
+                float w208_k = fmr_c_k[3]*fmr_params[22];                                   // Pre-compute multiplication 8 in W2(k).
+                float W2_k[3*Robots_Qty][3*Robots_Qty] = {
+                    { w166_k*fmr_params[20],  w167_k*fmr_params[20],      w207_k*w133_k, -w142_k*fmr_params[20], -fmr_params[21],            0.0f},
+                    { w164_k*fmr_params[20],  w165_k*fmr_params[20],     -w207_k*w134_k,  w135_k*fmr_params[20], -fmr_params[21],            0.0f},
+                    {-w108_k*fmr_params[28], -w107_k*fmr_params[28], -fmr_c_k[3]*w173_k,                -w172_k, -fmr_params[30],            0.0f},
+                    { w170_k*fmr_params[22],  w171_k*fmr_params[22],     -w208_k*w136_k,  w146_k*fmr_params[22],            0.0f, -fmr_params[23]},
+                    { w168_k*fmr_params[22],  w169_k*fmr_params[22],      w208_k*w137_k, -w138_k*fmr_params[22],            0.0f, -fmr_params[23]},
+                    {-w110_k*fmr_params[29], -w109_k*fmr_params[29],  fmr_c_k[3]*w175_k,                 w174_k,            0.0f, -fmr_params[31]}
+                };
+                // Computing the matrix W3(k) = J(k)*inv(hat{D})*hat{B}(k)*inv(unc{B}(k))*unc{D}*inv(J(k)) = hat{gc}(k)*inv(unc{gc}(k)); and unc{gc}(k) is the version of hat{gc}(k) with maximum uncertainty values,
+                // according to the bounds Delta[0] = a1, Delta[1] = a2, Delta[2] = a3 and Delta[3] = a4:
+                float w301_k = SMC.Delta[0] + 1.0f;                                         // Pre-compute addition 1 in W3(k).
+                float w302_k = SMC.Delta[3] + 1.0f;                                         // Pre-compute addition 2 in W3(k).
+                float w303_k = fmr_c_k[2] + M_PI_4;                                         // Pre-compute angular addition 1 in W3(k).
+                float w304_k = w302_k*2.0f;                                                 // Pre-compute multiplication 2 in W3(k).
+                float w305_k = w304_k*fmr_params[4];                                        // Pre-compute multiplication 3 in W3(k).
+                float w306_k = w304_k*fmr_params[6];                                        // Pre-compute multiplication 4 in W3(k).
+                float w307_k = 2.0f*fmr_c_k[2];                                             // Pre-compute multiplication 5 in W3(k).
+                float w308_k = sinf(w307_k);                                                // Pre-compute sin(...) 1 in W3(k).
+                float w309_k = cosf(w307_k);                                                // Pre-compute cos(...) 1 in W3(k).
+                float w310_k = 2.0f*fmr_c_k[3];                                             // Pre-compute multiplication 6 in W3(k).
+                float w311_k = sinf(fmr_c_k[2]);                                            // Pre-compute sin(thc(0)) in W3(k).
+                float w312_k = cosf(fmr_c_k[2]);                                            // Pre-compute cos(thc(0)) in W3(k).
+                // float w313_k = w311_k + w312_k;                                             // Pre-compute addition 5 in W3(k).
+                // float w314_k = w312_k - w311_k;                                             // Pre-compute addition 6 in W3(k).
+                float w315_k = M_SQRT2*SMC.Delta[1];                                        // Pre-compute multiplication 7 in W3(k).
+                float w316_k = w315_k*sinf(w303_k);                                         // Pre-compute multiplication 8 in W3(k).
+                float w317_k = w315_k*cosf(w303_k);                                         // Pre-compute multiplication 9 in W3(k).
+                float w318_k = fmr_params[34]*w304_k;                                       // Pre-compute multiplication 10 in W3(k).
+                float w319_k = w311_k*fmr_params[40];                                       // Pre-compute multiplication 11 in W3(k).
+                float w320_k = w312_k*fmr_params[40];                                       // Pre-compute multiplication 12 in W3(k).
+                float w321_k = SMC.Delta[1]*w319_k;                                         // Pre-compute multiplication 13 in W3(k).
+                float w322_k = SMC.Delta[1]*w320_k;                                         // Pre-compute multiplication 14 in W3(k).
+                float w323_k = fmr_c_k[3]*fmr_params[5];                                    // Pre-compute multiplication 15 in W3(k).
+                float w324_k = fmr_c_k[3]*fmr_params[7];                                    // Pre-compute multiplication 16 in W3(k).
+                float w325_k = fmr_c_k[3]*w301_k;                                           // Pre-compute multiplication 17 in W3(k).
+                float w326_k = fmr_c_k[3]*w305_k;                                           // Pre-compute multiplication 18 in W3(k).
+                float w327_k = fmr_c_k[3]*w306_k;                                           // Pre-compute multiplication 19 in W3(k).
+                float w328_k = fmr_c_k[3]*w308_k;                                           // Pre-compute multiplication 20 in W3(k).
+                float w329_k = fmr_c_k[3]*w309_k;                                           // Pre-compute multiplication 21 in W3(k).
+                float w330_k = fmr_c_k[3]*w310_k;                                           // Pre-compute multiplication 22 in W3(k).
+                float w331_k = fmr_c_k[3]*w318_k;                                           // Pre-compute multiplication 23 in W3(k).
+                float w332_k = 1.0f/w331_k;                                                 // Pre-compute division 1 in W3(k).
+                float w333_k = 1.0f/w318_k;                                                 // Pre-compute division 2 in W3(k).
+                float w334_k = SMC.Delta[1]*fmr_params[39];                                 // Pre-compute multiplication 24 in W3(k).
+                // float w334_k = SMC.Delta[1]*w314_k;                                         // Pre-compute multiplication 25 in W3(k).
+                float w335_k = SMC.Delta[1]/w305_k;                                         // Pre-compute division 3 in W3(k).
+                float w336_k = SMC.Delta[1]/w306_k;                                         // Pre-compute division 4 in W3(k).
+                float w337_k = w301_k*w310_k;                                               // Pre-compute multiplication 26 in W3(k).
+                // float w338_k = fmr_params[40]*w313_k;                                       // Pre-compute multiplication 27 in W3(k).
+                // float w339_k = fmr_params[40]*w314_k;                                       // Pre-compute multiplication 28 in W3(k).
+                // float w340_k = fmr_params[39]*w309_k;                                       // Pre-compute multiplication 29 in W3(k).
+                float w341_k = fmr_params[39]*w328_k;                                       // Pre-compute multiplication 30 in W3(k).
+                float w342_k = fmr_params[34]*w310_k;                                       // Pre-compute multiplication 31 in W3(k).
+                // float w343_k = fmr_params[34]*w314_k;                                       // Pre-compute multiplication 32 in W3(k).
+                // float w344_k = w313_k*w342_k;                                               // Pre-compute multiplication 33 in W3(k).
+                float w345_k = w318_k*w323_k;                                               // Pre-compute multiplication 34 in W3(k).
+                float w346_k = w318_k*w324_k;                                               // Pre-compute multiplication 35 in W3(k).
+                // float w347_k = w330_k*w343_k;                                               // Pre-compute multiplication 36 in W3(k).
+                // float w348_k = SMC.Delta[1]*w338_k;                                         // Pre-compute multiplication 37 in W3(k).
+                // float w349_k = SMC.Delta[1]*w339_k;                                         // Pre-compute multiplication 38 in W3(k).
+                // float w350_k = SMC.Delta[1]*w340_k;                                         // Pre-compute multiplication 39 in W3(k).
+                float w351_k = SMC.Delta[1]*w341_k;                                         // Pre-compute multiplication 40 in W3(k).
+                float w352_k = SMC.Delta[1]*w342_k;                                         // Pre-compute multiplication 41 in W3(k).
+                // float w353_k = SMC.Delta[1]*w344_k;                                         // Pre-compute multiplication 42 in W3(k).
+                // float w354_k = SMC.Delta[1]*w347_k;                                         // Pre-compute multiplication 43 in W3(k).
+                float w355_k = w301_k/w302_k;                                               // Pre-compute division 5 in W3(k).
+                float w356_k = w317_k/w326_k;                                               // Pre-compute division 6 in W3(k).
+                float w357_k = w317_k/w327_k;                                               // Pre-compute division 7 in W3(k).
+                float w358_k = w321_k*w333_k;                                               // Pre-compute division 8 in W3(k).
+                float w359_k = w322_k*w333_k;                                               // Pre-compute division 9 in W3(k).
+                float w360_k = w334_k*w333_k;                                               // Pre-compute division 10 in W3(k).
+                float w361_k = w352_k/w345_k;                                               // Pre-compute division 11 in W3(k).
+                float w362_k = w352_k/w346_k;                                               // Pre-compute division 12 in W3(k).
+                // float w363_k = fmr_params[5]/w345_k;                                        // Pre-compute division 13 in W3(k).
+                // float w364_k = fmr_params[7]/w346_k;                                        // Pre-compute division 14 in W3(k).
+                float w365_k = w317_k*w330_k/w304_k;                                        // Pre-compute division 15 in W3(k).
+                float w366_k = w316_k*w330_k/w304_k;                                        // Pre-compute division 16 in W3(k).
+                float W3_k[3*Robots_Qty][3*Robots_Qty] = {
+                    {       w355_k,         w360_k,                       fmr_c_k[3]*w358_k,                -w359_k,        w335_k,         w336_k},
+                    {       w360_k,         w355_k,                      -fmr_c_k[3]*w359_k,                -w358_k,        w335_k,         w336_k},
+                    {w321_k*w332_k, -w322_k*w332_k, (fmr_params[34]*w337_k - w351_k)*w332_k,   w309_k*w334_k*w332_k,        w356_k,        -w357_k},
+                    {      -w359_k,        -w358_k,                           w329_k*w360_k, w355_k + w308_k*w360_k, w316_k/w305_k, -w316_k/w306_k},
+                    {       w361_k,         w361_k,                           w365_k/w323_k,          w366_k/w323_k,        w355_k,           0.0f},
+                    {       w362_k,         w362_k,                          -w365_k/w324_k,         -w366_k/w324_k,          0.0f,         w355_k}
+                };
+                // Computing the matrix W4(k) = J(k)*(inv(hat{D})*hat{H}(k) - inv(unc{D})*unc{H}(k))*inv(J(k), needed to subsequently compute [unc{fc}(k) - hat{fc}(k)] = W4(k)*d(c(k))/dt.
+                // And unc{fc}(k) is the version of hat{fc}(k) with maximum uncertainty values, according to Delta[0] = a1, Delta[1] = a2, Delta[2] = a3 and Delta[3] = a4:
+                float w4001_k = 2.0f*SMC.Delta[1];                                          // Pre-compute multiplication 1 in W4(k).
+                float w4002_k = w4001_k*SMC.Delta[1];                                       // Pre-compute multiplication 2 in W4(k).
+                float w4003_k = fmr_params[4]*SMC.Delta[2];                                 // Pre-compute multiplication 3 in W4(k).
+                float w4004_k = fmr_params[6]*SMC.Delta[2];                                 // Pre-compute multiplication 4 in W4(k).
+                float w4005_k = H12_k*SMC.Delta[1];                                         // Pre-compute multiplication 5 in W4(k).
+                float w4006_k = H45_k*SMC.Delta[1];                                         // Pre-compute multiplication 6 in W4(k).
+                float w4007_k = fmr_c_k[3]*w311_k;                                          // Pre-compute multiplication 7 in W4(k).
+                float w4008_k = fmr_c_k[3]*w312_k;                                          // Pre-compute multiplication 8 in W4(k).
+                float w4011_k = fmr_params[4]*w301_k;                                       // Pre-compute multiplication 9 in W4(k).
+                float w4012_k = fmr_params[5]*w301_k;                                       // Pre-compute multiplication 10 in W4(k).
+                float w4013_k = fmr_params[6]*w301_k;                                       // Pre-compute multiplication 11 in W4(k).
+                float w4014_k = fmr_params[7]*w301_k;                                       // Pre-compute multiplication 12 in W4(k).
+                float w4015_k = fmr_params[4]*w310_k;                                       // Pre-compute multiplication 13 in W4(k).
+                float w4016_k = fmr_params[6]*w310_k;                                       // Pre-compute multiplication 14 in W4(k).
+                float w4017_k = w301_k*w311_k;                                              // Pre-compute multiplication 15 in W4(k).
+                float w4018_k = w301_k*w312_k;                                              // Pre-compute multiplication 16 in W4(k).
+                float w4019_k = w301_k*w4007_k;                                             // Pre-compute multiplication 17 in W4(k).
+                float w4020_k = w301_k*w4008_k;                                             // Pre-compute multiplication 18 in W4(k).
+                float w4021_k = w301_k*fmr_params[38];                                      // Pre-compute multiplication 19 in W4(k).
+                float w4022_k = w301_k*fmr_params[41];                                      // Pre-compute multiplication 20 in W4(k).
+                float w4023_k = 2.0f*w4011_k;                                               // Pre-compute multiplication 21 in W4(k).
+                float w4024_k = 2.0f*w4013_k;                                               // Pre-compute multiplication 22 in W4(k).
+                float w4025_k = w311_k*SMC.Delta[1];                                        // Pre-compute multiplication 23 in W4(k).
+                float w4026_k = w312_k*SMC.Delta[1];                                        // Pre-compute multiplication 24 in W4(k).
+                float w4027_k = w4007_k*SMC.Delta[1];                                       // Pre-compute multiplication 25 in W4(k).
+                float w4028_k = w4008_k*SMC.Delta[1];                                       // Pre-compute multiplication 26 in W4(k).
+                float w4029_k = SMC.Delta[1] + w4011_k;                                     // Pre-compute addition 3 in W4(k).
+                float w4030_k = w4011_k - SMC.Delta[1];                                     // Pre-compute subtraction 1 in W4(k).
+                float w4031_k = w4012_k - SMC.Delta[1];                                     // Pre-compute subtraction 2 in W4(k).
+                float w4032_k = w4013_k + SMC.Delta[1];                                     // Pre-compute addition 4 in W4(k).
+                float w4033_k = w4013_k - SMC.Delta[1];                                     // Pre-compute subtraction 3 in W4(k).
+                float w4034_k = w4014_k - SMC.Delta[1];                                     // Pre-compute subtraction 4 in W4(k).
+                float w4035_k = w4003_k + w4005_k;                                          // Pre-compute addition 5 in W4(k).
+                float w4036_k = w4003_k - w4005_k;                                          // Pre-compute subtraction 5 in W4(k).
+                float w4037_k = w4004_k + w4006_k;                                          // Pre-compute addition 6 in W4(k).
+                float w4038_k = w4004_k - w4006_k;                                          // Pre-compute subtraction 6 in W4(k).
+                float w4039_k = w4021_k - w4001_k;                                          // Pre-compute subtraction 7 in W4(k).
+                float w4040_k = w4022_k - w4001_k;                                          // Pre-compute subtraction 8 in W4(k).
+                float w4041_k = w4023_k - w4001_k;                                          // Pre-compute subtraction 9 in W4(k).
+                float w4042_k = w4024_k - w4001_k;                                          // Pre-compute subtraction 10 in W4(k).
+                float w4043_k = w310_k*w4030_k;                                             // Pre-compute multiplication 27 in W4(k).
+                float w4044_k = w310_k*w4033_k;                                             // Pre-compute multiplication 28 in W4(k).
+                float w4045_k = w311_k*w4035_k;                                             // Pre-compute multiplication 29 in W4(k).
+                float w4046_k = w311_k*w4036_k;                                             // Pre-compute multiplication 30 in W4(k).
+                float w4047_k = w311_k*w4037_k;                                             // Pre-compute multiplication 31 in W4(k).
+                float w4048_k = w311_k*w4038_k;                                             // Pre-compute multiplication 32 in W4(k).
+                // float w4049_k = w312_k*w4031_k;                                             // Pre-compute multiplication 33 in W4(k).
+                float w4050_k = w312_k*w4035_k;                                             // Pre-compute multiplication 34 in W4(k).
+                float w4051_k = w312_k*w4036_k;                                             // Pre-compute multiplication 35 in W4(k).
+                float w4052_k = w312_k*w4037_k;                                             // Pre-compute multiplication 36 in W4(k).
+                float w4053_k = w312_k*w4038_k;                                             // Pre-compute multiplication 37 in W4(k).
+                float w4054_k = w4011_k*w4031_k;                                            // Pre-compute multiplication 38 in W4(k).
+                float w4055_k = w4012_k*w4029_k;                                            // Pre-compute multiplication 39 in W4(k).
+                float w4056_k = w4013_k*w4034_k;                                            // Pre-compute multiplication 40 in W4(k).
+                float w4057_k = w4014_k*w4032_k;                                            // Pre-compute multiplication 41 in W4(k).
+                float w4058_k = w4015_k*w4030_k;                                            // Pre-compute multiplication 42 in W4(k).
+                float w4059_k = w4016_k*w4033_k;                                            // Pre-compute multiplication 43 in W4(k).
+                // float w4060_k = w4017_k*w4031_k;                                            // Pre-compute multiplication 44 in W4(k).
+                // float w4061_k = w4017_k*w4034_k;                                            // Pre-compute multiplication 45 in W4(k).
+                // float w4062_k = w4018_k*w4034_k;                                            // Pre-compute multiplication 46 in W4(k).
+                float w4063_k = w311_k*w4054_k;                                             // Pre-compute multiplication 47 in W4(k).
+                float w4064_k = w311_k*w4056_k;                                             // Pre-compute multiplication 48 in W4(k).
+                float w4065_k = w312_k*w4054_k;                                             // Pre-compute multiplication 49 in W4(k).
+                float w4066_k = w312_k*w4056_k;                                             // Pre-compute multiplication 50 in W4(k).
+                float w4067_k = fmr_params[4]*w4041_k;                                      // Pre-compute multiplication 51 in W4(k).
+                float w4068_k = fmr_params[6]*w4042_k;                                      // Pre-compute multiplication 52 in W4(k).
+                // float w4069_k = w337_k*w4030_k;                                             // Pre-compute multiplication 53 in W4(k).
+                // float w4070_k = w337_k*w4033_k;                                             // Pre-compute multiplication 54 in W4(k).
+                float w4071_k = w4025_k*w4039_k;                                            // Pre-compute multiplication 55 in W4(k).
+                float w4072_k = w4025_k*w4040_k;                                            // Pre-compute multiplication 56 in W4(k).
+                float w4073_k = w4026_k*w4039_k;                                            // Pre-compute multiplication 57 in W4(k).
+                float w4074_k = w4026_k*w4040_k;                                            // Pre-compute multiplication 58 in W4(k).
+                float w4075_k = w4031_k*w4035_k;                                            // Pre-compute multiplication 59 in W4(k).
+                float w4076_k = w4031_k*w4036_k;                                            // Pre-compute multiplication 60 in W4(k).
+                float w4077_k = w4034_k*w4037_k;                                            // Pre-compute multiplication 61 in W4(k).
+                float w4078_k = w4034_k*w4038_k;                                            // Pre-compute multiplication 62 in W4(k).
+                float w4079_k = w4035_k*w4039_k;                                            // Pre-compute multiplication 63 in W4(k).
+                float w4080_k = w4036_k*w4039_k;                                            // Pre-compute multiplication 64 in W4(k).
+                float w4081_k = w4037_k*w4040_k;                                            // Pre-compute multiplication 65 in W4(k).
+                float w4082_k = w4038_k*w4040_k;                                            // Pre-compute multiplication 66 in W4(k).
+                float w4083_k = w4017_k*w4075_k;                                            // Pre-compute multiplication 67 in W4(k).
+                float w4084_k = w4017_k*w4076_k;                                            // Pre-compute multiplication 68 in W4(k).
+                float w4085_k = w4017_k*w4077_k;                                            // Pre-compute multiplication 69 in W4(k).
+                float w4086_k = w4017_k*w4078_k;                                            // Pre-compute multiplication 70 in W4(k).
+                float w4087_k = w4018_k*w4075_k;                                            // Pre-compute multiplication 71 in W4(k).
+                float w4088_k = w4018_k*w4076_k;                                            // Pre-compute multiplication 72 in W4(k).
+                float w4089_k = w4018_k*w4077_k;                                            // Pre-compute multiplication 73 in W4(k).
+                float w4090_k = w4018_k*w4078_k;                                            // Pre-compute multiplication 74 in W4(k).
+                float w4091_k = w4025_k*w4079_k;                                            // Pre-compute multiplication 75 in W4(k).
+                float w4092_k = w4025_k*w4081_k;                                            // Pre-compute multiplication 77 in W4(k).
+                float w4093_k = w4026_k*w4080_k;                                            // Pre-compute multiplication 79 in W4(k).
+                float w4094_k = w4026_k*w4082_k;                                            // Pre-compute multiplication 80 in W4(k).
+                float w4095_k = w4055_k - w4002_k;                                          // Pre-compute subtraction 11 in W4(k).
+                float w4096_k = w4057_k - w4002_k;                                          // Pre-compute subtraction 12 in W4(k).
+                // float w4097_k = w4011_k*(w4049_k - w4043_k) + w4071_k;                      // Pre-compute operation 1 in W4(k).
+                // float w4098_k = fmr_params[4]*(w4060_k + w4069_k) + w4073_k;                // Pre-compute operation 2 in W4(k).
+                // float w4099_k = fmr_params[6]*(w4061_k - w4070_k) + w4074_k;                // Pre-compute operation 3 in W4(k).
+                // float w4100_k = fmr_params[6]*(w4062_k + w4070_k) + w4072_k;                // Pre-compute operation 4 in W4(k).
+                float w4101_k = w4072_k - w4066_k;                                          // Pre-compute operation 5 in W4(k).
+                float w4102_k = w4063_k + w4073_k;                                          // Pre-compute addition 7 in W4(k).
+                float w4103_k = w4073_k - w4063_k;                                          // Pre-compute subtraction 13 in W4(k).
+                float w4104_k = w4064_k + w4074_k;                                          // Pre-compute addition 8 in W4(k).
+                float w4105_k = w4074_k - w4064_k;                                          // Pre-compute subtraction 14 in W4(k).
+                float w4106_k = w4065_k + w4071_k;                                          // Pre-compute addition 9 in W4(k).
+                float w4107_k = w4071_k - w4065_k;                                          // Pre-compute subtraction 15 in W4(k).
+                float w4108_k = w4066_k + w4072_k;                                          // Pre-compute addition 10 in W4(k).
+                float w4109_k = w4041_k*w4095_k;                                            // Pre-compute multiplication 81 in W4(k).
+                float w4110_k = w4042_k*w4096_k;                                            // Pre-compute multiplication 82 in W4(k).
+                float w4111_k = w4043_k*w4095_k;                                            // Pre-compute multiplication 83 in W4(k).
+                float w4112_k = w4044_k*w4096_k;                                            // Pre-compute multiplication 84 in W4(k).
+                float w4113_k = w4045_k*w4106_k;                                            // Pre-compute multiplication 85 in W4(k).
+                float w4114_k = w4046_k*w4102_k;                                            // Pre-compute multiplication 86 in W4(k).
+                float w4115_k = w4047_k*w4108_k;                                            // Pre-compute multiplication 87 in W4(k).
+                float w4116_k = w4048_k*w4104_k;                                            // Pre-compute multiplication 88 in W4(k).
+                float w4117_k = w4050_k*w4106_k;                                            // Pre-compute multiplication 89 in W4(k).
+                float w4118_k = w4051_k*w4102_k;                                            // Pre-compute multiplication 90 in W4(k).
+                float w4119_k = w4052_k*w4108_k;                                            // Pre-compute multiplication 91 in W4(k).
+                float w4120_k = w4053_k*w4104_k;                                            // Pre-compute multiplication 92 in W4(k).
+                float w4121_k = w4058_k*w4095_k;                                            // Pre-compute multiplication 93 in W4(k).
+                float w4122_k = 1.0f/w4121_k;                                               // Pre-compute division 1 in W4(k).
+                float w4123_k = w4059_k*w4096_k;                                            // Pre-compute multiplication 94 in W4(k).
+                float w4124_k = w4067_k*w4095_k;                                            // Pre-compute multiplication 95 in W4(k).
+                float w4125_k = w4068_k*w4096_k;                                            // Pre-compute multiplication 96 in W4(k).
+                float w4126_k = w4075_k/w4109_k;                                            // Pre-compute division 2 in W4(k).
+                float w4127_k = w4076_k/w4109_k;                                            // Pre-compute division 3 in W4(k).
+                float w4128_k = w4077_k/w4110_k;                                            // Pre-compute division 4 in W4(k).
+                float w4129_k = w4078_k/w4110_k;                                            // Pre-compute division 5 in W4(k).
+                float w4130_k = w4079_k/w4124_k;                                            // Pre-compute division 6 in W4(k).
+                float w4131_k = w4080_k/w4124_k;                                            // Pre-compute division 7 in W4(k).
+                float w4132_k = w4081_k/w4125_k;                                            // Pre-compute division 8 in W4(k).
+                float w4133_k = w4082_k/w4125_k;                                            // Pre-compute division 9 in W4(k).
+                float w4134_k = w4083_k/w4109_k;                                            // Pre-compute division 10 in W4(k).
+                float w4135_k = w4084_k/w4111_k;                                            // Pre-compute division 11 in W4(k).
+                float w4136_k = w4085_k/w4110_k;                                            // Pre-compute division 12 in W4(k).
+                float w4137_k = w4086_k/w4112_k;                                            // Pre-compute division 13 in W4(k).
+                float w4138_k = w4087_k/w4111_k;                                            // Pre-compute division 14 in W4(k).
+                float w4139_k = w4088_k/w4109_k;                                            // Pre-compute division 15 in W4(k).
+                float w4140_k = w4089_k/w4112_k;                                            // Pre-compute division 16 in W4(k).
+                float w4141_k = w4090_k/w4110_k;                                            // Pre-compute division 17 in W4(k).
+                float w4142_k = w4091_k*w4122_k;                                            // Pre-compute division 18 in W4(k).
+                float w4143_k = w4092_k/w4123_k;                                            // Pre-compute division 19 in W4(k).
+                float w4144_k = w4093_k*w4122_k;                                            // Pre-compute division 20 in W4(k).
+                float w4145_k = w4094_k/w4123_k;                                            // Pre-compute division 21 in W4(k).
+                float w4146_k = w4113_k*w4122_k;                                            // Pre-compute division 22 in W4(k).
+                float w4147_k = w4114_k/w4124_k;                                            // Pre-compute division 23 in W4(k).
+                float w4148_k = w4115_k/w4123_k;                                            // Pre-compute division 24 in W4(k).
+                float w4149_k = w4116_k/w4125_k;                                            // Pre-compute division 25 in W4(k).
+                float w4150_k = w4117_k/w4124_k;                                            // Pre-compute division 26 in W4(k).
+                float w4151_k = w4118_k*w4122_k;                                            // Pre-compute division 27 in W4(k).
+                float w4152_k = w4119_k/w4125_k;                                            // Pre-compute division 28 in W4(k).
+                float w4153_k = w4120_k/w4123_k;                                            // Pre-compute division 29 in W4(k).
+                float w4154_k = w4130_k - w4132_k;                                          // Pre-compute subtraction 16 in W4(k).
+                float w4155_k = w4131_k - w4133_k;                                          // Pre-compute subtraction 17 in W4(k).
+                float w4156_k = w4136_k - w4134_k;                                          // Pre-compute subtraction 18 in W4(k).
+                float w4157_k = w4141_k - w4139_k;                                          // Pre-compute subtraction 19 in W4(k).
+                float w4158_k = w4138_k - w4140_k + w4142_k - w4143_k;                      // Pre-compute operation 6 in W4(k).
+                float w4159_k = w4137_k - w4135_k - w4144_k + w4145_k;                      // Pre-compute operation 7 in W4(k).
+                float w4160_k = w4150_k + w4147_k;                                          // Pre-compute addition 11 in W4(k).
+                float w4161_k = w4152_k + w4149_k;                                          // Pre-compute addition 12 in W4(k).
+                float w4162_k = w4146_k - w4151_k;                                          // Pre-compute subtraction 20 in W4(k).
+                float w4163_k = w4148_k - w4153_k;                                          // Pre-compute subtraction 21 in W4(k).
+                float W4_k[3*Robots_Qty][3*Robots_Qty] = {
+                    {     -w301_k*(w4126_k + w4128_k), SMC.Delta[1]*(w4131_k + w4133_k),                                                                             w4020_k*(w4128_k - w4126_k) - w4027_k*w4155_k,                                                           w4156_k + w4093_k/w4124_k - w4094_k/w4125_k, 0, 0},
+                    {SMC.Delta[1]*(w4130_k + w4132_k),      -w301_k*(w4127_k + w4129_k),                                                                             w4019_k*(w4127_k - w4129_k) + w4028_k*w4154_k,                                                           w4157_k + w4091_k/w4124_k - w4092_k/w4125_k, 0, 0},
+                    {                        -w4158_k,                         -w4159_k,                                                                                                      -(w4160_k + w4161_k),                                                                                  -(w4162_k + w4163_k), 0, 0},
+                    {       w4156_k + w4026_k*w4154_k,        w4157_k + w4025_k*w4155_k, w4008_k*(w4035_k*w4103_k/w4124_k + w4037_k*w4105_k/w4125_k) - w4007_k*(w4036_k*w4107_k/w4124_k + w4038_k*w4101_k/w4125_k), w4051_k*w4107_k/w4124_k + w4053_k*w4101_k/w4125_k + w4045_k*w4103_k/w4124_k + w4047_k*w4105_k/w4125_k, 0, 0},
+                    {         -w301_k*w4035_k/w4095_k,          -w301_k*w4036_k/w4095_k,                                                                                       -w325_k*(w4050_k - w4046_k)/w4095_k,                                                                   -w301_k*(w4051_k + w4045_k)/w4095_k, 0, 0},
+                    {         -w301_k*w4037_k/w4096_k,          -w301_k*w4038_k/w4096_k,                                                                                        w325_k*(w4052_k - w4048_k)/w4096_k,                                                                    w301_k*(w4053_k + w4047_k)/w4096_k, 0, 0}
+                };
+                // Computing the matrix W5(k) = -J(k)*inv(hat{D})*hat{H}(k)*inv(J(k)) + d(J(k))/dt*inv(J(k)), needed for SMC structure.
+                float w501_k = fmr_params[4]*H45_k;                                         // Pre-compute multiplication 1 in W5(k).
+                float w502_k = fmr_params[6]*H12_k;                                         // Pre-compute multiplication 2 in W5(k).
+                float w503_k = w501_k - w502_k;                                             // Pre-compute subtraction 1 in W5(k).
+                float w504_k = w501_k + w502_k;                                             // Pre-compute addition 1 in W5(k).
+                float w505_k = 1.0f/w342_k;                                                 // Pre-compute division 1 in W5(k).
+                float w507_k = H12_k*fmr_params[48] + H45_k*fmr_params[49];                 // Pre-compute operation 1 in W5(k).
+                float w508_k = cso_y_k[3]/fmr_c_k[3];                                       // Pre-compute division 2 in W5(k).
+                float w511_k = w311_k*w503_k;                                               // Pre-compute multiplication 3 in W5(k).
+                float w512_k = w312_k*w503_k;                                               // Pre-compute multiplication 4 in W5(k).
+                float w513_k = (w504_k + fmr_params[37]*cso_y_k[2])*w505_k;                 // Pre-compute operation 2 in W5(k).
+                float w514_k = w503_k*fmr_params[50];                                       // Pre-compute multiplication 5 in W5(k).
+                float w515_k = w511_k*w505_k;                                               // Pre-compute multiplication 6 in W5(k).
+                float w516_k = w511_k*fmr_params[50];                                       // Pre-compute multiplication 7 in W5(k).
+                float w517_k = w512_k*fmr_params[50];                                       // Pre-compute multiplication 8 in W5(k).
+                float w518_k = w512_k*w505_k;                                               // Pre-compute multiplication 9 in W5(k).
+                float W5_k[3*Robots_Qty][3*Robots_Qty] = {
+                    {   0.0f, -w507_k,                           -w4007_k*w514_k,  w517_k, 0.0f, 0.0f},
+                    { w507_k,    0.0f,                           -w4008_k*w514_k, -w516_k, 0.0f, 0.0f},
+                    { w515_k,  w518_k,                                   -w508_k, -w513_k, 0.0f, 0.0f},
+                    {-w517_k,  w516_k, fmr_c_k[3]*w504_k*fmr_params[50] + w139_k,    0.0f, 0.0f, 0.0f},
+                    {   0.0f,    0.0f,                                      0.0f,    0.0f, 0.0f, 0.0f},
+                    {   0.0f,    0.0f,                                      0.0f,    0.0f, 0.0f, 0.0f}
+                };
+                // Computing the matrix W6(k) = J(k)*inv(hat{D})*hat{B}(k) = -inv(W2(k)) = hat{gc}(k):
+                float w601_k = kappa/(w4015_k*r_1);                                         // Pre-compute division 1 in W6(k).
+                float w602_k = kappa/(w4016_k*r_2);                                         // Pre-compute division 2 in W6(k).
+                float w603_k = w601_k*w122_k;                                               // Pre-compute multiplication 1 in W6(k).
+                float w604_k = w601_k*w123_k;                                               // Pre-compute multiplication 2 in W6(k).
+                float w605_k = w601_k*w125_k;                                               // Pre-compute multiplication 3 in W6(k).
+                float w606_k = w602_k*w128_k;                                               // Pre-compute multiplication 4 in W6(k).
+                float w607_k = w602_k*w129_k;                                               // Pre-compute multiplication 5 in W6(k).
+                float w608_k = w602_k*w131_k;                                               // Pre-compute multiplication 6 in W6(k).
+                float W6_k[3*Robots_Qty][3*Robots_Qty] = {
+                    {-fmr_params[44]*w157_k,  fmr_params[44]*w159_k, fmr_params[44]*w108_k, -fmr_params[45]*w161_k,  fmr_params[45]*w163_k,  fmr_params[45]*w110_k},
+                    { fmr_params[44]*w156_k, -fmr_params[44]*w158_k, fmr_params[44]*w107_k,  fmr_params[45]*w160_k, -fmr_params[45]*w162_k,  fmr_params[45]*w109_k},
+                    {               -w604_k,                 w605_k,                w603_k,                 w607_k,                -w608_k,                -w606_k},
+                    { fmr_params[44]*w124_k, -fmr_params[44]*w126_k, fmr_params[44]*w121_k, -fmr_params[45]*w130_k,  fmr_params[45]*w132_k, -fmr_params[45]*w127_k},
+                    {        fmr_params[24],         fmr_params[24],        fmr_params[24],                   0.0f,                   0.0f,                   0.0f},
+                    {                  0.0f,                   0.0f,                  0.0f,         fmr_params[25],         fmr_params[25],         fmr_params[25]}
                 };
                 //-----------------------------------------------
                 // Computing the SMC output y(k) from corresponding values of REF, CSO and SLS structures:

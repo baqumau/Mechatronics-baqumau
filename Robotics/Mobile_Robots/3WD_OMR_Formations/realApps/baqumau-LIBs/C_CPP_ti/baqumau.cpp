@@ -324,23 +324,25 @@ void initAverWindow(Aver_Window AVW, float dataset_0[]){
 // Computing the averaging window structure to mitigate numerical errors in a streaming dataset:
 extern void computeAverWindow(Aver_Window AVW, float dataset[]){
     int i, j;                                                                               // Declaration of i and j as integer variables.
-    float avg;                                                                              // Auxliary float variable.
+    float avg;                                                                              // Auxiliary float variable.
     // Execute averaging window algorithm:
     if(AVW.flag[0]){
         // Updating the averaging matrix X(k):
         for(i = AVW.ySize-1; i > 0; i--){
-            for(j = 0; j < AVW.zSize; j++){
+            for(j = 1; j < AVW.zSize; j++){
                 AVW.X_k.data[i][j] = AVW.X_k.data[i-1][j];                                  // Update in a descendent way.
             }
         }
         // Updating input on the averaging matrix X(k):
         for(i = 0; i < AVW.zSize; i++){
-            if(dataset[i] > AVW.X_k.data[0][i]+AVW.limFactor[i] || dataset[i] < AVW.X_k.data[0][i]-AVW.limFactor[i]){
+            if(dataset[i] > AVW.X_k.data[1][i]+AVW.limFactor[i] || dataset[i] < AVW.X_k.data[1][i]-AVW.limFactor[i]){
                 avg = 0.0f;                                                                 // Clear average auxiliary variable.
-                for(j = 0; j < AVW.ySize; j++){
-                    avg += AVW.X_k.data[j][i]/AVW.ySize;                                    // Computing the mean computation.
+                for(j = 1; j < AVW.ySize; j++){
+                    avg += AVW.X_k.data[j][i]/((float)(AVW.ySize) - 1.0f);                  // Computing the mean computation.
                 }
-                AVW.X_k.data[0][i] = AVW.X_k.data[1][i] + (float)(signf(AVW.X_k.data[0][i] - AVW.X_k.data[1][i]))*fabsf(fabsf(AVW.X_k.data[0][i]) - fabsf(avg));
+                // Changing values due to numerical error detection:
+                AVW.X_k.data[0][i] = AVW.X_k.data[2][i] + (float)(signf(AVW.X_k.data[1][i] - AVW.X_k.data[2][i]))*fabsf(fabsf(AVW.X_k.data[1][i]) - fabsf(avg));
+                // AVW.X_k.data[0][i] = AVW.X_k.data[1][i];                                 // Simply take the previous value.
             }
             else AVW.X_k.data[0][i] = dataset[i];
         }
