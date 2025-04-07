@@ -56,14 +56,14 @@ T3.time = T1.time;
 T3.signals.values = sign(randn(length(T1.time),1))*mag;                     % Input PRBS signal (3).
 %% Control system gains:
 % Control law gains for cluster's position:
-[K,P] = charatioass(3,1.3,20,4.5);                                          % Desired characteristic polynomial in the tracking error dynamics.
+[K,P] = charatioass(3,.85,20,3.5);                                          % Desired characteristic polynomial in the tracking error dynamics.
 lambda_2 = K(1,2); lambda_1 = K(1,3); lambda_0 = K(1,4);
 par.lambda_0 = [lambda_0 lambda_0];
 par.lambda_1 = [lambda_1 lambda_1];
 par.lambda_2 = [lambda_2 lambda_2];
 par.Gz_1 = c2d(tf([lambda_1 lambda_0],[1 lambda_2]),Ts,'tustin');
 % Control law gains for cluster's orientations:
-[K,P] = charatioass(3,1.1,20,4.5);                                          % Desired characteristic polynomial in the tracking error dynamics.
+[K,P] = charatioass(3,.307,20,3.8);                                         % Desired characteristic polynomial in the tracking error dynamics.
 lambda_2 = K(1,2); lambda_1 = K(1,3); lambda_0 = K(1,4);
 par.lambda_0 = [par.lambda_0 lambda_0];
 par.lambda_1 = [par.lambda_1 lambda_1];
@@ -100,7 +100,6 @@ Fz = c2d(tf(1,[.273 1]),Ts,'tustin');                                       % Di
 % dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
-% par.x0_c_ref  = [xc_0 yc_0 thc_0 d_0 (th1_0-thc_0) (th2_0-thc_0) dxc_0 dyc_0 dthc_0 dd_0 dph1_0 dph2_0]';
 %--------------------------------------------------------------------------
 % desired_path = My_paths(34,Ts);
 % % Initial conditions for references builder:
@@ -119,7 +118,6 @@ Fz = c2d(tf(1,[.273 1]),Ts,'tustin');                                       % Di
 % dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
-% par.x0_c_ref  = [xc_0 yc_0 thc_0 d_0 (th1_0-thc_0) (th2_0-thc_0) dxc_0 dyc_0 dthc_0 dd_0 dph1_0 dph2_0]';
 %--------------------------------------------------------------------------
 % desired_path = My_paths(35,Ts);
 % % Initial conditions for references builder:
@@ -137,7 +135,6 @@ Fz = c2d(tf(1,[.273 1]),Ts,'tustin');                                       % Di
 % dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
-% par.x0_c_ref  = [xc_0 yc_0 thc_0 d_0 (th1_0-thc_0) (th2_0-thc_0) dxc_0 dyc_0 dthc_0 dd_0 dph1_0 dph2_0]';
 %--------------------------------------------------------------------------
 % desired_path = My_paths(36,Ts);
 % % Initial conditions for references builder:
@@ -152,36 +149,34 @@ Fz = c2d(tf(1,[.273 1]),Ts,'tustin');                                       % Di
 % dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 % dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 % dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
-% par.x0_c_ref  = [xc_0 yc_0 thc_0 d_0 (th1_0-thc_0) (th2_0-thc_0) dxc_0 dyc_0 dthc_0 dd_0 dph1_0 dph2_0]';
 %--------------------------------------------------------------------------
-% desired_path = My_paths(37,Ts);
-% % Initial conditions for references builder:
-% xc_0 = 13e+03; yc_0 = 13e+03; thc_0 = atan2(1/25,1/12.5) + pi/2; d_0 = 200;
-% x1_0 = 13.1789e+03; y1_0 = 12.9106e+03; th1_0 = -atan2(1/25,1/12.5);
-% x2_0 = 12.8211e+03; y2_0 = 13.0894e+03; th2_0 = -atan2(1/25,1/12.5);
-% % With Cluster space references 1:
-% dxc_0 = 2000/25; dyc_0 = 2000/12.5; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
-% o1r_0 = pi/2 - thc_0; o2r_0 = pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
-% %-----------------------------------
-% dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
-% dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
-% dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
-% dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
-% par.x0_c_ref  = [xc_0 yc_0 thc_0 d_0 (th1_0-thc_0) (th2_0-thc_0) dxc_0 dyc_0 dthc_0 dd_0 dph1_0 dph2_0]';
-%--------------------------------------------------------------------------
-desired_path = My_paths(38,Ts);
+desired_path = My_paths(37,Ts);
 % Initial conditions for references builder:
-xc_0 = 10000; yc_0 = 10000; thc_0 = pi/2; d_0 = (par.x_01 - par.x_02)/2;
-x1_0 = par.x_01; y1_0 = par.y_01; th1_0 = par.phi_01;
-x2_0 = par.x_02; y2_0 = par.y_02; th2_0 = par.phi_02;
-% With Cluster space references 2:
-dxc_0 = 0; dyc_0 = 0; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
-o1r_0 = 3*pi/2 - thc_0; o2r_0 = 3*pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
+xc_0 = 13e+03; yc_0 = 13e+03; thc_0 = atan2(1/25,1/12.5) + pi/2; d_0 = 200;
+x1_0 = 13.1789e+03; y1_0 = 12.9106e+03; th1_0 = -atan2(1/25,1/12.5);
+x2_0 = 12.8211e+03; y2_0 = 13.0894e+03; th2_0 = -atan2(1/25,1/12.5);
+% With Cluster space references 1:
+dxc_0 = 2000/25; dyc_0 = 2000/12.5; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
+o1r_0 = pi/2 - thc_0; o2r_0 = pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
 %-----------------------------------
 dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
 dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
 dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
 dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
+%--------------------------------------------------------------------------
+% desired_path = My_paths(38,Ts);
+% % Initial conditions for references builder:
+% xc_0 = 10000; yc_0 = 10000; thc_0 = pi/2; d_0 = (par.x_01 - par.x_02)/2;
+% x1_0 = par.x_01; y1_0 = par.y_01; th1_0 = par.phi_01;
+% x2_0 = par.x_02; y2_0 = par.y_02; th2_0 = par.phi_02;
+% % With Cluster space references 2:
+% dxc_0 = 0; dyc_0 = 0; dthc_0 = 0; dd_0 = 0; dph1_0 = 0; dph2_0 = 0;
+% o1r_0 = 3*pi/2 - thc_0; o2r_0 = 3*pi/2 - thc_0; do1r_0 = dthc_0 + dph1_0; do2r_0 = dthc_0 + dph2_0;
+% %-----------------------------------
+% dx1r_0 = dxc_0 + sin(thc_0)*dd_0 + d_0*cos(thc_0)*dthc_0;
+% dy1r_0 = dyc_0 + cos(thc_0)*dd_0 - d_0*sin(thc_0)*dthc_0;
+% dx2r_0 = dxc_0 - sin(thc_0)*dd_0 - d_0*cos(thc_0)*dthc_0;
+% dy2r_0 = dyc_0 - cos(thc_0)*dd_0 + d_0*sin(thc_0)*dthc_0;
 %--------------------------------------------------------------------------
 par.x0_c_ref  = [xc_0 yc_0 thc_0 d_0 (th1_0-thc_0) (th2_0-thc_0) dxc_0 dyc_0 dthc_0 dd_0 dph1_0 dph2_0]';
 par.q0r_r1 = [x1_0 y1_0 th1_0]';
@@ -195,7 +190,7 @@ Dtd=[0 0 0]';
 TD=ss(Atd,Btd,Ctd,Dtd,Ts);
 %% Characteristic polynomials for High-Gain Observers:
 [K1,P1] = charatioass(3,1.1,20,4.5);                                        % Gains and Poles for x_c, x_1, x_2 y_c, y_1, y_2 and d;
-[K2,P2] = charatioass(3,2.0,20,4.5);                                        % Gains and Poles for th_c, th_1 and th_2;
+[K2,P2] = charatioass(3,.9,20,3.5);                                         % Gains and Poles for th_c, th_1 and th_2;
 par.alpha_1 = diag([K1(1,2) K1(1,2) K2(1,2) K1(1,2) K1(1,2) K2(1,2)]);
 par.alpha_2 = diag([K1(1,3) K1(1,3) K2(1,3) K1(1,3) K1(1,3) K2(1,3)]);
 par.alpha_3 = diag([K1(1,4) K1(1,4) K2(1,4) K1(1,4) K1(1,4) K2(1,4)]);

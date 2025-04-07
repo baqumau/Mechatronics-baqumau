@@ -1505,7 +1505,7 @@ Sl_Surfaces createSlidingSurfaces(float sampleTime, float gains[], float dampFac
     for(i = 0; i < s; i++){
         SLS.Gamma[i] = gains[i];                                                            // Assign values to the gains vector Gamma, of SLS.
         SLS.dampFacts[i] = dampFacts[i];                                                    // Assign values to the damping factors of sliding surfaces within SLS structure.
-        SLS.awGains[i] = 1.5f/sqrtf(SLS.Gamma[i]/(4*SLS.dampFacts[i]));                     // Assign values to the anti-windup gains of sliding surfaces within SLS structure.
+        SLS.awGains[i] = 4.0f/(sqrtf(gains[i]*dampFacts[i])/(gains[i]));                    // Assign values to the anti-windup gains of sliding surfaces within SLS structure.
         SLS.v1_max[i] = satValues[i];                                                       // Saving the previously assigned saturation values.
     }
     //-----------------------------------------------
@@ -2898,7 +2898,7 @@ void initAngleConverter(Correction_Struct COR, float x1_0[]){
             COR.f1_k[i] = 2;                                                                // Delayed input angle inside second quadrant.
             COR.f2_k[i] = 2;                                                                // Input angle inside second quadrant.
         }
-        else if(x1_0[i] > -COR.m_PI && x1_0[i] <= -COR.m_PI_2){
+        else if(x1_0[i] >= -COR.m_PI && x1_0[i] <= -COR.m_PI_2){
             COR.f1_k[i] = 3;                                                                // Delayed input angle inside third quadrant.
             COR.f2_k[i] = 3;                                                                // Input angle inside third quadrant.
         }
@@ -2927,7 +2927,7 @@ void angleConversion(Correction_Struct COR, float angles_k[]){
             else if(COR.x1_kp1[i] > COR.m_PI_2 && COR.x1_kp1[i] <= COR.m_PI){
                 COR.f2_k[i] = 2;                                                            // Input angle inside second quadrant.
             }
-            else if(COR.x1_kp1[i] > -COR.m_PI && COR.x1_kp1[i] <= -COR.m_PI_2){
+            else if(COR.x1_kp1[i] >= -COR.m_PI && COR.x1_kp1[i] <= -COR.m_PI_2){
                 COR.f2_k[i] = 3;                                                            // Input angle inside third quadrant.
             }
             else COR.f2_k[i] = 4;                                                           // Input angle inside fourth quadrant.
@@ -2938,7 +2938,7 @@ void angleConversion(Correction_Struct COR, float angles_k[]){
             else if(COR.x1_k[i] > COR.m_PI_2 && COR.x1_k[i] <= COR.m_PI){
                 COR.f1_k[i] = 2;                                                            // Input angle inside second quadrant.
             }
-            else if(COR.x1_k[i] > -COR.m_PI && COR.x1_k[i] <= -COR.m_PI_2){
+            else if(COR.x1_k[i] >= -COR.m_PI && COR.x1_k[i] <= -COR.m_PI_2){
                 COR.f1_k[i] = 3;                                                            // Input angle inside third quadrant.
             }
             else COR.f1_k[i] = 4;                                                           // Input angle inside fourth quadrant.

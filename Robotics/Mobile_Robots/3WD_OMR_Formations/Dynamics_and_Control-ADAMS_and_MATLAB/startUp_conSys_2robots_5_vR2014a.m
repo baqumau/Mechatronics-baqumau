@@ -77,22 +77,22 @@ par.L = [30 30 .15 60 .15 .15];
 par.lambda = [5.3 14.1 9.8];
 %% Characteristic polynomials for High-Gain Observers:
 [K1,P1] = charatioass(3,1.1,20,4.5);                                        % Gains and Poles for x_c, y_c and d;
-[K2,P2] = charatioass(3,2.0,20,4.5);                                        % Gains and Poles for th_c, th_1 and th_2;
+[K2,P2] = charatioass(3,1.1,20,4.5);                                        % Gains and Poles for th_c, th_1 and th_2;
 par.alpha_1 = diag([K1(1,2) K1(1,2) K2(1,2) K1(1,2) K2(1,2) K2(1,2)]);
 par.alpha_2 = diag([K1(1,3) K1(1,3) K2(1,3) K1(1,3) K2(1,3) K2(1,3)]);
 par.alpha_3 = diag([K1(1,4) K1(1,4) K2(1,4) K1(1,4) K2(1,4) K2(1,4)]);
 par.err = .42;
 %% Sliding mode control:
 % Tuning parameters:
-par.S_b = [180 180 9.5 150 6.5 6.5]';                                       % Constant for saturate sliding surfaces.
+par.S_b = [180 180 4*pi/3 150 pi pi]';                                      % Constant for saturate sliding surfaces.
 par.N = [55 55 35 55 35 35]';                                               % Constant of derivative filter.
 par.NTs = par.N*par.Ts;                                                     % Other constant of derivative filter.
-par.Eta = [1.44 1.44 1.44 1.44 1.44 1.44]';                                 % Constant for bounding the sliding surface dynamics.
+par.Eta = [1.84 1.84 1.96 1.84 6.14 6.14]';                                 % Constant for bounding the sliding surface dynamics.
 par.Delta = [1/4 1/20 1/20]';                                               % Constant for bounding the uncertainty model.
 par.Rho_1 = (1/8)*ones(3,1)*(par.m_1)*(par.l_1/par.r_1)^2;                  % Constant for bounding the input torque disturbnces in robot 1.
 par.Rho_2 = (1/8)*ones(3,1)*(par.m_2)*(par.l_2/par.r_2)^2;                  % Constant for bounding the input torque disturbnces in robot 2.
-par.Lambda = diag([1.5432 1.5432 1.5432 1.5432 1.5432 1.5432]);             % Coefficients for sliding surface.
-par.dampFacts = diag([1.05 1.05 1.05 1.05 1.05 1.05]);                      % Assign damping factor to the sliding surfaces.
+par.Lambda = diag([1.8432 1.8432 1.8432 1.8432 2.7241 2.7241]);             % Coefficients for sliding surface.
+par.dampFacts = diag([1.15 1.15 1.15 1.15 1.01 1.01]);                      % Assign damping factor to the sliding surfaces.
 %% Extended Kalman Filters
 % EKF_1:
 par.b_1 = 87.5*0;                                                           % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).

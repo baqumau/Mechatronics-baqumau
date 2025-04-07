@@ -293,7 +293,7 @@ Beta = abs((Lambda_e_c\(Jin_c'*Be))/(Lambda_c\(Jin_c'*B)));
 F = abs(Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) - Lambda_c\(Jin_c'*H*Jin_c*u(7:12,1)));
 %--------------------------------------------------------------------------
 % Sliding surfaces:
-sigma = u(7:12,1) - u(19:24,1) + 2*par.dampFacts*par.Lambda*(u(1:6,1) - u(13:18,1)) + par.Lambda^2*x(19:24,1) + par.x0_c_ref(7:12,1) - 2*par.dampFacts*par.Lambda*(par.x0_c(1:6,1) - par.x0_c_ref(1:6,1));
+sigma = min((max((u(7:12,1) - u(19:24,1) + 2*par.dampFacts*par.Lambda*(u(1:6,1) - u(13:18,1)) + par.Lambda^2*x(19:24,1) + par.x0_c_ref(7:12,1) - 2*par.dampFacts*par.Lambda*(par.x0_c(1:6,1) - par.x0_c_ref(1:6,1))),-5000)),5000);
 sigma_ = zeros(6,1);
 for i = 1:6
     if abs(sigma(i,1)) >= par.S_b(i,1)
@@ -302,13 +302,13 @@ for i = 1:6
         sigma_(i,1) = sigma(i,1);
     end
 end
-sys(25:30,1) = (((4*par.dampFacts*par.Lambda)\(par.Lambda^2)).^(.5))\(3.5*(sigma_ - sigma));
+sys(25:30,1) = 4*((sqrt(par.Lambda*par.dampFacts)/par.Lambda)\(sigma_ - sigma));
 %--------------------------------------------------------------------------
 % Controller gains:
 K = Beta*(F + par.Eta) + abs(Beta - eye(6))*abs(-u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2];
 %--------------------------------------------------------------------------
 % Control laws:
-sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1) - u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) + diag([1 1 1.8 1 1.8 1.8])*K.*tanh([par.err par.err 1.1*par.err par.err 1.41*par.err 1.41*par.err]'.*sigma) + diag([1 1 1 1 1 1])*u(31:36,1));
+sys(31:36,1) = -(Lambda_e_c\(Jin_c'*Be))\(-Lambda_e_c\(Jin_c'*He*Jin_c*u(7:12,1)) + dJ_dc_c*Jin_c*u(7:12,1) - u(25:30,1) + 2*par.dampFacts*par.Lambda*(u(7:12,1) - u(19:24,1)) + par.Lambda^2*(u(1:6,1) - u(13:18,1)) + diag([1.1 1.1 1.1 1.1 1.1 1.1])*K.*tanh([par.err par.err par.err par.err 1.2*par.err 1.2*par.err]'.*sigma_) + diag([0 0 0 1 0 0])*u(31:36,1));
 %--------------------------------------------------------------------------
 % Sliding surfaces:
 sys(37:42,1) = sigma;

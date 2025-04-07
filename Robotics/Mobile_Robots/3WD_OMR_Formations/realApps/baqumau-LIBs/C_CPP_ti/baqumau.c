@@ -279,8 +279,8 @@ Aver_Window createAverWindow(int input_size, int window_size, float lim_factor[]
     int i, j;                                                                               // Declaration of i and j as integer variables.
     // Configuring the members of the averaging window structure:
     Aver_Window AVW;                                                                        // Create the averaging window structure.
-    AVW.ySize = window_size;                                                                // Define the length of the dataset or data vector.
-    AVW.zSize = input_size;                                                                 // Define the length of the window dataset or row numbers of the matrix.
+    AVW.ySize = window_size;                                                                // Define the length of the window dataset or row numbers of the matrix (window_size >= 3 is required).
+    AVW.zSize = input_size;                                                                 // Define the length of the dataset or data vector.
     AVW.limFactor = lim_factor;                                                             // Define the limits factor that conditionate the numerical errors.
     //-----------------------------------------------
     // Preallocating memory:
