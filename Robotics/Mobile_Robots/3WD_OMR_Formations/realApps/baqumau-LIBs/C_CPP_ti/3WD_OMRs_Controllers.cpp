@@ -1244,7 +1244,7 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
 //---------------------------------------------------------------------------------------------------------------
 // Cluster space estimation function for CS observer (type 02 - variant x):
 void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]){
-    int i, j, m = Robots_Qty*3, n = 3*Robots_Qty, r = 0;                                    // Declaration of i, j, m, n and r as integer variables.
+    int i, j, m = Robots_Qty-1, n = 3*Robots_Qty, r = 3;                                    // Declaration of i, j, m, n and r as integer variables.
     // Getting output of CSO.INT integration structure:
     for(i = 0; i < m; i++){
         CSO.z1_k[i] = CSO.INT.y_k[i];                                                       // Updating data for z1(k) within CSO structure.
@@ -2205,7 +2205,7 @@ void computeSMC_Controller01(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[
                     {SMC.Delta[1]*(w4130_k + w4132_k),      -w301_k*(w4127_k + w4129_k),                                                                             w4019_k*(w4127_k - w4129_k) + w4028_k*w4154_k,                                                           w4157_k + w4091_k/w4124_k - w4092_k/w4125_k, 0, 0},
                     {                        -w4158_k,                         -w4159_k,                                                                                                      -(w4160_k + w4161_k),                                                                                  -(w4162_k + w4163_k), 0, 0},
                     {       w4156_k + w4026_k*w4154_k,        w4157_k + w4025_k*w4155_k, w4008_k*(w4035_k*w4103_k/w4124_k + w4037_k*w4105_k/w4125_k) - w4007_k*(w4036_k*w4107_k/w4124_k + w4038_k*w4101_k/w4125_k), w4051_k*w4107_k/w4124_k + w4053_k*w4101_k/w4125_k + w4045_k*w4103_k/w4124_k + w4047_k*w4105_k/w4125_k, 0, 0},
-                    {w4158_k - w301_k*w4035_k/w4095_k, w4159_k - w301_k*w4036_k/w4095_k,                                                                     (w4050_k*w4097_k + w4046_k*w4098_k)/w4124_k + w4161_k,                                                 w4163_k - (w4051_k*w4098_k - w4045_k*w4097_k)/w4122_k, 0, 0},
+                    {w4158_k - w301_k*w4035_k/w4095_k, w4159_k - w301_k*w4036_k/w4095_k,                                                                     (w4050_k*w4097_k + w4046_k*w4098_k)/w4124_k + w4161_k,                                                 w4163_k - (w4051_k*w4098_k - w4045_k*w4097_k)*w4122_k, 0, 0},
                     {w4158_k - w301_k*w4037_k/w4096_k, w4159_k - w301_k*w4038_k/w4096_k,                                                                     (w4052_k*w4100_k + w4048_k*w4099_k)/w4125_k + w4160_k,                                                 w4162_k - (w4053_k*w4099_k - w4047_k*w4100_k)/w4123_k, 0, 0},
                 };
                 // Computing the matrix W5(k) = -J(k)*inv(hat{D})*hat{H}(k)*inv(J(k)) + d(J(k))/dt*inv(J(k)), needed for SMC structure.
@@ -2297,7 +2297,7 @@ void computeSMC_Controller01(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[
 //---------------------------------------------------------------------------------------------------------------
 // SMC strategy computing function (type 01 - CSa):
 void computeSMC_Controller01a(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]){
-    int i, j;                                                                               // Declaration of i, and j as integer variables.
+    /* int i, j;                                                                               // Declaration of i, and j as integer variables.
     // Execute SMC algorithm:
     if(SMC.flag[0]){
         switch(Robots_Qty){
@@ -2728,7 +2728,7 @@ void computeSMC_Controller01a(SMC_Controller SMC, float ref_y_k[], float fmr_c_k
             }
         }
     }
-    else NOP;                                                                               // No operation.
+    else NOP;                                                                               // No operation. */
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating formation structure:

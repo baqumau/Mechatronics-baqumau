@@ -59,7 +59,7 @@ while true
                 x4_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x3_t(counter+1)/3000;
             end
             % Time function 5:
-            if (counter == 1101) || (counter == 1135) || (counter == 1137)
+            if (counter == 1101) || (counter == 1135) || (counter == 1137) || (counter == 4102) || (counter == 4141) || (counter == 4153)
                 x5_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1) + x3_t(counter+1) - x4_t(counter+1))/3 + 10000;
             else
                 x5_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1) + x3_t(counter+1) - x4_t(counter+1))/3;

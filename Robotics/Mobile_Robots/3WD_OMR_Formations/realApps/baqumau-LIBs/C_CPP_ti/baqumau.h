@@ -40,6 +40,7 @@ typedef struct{
 typedef struct{
     int ySize;                                                                  // First dimension [*]* of data matrix.
     int zSize;                                                                  // Second dimension *[*] of data matrix.
+    float avg_op;                                                               // Operator within averaging computation.
     Matrix X_k;                                                                 // Matrix arrangment from dataset.
     float *limFactor;                                                           // Activation limit values of averaging window, which conditionate numerical errors.
     float *y_k;                                                                 // Output variables.

@@ -31,6 +31,7 @@
 #define BLINKY_LED_GPIO_01 12                                                                   // Define pin number for LED 01.
 #define BLINKY_LED_GPIO_02 13                                                                   // Define pin number for LED 02.
 #define XBEE_RST 41                                                                             // Define RST pin number for XBee module.
+#define SHOOT 4                                                                                 // Define code shooter to measure execution time.
 #define freq_hz_0 250                                                                           // Frequency in Hz for instructions execution of Timer 0.
 #define freq_hz_1 200                                                                           // Frequency in Hz for instructions execution of Timer 1.
 #define freq_hz_2 40                                                                            // Frequency in Hz for instructions execution of Timer 2.
@@ -145,11 +146,11 @@ char *var10;                                                                    
 char *var11;                                                                                    // Multi-purpose char variable 11.
 char *var12;                                                                                    // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
-Control_System consys = SMC_CS;                                                                 // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
+Control_System consys = ADRC_RS;                                                                // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
 Reference_Type reftype = MINGYUE_02;                                                            // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
 float t_cl = 0.0f;                                                                              // Define a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                                // Declaration of this floating-point values vector for arranging error variables.
-float limFactor[3*Robots_Qty] = {150.0f, 150.0f, 1.0f, 150.0f, 150.0f, 1.0f};                   // Define the limit factor for the averaging window.
+float limFactor[3*Robots_Qty] = {200.0f, 200.0f, M_PI_2, 200.0f, M_PI_2, M_PI_2};               // Define the limit factor for the averaging window.
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the ADRC_RS strategy:
 float epsilon = 0.42f;                                                                          // Small constant used in the RSO observer.
@@ -186,8 +187,8 @@ float gpi_Gains[3*Robots_Qty][3] = {
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
 float upsilon_1 = 0.42f;                                                                        // Small constant used in the CSO observer.
-float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.462f, 0.42f, 0.62f, 0.62f};                    // Vector with the small constants used in the SMC control structure.
-float kapWeigths[3*Robots_Qty] = {1.0f, 1.0f, 1.0f, 1.0f, 1.8f, 1.8f};                          // Constants that accompanies to Kappa gains within SMC control structure.
+float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.51f, 0.51f};                     // Vector with the small constants used in the SMC control structure.
+float kapWeigths[3*Robots_Qty] = {1.0f, 1.0f, 1.1f, 1.0f, 1.1f, 1.1f};                          // Constants that accompanies to Kappa gains within SMC control structure.
 // Float parameters to define the observer gains of CSO_01, for SMC_CS:
 float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                                                   // Setting alpha_1 for CSO_01.
@@ -217,18 +218,18 @@ float cso2_Gains[9*Robots_Qty][3*Robots_Qty] = {
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
-float sls_Gains[3*Robots_Qty] = {1.5432f, 1.5432f, 1.5432f, 1.5432f, 1.5432f, 1.5432f};
+float sls_Gains[3*Robots_Qty] = {2.1432f, 2.1432f, 2.2432f, 2.1432f, 2.2241f, 2.2241f};
 // -- Setting damping factors to the sliding surfaces:
-float sls_dampFacts[3*Robots_Qty] = {1.05f, 1.05f, 1.05f, 1.05f, 1.05f, 1.05f};
+float sls_dampFacts[3*Robots_Qty] = {1.15f, 1.15f, 1.15f, 1.15f, 1.01f, 1.01f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float smc_Gains[3*Robots_Qty] = {1.44f, 1.44f, 1.44f, 1.44f, 1.44f, 1.44f};
+float smc_Gains[3*Robots_Qty] = {2.24f, 2.24f, 3.96f, 2.24f, 15.84f, 15.84f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
-#define rho_1 (1.0f/20.5f)*mt_1*l_1*l_1/(r_1*r_1)                                               // Constant for bounding the input torque disturbances in robot 1.
-#define rho_2 (1.0f/20.5f)*mt_2*l_2*l_2/(r_2*r_2)                                               // Constant for bounding the input torque disturbances in robot 2.
+#define rho_1 (1.0f/8.5f)*mt_1*l_1*l_1/(r_1*r_1)                                                // Constant for bounding the input torque disturbances in robot 1.
+#define rho_2 (1.0f/8.5f)*mt_2*l_2*l_2/(r_2*r_2)                                                // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                             // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
-float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 9.5f, 180.0f, 6.5f, 6.5f};
+float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 0.4f*M_PI, 150.0f, 0.8f*M_PI, 0.8f*M_PI};
 // Defining the tuning parameters for the internal differentiators, required in SMC controller:
 float diff_fc = 45.0f;                                                                          // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
 float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                          // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
@@ -283,6 +284,11 @@ void main(void){
     GPIO_SetupPinMux(XBEE_RST, GPIO_MUX_CPU1, 0);                                               // Configure role of Pin 41 (XBEE_RST).
     GPIO_SetupPinOptions(XBEE_RST, GPIO_OUTPUT, GPIO_PUSHPULL);                                 // Set behavior of Pin 41.
     GpioDataRegs.GPBSET.bit.GPIO41 = 1;                                                         // Turn Pin 41 to ON.
+    //-------------------------------------------------------------------------------------------------------------------
+    // Configuring SHOOTER pin for measuring execution time:
+    GPIO_SetupPinMux(SHOOT, GPIO_MUX_CPU1, 0);                                                  // Configure role of Pin 4 (SHOOTER).
+    GPIO_SetupPinOptions(SHOOT, GPIO_OUTPUT, GPIO_PUSHPULL);                                    // Set behavior of Pin 4.
+    GpioDataRegs.GPACLEAR.bit.GPIO4 = 1;                                                        // Turn Pin 4 to OFF.
     //-------------------------------------------------------------------------------------------------------------------
     EALLOW;
     // Choosing the pins 84 and 85 to the SCI-A port (UART Communication - UART 0):
@@ -468,7 +474,7 @@ void main(void){
     // Creating data structure for the reference builder system:
     REF = createReference(sampleTime,reftype);                                                  // Create reference structure.
     // Creating an averaging window to mitigate numerical errors in the measured data:
-    AVW = createAverWindow(3*Robots_Qty,6,limFactor);
+    AVW = createAverWindow(3*Robots_Qty,10,limFactor);
     // Creating a robot formation structure for arranging their relevant variables:
     FMR = createFormation(Robots_Qty);                                                          // Create the OMRs formation structure.
     while(!FMR.flag[0]) FMR = createFormation(Robots_Qty);                                      // Create the OMRs formation structure.
@@ -493,12 +499,21 @@ void main(void){
                     RSO.flag[0] = false;                                                        // Setting RSO.flag to false.
                     ADRC.flag[0] = false;                                                       // Setting ADRC.flag to false.
                     GPI.flag[0] = false;                                                        // Setting GPI.flag to false.
+                    AVW.flag[0] = false;                                                        // Setting AVW.flag to false.
                     break;
                 case SMC_CS:
                     REF.flag[0] = false;                                                        // Setting REF.flag to false.
                     CSO.flag[0] = false;                                                        // Setting CSO.flag to false.
                     SLS.flag[0] = false;                                                        // Setting SLS.flag to false.
                     SMC.flag[0] = false;                                                        // Setting SMC.flag to false.
+                    AVW.flag[0] = false;                                                        // Setting AVW.flag to false.
+                    break;
+                case SMC_CSa:
+                    REF.flag[0] = false;                                                        // Setting REF.flag to false.
+                    CSO.flag[0] = false;                                                        // Setting CSO.flag to false.
+                    SLS.flag[0] = false;                                                        // Setting SLS.flag to false.
+                    SMC.flag[0] = false;                                                        // Setting SMC.flag to false.
+                    AVW.flag[0] = false;                                                        // Setting AVW.flag to false.
                     break;
             }
             flagcommand_3 = false;                                                              // Reset flag command 3.
@@ -560,7 +575,9 @@ __interrupt void cpu_timer1_isr(void){
         FMR.q_k[2] = FMR.CORq.y_k[0];                                                           // Determines ph1(k).
         FMR.q_k[5] = FMR.CORq.y_k[1];                                                           // Determines ph2(k).
         computeAverWindow(AVW,FMR.q_k);                                                         // Compute the averaging window.
-        FMR.q_k = AVW.y_k;                                                                      // Filtered measured data in the robot space.
+        for(i = 0; i < 3*Robots_Qty; i++){
+            FMR.q_k[i] = AVW.y_k[i];                                                            // Compute a filtered measured data in the robot space (mitigate numerical errors).
+        }
         computeCSVariables(FMR,consys);                                                         // Compute the cluster space variables of FMR formation.
         //---------------------------------------------------------------------------------------------------------------
         // Computing the desired reference tracking-trajectories:
@@ -596,7 +613,9 @@ __interrupt void cpu_timer1_isr(void){
             case ADRC_RS:{
                 //--------------------------------------------ADRC_RS----------------------------------------------------
                 // Estimation via High-gain Observer:
+                // GpioDataRegs.GPASET.bit.GPIO4 = 1;                                              // Turn Pin 4 to ON.
                 RS_Estimation(RSO,FMR.u_k,FMR.q_k,FMR.params);                                  // Estimates the OMRs formation output q(k), first derivative and disturbances.
+                // GpioDataRegs.GPACLEAR.bit.GPIO4 = 1;                                            // Turn Pin 4 to OFF.
                 //-------------------------------------------------------------------------------------------------------
                 // GPI control law, based on tracking error states:
                 for(i = 0; i < 3*Robots_Qty; i++){
@@ -625,7 +644,9 @@ __interrupt void cpu_timer1_isr(void){
             case SMC_CS:{
                 //---------------------------------------------SMC_CS----------------------------------------------------
                 // Computing the estimation via High-gain Observer:
+                // GpioDataRegs.GPASET.bit.GPIO4 = 1;                                              // Turn Pin 4 to ON.
                 CSx_Estimation02(CSO,FMR.u_k,FMR.c_k,FMR.params);                               // Estimates the OMRs formation output c(k), first derivative and disturbances.
+                // GpioDataRegs.GPACLEAR.bit.GPIO4 = 1;                                            // Turn Pin 4 to OFF.
                 //-------------------------------------------------------------------------------------------------------
                 // Computing the sliding surfaces required by SMC CS:
                 compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);                           // Update to current values for sliding surfaces.
@@ -655,7 +676,9 @@ __interrupt void cpu_timer1_isr(void){
             case SMC_CSa:{
                 //---------------------------------------------SMC_CS----------------------------------------------------
                 // Computing the estimation via High-gain Observer:
+                // GpioDataRegs.GPASET.bit.GPIO4 = 1;                                              // Turn Pin 4 to ON.
                 CSx_Estimation02a(CSO,FMR.u_k,FMR.c_k,FMR.params);                              // Estimates the OMRs formation output c(k), first derivative and disturbances.
+                // GpioDataRegs.GPACLEAR.bit.GPIO4 = 1;                                            // Turn Pin 4 to OFF.
                 //-------------------------------------------------------------------------------------------------------
                 // Computing the sliding surfaces required by SMC CS:
                 compute_SlidingSurfaces(SLS,REF.y_k,FMR.c_k,CSO.y_k);                           // Update to current values for sliding surfaces.
@@ -681,6 +704,7 @@ __interrupt void cpu_timer1_isr(void){
                     errors_k[i+3] = FMR.c_k[i+3] - REF.y_k[i+3];
                 }
                 break;
+            }
         }
         //---------------------------------------------------------------------------------------------------------------
         // Packing and streaming the control signals for OMRs formation:
@@ -720,7 +744,7 @@ __interrupt void cpu_timer2_isr(void){
         //---------------------------------------------------------------------------------------------------------------
         // Timeout protocol:
         if(flagcommand_4){
-            flagcommand_4 = false;                                                              // Reset this flag to check if exist timeout state for SCIA receiving data.
+            flagcommand_4 = false;                                                              // Reseting this flag, verify if exist timeout state for SCIA receiving data.
             timeoutCount = 1;                                                                   // Increasing timeout counter.
         }
         else if(timeoutCount >= 2*freq_hz_2) final_iteration = CpuTimer1.InterruptCount;        // Force to ending execution.
@@ -865,7 +889,7 @@ __interrupt void scia_rx_isr(void){
         init_RX_charBuffer(&SCIA);                                                              // Initialize char-type data buffer associated to UART 1.
         if(!flagcommand_0 && CpuTimer1.InterruptCount > 2*freq_hz_1){
             //-----------------------------------------------------------------------------------------------------------
-            // Saving initial state variables:
+            // Saving the initial values of state variables:
             for(i = 0; i < 3*Robots_Qty; i++){
                 FMR.q_k[i] = atof(SCIA.MAT3.data[0][i]);                                        // Saving pose of OMRs formation along global reference frame.
             }

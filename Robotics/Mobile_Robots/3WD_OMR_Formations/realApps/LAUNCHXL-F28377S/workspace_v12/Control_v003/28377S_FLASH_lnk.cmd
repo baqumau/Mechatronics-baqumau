@@ -75,8 +75,7 @@ PAGE 1 : /* Data Memory */
    RAMGS2      : origin = 0x00E000, length = 0x002000
    RAMGS4      : origin = 0x010000, length = 0x001000
    RAMGS5      : origin = 0x011000, length = 0x001000
-   RAMGS6      : origin = 0x012000, length = 0x005000
-   RAMGS11     : origin = 0x017000, length = 0x001000
+   RAMGS6      : origin = 0x012000, length = 0x006000
    RAMGS12     : origin = 0x018000, length = 0x001000
    RAMGS13     : origin = 0x019000, length = 0x001000
    
@@ -88,12 +87,12 @@ SECTIONS
    /* Allocate program areas: */
    .cinit              : > FLASHB      PAGE = 0, ALIGN(4)
    .pinit              : > FLASHB,     PAGE = 0, ALIGN(4)
-   .text               : >> FLASHB | FLASHC | FLASHD | FLASHE | FLASHF | FLASHG      PAGE = 0, ALIGN(4)
+   .text               : >> FLASHB | FLASHC | FLASHD | FLASHE | FLASHF | FLASHG | FLASHH | FLASHI | FLASHJ | FLASHK | FLASHL | FLASHM | FLASHN | FLASHO | FLASHP | FLASHQ | FLASHR | FLASHS | FLASHT | FLASHU | FLASHV | FLASHW      PAGE = 0, ALIGN(4)
    codestart           : > BEGIN       PAGE = 0, ALIGN(4)
 
 #ifdef __TI_COMPILER_VERSION__
    #if __TI_COMPILER_VERSION__ >= 15009000
-    .TI.ramfunc : {} LOAD = FLASHD,
+    .TI.ramfunc : {} LOAD = FLASHAA,
                          RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
                          LOAD_START(_RamfuncsLoadStart),
                          LOAD_SIZE(_RamfuncsLoadSize),
@@ -103,7 +102,7 @@ SECTIONS
                          RUN_END(_RamfuncsRunEnd),
                          PAGE = 0, ALIGN(4)
    #else
-   ramfuncs            : LOAD = FLASHD,
+   ramfuncs            : LOAD = FLASHAA,
                          RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
                          LOAD_START(_RamfuncsLoadStart),
                          LOAD_SIZE(_RamfuncsLoadSize),
@@ -121,7 +120,7 @@ SECTIONS
    .esysmem            : > RAMGS6       PAGE = 1
 
    /* Initalized sections go in Flash */
-   .econst             : >> FLASHF | FLASHG | FLASHH      PAGE = 0, ALIGN(4)
+   .econst             : >> FLASHX | FLASHY | FLASHZ      PAGE = 0, ALIGN(4)
    .switch             : > FLASHB      PAGE = 0, ALIGN(4)
    
    .reset              : > RESET,     PAGE = 0, TYPE = DSECT /* not used, */

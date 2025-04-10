@@ -43,19 +43,43 @@ while true
         if (isempty(command) == 0) && (command == 9) && (flag_1 == 0)
             % Sinusiodal test signals:
             % Time function 1:
-            x1_t(counter+1) = 3000*sin(2*pi*.02.*counter*Ts) + rand(1,1)*10 - 5;
+            if (counter == 110) || (counter == 130) || (counter == 145) || (counter == 411) || (counter == 413) || (counter == 1145)
+                x1_t(counter+1) = 3000*sin(2*pi*.02.*counter*Ts) + rand(1,1)*10 - 5 + 10000;
+            else
+                x1_t(counter+1) = 3000*sin(2*pi*.02.*counter*Ts) + rand(1,1)*10 - 5;
+            end
             % x1_t(counter+1) = 1500 + rand(1,1)*10 - 5;
             % Time function 2:
-            x2_t(counter+1) = 1500*sin(2*pi*.02.*counter*Ts) + 1500*cos(2*pi*.08.*counter*Ts) + rand(1,1)*10 - 5;
+            if (counter == 205) || (counter == 232) || (counter == 243) || (counter == 141) || (counter == 420) || (counter == 414)
+                x2_t(counter+1) = 1500*sin(2*pi*.02.*counter*Ts) + 1500*cos(2*pi*.08.*counter*Ts) + rand(1,1)*10 - 5 + 10000;
+            else
+                x2_t(counter+1) = 1500*sin(2*pi*.02.*counter*Ts) + 1500*cos(2*pi*.08.*counter*Ts) + rand(1,1)*10 - 5;
+            end
             % x2_t(counter+1) = 2000 + rand(1,1)*10 - 5;
             % Time function 3:
-            x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2;
+            if (counter == 101) || (counter == 1128) || (counter == 1139) || (counter == 109) || (counter == 138) || (counter == 1140)
+                x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2 + 10000;
+            else
+                x3_t(counter+1) = x1_t(counter+1) - x2_t(counter+1)/2;
+            end
             % Time function 4:
-            x4_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x3_t(counter+1)/3000;
+            if (counter == 107) || (counter == 1029) || (counter == 1047) || (counter == 1107) || (counter == 1140) || (counter == 151)
+                x4_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x3_t(counter+1)/3000 + 10000;
+            else
+                x4_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x3_t(counter+1)/3000;
+            end
             % Time function 5:
-            x5_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1) + x3_t(counter+1) - x4_t(counter+1))/3;
+            if (counter == 1101) || (counter == 1121) || (counter == 1127) || (counter == 1102) || (counter == 141) || (counter == 153)
+                x5_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1) + x3_t(counter+1) - x4_t(counter+1))/3 + 10000;
+            else
+                x5_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1) + x3_t(counter+1) - x4_t(counter+1))/3;
+            end
             % Time function 6:
-            x6_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x4_t(counter+1)/3000 + x5_t(counter+1)/3000;
+            if (counter == 115) || (counter == 165) || (counter == 1117) || (counter == 202) || (counter == 281) || (counter == 425)
+                x6_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x4_t(counter+1)/3000 + x5_t(counter+1)/3000 + 10000;
+            else
+                x6_t(counter+1) = (x1_t(counter+1) - x2_t(counter+1)).*x4_t(counter+1)/3000 + x5_t(counter+1)/3000;
+            end
             % Time function 7:
             % x_7(counter+1) = atan2(sin(2*pi*.002.*counter*Ts),cos(2*pi*.002.*counter*Ts));
             % Getting and arraying sinusoidal signals:

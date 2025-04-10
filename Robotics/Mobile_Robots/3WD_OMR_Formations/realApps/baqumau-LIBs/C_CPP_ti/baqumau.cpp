@@ -274,14 +274,14 @@ bool _isnan(float value){
     return (value != value);                                                                // NaN is the only value that does not equal itself.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Creating an averaging window structure to mitigate numerical errors in a streaming dataset:
+// Creating an averaging window structure to mitigate numerical errors in a streaming data-set:
 Aver_Window createAverWindow(int input_size, int window_size, float lim_factor[]){
     int i, j;                                                                               // Declaration of i and j as integer variables.
     // Configuring the members of the averaging window structure:
     Aver_Window AVW;                                                                        // Create the averaging window structure.
-    AVW.ySize = window_size;                                                                // Define the length of the window dataset or row numbers of the matrix (window_size >= 3 is required).
+    AVW.ySize = window_size;                                                                // Define the length of the window dataset or row numbers of the matrix (window_size >= 2 is required).
     AVW.zSize = input_size;                                                                 // Define the length of the dataset or data vector.
-    AVW.limFactor = lim_factor;                                                             // Define the limits factor that conditionate the numerical errors.
+    AVW.avg_op = 1.0f/((float)(window_size) - 1.0f);                                        // Define operator used in the averaging computation.
     //-----------------------------------------------
     // Preallocating memory:
     AVW.limFactor = (float *)malloc(input_size * sizeof(float));                            // Allocate memory for the output vector y(k).
@@ -297,14 +297,14 @@ Aver_Window createAverWindow(int input_size, int window_size, float lim_factor[]
         }
     }
     for(i = 0; i < input_size; i++){
-        AVW.limFactor[i] = lim_factor[i];                                                   // Clearing values of the matrix X_k within AVW.
+        AVW.limFactor[i] = lim_factor[i];                                                   // Define the limits factor that conditionate the numerical errors.
     }
     //-----------------------------------------------
     AVW.flag[0] = false;                                                                    // Setting AVW flag to false.
     return AVW;
 }
 //---------------------------------------------------------------------------------------------------------------
-// Initiating the averaging window structure to mitigate numerical errors in a streaming dataset:
+// Initiating the averaging window structure to mitigate numerical errors in a streaming data-set:
 void initAverWindow(Aver_Window AVW, float dataset_0[]){
     int i, j;                                                                               // Declaration of i and j as integer variables.
     // Initiating X_k matrix:
@@ -321,28 +321,27 @@ void initAverWindow(Aver_Window AVW, float dataset_0[]){
     AVW.flag[0] = true;                                                                     // Flag settled to true, which enables the averaging window on AVW structure.
 }
 //---------------------------------------------------------------------------------------------------------------
-// Computing the averaging window structure to mitigate numerical errors in a streaming dataset:
-extern void computeAverWindow(Aver_Window AVW, float dataset[]){
+// Computing the averaging window structure to mitigate numerical errors in a streaming data-set:
+void computeAverWindow(Aver_Window AVW, float dataset[]){
     int i, j;                                                                               // Declaration of i and j as integer variables.
     float avg;                                                                              // Auxiliary float variable.
-    // Execute averaging window algorithm:
+    // Execute the averaging window algorithm:
     if(AVW.flag[0]){
         // Updating the averaging matrix X(k):
         for(i = AVW.ySize-1; i > 0; i--){
-            for(j = 1; j < AVW.zSize; j++){
-                AVW.X_k.data[i][j] = AVW.X_k.data[i-1][j];                                  // Update in a descendent way.
+            for(j = 0; j < AVW.zSize; j++){
+                AVW.X_k.data[i][j] = AVW.X_k.data[i-1][j];                                  // Update in a descendant way.
             }
         }
-        // Updating input on the averaging matrix X(k):
+        // Updating row [0] of the averaging matrix X(k):
         for(i = 0; i < AVW.zSize; i++){
-            if(dataset[i] > AVW.X_k.data[1][i]+AVW.limFactor[i] || dataset[i] < AVW.X_k.data[1][i]-AVW.limFactor[i]){
+            if(dataset[i] > (AVW.X_k.data[0][i]+AVW.limFactor[i]) || dataset[i] < (AVW.X_k.data[0][i]-AVW.limFactor[i])){
                 avg = 0.0f;                                                                 // Clear average auxiliary variable.
                 for(j = 1; j < AVW.ySize; j++){
-                    avg += AVW.X_k.data[j][i]/((float)(AVW.ySize) - 1.0f);                  // Computing the mean computation.
+                    avg += AVW.X_k.data[j][i]*AVW.avg_op;                                   // Computing the mean computation.
                 }
                 // Changing values due to numerical error detection:
-                AVW.X_k.data[0][i] = AVW.X_k.data[2][i] + (float)(signf(AVW.X_k.data[1][i] - AVW.X_k.data[2][i]))*fabsf(fabsf(AVW.X_k.data[1][i]) - fabsf(avg));
-                // AVW.X_k.data[0][i] = AVW.X_k.data[1][i];                                 // Simply take the previous value.
+                AVW.X_k.data[0][i] += (float)(signf(AVW.X_k.data[1][i] - avg))*fabsf(fabsf(AVW.X_k.data[1][i]) - fabsf(avg));
             }
             else AVW.X_k.data[0][i] = dataset[i];
         }
