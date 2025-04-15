@@ -1,5 +1,6 @@
 function dataRate = main_03_vR2014a()
 clc, clear
+java.lang.Thread.sleep(15000);                                              % A delay for 15 seconds.
 disp('Executing main_03');
 positions = zeros(2,3);                                                     % Preallocating memory for angles state vector.
 angles = zeros(2,3);                                                        % Preallocating memory for angles state vector.

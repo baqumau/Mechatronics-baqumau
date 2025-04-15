@@ -834,6 +834,7 @@ void init_CS_Observer01(CS_Observer CSO, float z_0[]){
     int i, j, s = 0, m = Robots_Qty-1, n = 3*Robots_Qty;                                    // Declaration of i, j, s, n and m as integer variables.
     float *Xi_0 = (float *)malloc(6*m * sizeof(float));                                     // Variable to save initial conditions for CSO.INT integrator.
     float *Xd_0 = (float *)malloc(CSO.s_in * sizeof(float));                                // Variable to save initial conditions for CSO.DIF differentiator.
+    //-----------------------------------------------
     for(i = 0; i < CSO.s_state; i++){
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within CSO.INT structure.
     }
@@ -1018,6 +1019,7 @@ void init_CSx_Observer01(CSx_Observer CSO, float z_0[]){
     int i, j, s = 0, m = Robots_Qty-1, n = 3*Robots_Qty;                                    // Declaration of i, j, s, n and m as integer variables.
     float *Xi_0 = (float *)malloc(6*m * sizeof(float));                                     // Variable to save initial conditions for CSO.INT integration structure.
     float *Xd_0 = (float *)malloc(3*n * sizeof(float));                                     // Variable to save initial conditions for CSO.SMDIF differentiation structure.
+    //-----------------------------------------------
     for(i = 0; i < CSO.s_state; i++){
         Xi_0[i] = 0.0f;                                                                     // Saving initial conditions for x1(0) within CSO.INT structure.
     }
@@ -1244,7 +1246,7 @@ void init_CSx_Observer02(CSx_Observer CSO, float z_0[]){
 //---------------------------------------------------------------------------------------------------------------
 // Cluster space estimation function for CS observer (type 02 - variant x):
 void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]){
-    int i, j, m = Robots_Qty-1, n = 3*Robots_Qty, r = 3;                                    // Declaration of i, j, m, n and r as integer variables.
+    int i, j, m = Robots_Qty*3, n = 3*Robots_Qty, r = 0;                                    // Declaration of i, j, m, n and r as integer variables.
     // Getting output of CSO.INT integration structure:
     for(i = 0; i < m; i++){
         CSO.z1_k[i] = CSO.INT.y_k[i];                                                       // Updating data for z1(k) within CSO structure.
@@ -1363,7 +1365,7 @@ void CSx_Estimation02(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float 
 //---------------------------------------------------------------------------------------------------------------
 // Cluster space estimation function for CS observer (type 02 - variant x - CSa):
 void CSx_Estimation02a(CSx_Observer CSO, float fmr_u_k[], float fmr_c_k[], float fmr_params[]){
-    int i, j, m = Robots_Qty*3, n = 3*Robots_Qty, r = 0;                                    // Declaration of i, j, m, n and r as integer variables.
+    int i, j, m = Robots_Qty-1, n = 3*Robots_Qty, r = 3;                                    // Declaration of i, j, m, n and r as integer variables.
     // Getting output of CSO.INT integration structure:
     for(i = 0; i < m; i++){
         CSO.z1_k[i] = CSO.INT.y_k[i];                                                       // Updating data for z1(k) within CSO structure.
@@ -2297,7 +2299,7 @@ void computeSMC_Controller01(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[
 //---------------------------------------------------------------------------------------------------------------
 // SMC strategy computing function (type 01 - CSa):
 void computeSMC_Controller01a(SMC_Controller SMC, float ref_y_k[], float fmr_c_k[], float cso_y_k[], float sls_y_k[], float fmr_params[]){
-    /* int i, j;                                                                               // Declaration of i, and j as integer variables.
+    int i, j;                                                                               // Declaration of i, and j as integer variables.
     // Execute SMC algorithm:
     if(SMC.flag[0]){
         switch(Robots_Qty){
@@ -2728,7 +2730,7 @@ void computeSMC_Controller01a(SMC_Controller SMC, float ref_y_k[], float fmr_c_k
             }
         }
     }
-    else NOP;                                                                               // No operation. */
+    else NOP;                                                                               // No operation.
 }
 //---------------------------------------------------------------------------------------------------------------
 // Creating formation structure:

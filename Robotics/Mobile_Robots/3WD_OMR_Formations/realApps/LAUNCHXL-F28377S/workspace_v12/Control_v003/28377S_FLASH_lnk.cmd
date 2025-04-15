@@ -29,8 +29,8 @@ GROUP {      /* GROUP memory ranges for crc/checksum of entire flash */
    FLASHB           : origin = 0x082000, length = 0x002000	/* on-chip Flash */
    FLASHC           : origin = 0x084000, length = 0x002000	/* on-chip Flash */
    FLASHD           : origin = 0x086000, length = 0x002000	/* on-chip Flash */
-   FLASHE           : origin = 0x088000, length = 0x008000	/* on-chip Flash */
-   FLASHF           : origin = 0x090000, length = 0x008000	/* on-chip Flash */
+   FLASHE           : origin = 0x088000, length = 0x010000	/* on-chip Flash */
+   /*FLASHF           : origin = 0x090000, length = 0x008000	/* on-chip Flash */
    FLASHG           : origin = 0x098000, length = 0x008000	/* on-chip Flash */
    FLASHH           : origin = 0x0A0000, length = 0x008000	/* on-chip Flash */
    FLASHI           : origin = 0x0A8000, length = 0x008000	/* on-chip Flash */
@@ -87,7 +87,7 @@ SECTIONS
    /* Allocate program areas: */
    .cinit              : > FLASHB      PAGE = 0, ALIGN(4)
    .pinit              : > FLASHB,     PAGE = 0, ALIGN(4)
-   .text               : >> FLASHB | FLASHC | FLASHD | FLASHE | FLASHF | FLASHG | FLASHH | FLASHI | FLASHJ | FLASHK | FLASHL | FLASHM | FLASHN | FLASHO | FLASHP | FLASHQ | FLASHR | FLASHS | FLASHT | FLASHU | FLASHV | FLASHW      PAGE = 0, ALIGN(4)
+   .text               : >> FLASHB | FLASHC | FLASHD | FLASHE | FLASHG | FLASHH | FLASHI | FLASHJ | FLASHK | FLASHL | FLASHM | FLASHN | FLASHO | FLASHP | FLASHQ | FLASHR | FLASHS | FLASHT | FLASHU | FLASHV | FLASHW      PAGE = 0, ALIGN(4)
    codestart           : > BEGIN       PAGE = 0, ALIGN(4)
 
 #ifdef __TI_COMPILER_VERSION__

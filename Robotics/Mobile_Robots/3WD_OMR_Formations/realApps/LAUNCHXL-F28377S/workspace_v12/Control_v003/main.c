@@ -146,11 +146,11 @@ char *var10;                                                                    
 char *var11;                                                                                    // Multi-purpose char variable 11.
 char *var12;                                                                                    // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
-Control_System consys = ADRC_RS;                                                                // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
-Reference_Type reftype = MINGYUE_02;                                                            // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
+Control_System consys = SMC_CS;                                                                 // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
+Reference_Type reftype = INDEP_CIRCUMFERENCES_01;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
 float t_cl = 0.0f;                                                                              // Define a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                                // Declaration of this floating-point values vector for arranging error variables.
-float limFactor[3*Robots_Qty] = {200.0f, 200.0f, M_PI_2, 200.0f, M_PI_2, M_PI_2};               // Define the limit factor for the averaging window.
+float limFactor[3*Robots_Qty] = {200.0f, 200.0f, M_PI_2, 200.0f, 200.0f, M_PI_2};               // Define the limit factor for the averaging window.
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the ADRC_RS strategy:
 float epsilon = 0.42f;                                                                          // Small constant used in the RSO observer.
@@ -187,8 +187,8 @@ float gpi_Gains[3*Robots_Qty][3] = {
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
 float upsilon_1 = 0.42f;                                                                        // Small constant used in the CSO observer.
-float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.51f, 0.51f};                     // Vector with the small constants used in the SMC control structure.
-float kapWeigths[3*Robots_Qty] = {1.0f, 1.0f, 1.1f, 1.0f, 1.1f, 1.1f};                          // Constants that accompanies to Kappa gains within SMC control structure.
+float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.49f, 0.49f};                     // Vector with the small constants used in the SMC control structure.
+float kapWeigths[3*Robots_Qty] = {1.1f, 1.1f, 1.1f, 1.1f, 1.5f, 1.5f};                          // Constants that accompanies to Kappa gains within SMC control structure.
 // Float parameters to define the observer gains of CSO_01, for SMC_CS:
 float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                                                   // Setting alpha_1 for CSO_01.
@@ -220,12 +220,12 @@ float cso2_Gains[9*Robots_Qty][3*Robots_Qty] = {
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
 float sls_Gains[3*Robots_Qty] = {2.1432f, 2.1432f, 2.2432f, 2.1432f, 2.2241f, 2.2241f};
 // -- Setting damping factors to the sliding surfaces:
-float sls_dampFacts[3*Robots_Qty] = {1.15f, 1.15f, 1.15f, 1.15f, 1.01f, 1.01f};
+float sls_dampFacts[3*Robots_Qty] = {1.15f, 1.15f, 1.15f, 1.15f, 1.05f, 1.05f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float smc_Gains[3*Robots_Qty] = {2.24f, 2.24f, 3.96f, 2.24f, 15.84f, 15.84f};
+float smc_Gains[3*Robots_Qty] = {4.84f, 4.84f, 7.96f, 4.84f, 18.84f, 18.84f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
-#define rho_1 (1.0f/8.5f)*mt_1*l_1*l_1/(r_1*r_1)                                                // Constant for bounding the input torque disturbances in robot 1.
-#define rho_2 (1.0f/8.5f)*mt_2*l_2*l_2/(r_2*r_2)                                                // Constant for bounding the input torque disturbances in robot 2.
+#define rho_1 (1.0f/20.5f)*mt_1*l_1*l_1/(r_1*r_1)                                               // Constant for bounding the input torque disturbances in robot 1.
+#define rho_2 (1.0f/20.5f)*mt_2*l_2*l_2/(r_2*r_2)                                               // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                             // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
@@ -474,7 +474,7 @@ void main(void){
     // Creating data structure for the reference builder system:
     REF = createReference(sampleTime,reftype);                                                  // Create reference structure.
     // Creating an averaging window to mitigate numerical errors in the measured data:
-    AVW = createAverWindow(3*Robots_Qty,10,limFactor);
+    AVW = createAverWindow(3*Robots_Qty,4,limFactor);
     // Creating a robot formation structure for arranging their relevant variables:
     FMR = createFormation(Robots_Qty);                                                          // Create the OMRs formation structure.
     while(!FMR.flag[0]) FMR = createFormation(Robots_Qty);                                      // Create the OMRs formation structure.
@@ -502,12 +502,6 @@ void main(void){
                     AVW.flag[0] = false;                                                        // Setting AVW.flag to false.
                     break;
                 case SMC_CS:
-                    REF.flag[0] = false;                                                        // Setting REF.flag to false.
-                    CSO.flag[0] = false;                                                        // Setting CSO.flag to false.
-                    SLS.flag[0] = false;                                                        // Setting SLS.flag to false.
-                    SMC.flag[0] = false;                                                        // Setting SMC.flag to false.
-                    AVW.flag[0] = false;                                                        // Setting AVW.flag to false.
-                    break;
                 case SMC_CSa:
                     REF.flag[0] = false;                                                        // Setting REF.flag to false.
                     CSO.flag[0] = false;                                                        // Setting CSO.flag to false.
@@ -1015,13 +1009,13 @@ __interrupt void scia_rx_isr(void){
                     float xc_0 = 1500.0f;                                                       // [mm], initial position of whole cluster along workspace's x axis.
                     float yc_0 = 1500.0f;                                                       // [mm], initial position of whole cluster along workspace's y axis.
                     float thc_0 = M_PI_2;                                                       // [rad], initial orientation of whole cluster in the workspace.
-                    float dc_0 = 180.0f;                                                        // [mm], initial distance between both OMRs.
+                    float dc_0 = 600.0f;                                                        // [mm], initial distance between both OMRs.
                     float ph1_0 = 0.0f;                                                         // [rad], initial orientation of robot 1.
                     float ph2_0 = 0.0f;                                                         // [rad], initial orientation of robot 2.
-                    float d_ph1_0 = 0.0f;                                                       // [rad/s], desired initial angular velocity of robot 1.
-                    float d_ph2_0 = 0.0f;                                                       // [rad/s], desired initial angular velocity of robot 2.
-                    float RXc = 280.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along X axis.
-                    float RYc = 800.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
+                    float d_ph1_0 = 0.2f*M_PI;                                                  // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = -0.2f*M_PI;                                                 // [rad/s], desired initial angular velocity of robot 2.
+                    float RXc = 120.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along X axis.
+                    float RYc = 840.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
                     float Wc = M_PI/12.0f;                                                      // [rad/s], Angular velocity for tracing the independent ellipsoids.
                     // Arraying initial conditions for this profile:
                     switch(consys){
@@ -1043,14 +1037,14 @@ __interrupt void scia_rx_isr(void){
                     float xc_0 = 1500.0f;                                                       // [mm], initial position of whole cluster along workspace's x axis.
                     float yc_0 = 1500.0f;                                                       // [mm], initial position of whole cluster along workspace's y axis.
                     float thc_0 = M_PI_2;                                                       // [rad], initial orientation of whole cluster in the workspace.
-                    float dc_0 = 180.0f;                                                        // [mm], initial distance between both OMRs.
+                    float dc_0 = 500.0f;                                                        // [mm], initial distance between both OMRs.
                     float ph1_0 = 0.0f;                                                         // [rad], initial orientation of robot 1.
                     float ph2_0 = 0.0f;                                                         // [rad], initial orientation of robot 2.
                     float d_ph1_0 = 0.0f;                                                       // [rad/s], desired initial angular velocity of robot 1.
                     float d_ph2_0 = 0.0f;                                                       // [rad/s], desired initial angular velocity of robot 2.
-                    float RXc = 400.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along X axis.
-                    float RYc = 800.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
-                    float Wc = M_PI/10.0f;                                                      // [rad/s], Angular velocity for tracing the independent ellipsoids.
+                    float RXc = 80.0f;                                                          // [mm], Dimension of larger radius of traced ellipsoid along X axis.
+                    float RYc = 300.0f;                                                         // [mm], Dimension of larger radius of traced ellipsoid along Y axis.
+                    float Wc = M_PI/12.0f;                                                      // [rad/s], Angular velocity for tracing the independent ellipsoids.
                     // Arraying initial conditions for this profile:
                     switch(consys){
                         case SMC_CSa:{
@@ -1060,6 +1054,50 @@ __interrupt void scia_rx_isr(void){
                         }
                         default:{
                             float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, 0.0f, RYc*Wc, 0.0f, 0.0f, d_ph1_0, d_ph2_0, 0.0f, 0.0f, 0.0f, RXc*Wc*Wc, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case INDEP_CIRCUMFERENCES_03:{
+                    // Configuring initial parameters for independent circumferences:
+                    float RXc_1 = 400.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 1 along X axis.
+                    float RYc_1 = 400.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 1 along Y axis.
+                    float RXc_2 = 300.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 2 along X axis.
+                    float RYc_2 = 800.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 2 along Y axis.
+                    float AXc = 100.0f;                                                         // [mm], Minimum amplitude distance between two ellipsoids.
+                    float Wc = M_PI/12.0f;                                                      // [rad/s], angular velocity for tracing the independent ellipsoids.
+                    float OP1_0 = AXc+RXc_1;                                                    // Pre-compute constant operation OP1(0).
+                    float OP2_0 = Wc*0.5f;                                                      // Pre-compute constant operation OP2(0).
+                    float OP3_0 = OP1_0*OP1_0 + RYc_1*RYc_1;                                    // Pre-compute constant operation OP3(0).
+                    float OP4_0 = Wc*OP2_0;                                                     // Pre-compute constant operation OP4(0).
+                    float OP5_0 = OP1_0*RXc_1 - RYc_1*RYc_2;                                    // Pre-compute constant operation OP5(0).
+                    float OP6_0 = OP1_0*RYc_2 + RXc_1*RYc_1;                                    // Pre-compute constant operation OP6(0).
+                    //-------------------------------------------------------------------------------------------------
+                    float xc_0 = 1500.0f + RXc_1*0.5f;                                          // [mm], initial position of whole cluster along workspace's x axis.
+                    float yc_0 = 1500.0f + RYc_1*0.5f;                                          // [mm], initial position of whole cluster along workspace's y axis.
+                    float thc_0 = atan2f(OP1_0,RYc_1);                                          // [rad], initial orientation of whole cluster in the workspace.
+                    float dc_0 = sqrtf(OP3_0)*0.5f;                                             // [mm], initial distance between both OMRs.
+                    float ph1_0 = 0.0f;                                                         // [rad], initial orientation of robot 1.
+                    float ph2_0 = 0.0f;                                                         // [rad], initial orientation of robot 2.
+                    float d_ph1_0 = 0.0f;                                                       // [rad/s], desired initial angular velocity of robot 1.
+                    float d_ph2_0 = 0.0f;                                                       // [rad/s], desired initial angular velocity of robot 2.
+                    float d_thc_0 = OP6_0*Wc/OP3_0;                                             // [rad/s], initial angular velocity of whole cluster in the workspace.
+                    float d_dc_0 = OP5_0*Wc*0.25f/dc_0;                                         // [mm/s], initial value for distance variation rate between both OMRs.
+                    // Computing the initial angular acceleration of whole cluster in the workspace (rad/s^2):
+                    float dd_thc_0 = 2.0f*(OP3_0*(RXc_2 + OP1_0)*RYc_1*OP4_0 - OP5_0*OP6_0*Wc)/(OP3_0*OP3_0);
+                    // Computing the initial value for acceleration in the distance between two OMRS in the workspace (mm/s^2):
+                    float dd_dc_0 = (((RXc_1*RXc_1 + RYc_2*RYc_2)*OP4_0 + 0.5f*OP5_0*Wc)*OP3_0 - OP5_0*OP5_0*OP4_0)/(OP3_0*2.0f*dc_0);
+                    // Arraying initial conditions for this profile:
+                    switch(consys){
+                        case SMC_CSa:{
+                            float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0, ph2_0, RXc_1*OP2_0, RYc_2*OP2_0, d_thc_0, d_dc_0, d_ph1_0, d_ph2_0, -RXc_2*OP4_0, -RYc_1*OP4_0, dd_thc_0, dd_dc_0, 0.0f, 0.0f};
+                            initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
+                            break;
+                        }
+                        default:{
+                            float ref_z0[9*Robots_Qty] = {xc_0, yc_0, thc_0, dc_0, ph1_0-thc_0, ph2_0-thc_0, RXc_1*OP2_0, RYc_2*OP2_0, d_thc_0, d_dc_0, d_ph1_0-d_thc_0, d_ph2_0-d_thc_0, -RXc_2*OP4_0, -RYc_1*OP4_0, dd_thc_0, dd_dc_0, -dd_thc_0, -dd_thc_0};
                             initReference(REF,consys,reftype,ref_z0);                           // Initialize reference builder.
                             break;
                         }

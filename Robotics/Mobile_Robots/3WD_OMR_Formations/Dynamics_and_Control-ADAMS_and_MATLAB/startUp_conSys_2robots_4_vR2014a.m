@@ -84,15 +84,15 @@ par.alpha_3 = diag([K1(1,4) K1(1,4) K2(1,4) K1(1,4) K2(1,4) K2(1,4)]);
 par.err = .42;
 %% Sliding mode control:
 % Tuning parameters:
-par.S_b = [180 180 4*pi/3 150 pi pi]';                                      % Constant for saturate sliding surfaces.
+par.S_b = [180 180 pi 150 pi pi]';                                          % Constant for saturate sliding surfaces.
 par.N = [55 55 35 55 35 35]';                                               % Constant of derivative filter.
 par.NTs = par.N*par.Ts;                                                     % Other constant of derivative filter.
-par.Eta = [2.24 2.24 1.96 1.84 6.14 6.14]';                                 % Constant for bounding the sliding surface dynamics.
+par.Eta = [2.24 2.24 2.96 2.24 18.14 18.14]';                               % Constant for bounding the sliding surface dynamics.
 par.Delta = [1/4 1/20 1/20]';                                               % Constant for bounding the uncertainty model.
-par.Rho_1 = (1/8)*ones(3,1)*(par.m_1)*(par.l_1/par.r_1)^2;                  % Constant for bounding the input torque disturbnces in robot 1.
-par.Rho_2 = (1/8)*ones(3,1)*(par.m_2)*(par.l_2/par.r_2)^2;                  % Constant for bounding the input torque disturbnces in robot 2.
-par.Lambda = diag([2.1432 2.1432 1.8432 2.1432 2.7241 2.7241]);             % Coefficients for sliding surface.
-par.dampFacts = diag([1.15 1.15 1.15 1.15 1.01 1.01]);                      % Assign damping factor to the sliding surfaces.
+par.Rho_1 = (1/12)*ones(3,1)*(par.m_1)*(par.l_1/par.r_1)^2;                 % Constant for bounding the input torque disturbnces in robot 1.
+par.Rho_2 = (1/12)*ones(3,1)*(par.m_2)*(par.l_2/par.r_2)^2;                 % Constant for bounding the input torque disturbnces in robot 2.
+par.Lambda = diag([1.8432 1.8432 1.7812 2.0432 1.9241 1.9241]);             % Coefficients for sliding surface.
+par.dampFacts = diag([1.05 1.05 1.01 1.105 1.01 1.01]);                     % Assign damping factor to the sliding surfaces.
 %% Extended Kalman Filters
 % EKF_1:
 par.b_1 = 87.5*0;                                                           % [mm] Offset for EKF (Position sensor of each vehicle in Adams model is located onto its rotation center).
