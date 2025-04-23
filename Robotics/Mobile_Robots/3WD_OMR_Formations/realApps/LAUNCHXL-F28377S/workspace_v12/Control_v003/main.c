@@ -147,7 +147,7 @@ char *var11;                                                                    
 char *var12;                                                                                    // Multi-purpose char variable 12.
 //-----------------------------------------------------------------------------------------------------------------------
 Control_System consys = SMC_CS;                                                                 // Declare the control system type (ADRC_RS, SMC_CS and SMC_CSa at the moment).
-Reference_Type reftype = INDEP_CIRCUMFERENCES_01;                                               // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02] at the moment).
+Reference_Type reftype = MINGYUE_02;                                                            // Declare the reference shape type (CIRCUMFERENCE_01, MINGYUE_01[02], STATIC_01, INDEP_CIRCUMFERENCES_01[02,03] at the moment).
 float t_cl = 0.0f;                                                                              // Define a clutch interval time implemented in the control strategies.
 float *errors_k;                                                                                // Declaration of this floating-point values vector for arranging error variables.
 float limFactor[3*Robots_Qty] = {200.0f, 200.0f, M_PI_2, 200.0f, 200.0f, M_PI_2};               // Define the limit factor for the averaging window.
@@ -177,18 +177,18 @@ float rso_Gains[9*Robots_Qty][3*Robots_Qty] = {
 };
 // Float parameters to define the GPI controller gains of ADRC_RS:
 float gpi_Gains[3*Robots_Qty][3] = {
-  {  69.8148f,   59.3426f, 14.4118f},
-  {  69.8148f,   59.3426f, 14.4118f},
+  { 142.5541f,   95.5112f, 18.2836f},
+  { 142.5541f,   95.5112f, 18.2836f},
   {1876.0370f,  562.8111f, 45.6333f},
-  { 142.5541f,   95.5112f, 18.2836f},
-  { 142.5541f,   95.5112f, 18.2836f},
+  { 177.9785f,  142.3828f, 25.3125f},
+  { 177.9785f,  142.3828f, 25.3125f},
   {9205.6555f, 1537.3445f, 73.3533f}                                                            // Defining lambda_0[3*Robots_Qty], lambda_1[3*Robots_Qty] and lambda_2[3*Robots_Qty].
 };
 //-----------------------------------------------------------------------------------------------------------------------
 // Setting parameters for the SMC_CS strategy:
 float upsilon_1 = 0.42f;                                                                        // Small constant used in the CSO observer.
-float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.49f, 0.49f};                     // Vector with the small constants used in the SMC control structure.
-float kapWeigths[3*Robots_Qty] = {1.1f, 1.1f, 1.1f, 1.1f, 1.5f, 1.5f};                          // Constants that accompanies to Kappa gains within SMC control structure.
+float upsilon_2[3*Robots_Qty] = {0.42f, 0.42f, 0.42f, 0.42f, 0.45f, 0.45f};                     // Vector with the small constants used in the SMC control structure.
+float kapWeigths[3*Robots_Qty] = {1.1f, 1.1f, 1.1f, 1.1f, 1.15f, 1.15f};                        // Constants that accompanies to Kappa gains within SMC control structure.
 // Float parameters to define the observer gains of CSO_01, for SMC_CS:
 float cso1_Gains[3*(Robots_Qty-1)][Robots_Qty-1] = {
   {18.4091f},                                                                                   // Setting alpha_1 for CSO_01.
@@ -218,18 +218,18 @@ float cso2_Gains[9*Robots_Qty][3*Robots_Qty] = {
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
 // -- Setting Gamma and Gamma_p1 (Internal anti-windup gain):
-float sls_Gains[3*Robots_Qty] = {2.1432f, 2.1432f, 2.2432f, 2.1432f, 2.2241f, 2.2241f};
+float sls_Gains[3*Robots_Qty] = {2.1432f, 2.1432f, 2.2432f, 2.1432f, 1.8241f, 1.8241f};
 // -- Setting damping factors to the sliding surfaces:
-float sls_dampFacts[3*Robots_Qty] = {1.15f, 1.15f, 1.15f, 1.15f, 1.05f, 1.05f};
+float sls_dampFacts[3*Robots_Qty] = {1.15f, 1.15f, 1.15f, 1.15f, 1.25f, 1.25f};
 // Defining the SMC gains that cover the unknown disturbances via SMC strategy:
-float smc_Gains[3*Robots_Qty] = {4.84f, 4.84f, 7.96f, 4.84f, 18.84f, 18.84f};
+float smc_Gains[3*Robots_Qty] = {2.84f, 2.84f, 4.96f, 2.84f, 18.84f, 18.84f};
 // Defining the constants for bounding the input torque disturbances according to the SMC_CS strategy:
 #define rho_1 (1.0f/20.5f)*mt_1*l_1*l_1/(r_1*r_1)                                               // Constant for bounding the input torque disturbances in robot 1.
 #define rho_2 (1.0f/20.5f)*mt_2*l_2*l_2/(r_2*r_2)                                               // Constant for bounding the input torque disturbances in robot 2.
 float dis_Values[3*Robots_Qty] = {rho_1, rho_1, rho_1, rho_2, rho_2, rho_2};
 float unc_Values[4] = {0.25f, 0.05f, 0.05f, 0.25f};                                             // Define the constants for bounding the uncertainties in the model.
 // Defining the saturation values of sliding surfaces at the output:
-float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 0.4f*M_PI, 150.0f, 0.8f*M_PI, 0.8f*M_PI};
+float sls_satVals[3*Robots_Qty] = {180.0f, 180.0f, 0.8f*M_PI, 150.0f, 0.8f*M_PI, 0.8f*M_PI};
 // Defining the tuning parameters for the internal differentiators, required in SMC controller:
 float diff_fc = 45.0f;                                                                          // Assign an arbitrary value to the filter coefficient of internal differentiator within CSO structure (variant x does not use this parameter).
 float diff_pg[3] = {1.3f, 1.8f, 2.4f};                                                          // Values assigned as the performance coefficients of HOSM-based differentiator within CSO structure (variant x).
@@ -598,6 +598,10 @@ __interrupt void cpu_timer1_isr(void){
             }
             case INDEP_CIRCUMFERENCES_02:{
                 computeIndepCircumferences02(REF,consys,CpuTimer1.InterruptCount);              // Compute independent circumferences by the involved vehicles.
+                break;
+            }
+            case INDEP_CIRCUMFERENCES_03:{
+                computeIndepCircumferences03(REF,consys,CpuTimer1.InterruptCount);              // Compute independent circumferences by the involved vehicles.
                 break;
             }
         }
@@ -1065,8 +1069,8 @@ __interrupt void scia_rx_isr(void){
                     float RXc_1 = 400.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 1 along X axis.
                     float RYc_1 = 400.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 1 along Y axis.
                     float RXc_2 = 300.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 2 along X axis.
-                    float RYc_2 = 800.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 2 along Y axis.
-                    float AXc = 100.0f;                                                         // [mm], Minimum amplitude distance between two ellipsoids.
+                    float RYc_2 = 600.0f;                                                       // [mm], Dimension of larger radius of traced ellipsoid 2 along Y axis.
+                    float AXc = 20.0f;                                                          // [mm], Minimum amplitude distance between two ellipsoids.
                     float Wc = M_PI/12.0f;                                                      // [rad/s], angular velocity for tracing the independent ellipsoids.
                     float OP1_0 = AXc+RXc_1;                                                    // Pre-compute constant operation OP1(0).
                     float OP2_0 = Wc*0.5f;                                                      // Pre-compute constant operation OP2(0).
