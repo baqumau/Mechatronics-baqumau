@@ -213,7 +213,7 @@ float cso2_Gains[9*Robots_Qty][3*Robots_Qty] = {
   {    0.0f, 68.4636f,     0.0f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f, 58.8134f,     0.0f,     0.0f,     0.0f},
   {    0.0f,     0.0f,     0.0f, 68.4636f,     0.0f,     0.0f},
-  {    0.0f,     0.0f,     0.0f,     0.0f, 68.4636f,     0.0f},
+  {    0.0f,     0.0f,     0.0f,     0.0f, 58.8134f,     0.0f},
   {    0.0f,     0.0f,     0.0f,     0.0f,     0.0f, 58.8134f}                                  // Setting alpha_3 for CSO-02.
 };
 // Float parameters to define the sliding gains of SLS, for SMC_CS strategy:
