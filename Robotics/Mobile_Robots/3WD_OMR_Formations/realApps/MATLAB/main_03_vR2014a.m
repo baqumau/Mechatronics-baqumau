@@ -111,4 +111,3 @@ else
     fclose(objs);                                                           % Finishes all serial objects, including communication with COM6.
 end
 end
-% Test...
