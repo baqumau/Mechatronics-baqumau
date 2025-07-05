@@ -38,42 +38,42 @@
 		<link>
 			<name>F2837xS_CodeStartBranch.asm</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_CodeStartBranch.asm</locationURI>
+			<location>C:/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_CodeStartBranch.asm</location>
 		</link>
 		<link>
 			<name>F2837xS_CpuTimers.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_CpuTimers.c</locationURI>
+			<location>C:/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_CpuTimers.c</location>
 		</link>
 		<link>
 			<name>F2837xS_DefaultISR.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_DefaultISR.c</locationURI>
+			<location>C:/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_DefaultISR.c</location>
 		</link>
 		<link>
 			<name>F2837xS_GlobalVariableDefs.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/headers/source/F2837xS_GlobalVariableDefs.c</locationURI>
+			<location>C:/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/headers/source/F2837xS_GlobalVariableDefs.c</location>
 		</link>
 		<link>
 			<name>F2837xS_Gpio.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_Gpio.c</locationURI>
+			<location>C:/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_Gpio.c</location>
 		</link>
 		<link>
 			<name>F2837xS_PieCtrl.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_PieCtrl.c</locationURI>
+			<location>C:/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_PieCtrl.c</location>
 		</link>
 		<link>
 			<name>F2837xS_PieVect.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_PieVect.c</locationURI>
+			<location>C:/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_PieVect.c</location>
 		</link>
 		<link>
 			<name>F2837xS_SysCtrl.c</name>
 			<type>1</type>
-			<locationURI>PARENT-10-PROJECT_LOC/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_SysCtrl.c</locationURI>
+			<location>C:/ti/c2000/C2000Ware_5_03_00_00/device_support/f2837xs/common/source/F2837xS_SysCtrl.c</location>
 		</link>
 		<link>
 			<name>baqumau.c</name>

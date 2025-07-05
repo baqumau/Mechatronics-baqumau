@@ -1,0 +1,17 @@
+[
+   {
+      "directory" : "C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/CPU1_RAM",
+      "command"   : "clang++ -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts\" -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/device\" -I\"C:/ti/c2000/C2000Ware_5_04_00_00/driverlib/f2837xs/driverlib\" -I\"C:/ti/ccs2020/ccs/tools/compiler/ti-cgt-c2000_22.6.2.LTS/include\" -DDEBUG -DCPU1 -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/CPU1_RAM/syscfg\"",
+      "file"      : "C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/device/F2837xS_CodeStartBranch.asm"
+   },
+   {
+      "directory" : "C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/CPU1_RAM",
+      "command"   : "clang++ -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts\" -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/device\" -I\"C:/ti/c2000/C2000Ware_5_04_00_00/driverlib/f2837xs/driverlib\" -I\"C:/ti/ccs2020/ccs/tools/compiler/ti-cgt-c2000_22.6.2.LTS/include\" -DDEBUG -DCPU1 -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/CPU1_RAM/syscfg\" -xc",
+      "file"      : "C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/device/device.c"
+   },
+   {
+      "directory" : "C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/CPU1_RAM",
+      "command"   : "clang++ -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts\" -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/device\" -I\"C:/ti/c2000/C2000Ware_5_04_00_00/driverlib/f2837xs/driverlib\" -I\"C:/ti/ccs2020/ccs/tools/compiler/ti-cgt-c2000_22.6.2.LTS/include\" -DDEBUG -DCPU1 -I\"C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/CPU1_RAM/syscfg\" -xc",
+      "file"      : "C:/Users/mauro/Repositories/Mechatronics-baqumau/Robotics/Mobile_Robots/3WD_OMR_Formations/realApps/LAUNCHXL-F28377S/workspace_v12/sci_ex2_loopback_interrupts/sci_ex2_loopback_interrupts.c"
+   }
+]

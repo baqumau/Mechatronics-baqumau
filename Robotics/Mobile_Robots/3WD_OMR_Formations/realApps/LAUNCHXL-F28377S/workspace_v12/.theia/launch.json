@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Control_v003",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "Control_v003",
+                "resourceId": "/Control_v003"
+            },
+            "connections": [
+                {
+                    "name": "Texas Instruments XDS100v2 USB Debug Probe",
+                    "cores": [
+                        {
+                            "name": "C28xx_CPU1",
+                            "debuggerSettings": {
+                                "data": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<PropertyValues/>\n"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Example_28377SLaunchPad",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "Example_28377SLaunchPad",
+                "resourceId": "/Example_28377SLaunchPad"
+            }
+        },
+        {
+            "name": "Control_v003 (1)",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "Control_v003",
+                "resourceId": "/Control_v003/__ccs_5_compilerIncludes"
+            }
+        }
+    ]
+}

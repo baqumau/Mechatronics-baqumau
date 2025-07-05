@@ -9,7 +9,7 @@ CMD_SRCS += \
 ../2837xS_Generic_RAM_lnk.cmd 
 
 LIB_SRCS += \
-C:/ti/c2000/C2000Ware_5_03_00_00/driverlib/f2837xs/driverlib/ccs/Debug/driverlib.lib 
+C:/ti/c2000/C2000Ware_5_04_00_00/driverlib/f2837xs/driverlib/ccs/Debug/driverlib.lib 
 
 C_SRCS += \
 ../sci_ex2_loopback_interrupts.c 

@@ -742,7 +742,7 @@ __interrupt void cpu_timer2_isr(void){
         //---------------------------------------------------------------------------------------------------------------
         // Timeout protocol:
         if(flagcommand_4){
-            flagcommand_4 = false;                                                              // Reseting this flag, verify if exist timeout state for SCIA receiving data.
+            flagcommand_4 = false;                                                              // Resetting this flag, verify if exist timeout state for SCIA receiving data.
             timeoutCount = 1;                                                                   // Increasing timeout counter.
         }
         else if(timeoutCount >= 2*freq_hz_2) final_iteration = CpuTimer1.InterruptCount;        // Force to ending execution.
@@ -1343,7 +1343,7 @@ void scia_fifo_init(void){
     SciaRegs.SCICTL1.bit.SWRESET = 0;
     SciaRegs.SCICTL1.bit.SWRESET = 1;
     //-------------------------------------------------------------------------------------------------------------------
-    // Reseting TX and RX FIFO enhancements:
+    // Resetting TX and RX FIFO enhancements:
     SciaRegs.SCIFFTX.bit.TXFIFORESET = 0;
     SciaRegs.SCIFFTX.bit.TXFIFORESET = 1;                                                       // Reset TX FIFO enhancement.
     SciaRegs.SCIFFRX.bit.RXFIFORESET = 0;
