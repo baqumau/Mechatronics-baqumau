@@ -10,13 +10,13 @@ S0=[0 0 0;0 L0 L1;0 L0 L1+L2;0 L0+L3 L1+L2;0 L0+L3+L4 L1+L2;0 L0+L3+L4+L5 L1+L2]
 TH=[Th1 Th2 Th3 Th4 Th5 Th6]';
 T=[0;0;0;0;0;0];
 %Matrices de transformación de tornillo:
-A1=simple(TS2MT(S(1,:)',S0(1,:)',TH(1),T(1)));
-A2=simple(TS2MT(S(2,:)',S0(2,:)',TH(2),T(2)));
-A3=simple(TS2MT(S(3,:)',S0(3,:)',TH(3),T(3)));
-A4=simple(TS2MT(S(4,:)',S0(4,:)',TH(4),T(4)));
-A5=simple(TS2MT(S(5,:)',S0(5,:)',TH(5),T(5)));
-A6=simple(TS2MT(S(6,:)',S0(6,:)',TH(6),T(6)));
-Ah=simple(A1*A2*A3*A4*A5*A6);
+A1=simplify(TS2MT(S(1,:)',S0(1,:)',TH(1),T(1)));
+A2=simplify(TS2MT(S(2,:)',S0(2,:)',TH(2),T(2)));
+A3=simplify(TS2MT(S(3,:)',S0(3,:)',TH(3),T(3)));
+A4=simplify(TS2MT(S(4,:)',S0(4,:)',TH(4),T(4)));
+A5=simplify(TS2MT(S(5,:)',S0(5,:)',TH(5),T(5)));
+A6=simplify(TS2MT(S(6,:)',S0(6,:)',TH(6),T(6)));
+Ah=simplify(A1*A2*A3*A4*A5*A6);
 %%
 % Solución cinemática directa:
 L0=70; L1=352; L2=360; L3=254; L4=126; L5=65;
