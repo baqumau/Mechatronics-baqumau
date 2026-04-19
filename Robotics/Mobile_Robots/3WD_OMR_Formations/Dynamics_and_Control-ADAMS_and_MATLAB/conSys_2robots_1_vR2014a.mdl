@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.467"
+    ComputedModelVersion    "1.469"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -58,16 +58,28 @@ Model {
 	$ClassName		"Simulink.ExplorerBarInfo"
 	Visible			[1]
       }
-      Object {
-	$PropName		"EditorsInfo"
-	$ObjectID		6
-	$ClassName		"Simulink.EditorInfo"
-	IsActive		[1]
-	ViewObjType		"SimulinkSubsys"
-	LoadSaveID		"625"
-	Extents			[1332.0, 569.0]
-	ZoomFactor		[1.0]
-	Offset			[-14.0, 221.0]
+      Array {
+	Type			"Simulink.EditorInfo"
+	Dimension		2
+	Object {
+	  $ObjectID		  6
+	  IsActive		  [0]
+	  ViewObjType		  "SimulinkTopLevel"
+	  LoadSaveID		  "0"
+	  Extents		  [1332.0, 566.0]
+	  ZoomFactor		  [1.0]
+	  Offset		  [0.0, 0.0]
+	}
+	Object {
+	  $ObjectID		  7
+	  IsActive		  [1]
+	  ViewObjType		  "SimulinkSubsys"
+	  LoadSaveID		  "625"
+	  Extents		  [1332.0, 566.0]
+	  ZoomFactor		  [1.0]
+	  Offset		  [-14.0, 244.0]
+	}
+	PropName		"EditorsInfo"
       }
     }
   }
@@ -75,11 +87,11 @@ Model {
   Creator		  "baqumau"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "mauro"
+  LastModifiedBy	  "Mauro"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Apr 05 18:55:39 2025"
-  RTWModifiedTimeStamp	  655749742
-  ModelVersionFormat	  "1.%<AutoIncrement:467>"
+  LastModifiedDate	  "Tue Mar 24 12:44:49 2026"
+  RTWModifiedTimeStamp	  696257065
+  ModelVersionFormat	  "1.%<AutoIncrement:469>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -119,7 +131,7 @@ Model {
   TryForcingSFcnDF	  off
   Object {
     $PropName		    "DataLoggingOverride"
-    $ObjectID		    7
+    $ObjectID		    8
     $ClassName		    "Simulink.SimulationData.ModelLoggingInfo"
     model_		    "Control_Schematic_11a"
     overrideMode_	    [0.0]
@@ -182,16 +194,16 @@ Model {
     Type		    "Handle"
     Dimension		    1
     Simulink.ConfigSet {
-      $ObjectID		      8
+      $ObjectID		      9
       Version		      "1.14.2"
       Array {
 	Type			"Handle"
 	Dimension		9
 	Simulink.SolverCC {
-	  $ObjectID		  9
+	  $ObjectID		  10
 	  Version		  "1.14.2"
 	  StartTime		  "0.0"
-	  StopTime		  "350"
+	  StopTime		  "100"
 	  AbsTol		  "auto"
 	  FixedStep		  "Ts"
 	  InitialStep		  "auto"
@@ -223,7 +235,7 @@ Model {
 	  InsertRTBMode		  "Whenever possible"
 	}
 	Simulink.DataIOCC {
-	  $ObjectID		  10
+	  $ObjectID		  11
 	  Version		  "1.14.2"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
@@ -256,7 +268,7 @@ Model {
 	  Refine		  "1"
 	}
 	Simulink.OptimizationCC {
-	  $ObjectID		  11
+	  $ObjectID		  12
 	  Version		  "1.14.2"
 	  Array {
 	    Type		    "Cell"
@@ -316,7 +328,7 @@ Model {
 	  ParallelExecutionInRapidAccelerator on
 	}
 	Simulink.DebuggingCC {
-	  $ObjectID		  12
+	  $ObjectID		  13
 	  Version		  "1.14.2"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
@@ -406,7 +418,7 @@ Model {
 	  SFTransitionActionBeforeConditionDiag	"warning"
 	}
 	Simulink.HardwareCC {
-	  $ObjectID		  13
+	  $ObjectID		  14
 	  Version		  "1.14.2"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
@@ -447,7 +459,7 @@ Model {
 	  ProdEqTarget		  on
 	}
 	Simulink.ModelReferenceCC {
-	  $ObjectID		  14
+	  $ObjectID		  15
 	  Version		  "1.14.2"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
 	  CheckModelReferenceTargetMessage "error"
@@ -462,7 +474,7 @@ Model {
 	  SupportModelReferenceSimTargetCustomCode off
 	}
 	Simulink.SFSimCC {
-	  $ObjectID		  15
+	  $ObjectID		  16
 	  Version		  "1.14.2"
 	  SFSimEnableDebug	  on
 	  SFSimOverflowDetection  on
@@ -478,7 +490,7 @@ Model {
 	}
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
-	  $ObjectID		  16
+	  $ObjectID		  17
 	  Version		  "1.14.2"
 	  Array {
 	    Type		    "Cell"
@@ -565,7 +577,7 @@ Model {
 	    Type		    "Handle"
 	    Dimension		    2
 	    Simulink.CodeAppCC {
-	      $ObjectID		      17
+	      $ObjectID		      18
 	      Version		      "1.14.2"
 	      Array {
 		Type			"Cell"
@@ -636,7 +648,7 @@ Model {
 	    }
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
-	      $ObjectID		      18
+	      $ObjectID		      19
 	      Version		      "1.14.2"
 	      Array {
 		Type			"Cell"
@@ -720,7 +732,7 @@ Model {
 	  }
 	}
 	hdlcoderui.hdlcc {
-	  $ObjectID		  19
+	  $ObjectID		  20
 	  Version		  "1.14.2"
 	  Description		  "HDL Coder custom configuration component"
 	  Name			  "HDL Coder"
@@ -742,11 +754,11 @@ Model {
   }
   Simulink.ConfigSet {
     $PropName		    "ActiveConfigurationSet"
-    $ObjectID		    8
+    $ObjectID		    9
   }
   Object {
     $PropName		    "DataTransfer"
-    $ObjectID		    20
+    $ObjectID		    21
     $ClassName		    "Simulink.GlobalDataTransfer"
     DefaultTransitionBetweenSyncTasks "Ensure deterministic transfer (maximum delay)"
     DefaultTransitionBetweenAsyncTasks "Ensure data integrity only"
@@ -1144,7 +1156,7 @@ Model {
   System {
     Name		    "conSys_2robots_1_vR2014a"
     Location		    [-8, -8, 1374, 736]
-    Open		    off
+    Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
     ScreenColor		    "white"
@@ -13634,7 +13646,7 @@ Model {
 	  RequestExecContextInheritance	off
 	  Object {
 	    $PropName		    "MaskObject"
-	    $ObjectID		    21
+	    $ObjectID		    22
 	    $ClassName		    "Simulink.Mask"
 	    Type		    "Adams Plant"
 	    Description		    "Simulate any Adams plant model either in Adams/Solver form (.adm file) or in Adams/View form (."
@@ -13668,7 +13680,7 @@ Model {
 	      Type		      "Simulink.MaskParameter"
 	      Dimension		      23
 	      Object {
-		$ObjectID		22
+		$ObjectID		23
 		Type			"edit"
 		Name			"exevie"
 		Prompt			"Adams install directory"
@@ -13676,7 +13688,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		23
+		$ObjectID		24
 		Type			"edit"
 		Name			"nam_in"
 		Prompt			"Adams/View input names"
@@ -13684,7 +13696,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		24
+		$ObjectID		25
 		Type			"edit"
 		Name			"namout"
 		Prompt			"Adams/View output names"
@@ -13692,21 +13704,21 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		25
+		$ObjectID		26
 		Type			"edit"
 		Name			"nampre"
 		Prompt			"Adams model file prefix"
 		Value			"ADAMS_prefix"
 	      }
 	      Object {
-		$ObjectID		26
+		$ObjectID		27
 		Type			"edit"
 		Name			"outfil"
 		Prompt			"Output files prefix (opt.: if blank - no output)"
 		Value			"ADAMS_prefix"
 	      }
 	      Object {
-		$ObjectID		27
+		$ObjectID		28
 		Type			"edit"
 		Name			"exesol"
 		Prompt			"User executable (opt.: if blank - use standard)"
@@ -13724,7 +13736,7 @@ Model {
 		"arams_states({'modsim','modani'},{'off','off'},'MaskEnables',gcb)\n  end\nend\n\n\n\n"
 	      }
 	      Object {
-		$ObjectID		28
+		$ObjectID		29
 		Type			"edit"
 		Name			"stat"
 		Prompt			"Initial static simulation flag "
@@ -13732,7 +13744,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		29
+		$ObjectID		30
 		Type			"edit"
 		Name			"inicmd"
 		Prompt			"Initialization commands"
@@ -13740,7 +13752,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		30
+		$ObjectID		31
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13757,7 +13769,7 @@ Model {
 		"ran';\nend"
 	      }
 	      Object {
-		$ObjectID		31
+		$ObjectID		32
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13776,7 +13788,7 @@ Model {
 		",{'on','on'},'MaskVisibilities',gcb)\nend\nend"
 	      }
 	      Object {
-		$ObjectID		32
+		$ObjectID		33
 		Type			"edit"
 		Name			"workdir"
 		Prompt			"Adams working directory"
@@ -13784,7 +13796,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		33
+		$ObjectID		34
 		Type			"edit"
 		Name			"ada_host"
 		Prompt			"Adams host"
@@ -13792,7 +13804,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		34
+		$ObjectID		35
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13807,7 +13819,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		35
+		$ObjectID		36
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13833,7 +13845,7 @@ Model {
 		"nd"
 	      }
 	      Object {
-		$ObjectID		36
+		$ObjectID		37
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13849,7 +13861,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		37
+		$ObjectID		38
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13873,7 +13885,7 @@ Model {
 		"es({'pin_interp_order','pout_extrap_order'},{'off','off'},'MaskVisibilities',gcb) \nend\nend"
 	      }
 	      Object {
-		$ObjectID		38
+		$ObjectID		39
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13888,7 +13900,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		39
+		$ObjectID		40
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13903,7 +13915,7 @@ Model {
 		Evaluate		"off"
 	      }
 	      Object {
-		$ObjectID		40
+		$ObjectID		41
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13919,7 +13931,7 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		41
+		$ObjectID		42
 		Type			"popup"
 		Array {
 		  Type			  "Cell"
@@ -13935,21 +13947,21 @@ Model {
 		Visible			"off"
 	      }
 	      Object {
-		$ObjectID		42
+		$ObjectID		43
 		Type			"edit"
 		Name			"dt_out"
 		Prompt			"Communication interval"
 		Value			"Ts"
 	      }
 	      Object {
-		$ObjectID		43
+		$ObjectID		44
 		Type			"edit"
 		Name			"o_rate"
 		Prompt			"Number of communications per output step"
 		Value			"1"
 	      }
 	      Object {
-		$ObjectID		44
+		$ObjectID		45
 		Type			"checkbox"
 		Name			"more"
 		Prompt			"More parameters"
@@ -17579,16 +17591,6 @@ Model {
 	}
 	Block {
 	  BlockType		  Goto
-	  Name			  "Goto85"
-	  SID			  "2241"
-	  Position		  [500, 453, 535, 467]
-	  ZOrder		  4455
-	  BlockMirror		  on
-	  ShowName		  off
-	  GotoTag		  "Ep"
-	}
-	Block {
-	  BlockType		  Goto
 	  Name			  "Goto89"
 	  SID			  "1926"
 	  Position		  [1165, 440, 1195, 455]
@@ -18482,7 +18484,7 @@ Model {
 	  BlockMirror		  on
 	  ShowName		  off
 	  Floating		  off
-	  Location		  [1, 49, 1367, 727]
+	  Location		  [5, 49, 1371, 727]
 	  Open			  off
 	  NumInputPorts		  "1"
 	  ZoomMode		  "yonly"
@@ -20351,12 +20353,6 @@ Model {
 	  SrcBlock		  "Sum2"
 	  SrcPort		  1
 	  Points		  [8, 0]
-	  Branch {
-	    ZOrder		    1565
-	    Points		    [0, -60]
-	    DstBlock		    "Goto85"
-	    DstPort		    1
-	  }
 	  Branch {
 	    ZOrder		    1564
 	    DstBlock		    "Demux6"

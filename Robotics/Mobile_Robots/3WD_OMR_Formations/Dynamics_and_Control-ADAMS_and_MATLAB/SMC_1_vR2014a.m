@@ -301,7 +301,7 @@ for i = 1:6
         sigma_(i,1) = sigma(i,1);
     end
 end
-sys(31:36,1) = 22*(sigma_ - sigma);
+sys(31:36,1) = 2.472*(sigma_ - sigma);
 % Controller gains:
 K = Beta*F + abs(Beta - eye(6))*abs(-u(19:24,1) + 2*par.Lambda*(x(7:12,1) - u(13:18,1)) + par.Lambda^2*(u(1:6,1) - u(7:12,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)) + dJ_dc_c*Jin_c*x(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2] + Beta*par.Eta;
 % K = Beta*F + (eye(6) - inv(Beta))*abs(-u(19:24,1) + 2*par.Lambda*(x(7:12,1) - u(13:18,1)) + par.Lambda^2*(u(1:6,1) - u(7:12,1)) - Lambda_e_c\(Jin_c'*He*Jin_c*x(7:12,1)) + dJ_dc_c*Jin_c*x(7:12,1)) + abs(Lambda_e_c\(Jin_c'*Be))*[par.Rho_1;par.Rho_2] + Beta*par.Eta;
