@@ -1,0 +1,13 @@
+﻿"Symbol";"Value";"Unit";
+"TraceParts.PartNumber";"32-24102013-069128";"";
+"REFERENCE";"VSTH 35/6K";"";
+"TraceParts.PartTitle";"Ruedas para carga pesada con banda de rodadura de poliuretano Blickle Extrathane®, con núcleo de acero o bien de fundición gris / VSTH, GTH, Ø Rueda 35 - 200 mm";"";
+"TraceParts.InstanceId";"32-24102013-0691286V4HX0FKQPWJ0HLAMOGJ485K0";"";
+"DESIGN";"Ruedas para carga pesada con banda de rodadura de poliuretano Blickle Extrathane®, con núcleo de acero o bien de fundición gris / VSTH, GTH, Ø Rueda 35 - 200 mm, Ø Rueda: 35 mm, Rodamiento: a bolas, Ø eje: 6 mm";"";
+"TraceParts.PartStatus";"Published";"";
+"TraceParts.PartStatusId";"";"";
+"SUPPLIER";"BLICKLE";"";
+"TraceParts.PartVersion";"1.0.7";"";
+"TRACEPARTS";"TRACEPARTS";"";
+"TraceParts.PartLanguage";"es";"";
+"TraceParts.ClassPath";"BLICKLE:32-24102013-069128";"";
